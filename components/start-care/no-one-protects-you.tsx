@@ -46,7 +46,7 @@ export function NoOneProtectsYou() {
           </div>
 
           {/* 유튜브 영상 영역 */}
-          <div className="w-full max-w-2xl mb-12 md:mb-16">
+          <div className="w-full max-w-2xl mb-12 md:mb-16 px-4 mx-auto">
             <div className="aspect-video bg-gray-800 rounded-lg border border-gray-700 overflow-hidden relative group">
               {!isVideoPlaying ? (
                 // 유튜브 썸네일 표시

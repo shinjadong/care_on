@@ -19,8 +19,8 @@ export function FirstYearMatters() {
       </div>
 
       {/* 이미지 영역 - 모바일: 와이드, 데스크탑: 중앙 정렬 */}
-      <div className="w-full md:flex md:justify-center">
-        <div className="relative w-full md:max-w-4xl aspect-square">
+      <div className="w-full md:flex md:justify-center px-4 md:px-0">
+        <div className="relative w-full md:max-w-4xl aspect-square max-w-[calc(100vw-2rem)] mx-auto">
           {/* 국세청 자료 이미지 */}
           <Image
             src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EA%B5%AD%EC%84%B8%EC%B2%AD%EC%9E%90%EB%A3%8C"
