@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 const scoreData = [
   {
@@ -35,6 +36,15 @@ const scoreData = [
 ]
 
 export function ScoreExplanation() {
+  const isMobile = useIsMobile()
+  
+  // 모바일: 빠른 애니메이션 (팟!), 데스크탑: 부드러운 애니메이션
+  const getTransition = (mobileDuration: number, desktopDuration: number, mobileDelay: number, desktopDelay: number) => ({
+    duration: isMobile ? mobileDuration : desktopDuration,
+    delay: isMobile ? mobileDelay : desktopDelay,
+    ease: "easeOut" as const
+  })
+
   return (
     <motion.section 
       className="bg-gray-100 pt-12 pb-6 text-center"
@@ -48,7 +58,7 @@ export function ScoreExplanation() {
           className="text-2xl font-semibold text-red-800 md:text-4xl"
           initial={{ opacity: 0, y: 30 }} // 경고 메시지가 아래에서 올라옴 (땅에서 솟아오르는 경고처럼)
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.1, ease: "easeOut" }} // 0.6초→0.3초, 0.2초→0.1초로 더 빠르게
+          transition={getTransition(0.15, 0.6, 0.05, 0.2)} // 모바일: 빠르게, 데스크탑: 부드럽게
           viewport={{ once: true, amount: 0.5 }} // 0.8→0.5로 더 일찍 트리거
         >
           60점 이하라면,
@@ -58,10 +68,12 @@ export function ScoreExplanation() {
           initial={{ opacity: 0, y: 30, scale: 0.8 }} // 중요한 문구가 아래에서 올라오며 작게 시작해서 커짐 (땅속에서 보물이 솟아오르는 것처럼)
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ 
-            duration: 0.4, // 0.7초 → 0.4초로 더 빠르게
-            delay: 0.2, // 0.4초 → 0.2초로 더 빠르게
-            ease: "easeOut",
-            scale: { type: "spring", stiffness: 200, damping: 12 } // 더 빠른 스프링
+            ...getTransition(0.2, 0.7, 0.1, 0.4), // 모바일: 빠르게, 데스크탑: 부드럽게
+            scale: { 
+              type: "spring", 
+              stiffness: isMobile ? 400 : 200, // 모바일에서만 빠른 스프링
+              damping: isMobile ? 10 : 12 
+            }
           }}
           viewport={{ once: true, amount: 0.5 }} // 0.8→0.5로 더 일찍 트리거
         >
@@ -71,7 +83,7 @@ export function ScoreExplanation() {
           className="text-3xl font-medium text-gray-600 md:text-4xl"
           initial={{ opacity: 0, y: 20 }} // 마지막 설명이 아래에서 등장 (결론이 드러나는 것처럼)
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.3, ease: "easeOut" }} // 0.6초→0.3초, 0.7초→0.3초로 더 빠르게
+          transition={getTransition(0.15, 0.6, 0.15, 0.7)} // 모바일: 빠르게, 데스크탑: 부드럽게
           viewport={{ once: true, amount: 0.5 }} // 0.8→0.5로 더 일찍 트리거
         >
           <span className="font-bold text-gray-900">위험</span>에 <span className="font-bold text-gray-900">대비</span>해야
@@ -82,7 +94,7 @@ export function ScoreExplanation() {
         className="container mx-auto px-4 mt-24"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.3, delay: 0.4 }} // 1.0초 → 0.4초로 더 빠르게 (상단 텍스트와 겹치게)
+        transition={getTransition(0.15, 1.0, 0.2, 1.3)} // 모바일: 빠르게, 데스크탑: 부드럽게
         viewport={{ once: true, amount: 0.2 }} // 0.3 → 0.2로 더 일찍 트리거
       >
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -112,13 +124,13 @@ export function ScoreExplanation() {
                   rotateX: 0 
                 }}
                 transition={{ 
-                  duration: isDangerousBox ? 0.4 : 0.3, // 0.8초→0.4초, 0.6초→0.3초로 더 빠르게
-                  delay: 0.5 + (index * 0.1), // 1.3초→0.5초, 0.15초→0.1초로 더 빠르고 간격 좁게 (도미노 효과)
+                  duration: isMobile ? (isDangerousBox ? 0.2 : 0.15) : (isDangerousBox ? 0.8 : 0.6), // 모바일: 빠르게, 데스크탑: 부드럽게
+                  delay: isMobile ? 0.1 + (index * 0.03) : 1.3 + (index * 0.15), // 모바일: 거의 동시, 데스크탑: 순차적
                   ease: "easeOut",
                   scale: isDangerousBox ? { 
                     type: "spring", 
-                    stiffness: 250, // 더 빠른 스프링
-                    damping: 15 
+                    stiffness: isMobile ? 400 : 250, // 모바일에서만 빠른 스프링
+                    damping: isMobile ? 12 : 15 
                   } : undefined // 위험한 박스는 스프링 효과로 더 강조
                 }}
                 whileHover={{ 

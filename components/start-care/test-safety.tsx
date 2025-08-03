@@ -5,12 +5,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 // 창업 안전지수 진단 문항
 const questions = [
   { 
     id: "cost_awareness", 
-    text: "창업 준비하면서 \"내가 얼마를 쓰고 있는지\" 정확히 모르고 불안한가요?",
+    text: "창업 준비하면서 \"내가 얼마를 쓰고 있는지\" 정확히 알고 계신가요?",
     lowLabel: "전혀 모른다",
     highLabel: "정확히 안다"
   },
@@ -22,7 +23,7 @@ const questions = [
   },
   { 
     id: "price_verification", 
-    text: "인테리어 견적이나 장비 가격 볼 때 \"이게 맞는 가격인가?\" 의심되지만 확인할 방법이 없나요?",
+    text: "인테리어 견적이나 장비 가격 볼 때 \"이게 맞는 가격인가?\" 의심 될 때, 확인할 방법이 있으신가요?",
     lowLabel: "전혀 모른다",
     highLabel: "확인 가능하다"
   },
@@ -34,13 +35,15 @@ const questions = [
   },
   { 
     id: "support_system", 
-    text: "창업 준비하면서 \"이거 물어볼 사람이 없네\" 하고 혼자 끙끙 앓은 적이 많나요?",
+    text: "창업 준비하면서 \"이거 물어볼 사람이 없네\" 하고 혼자 끙끙 앓은 적이 있나요?",
     lowLabel: "완전 혼자다",
     highLabel: "도움받을 곳 많다"
   },
 ]
 
 export function TestSafety() {
+  const isMobile = useIsMobile()
+  
   // 상태 관리 - 마치 TV 리모컨으로 채널을 바꾸듯 즉시 전환
   const [scores, setScores] = useState<Record<string, number>>({})
   const [currentQuestion, setCurrentQuestion] = useState(0) // 현재 질문 번호
@@ -99,10 +102,10 @@ export function TestSafety() {
           viewport={{ once: true, amount: 0.8 }}
         >
           <h2 className="text-2xl md:text-4xl font-bold text-gray-800 mb-4">
-            하나라도 해당 한다면<br />대비 하셔야 해요!
+            하나라도 해당 한다면<br />대비 하셔야 합니다.
           </h2>
           <div className="flex justify-between items-center mb-6">
-            <p className="text-gray-600">안전지수 테스트</p>
+            <p className="text-red-800">안전지수 테스트</p>
             <p className="text-sm text-gray-500 mr-4">직접 체크해보세요.</p>
           </div>
         </motion.div>
@@ -118,9 +121,9 @@ export function TestSafety() {
                 animate={{ opacity: 1, y: 0, scale: 1 }} // 등장: 선명해지며 원래 크기로 (선물상자가 열리는 것처럼)
                 exit={{ opacity: 0, y: -20, scale: 0.95 }} // 퇴장: 투명해지며 위로 사라짐 (구름처럼 사라지는 것처럼)
                 transition={{ 
-                  duration: 0.5, 
+                  duration: isMobile ? 0.3 : 0.5, // 모바일: 빠르게, 데스크탑: 부드럽게
                   ease: "easeOut",
-                  scale: { duration: 0.3 } // 크기 변화는 더 빠르게
+                  scale: { duration: isMobile ? 0.2 : 0.3 } // 모바일에서 크기 변화도 더 빠르게
                 }}
               >
                 <h3 className="text-base font-semibold leading-relaxed text-gray-800">
@@ -128,15 +131,19 @@ export function TestSafety() {
                 </h3>
 
                 {/* 가로 배치 선택지 - 둥근 직사각형 디자인 */}
-                <motion.div 
-                  className="space-y-6"
-                  initial={{ opacity: 0, y: 20 }} // 선택지는 질문보다 조금 늦게 등장
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
-                >
+                                  <motion.div 
+                    className="space-y-6"
+                    initial={{ opacity: 0, y: 20 }} // 선택지는 질문보다 조금 늦게 등장
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ 
+                      duration: isMobile ? 0.2 : 0.4, // 모바일: 빠르게, 데스크탑: 부드럽게
+                      delay: isMobile ? 0.1 : 0.2, // 모바일에서 더 빠른 등장
+                      ease: "easeOut" 
+                    }}
+                  >
                   <RadioGroup
                     onValueChange={handleScoreChange}
-                    className="flex justify-center space-x-3"
+                    className="flex justify-center space-x-2 px-4"
                   >
                     {[1, 2, 3, 4, 5].map((score, index) => (
                       <motion.div 
@@ -145,8 +152,8 @@ export function TestSafety() {
                         initial={{ opacity: 0, scale: 0.8 }} // 각 버튼이 작게 시작해서 커짐 (팝콘이 터지는 것처럼)
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ 
-                          duration: 0.3, 
-                          delay: 0.3 + (index * 0.1), // 0.1초씩 지연되며 순차적으로 등장
+                          duration: isMobile ? 0.2 : 0.3, // 모바일: 빠르게, 데스크탑: 부드럽게
+                          delay: isMobile ? 0.15 + (index * 0.05) : 0.3 + (index * 0.1), // 모바일에서 더 빠르고 간격 좁게
                           ease: "easeOut" 
                         }}
                       >
@@ -157,7 +164,7 @@ export function TestSafety() {
                         />
                         <Label 
                           htmlFor={`q${currentQuestion}-score-${score}`}
-                          className="flex items-center justify-center w-14 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 cursor-pointer transition-all duration-200 border-2 border-transparent hover:border-gray-300"
+                          className="flex items-center justify-center w-12 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 cursor-pointer transition-all duration-200 border-2 border-transparent hover:border-gray-300"
                         >
                           <span className="text-sm font-medium text-gray-700">
                             {score}
@@ -201,12 +208,12 @@ export function TestSafety() {
               initial={{ opacity: 0, scale: 0.3, y: 50 }} // 작고 투명한 상태에서 아래쪽에 위치 (마치 보물상자에서 나오는 보석처럼)
               animate={{ opacity: 1, scale: 1, y: 0 }} // 크고 선명하게 제자리로 (보석이 반짝이며 등장하는 것처럼)
               transition={{ 
-                duration: 0.8, 
-                delay: 0.3,
+                duration: isMobile ? 0.4 : 0.8, // 모바일: 빠르게, 데스크탑: 부드럽게
+                delay: isMobile ? 0.1 : 0.3, // 모바일에서 더 빠른 등장
                 ease: "easeOut",
                 scale: { 
                   type: "spring", // 스프링 애니메이션으로 통통 튀는 느낌
-                  stiffness: 200,
+                  stiffness: isMobile ? 300 : 200, // 모바일에서 더 빠른 스프링
                   damping: 15
                 }
               }}
@@ -216,8 +223,8 @@ export function TestSafety() {
                 initial={{ opacity: 0, scale: 0.5 }} // 점수 숫자는 별도로 애니메이션
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ 
-                  duration: 0.5, 
-                  delay: 0.8,
+                  duration: isMobile ? 0.3 : 0.5, // 모바일: 빠르게, 데스크탑: 부드럽게
+                  delay: isMobile ? 0.3 : 0.8, // 모바일에서 더 빠른 등장
                   ease: "easeOut"
                 }}
               >
@@ -229,8 +236,8 @@ export function TestSafety() {
               initial={{ opacity: 0, y: 30 }} // 버튼은 마지막에 아래에서 등장 (커튼콜처럼)
               animate={{ opacity: 1, y: 0 }}
               transition={{ 
-                duration: 0.5, 
-                delay: 1.2,
+                duration: isMobile ? 0.3 : 0.5, // 모바일: 빠르게, 데스크탑: 부드럽게
+                delay: isMobile ? 0.5 : 1.2, // 모바일에서 훨씬 빠른 등장
                 ease: "easeOut"
               }}
             >

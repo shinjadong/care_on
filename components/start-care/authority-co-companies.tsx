@@ -34,7 +34,7 @@ export function AuthorityCoCompanies() {
     <section className="py-12 md:py-24 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <em className="text-point text-xl md:text-2xl font-serif italic">신뢰의 다른 이름 '케어온'</em>
+          <em className="text-[#b8860b] text-xl md:text-2xl text-bold font-serif italic">신뢰의 다른 이름 '케어온'</em>
           <h3 className="text-3xl md:text-4xl font-bold text-gray-800 mt-2">국내 최고의 파트너사와 함께 합니다.</h3>
         </div>
         <div className="space-y-4">

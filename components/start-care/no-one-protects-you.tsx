@@ -80,7 +80,7 @@ export function NoOneProtectsYou() {
                 // 유튜브 iframe 재생
                 <iframe
                   src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
-                  title="폐업률 통계 영상"
+                  title=""
                   className="w-full h-full"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
