@@ -134,7 +134,7 @@ export function Secrets1to3() {
                   />
                   
                   {/* 그라데이션 오버레이 - 텍스트 쪽에서 이미지 쪽으로 투명해짐 */}
-                  <div className="absolute inset-0 bg-gradient-to-l from-transparent via-gray-800/70 to-gray-800"></div>
+                  <div className="absolute inset-0 bg-gradient-to-l from-black/30 via-gray-900/85 to-gray-900"></div>
                 </div>
               </div>
 
@@ -154,7 +154,7 @@ export function Secrets1to3() {
                 </div>
                 
                 {/* 그라데이션 오버레이 - 위에서 아래로 텍스트 가독성 확보 */}
-                <div className="absolute inset-0 bg-gradient-to-b from-gray-900/90 via-gray-800/70 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-black/95 via-gray-900/85 to-black/40"></div>
                 
                 {/* 텍스트 콘텐츠 오버레이 */}
                 <div className="absolute inset-0 p-6 flex flex-col justify-start">
