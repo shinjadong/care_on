@@ -11,13 +11,13 @@ export function HeroSection() {
       <div className="relative z-10 flex flex-col justify-center h-full">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl text-left">
-            <span className="text-lg font-semibold">세이프스타트 패키지</span>
+            <span className="text-lg font-semibold">세이프 스타트 패키지</span>
             <h1 className="text-4xl md:text-6xl font-extrabold my-4 leading-tight">
               예비창업자를 위한
               <br />
               1:1 맞춤 세팅
             </h1>
-            <p className="text-lg md:text-xl leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-300 leading-relaxed">
               떨리는 첫 사업,
               <br />
               실패하지 않게

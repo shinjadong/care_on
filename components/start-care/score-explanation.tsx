@@ -1,69 +1,160 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
 
 const scoreData = [
   {
-    scoreRange: "6-12점",
-    stage: "심각한 위기 단계",
+    scoreRange: "80-100점",
+    stage: "준비된 창업",
     description:
-      "마케팅에 대한 통제력을 \n상실한 상태입니다. \n\n매달 비용만 지출하고 방향성 없이 \n표류하고 있을 가능성이 높습니다. \n\n즉각적인 개선이 필요합니다.",
-    isWarning: true,
-  },
-  {
-    scoreRange: "13-18점",
-    stage: "위기 주의 단계",
-    description:
-      "기본적인 마케팅은 진행 중이지만 \n효율성과 방향성의 점검이 \n필요합니다. \n\n마케팅 주도권 확보와 체계적인 \n접근이 필요합니다.",
-    isWarning: true,
-  },
-  {
-    scoreRange: "19-24점",
-    stage: "안정 단계",
-    description:
-      "마케팅이 비교적 잘 관리되고 \n있지만, 최적화할 여지가 있습니다. \n\n확장 가능한 범위를 설정하고 \n다음 단계를 위한 액션이\n필요합니다.",
+      "좋습니다! 창업 준비가 탄탄하게 되어 있네요.\n\n실패 위험이 낮고, 예상치 못한 상황에도 대처할 준비가 되어 있습니다.\n\n지금처럼만 하시면 됩니다!",
     isWarning: false,
   },
   {
-    scoreRange: "25-30점",
-    stage: "최적화 단계",
-    description: "축하드립니다! \n\n마케팅이 매우 효과적으로\n운영되고 있습니다. \n\n이 페이지를 떠나주셔도 좋습니다.",
-    isWarning: false,
+    scoreRange: "60-79점",
+    stage: "불안한 출발",
+    description:
+      "\"될까 말까\" 반반인 상태입니다.\n\n막연한 불안감은 있지만 아직 뭐가 문제인지 모르고 있어요.\n\n많은 초보 사장님들이 이 단계에서 실수를 합니다.\n\n지금 조금만 더 준비하면 안전하게 시작할 수 있습니다.",
+    isWarning: true,
+  },
+  {
+    scoreRange: "40-59점",
+    stage: "위험한 도박",
+    description:
+      "지금 상태로 창업하면 \"10명 중 7명\"이 망하는 통계에 들어갑니다.\n\n특히 첫 3개월 안에 \"예상 못한 돈\"이 펑펑 나가서 당황하실 거예요.\n\n- 인테리어 추가 비용 폭탄\n- 생각보다 안 오는 손님\n- 갑자기 그만두는 알바\n\n이런 일이 동시에 터지면... 버티기 힘듭니다.",
+    isWarning: true,
+  },
+  {
+    scoreRange: "39점 이하",
+    stage: "폐업 예약",
+    description:
+      "죄송하지만... 지금 상태로는 \"6개월 안에 문 닫을\" 확률이 90%입니다.\n\n창업하면 안 되는 상태인데 용기만으로 뛰어들려고 하시네요.\n\n\"내 전 재산 날리고 빚만 남는\"\n 최악의 시나리오가 기다리고 있습니다.\n\n지금 당장 안전장치부터 만드세요.",
+    isWarning: true,
   },
 ]
 
 export function ScoreExplanation() {
   return (
-    <section className="bg-[#030303] py-24 text-center">
+    <motion.section 
+      className="bg-gray-100 pt-12 pb-6 text-center"
+      initial={{ opacity: 0, y: 50 }} // 전체 섹션이 투명하고 아래쪽에서 시작 (지하에서 솟아오르는 것처럼)
+      whileInView={{ opacity: 1, y: 0 }} // 스크롤 시 선명하게 나타나며 제자리로 (신전이 드러나는 것처럼)
+      transition={{ duration: 0.4, ease: "easeOut" }} // 0.8초 → 0.4초로 더 빠르게
+      viewport={{ once: true, amount: 0.2 }} // 0.3 → 0.2로 더 일찍 트리거
+    >
       <div className="container mx-auto px-4">
-        <p className="text-2xl font-medium text-gray-400 md:text-4xl">60점 이하라면,</p>
-        <strong className="my-4 block text-5xl font-bold text-white md:my-6 md:text-7xl">1년 내 폐업</strong>
-        <p className="text-2xl font-medium text-gray-400 md:text-4xl">
-          <span className="font-bold text-white">위험</span>에 <span className="font-bold text-white">대비</span>해야
+        <motion.p 
+          className="text-2xl font-semibold text-red-800 md:text-4xl"
+          initial={{ opacity: 0, y: 30 }} // 경고 메시지가 아래에서 올라옴 (땅에서 솟아오르는 경고처럼)
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1, ease: "easeOut" }} // 0.6초→0.3초, 0.2초→0.1초로 더 빠르게
+          viewport={{ once: true, amount: 0.5 }} // 0.8→0.5로 더 일찍 트리거
+        >
+          60점 이하라면,
+        </motion.p>
+        <motion.strong 
+          className="my-4 block text-4xl font-bold text-gray-900 md:my-6 md:text-7xl"
+          initial={{ opacity: 0, y: 30, scale: 0.8 }} // 중요한 문구가 아래에서 올라오며 작게 시작해서 커짐 (땅속에서 보물이 솟아오르는 것처럼)
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ 
+            duration: 0.4, // 0.7초 → 0.4초로 더 빠르게
+            delay: 0.2, // 0.4초 → 0.2초로 더 빠르게
+            ease: "easeOut",
+            scale: { type: "spring", stiffness: 200, damping: 12 } // 더 빠른 스프링
+          }}
+          viewport={{ once: true, amount: 0.5 }} // 0.8→0.5로 더 일찍 트리거
+        >
+          1년 내 폐업
+        </motion.strong>
+        <motion.p 
+          className="text-3xl font-medium text-gray-600 md:text-4xl"
+          initial={{ opacity: 0, y: 20 }} // 마지막 설명이 아래에서 등장 (결론이 드러나는 것처럼)
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.3, ease: "easeOut" }} // 0.6초→0.3초, 0.7초→0.3초로 더 빠르게
+          viewport={{ once: true, amount: 0.5 }} // 0.8→0.5로 더 일찍 트리거
+        >
+          <span className="font-bold text-gray-900">위험</span>에 <span className="font-bold text-gray-900">대비</span>해야
           합니다.
-        </p>
+        </motion.p>
       </div>
-      <div className="container mx-auto px-4 mt-24">
+      <motion.div 
+        className="container mx-auto px-4 mt-24"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.4 }} // 1.0초 → 0.4초로 더 빠르게 (상단 텍스트와 겹치게)
+        viewport={{ once: true, amount: 0.2 }} // 0.3 → 0.2로 더 일찍 트리거
+      >
         <ul className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {scoreData.map((item, index) => (
-            <li
-              key={index}
-              className={cn(
-                "bg-white rounded-xl p-8 shadow-md transition-shadow hover:shadow-xl",
-                item.isWarning && "border-2 border-red-500/50",
-              )}
-            >
-              <div className="mb-6">
-                <strong className="block text-2xl font-bold text-[#916C1E]">{item.scoreRange}</strong>
-                <p className="text-lg font-semibold mt-1 text-gray-800">{item.stage}</p>
-              </div>
-              <div>
-                <p className="text-gray-600 whitespace-pre-line leading-relaxed">{item.description}</p>
-              </div>
-            </li>
-          ))}
+          {scoreData.map((item, index) => {
+            // 위험한 도박(3번째)과 폐업 예약(4번째) 박스인지 확인
+            const isDangerousBox = index >= 2;
+            
+            return (
+              <motion.li
+                key={index}
+                className={cn(
+                  "rounded-xl p-8 shadow-md transition-shadow hover:shadow-xl text-left",
+                  isDangerousBox 
+                    ? "bg-gradient-to-br from-red-900 via-red-800 to-red-900" 
+                    : "bg-white"
+                )}
+                initial={{ 
+                  opacity: 0, 
+                  y: 80, 
+                  scale: 0.9,
+                  rotateX: isDangerousBox ? -15 : 0 // 위험한 박스는 살짝 기울어져서 등장 (경고판이 세워지는 것처럼)
+                }}
+                whileInView={{ 
+                  opacity: 1, 
+                  y: 0, 
+                  scale: 1,
+                  rotateX: 0 
+                }}
+                transition={{ 
+                  duration: isDangerousBox ? 0.4 : 0.3, // 0.8초→0.4초, 0.6초→0.3초로 더 빠르게
+                  delay: 0.5 + (index * 0.1), // 1.3초→0.5초, 0.15초→0.1초로 더 빠르고 간격 좁게 (도미노 효과)
+                  ease: "easeOut",
+                  scale: isDangerousBox ? { 
+                    type: "spring", 
+                    stiffness: 250, // 더 빠른 스프링
+                    damping: 15 
+                  } : undefined // 위험한 박스는 스프링 효과로 더 강조
+                }}
+                whileHover={{ 
+                  scale: 1.02, // 호버 시 살짝 확대 (종이가 떠오르는 것처럼)
+                  y: -5,
+                  transition: { duration: 0.2 }
+                }}
+                viewport={{ once: true, amount: 0.1 }} // 0.3 → 0.1로 더 일찍 트리거 (스크롤 시 즉각 반응)
+              >
+                <div className="mb-6">
+                  <strong className={cn(
+                    "block text-2xl font-bold",
+                    isDangerousBox ? "text-white" : "text-[#916C1E]"
+                  )}>
+                    {item.scoreRange}
+                  </strong>
+                  <p className={cn(
+                    "text-lg font-semibold mt-1",
+                    isDangerousBox ? "text-gray-100" : "text-gray-800"
+                  )}>
+                    {item.stage}
+                  </p>
+                </div>
+                <div>
+                  <p className={cn(
+                    "whitespace-pre-line leading-relaxed",
+                    isDangerousBox ? "text-gray-100" : "text-gray-600"
+                  )}>
+                    {item.description}
+                  </p>
+                </div>
+              </motion.li>
+            );
+          })}
         </ul>
-      </div>
-    </section>
+      </motion.div>
+    </motion.section>
   )
 }

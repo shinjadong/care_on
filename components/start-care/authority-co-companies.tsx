@@ -1,17 +1,20 @@
 import Image from "next/image"
 
 const Marquee = ({ images, reverse = false }: { images: string[]; reverse?: boolean }) => {
-  const animationClass = reverse ? "animate-marquee-reverse-medium" : "animate-marquee-medium"
+  const animationClass = reverse ? "animate-marquee-slow" : "animate-marquee-slow"
+  // 끊김 없는 연속성을 위해 16배 복제 - 더 부드러운 무한 스크롤 효과를 위해 배율 증가
+  const repeatedImages = Array(16).fill(images).flat()
+  
   return (
     <div className="relative flex w-full overflow-hidden">
       <div className={`flex w-max ${animationClass}`}>
-        {[...images, ...images].map((src, index) => (
-          <div key={index} className="relative w-[400px] h-12 mx-4 flex-shrink-0">
+        {repeatedImages.map((src, index) => (
+          <div key={index} className="relative w-[400px] h-12 mx-1 flex-shrink-0">
             <Image
               src={src || "/placeholder.svg"}
               alt={`Partner logo ${index + 1}`}
-              layout="fill"
-              objectFit="contain"
+              fill
+              className="object-contain"
             />
           </div>
         ))}
@@ -28,7 +31,7 @@ export function AuthorityCoCompanies() {
   const partnerLogos5 = ["https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/5.png"]
 
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section className="py-12 md:py-24 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <em className="text-point text-xl md:text-2xl font-serif italic">신뢰의 다른 이름 '케어온'</em>

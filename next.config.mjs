@@ -9,6 +9,11 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  experimental: {
+    // Framer Motion과 App Router 호환성 개선
+    optimizePackageImports: ['framer-motion'],
+  },
+  transpilePackages: ['framer-motion'],
 }
 
 export default nextConfig
