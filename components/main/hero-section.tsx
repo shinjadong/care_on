@@ -16,10 +16,11 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          수백만원을 투자했지만, <br />
-          어느 컨설팅도 <br />
+          수백만원을 투자했지만 <br />
+          그 어떤 컨설팅도, <br />
+          <br />
           <span className="text-red-600">내 사업의 위험</span>을 <br />
-          막아주지 못했습니다
+          막아주지 못했습니다.
         </motion.h1>
       </div>
     </section>

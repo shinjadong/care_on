@@ -8,7 +8,7 @@ interface ReviewHeaderProps {
 
 export function ReviewHeader({ totalCount }: ReviewHeaderProps) {
   return (
-    <section className="bg-gradient-to-b from-gray-900 to-gray-800 py-16 md:py-20">
+    <section className="bg-gradient-to-b from-gray-900 to-gray-800 py-16 md:pt-44 md:pb-20">
       <div className="container mx-auto px-4 max-w-4xl">
         <motion.div 
           className="text-center"
@@ -40,7 +40,7 @@ export function ReviewHeader({ totalCount }: ReviewHeaderProps) {
                 transition: { duration: 0.2 }
               }}
             >
-              <span className="text-yellow-300">{totalCount.toLocaleString()}명</span> 사업자의 선택
+              <span className="text-white">{totalCount.toLocaleString()}명</span> 사업자의 선택
             </motion.div>
           </motion.div>
 
