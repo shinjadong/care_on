@@ -4,13 +4,7 @@ import { motion } from "framer-motion"
 
 export function AnxietyCheck() {
   return (
-    <motion.section 
-      className="py-20 md:py-32 bg-black"
-      initial={{ opacity: 0 }} // 검은 배경이 서서히 등장 (어둠이 깔리는 것처럼)
-      whileInView={{ opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      viewport={{ once: true, amount: 0.2 }}
-    >
+    <section className="py-20 md:py-32 bg-black">
       <div className="container mx-auto px-4 text-center">
         <motion.h2 
           className="text-3xl md:text-5xl lg:text-6xl font-bold font-serif text-white mb-8"
@@ -32,6 +26,6 @@ export function AnxietyCheck() {
           왜 이렇게 <span className="text-white">불안</span>할까요?
         </motion.p>
       </div>
-    </motion.section>
+    </section>
   )
 }
