@@ -34,7 +34,7 @@ export function FinalCTA() {
             <Button asChild size="lg" className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-4 text-lg">
               <Link href="/start-care">스타트케어 살펴보기</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4 text-lg">
+            <Button asChild size="lg" variant="outline" className="border-white text-gray-900 hover:bg-white hover:text-gray-900 px-8 py-4 text-lg">
               <Link href="/review">성공 사례 확인하기</Link>
             </Button>
           </div>

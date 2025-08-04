@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 
 export function HeroSection() {
   return (
-    <section className="py-40 md:py-40 bg-gray-900">
+    <section className="py-40 md:pt-56 md:pb-20 bg-gray-900">
       <div className="container mx-auto px-4 text-center">
         <motion.h1 
           className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 leading-tight"
