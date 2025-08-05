@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   authors: [{ name: "케어온 개발팀" }],
   creator: "케어온",
   publisher: "케어온",
+  // 외부 URL에서 파비콘을 가져오도록 설정 - 브라우저 탭의 작은 아이콘
+  icons: {
+    icon: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EC%BC%80%EC%96%B4%EC%98%A8_favicon",
+  },
   openGraph: {
     title: "케어온 - 창업자의 든든한 파트너",
     description: "창업 초기의 위험을 보호하는 안전망. 95% 생존율을 달성한 검증된 시스템.",
