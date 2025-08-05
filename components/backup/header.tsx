@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Phone, Shield, MessageCircle, Star, Home } from "lucide-react"
@@ -84,17 +85,20 @@ export function Header() {
         <div className="flex items-center justify-between h-20">
           {/* 로고 영역 - 케어온 브랜드 아이덴티티 */}
           <div className="flex items-center space-x-4">
-            <Link href="/" className="flex flex-col group">
-              <span className={`text-2xl font-bold transition-colors duration-300 ${
-                isScrolled ? "text-gray-900" : "text-white"
-              } group-hover:text-teal-600`}>
-                케어온
-              </span>
-              <span className={`text-xs transition-colors duration-300 ${
-                isScrolled ? "text-gray-500" : "text-gray-200"
-              }`}>
-                창업자의 든든한 파트너
-              </span>
+            <Link href="/" className="group">
+              {/* 로고 이미지 - 스크롤 상태에 따라 다른 이미지 표시 */}
+              <div className="relative h-12 w-12 transition-all duration-300 group-hover:scale-105">
+                <Image
+                  src={isScrolled 
+                    ? "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EC%BC%80%EC%96%B4%EC%98%A8%EB%A1%9C%EA%B3%A0_small"
+                    : "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EC%BC%80%EC%96%B4%EC%98%A8%EB%A1%9C%EA%B3%A0-small-white"
+                  }
+                  alt="케어온 로고"
+                  fill
+                  className="object-contain"
+                  sizes="48px"
+                />
+              </div>
             </Link>
           </div>
 
