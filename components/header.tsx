@@ -20,12 +20,6 @@ import {
 // 창업자를 위한 종합 지원 플랫폼의 주요 서비스들을 체계적으로 구성
 const navItems = [
   { 
-    name: "홈", 
-    href: "/", 
-    icon: Home,
-    description: "케어온 메인 페이지" 
-  },
-  { 
     name: "스타트케어", 
     href: "/start-care", 
     icon: Shield,
@@ -51,14 +45,6 @@ const navItems = [
         description: "실제 창업자들의 성공 후기" 
       },
     ],
-  },
-  { 
-    name: "케어온 소개", 
-    href: "#about" 
-  },
-  { 
-    name: "문의하기", 
-    href: "#contact" 
   },
 ]
 

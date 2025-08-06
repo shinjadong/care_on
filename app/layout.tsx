@@ -1,8 +1,8 @@
 import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
-import { Footer } from "@/components/backup/footer"
-import { Header } from "@/components/backup/header"
+import { Footer } from "@/components/footer"
+import { Header } from "@/components/header"
 
 export const metadata: Metadata = {
   title: "케어온 - 창업자의 든든한 파트너",
