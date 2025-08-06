@@ -51,7 +51,7 @@ const getWeightedRandomSlots = () => {
 // 하단 고정 플로팅 배너 컴포넌트
 export function FloatingBanner() {
   const [remainingSlots, setRemainingSlots] = useState(4)
-  const [isVisible, setIsVisible] = useState(true)
+  const [isScrollVisible, setIsScrollVisible] = useState(false)
   
   // 이번 주 일요일 자정으로 설정
   const thisWeekEnd = new Date()
@@ -73,77 +73,47 @@ export function FloatingBanner() {
     return () => clearInterval(interval)
   }, [])
 
+  // 스크롤 기반 등장 애니메이션 및 푸터 감지
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY
+      const windowHeight = window.innerHeight
+      const documentHeight = document.documentElement.scrollHeight
+      
+      // 푸터까지의 거리 계산 (푸터 높이를 대략 300px로 가정)
+      const footerDistance = documentHeight - windowHeight - 300
+      
+      // 화면 높이의 50% 이상 스크롤하고, 푸터에 도달하지 않았을 때만 나타남
+      if (scrollY > windowHeight * 0.5 && scrollY < footerDistance) {
+        setIsScrollVisible(true)
+      } else {
+        setIsScrollVisible(false)
+      }
+    }
+    
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   const handleApply = () => {
     window.location.href = '/start-care'
   }
 
-  const handleReview = () => {
-    window.location.href = '/review'
-  }
-
-  const handleClose = () => {
-    setIsVisible(false)
-  }
-
-  if (!isVisible) return null
+  if (!isScrollVisible) return null
 
   return (
-    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 max-w-sm w-full mx-4">
-      <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
-        {/* 상단 빨간색 긴급 배너 */}
-        <div className="bg-red-600 text-white py-2 px-4 text-center text-xs font-medium relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-red-500 to-red-600 animate-pulse"></div>
-          <div className="relative z-10 flex items-center justify-center space-x-2">
-            <span>🔥 무료체험단 마감 임박!</span>
-            <div className="flex items-center space-x-1">
-              <Clock className="w-3 h-3" />
-              <span className="font-mono font-bold">{timeLeft}</span>
-            </div>
-          </div>
+    <div className="fixed bottom-4 left-0 right-0 z-50 w-full flex justify-center">
+      <div className="animate-slide-up-bounce">
+      <div className="relative w-full max-w-4xl mx-4">
+        <div className="flex justify-center">
+          <button 
+            onClick={handleApply}
+            className="bg-gradient-to-b from-[#048777]/90 to-[#036558]/90 hover:from-[#059a88]/95 hover:to-[#047264]/95 backdrop-blur-sm text-white py-2 px-24 rounded-lg font-semibold text-lg transition-all duration-300 border-0 border-gray-100/50 shadow-lg"
+          >
+            지금 신청하기
+          </button>
         </div>
-        
-        {/* 메인 콘텐츠 영역 */}
-        <div className="bg-white p-4 text-center">
-          <div className="flex items-center justify-center mb-3">
-            <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-            <span className="text-sm text-gray-600">
-              지금까지 <span className="font-bold text-blue-600">3,549명</span>의 사업자가 함께했어요
-            </span>
-          </div>
-          
-          <div className="mb-4">
-            <div className="bg-red-50 text-red-600 px-3 py-2 rounded-lg mb-2">
-              <span className="text-sm font-semibold">
-                이번 주 마감: 남은 인원 {remainingSlots}명
-              </span>
-            </div>
-          </div>
-          
-          <div className="flex space-x-2">
-            <button 
-              onClick={handleApply}
-              className="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-3 px-4 rounded-lg font-semibold text-sm transition-colors"
-            >
-              지금 신청하기
-            </button>
-            <button 
-              onClick={handleReview}
-              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-semibold text-sm transition-colors"
-            >
-              후기 확인하기
-            </button>
-          </div>
-        </div>
-        
-        {/* 닫기 버튼 */}
-        <button 
-          onClick={handleClose}
-          className="absolute top-2 right-2 w-6 h-6 bg-black bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center transition-colors"
-        >
-          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+      </div>
       </div>
     </div>
   )

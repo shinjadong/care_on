@@ -13,7 +13,6 @@ import { FirstYearMatters } from "@/components/start-care/first-year-matters"
 import { ApplicationSection } from "@/components/start-care/application-section"
 import { FaqSection } from "@/components/start-care/faq-section"
 import { FinalCta } from "@/components/start-care/final-cta"
-import { QuickMenu } from "@/components/start-care/quick-menu"
 import { ImageUploader } from "@/components/start-care/image-uploader"
 
 export default function StartCarePage() {
@@ -45,7 +44,6 @@ export default function StartCarePage() {
         <FinalCta />
         <ImageUploader />
       </main>
-      <QuickMenu />
     </div>
   )
 }

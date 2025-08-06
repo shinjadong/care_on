@@ -7,10 +7,10 @@ import { motion } from "framer-motion"
 
 export function HeroSection() {
   return (
-    <section className="py-40 md:pt-56 md:pb-20 bg-gray-900">
-      <div className="container mx-auto px-4 text-center">
+    <section className="min-h-screen w-full bg-gradient-to-b from-gray-800 to-black flex items-center justify-center">
+      <div className="w-full max-w-none px-4 text-center">
         <motion.h1 
-          className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 leading-tight"
+          className="text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-8 leading-tight"
           style={{ fontFamily: 'Noto Serif KR, serif' }}
           initial={{ opacity: 0, y: 30 }} // 아래에서 위로 서서히 등장 (진실이 드러나는 것처럼)
           animate={{ opacity: 1, y: 0 }}

@@ -8,8 +8,8 @@ interface ReviewHeaderProps {
 
 export function ReviewHeader({ totalCount }: ReviewHeaderProps) {
   return (
-    <section className="bg-gradient-to-b from-gray-900 to-gray-800 py-16 md:pt-44 md:pb-20">
-      <div className="container mx-auto px-4 max-w-4xl">
+    <section className="min-h-screen w-full bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center md:pt-44 md:pb-20">
+      <div className="w-full max-w-4xl px-4">
         <motion.div 
           className="text-center"
           initial={{ opacity: 0, y: 30 }}
