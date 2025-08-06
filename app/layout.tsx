@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { Footer } from "@/components/footer"
 import { Header } from "@/components/header"
+import { FloatingBanner } from "@/components/floating-banner"
 
 export const metadata: Metadata = {
   title: "케어온 - 창업자의 든든한 파트너",
@@ -38,6 +39,7 @@ export default function RootLayout({
         <Header />
         {children}
         <Footer />
+        <FloatingBanner />
       </body>
     </html>
   )

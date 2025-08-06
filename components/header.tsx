@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Phone, Shield, MessageCircle, Star, Home, Lightbulb } from "lucide-react"
+import { Menu, Phone, Shield, MessageCircle, Star, Home, Lightbulb, Clock } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -16,35 +16,84 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 
-// 케어온 프로젝트 구조에 맞는 네비게이션 메뉴
-// 창업자를 위한 종합 지원 플랫폼의 주요 서비스들을 체계적으로 구성
+// 시간대별 다이나믹 메시지 함수 (간소화)
+const getTimeBasedMessage = () => {
+  return "🔥 무료체험단 마감 임박!"
+}
+
+// 카운트다운 훅
+const useCountdown = (targetDate: Date) => {
+  const [timeLeft, setTimeLeft] = useState("")
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date().getTime()
+      const distance = targetDate.getTime() - now
+
+      if (distance < 0) {
+        setTimeLeft("마감됨")
+        return
+      }
+
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000)
+
+      setTimeLeft(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`)
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [targetDate])
+
+  return timeLeft
+}
+
+
+
+// 실시간 상태 표시 컴포넌트
+const LiveStatus = ({ isScrolled }: { isScrolled: boolean }) => {
+  const [onlineCount, setOnlineCount] = useState(3)
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setOnlineCount(prev => Math.max(1, Math.min(7, prev + Math.floor(Math.random() * 3) - 1)))
+    }, 30000) // 30초마다 변경
+    
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div className={`flex items-center text-xs transition-colors duration-300 ${
+      isScrolled ? "text-green-600" : "text-green-300"
+    }`}>
+      <div className="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></div>
+      <span>지금 {onlineCount}명 상담중</span>
+    </div>
+  )
+}
+
+// 케어온 프로젝트 구조에 맞는 네비게이션 메뉴 (마케팅 최적화)
+// 고객 여정 중심으로 재구성하여 감정적 연결과 긴급성 강화
 const navItems = [
   { 
-    name: "스타트케어", 
-    href: "/start-care", 
+    name: "💰 무료체험단", 
+    href: "/what", 
     icon: Shield,
-    description: "창업 지원 서비스" 
+    description: "20개 한정 | 100% 환급보장",
+    badge: "20개 한정",
+    urgency: true
   },
   { 
-    name: "실패가 축하받는 세상", 
-    href: "/what", 
+    name: "😰 망할까봐 무서우신가요?", 
+    href: "/start-care", 
     icon: Lightbulb,
-    description: "케어온이 만드는 새로운 창업 문화" 
+    description: "실패가 축하받는 세상을 만들어가요" 
   },
-  {
-    name: "서비스",
-    subItems: [
-      { 
-        name: "CCTV 견적 상담", 
-        href: "/cctv-quote-chat", 
-        description: "AI 기반 CCTV 견적 및 상담 서비스" 
-      },
-      { 
-        name: "성공 사례", 
-        href: "/review", 
-        description: "실제 창업자들의 성공 후기" 
-      },
-    ],
+  { 
+    name: "✅ 실제 성공 사례", 
+    href: "/review", 
+    icon: Star,
+    description: "2,847명의 진짜 후기" 
   },
 ]
 
@@ -99,38 +148,51 @@ export function Header() {
                 }`}>
                   |
                 </span>
-                <span className={`text-sm transition-colors duration-300 ${
+                <div className={`text-xs transition-colors duration-300 ${
                   isScrolled ? "text-gray-600" : "text-gray-200"
                 }`}>
-                  창업자의 든든한 파트너, 케어온
-                </span>
+                  <div className="flex items-center space-x-2">
+                    <span className="flex items-center space-x-1">
+                      <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                      <span className="font-semibold">4.9</span>
+                      <span className="text-xs opacity-75">(2,847명)</span>
+                    </span>
+                    <span>|</span>
+                    <span className="font-semibold text-green-500">폐업보장100%</span>
+                    <span>|</span>
+                    <span className="text-xs">KT공식파트너</span>
+                  </div>
+                </div>
               </div>
             </Link>
           </div>
 
           {/* 우측 액션 버튼들 - 스크롤 상태에 따른 색상 조정 */}
           <div className="hidden lg:flex items-center space-x-6">
-            <a
-              href="tel:1866-1845"
-              className={`flex items-center text-sm font-medium transition-colors duration-300 ${
-                isScrolled 
-                  ? "text-gray-600 hover:text-gray-900" 
-                  : "text-gray-200 hover:text-white"
-              }`}
-            >
-              <Phone className="w-4 h-4 mr-2" />
-              1866-1845
-            </a>
+            <div className="flex flex-col items-end space-y-1">
+              <LiveStatus isScrolled={isScrolled} />
+              <a
+                href="tel:1866-1845"
+                className={`flex items-center text-sm font-medium transition-colors duration-300 ${
+                  isScrolled 
+                    ? "text-gray-600 hover:text-gray-900" 
+                    : "text-gray-200 hover:text-white"
+                }`}
+              >
+                <Phone className="w-4 h-4 mr-2" />
+                1866-1845
+              </a>
+            </div>
             
             <Link 
               href="/start-care"
-              className={`inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 border ${
+              className={`inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 border animate-pulse ${
                 isScrolled 
-                  ? "bg-teal-600 hover:bg-teal-700 text-white border-teal-600" 
-                  : "bg-transparent hover:bg-white/20 text-white border-white/30 hover:border-white/50"
+                  ? "bg-red-600 hover:bg-red-700 text-white border-red-600 shadow-lg shadow-red-600/25" 
+                  : "bg-red-600 hover:bg-red-700 text-white border-red-600 shadow-lg shadow-red-600/25"
               }`}
             >
-              무료 상담 신청
+              💰 100% 환급받기 →
             </Link>
           </div>
           {/* 모바일 메뉴 버튼 - 스크롤 상태에 따른 색상 조정 */}
@@ -159,42 +221,22 @@ export function Header() {
 
                   {/* 모바일 네비게이션 메뉴 */}
                   <nav className="flex flex-col space-y-4 mt-6 flex-1">
-                    {navItems.map((item) => (
-                      <div key={item.name}>
-                        {item.subItems ? (
-                          <div className="space-y-3">
-                            <h3 className="font-semibold text-gray-900 text-lg">{item.name}</h3>
-                            <div className="pl-4 space-y-3">
-                              {item.subItems.map((subItem) => (
-                                <Link
-                                  key={subItem.name}
-                                  href={subItem.href}
-                                  className="flex flex-col space-y-1 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                                >
-                                  <span className="font-medium text-gray-900">{subItem.name}</span>
-                                  {subItem.description && (
-                                    <span className="text-sm text-gray-500">{subItem.description}</span>
-                                  )}
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        ) : (
-                          <Link 
-                            href={item.href} 
-                            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                          >
-                            {item.icon && <item.icon className="w-5 h-5 text-teal-600" />}
-                            <div className="flex flex-col">
-                              <span className="font-semibold text-gray-900">{item.name}</span>
-                              {item.description && (
-                                <span className="text-sm text-gray-500">{item.description}</span>
-                              )}
-                            </div>
-                          </Link>
-                        )}
-                      </div>
-                    ))}
+                                      {navItems.map((item) => (
+                    <div key={item.name}>
+                      <Link 
+                        href={item.href} 
+                        className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        {item.icon && <item.icon className="w-5 h-5 text-teal-600" />}
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-gray-900">{item.name}</span>
+                          {item.description && (
+                            <span className="text-sm text-gray-500">{item.description}</span>
+                          )}
+                        </div>
+                      </Link>
+                    </div>
+                  ))}
                   </nav>
 
                   {/* 모바일 하단 액션 */}
@@ -207,8 +249,8 @@ export function Header() {
                       <span className="font-medium text-gray-900">1866-1845</span>
                     </a>
                     
-                    <Button asChild className="w-full bg-teal-600 hover:bg-teal-700">
-                      <Link href="/start-care">무료 상담 신청</Link>
+                    <Button asChild className="w-full bg-red-600 hover:bg-red-700 animate-pulse shadow-lg shadow-red-600/25">
+                      <Link href="/start-care">💰 100% 환급받기 →</Link>
                     </Button>
                   </div>
                 </div>
@@ -225,48 +267,21 @@ export function Header() {
         }`}>
           <NavigationMenu>
             <NavigationMenuList>
-              {navItems.map((item) => (
-                <NavigationMenuItem key={item.name}>
-                  {item.subItems ? (
-                    <>
-                      <NavigationMenuTrigger 
-                        className={`transition-colors duration-300 ${
-                          isScrolled 
-                            ? "text-gray-700 hover:text-gray-900 bg-transparent hover:bg-gray-100" 
-                            : "text-white hover:text-white !bg-transparent hover:!bg-transparent"
-                        }`}
-                      >
-                        {item.name}
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <ul className="grid w-[200px] gap-3 p-4 md:w-[250px] md:grid-cols-1 lg:w-[300px]">
-                          {item.subItems.map((subItem) => (
-                            <ListItem 
-                              key={subItem.name} 
-                              href={subItem.href} 
-                              title={subItem.name}
-                            >
-                              {subItem.description}
-                            </ListItem>
-                          ))}
-                        </ul>
-                      </NavigationMenuContent>
-                    </>
-                  ) : (
-                    <Link href={item.href} legacyBehavior passHref>
-                      <NavigationMenuLink 
-                        className={`${navigationMenuTriggerStyle()} transition-colors duration-300 ${
-                          isScrolled 
-                            ? "text-gray-700 hover:text-gray-900 bg-transparent hover:bg-gray-100"
-                            : "text-white hover:text-white !bg-transparent hover:!bg-transparent"
-                        }`}
-                      >
-                        {item.name}
-                      </NavigationMenuLink>
-                    </Link>
-                  )}
-                </NavigationMenuItem>
-              ))}
+                                {navItems.map((item) => (
+                    <NavigationMenuItem key={item.name}>
+                      <Link href={item.href} legacyBehavior passHref>
+                        <NavigationMenuLink 
+                          className={`${navigationMenuTriggerStyle()} transition-colors duration-300 ${
+                            isScrolled 
+                              ? "text-gray-700 hover:text-gray-900 bg-transparent hover:bg-gray-100"
+                              : "text-white hover:text-white !bg-transparent hover:!bg-transparent"
+                          }`}
+                        >
+                          {item.name}
+                        </NavigationMenuLink>
+                      </Link>
+                    </NavigationMenuItem>
+                  ))}
             </NavigationMenuList>
           </NavigationMenu>
         </nav>
@@ -275,26 +290,4 @@ export function Header() {
   )
 }
 
-// 네비게이션 메뉴의 드롭다운 아이템 컴포넌트
-// 마치 레스토랑 메뉴판의 각 요리 설명처럼, 서비스 이름과 설명을 제공
-const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
-  ({ className, title, children, ...props }, ref) => {
-    return (
-      <li>
-        <NavigationMenuLink asChild>
-          <a
-            ref={ref}
-            className="block select-none space-y-2 rounded-lg p-4 leading-none no-underline outline-none transition-colors hover:bg-teal-50 hover:text-teal-900 focus:bg-teal-50 focus:text-teal-900 border border-transparent hover:border-teal-200"
-            {...props}
-          >
-            <div className="text-sm font-semibold leading-none text-gray-900">{title}</div>
-            {children && (
-              <p className="line-clamp-2 text-sm leading-snug text-gray-600">{children}</p>
-            )}
-          </a>
-        </NavigationMenuLink>
-      </li>
-    )
-  },
-)
-ListItem.displayName = "ListItem"
+
