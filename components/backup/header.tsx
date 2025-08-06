@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Phone, Shield, MessageCircle, Star, Home } from "lucide-react"
+import { Menu, Phone, Shield, MessageCircle, Star, Home, Lightbulb } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -30,6 +30,12 @@ const navItems = [
     href: "/start-care", 
     icon: Shield,
     description: "창업 지원 서비스" 
+  },
+  { 
+    name: "실패가 축하받는 세상", 
+    href: "/what", 
+    icon: Lightbulb,
+    description: "케어온이 만드는 새로운 창업 문화" 
   },
   {
     name: "서비스",

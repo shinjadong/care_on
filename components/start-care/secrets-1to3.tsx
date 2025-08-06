@@ -45,13 +45,7 @@ const secrets = [
 
 export function Secrets1to3() {
   return (
-    <motion.section 
-      className="pt-4 md:pt-6 pb-16 md:pb-24 bg-black"
-      initial={{ opacity: 0, y: 50 }} // 전체 섹션이 아래에서 올라옴 (비밀이 드러나는 것처럼)
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      viewport={{ once: true, amount: 0.2 }}
-    >
+    <section className="pt-4 md:pt-6 pb-16 md:pb-24 bg-black">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* 비밀 리스트 - 각 비밀을 카드 형태로 표현 */}
         <div className="space-y-8">
@@ -207,6 +201,6 @@ export function Secrets1to3() {
           ))}
         </div>
       </div>
-    </motion.section>
+    </section>
   )
 }
