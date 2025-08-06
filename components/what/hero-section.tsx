@@ -33,7 +33,7 @@ export function WhatHeroSection({ onVideoEnd }: WhatHeroSectionProps) {
       playerRef.current = new window.YT.Player('youtube-player', {
         height: '100%',
         width: '100%',
-        videoId: 'lSNchNDxYG0', // YouTube 쇼츠 ID
+        videoId: '8oW0OOLdvjw', // YouTube 쇼츠 ID
         playerVars: {
           autoplay: 0, // 자동 재생 안함
           mute: 0, // 음소거 해제
@@ -76,7 +76,7 @@ export function WhatHeroSection({ onVideoEnd }: WhatHeroSectionProps) {
   return (
     <section className="min-h-screen bg-black flex items-center justify-center px-4">
       <div 
-        className="w-full max-w-md bg-black rounded-3xl overflow-hidden"
+        className="w-full max-w-md bg-black rounded-xl overflow-hidden"
         style={{ aspectRatio: '9/16' }}
       >
         {/* YouTube 영상 플레이어 */}
