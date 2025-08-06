@@ -97,7 +97,7 @@ export function WhatOfferSection() {
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <Link 
-            href="/start-care"
+            href="https://forms.gle/xUcRxNYcFnYGZjga7"
             className="inline-flex items-center px-12 py-4 bg-gradient-to-r from-teal-600 to-blue-600 text-white text-xl font-bold rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 group hover:scale-105"
           >
             투자 라운드 참여하기

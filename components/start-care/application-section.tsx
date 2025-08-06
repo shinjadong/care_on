@@ -93,9 +93,11 @@ export function ApplicationSection() {
             </div>
           </div>
           <div className="mt-8 flex flex-col space-y-4">
-            <Button size="lg" className="w-full bg-teal-600 hover:bg-teal-700 h-12 text-lg">
-              지금 바로 신청하기
-            </Button>
+            <a href="https://forms.gle/xUcRxNYcFnYGZjga7" target="_blank" rel="noopener noreferrer" className="w-full">
+              <Button size="lg" className="w-full bg-teal-600 hover:bg-teal-700 h-12 text-lg">
+                지금 바로 신청하기
+              </Button>
+            </a>
             <Button
               variant="outline"
               size="lg"

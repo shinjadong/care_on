@@ -52,7 +52,9 @@ export function QuickMenu() {
           </p>
         </div>
         <div className="flex flex-col space-y-2">
-          <Button className="w-full bg-teal-600 hover:bg-teal-700">지금 신청하기</Button>
+          <a href="https://forms.gle/xUcRxNYcFnYGZjga7" target="_blank" rel="noopener noreferrer" className="w-full">
+            <Button className="w-full bg-teal-600 hover:bg-teal-700">지금 신청하기</Button>
+          </a>
           <Button variant="outline" className="w-full bg-transparent">
             후기 확인하기
           </Button>

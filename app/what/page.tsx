@@ -33,8 +33,8 @@ export default function WhatPage() {
       <div ref={whyCheerRef}>
         {/* 이제 isVisible 프롭이 필요 없습니다. */}
         <WhyCheer />
-      </div>
-      
+        </div>
+        
       {/* 📖 스토리 섹션 - 투자자 격차의 현실 */}
       <WhatStorySection />
       
@@ -43,6 +43,6 @@ export default function WhatPage() {
       
       {/* 💎 오퍼 섹션 - 구체적 투자 패키지 */}
       <WhatOfferSection />
-    </div>
+        </div>
   )
 }

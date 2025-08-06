@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { motion } from "framer-motion"
 import { ReviewHeader } from "@/components/review/review-header"
 import { CategoryFilter } from "@/components/review/category-filter"
@@ -14,6 +14,14 @@ export default function ReviewPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const reviewsPerPage = 20
+
+  // 스크롤 목표 지점을 위한 ref 생성
+  const reviewsSectionRef = useRef<HTMLDivElement>(null)
+
+  // 스크롤 다운 핸들러
+  const handleScrollDown = () => {
+    reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   // 필터링된 후기 데이터
   const filteredReviews = reviewsData.filter(review => {
@@ -42,11 +50,14 @@ export default function ReviewPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 페이지 헤더 */}
-      <ReviewHeader totalCount={reviewsData.length} />
+      {/* 페이지 헤더에 스크롤 핸들러 전달 */}
+      <ReviewHeader 
+        totalCount={reviewsData.length} 
+        onScrollClick={handleScrollDown}
+      />
       
-      {/* 메인 컨텐츠 */}
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+      {/* 메인 컨텐츠에 ref 연결 */}
+      <div ref={reviewsSectionRef} className="container mx-auto px-4 py-8 max-w-6xl">
         
         {/* 카테고리 필터 */}
         <CategoryFilter 

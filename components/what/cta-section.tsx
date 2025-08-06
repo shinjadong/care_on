@@ -28,7 +28,7 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
           </p>
           <motion.button
             className="inline-flex items-center px-12 py-4 bg-white text-teal-600 text-xl font-bold rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 group"
-            onClick={onInvestorClick}
+            onClick={() => window.location.href = 'https://forms.gle/xUcRxNYcFnYGZjga7'}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
           >

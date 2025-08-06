@@ -96,7 +96,7 @@ export function FloatingBanner() {
   }, [])
 
   const handleApply = () => {
-    window.location.href = '/start-care'
+    window.location.href = 'https://forms.gle/xUcRxNYcFnYGZjga7'
   }
 
   if (!isScrollVisible) return null
@@ -104,14 +104,14 @@ export function FloatingBanner() {
   return (
     <div className="fixed bottom-4 left-0 right-0 z-50 w-full flex justify-center">
       <div className="animate-slide-up-bounce">
-      <div className="relative w-full max-w-4xl mx-4">
+      <div className="relative w-full max-w-4xl">
         <div className="flex justify-center">
-          <button 
-            onClick={handleApply}
+            <button 
+              onClick={handleApply}
             className="bg-gradient-to-b from-[#048777]/90 to-[#036558]/90 hover:from-[#059a88]/95 hover:to-[#047264]/95 backdrop-blur-sm text-white py-2 px-24 rounded-lg font-semibold text-lg transition-all duration-300 border-0 border-gray-100/50 shadow-lg"
-          >
-            지금 신청하기
-          </button>
+            >
+              지금 신청하기
+            </button>
         </div>
       </div>
       </div>

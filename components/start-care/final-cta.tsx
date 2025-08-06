@@ -43,9 +43,11 @@ export function FinalCta() {
           ))}
         </div>
         <div className="text-center">
-          <Button size="lg" className="bg-white text-teal-800 hover:bg-gray-200 h-14 px-10 text-lg font-bold">
-            케어온 아카데미 지금 바로 신청하기!
-          </Button>
+          <a href="https://forms.gle/xUcRxNYcFnYGZjga7" target="_blank" rel="noopener noreferrer">
+            <Button size="lg" className="bg-white text-teal-800 hover:bg-gray-200 h-14 px-10 text-lg font-bold">
+              케어온 아카데미 지금 바로 신청하기!
+            </Button>
+          </a>
         </div>
       </div>
     </section>
