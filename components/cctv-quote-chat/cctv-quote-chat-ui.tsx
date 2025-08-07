@@ -312,7 +312,7 @@ const CCTVRentalQuote = () => {
         ))}
         <div ref={messagesEndRef} />
       </div>
-      {!isSubmitting && !isSubmitted && FORM_STEPS[FORM_STEPS.length - 1].field === formData.agreeTerms && (
+      {!isSubmitting && !isSubmitted && FORM_STEPS[FORM_STEPS.length - 1].field === 'agreeTerms' && (
         <div className="bg-white p-4 border-t sticky bottom-0 z-10">
           <button
             onClick={() => handleSubmit()}

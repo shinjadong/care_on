@@ -94,19 +94,21 @@ export function WhatStorySection() {
 
     // PC/모바일 반응형 애니메이션 정의
     const textAnimation = isMobile ? {
+        // 📱 모바일: 콘텐츠 등장 시 텍스트 완전히 숨김
         initial: { opacity: 1, top: "50%", left: "50%", x: "-50%", y: "-50%" },
-        animate: { opacity: 1, top: "13%", left: "50%", x: "-50%", y: "-50%" },
+        animate: { opacity: 0, top: "13%", left: "50%", x: "-50%", y: "-50%" },
     } : {
-        // PC 화면에서 좌측으로 이동, 간격을 좁힘
+        // 💻 PC 화면에서 좌측으로 이동, 간격을 좁힘
         initial: { opacity: 1, top: "50%", left: "50%", x: "-50%", y: "-50%" },
         animate: { opacity: 1, top: "50%", left: "37.5%", x: "-50%", y: "-50%" },
     };
 
     const frameAnimation = isMobile ? {
-        initial: { opacity: 0, scale: 0.95, top: "50%", left: "50%", x: "-50%", y: "-50%" },
-        animate: { opacity: 1, scale: 1, top: "57%", left: "50%", x: "-50%", y: "-50%" },
+        // 📱 모바일: 프레임 크기 5% 축소하고 완전 중앙 위치
+        initial: { opacity: 0, scale: 0.9, top: "50%", left: "50%", x: "-50%", y: "-50%" },
+        animate: { opacity: 1, scale: 0.95, top: "50%", left: "50%", x: "-50%", y: "-50%" },
     } : {
-        // PC 화면에서 우측으로 이동, 간격을 좁힘
+        // 💻 PC 화면에서 우측으로 이동, 간격을 좁힘
         initial: { opacity: 0, scale: 0.8, top: "50%", left: "50%", x: "-50%", y: "-50%" },
         animate: { opacity: 1, scale: 1, top: "50%", left: "57%", x: "-50%", y: "-50%" },
     };
