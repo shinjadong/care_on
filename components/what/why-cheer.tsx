@@ -1,98 +1,154 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef, forwardRef } from "react"
 
-// 🎯 실패를 축하하는 이유를 설명하는 섹션
-// 이제 isVisible 프롭 대신, 사용자가 스크롤하여 컴포넌트가 화면에 보일 때 애니메이션이 실행됩니다.
+const MAX_STEPS = 3;
 
-export function WhyCheer() {
-  const [showScroll, setShowScroll] = useState(false)
+export const WhyCheer = forwardRef<HTMLElement>((props, ref) => {
+  const [step, setStep] = useState(1);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const touchStartY = useRef(0);
 
+  // 부모로부터 받은 ref와 내부 ref를 연결합니다.
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowScroll(true)
-    }, 3000) // 3초 후에 스크롤 아이콘을 보여줌
+    const internalRef = sectionRef.current;
+    if (typeof ref === 'function') {
+      ref(internalRef);
+    } else if (ref) {
+      ref.current = internalRef;
+    }
+  }, [ref]);
 
-    return () => clearTimeout(timer)
-  }, [])
+  // 📖 스크롤 및 터치 이벤트 제어 로직 (수정됨)
+  useEffect(() => {
+    const element = sectionRef.current;
+    if (!element) return;
+
+    // 스텝을 변경하는 중앙 함수
+    const changeStep = (direction: 'up' | 'down') => {
+      if (isAnimating) return;
+      
+      const newStep = direction === 'down' ? step + 1 : step - 1;
+      if (newStep >= 1 && newStep <= MAX_STEPS) {
+        setIsAnimating(true);
+        setStep(newStep);
+        setTimeout(() => setIsAnimating(false), 1000);
+      }
+    };
+
+    // 마우스 휠 핸들러: 마지막/첫 스텝에서는 기본 스크롤을 허용
+    const handleWheel = (e: WheelEvent) => {
+      const isScrollingDown = e.deltaY > 0;
+      if (isScrollingDown) {
+        if (step < MAX_STEPS) {
+          e.preventDefault();
+          changeStep('down');
+        }
+      } else {
+        if (step > 1) {
+          e.preventDefault();
+          changeStep('up');
+        }
+      }
+    };
+    
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY.current = e.touches[0].clientY;
+    };
+    
+    // 터치 이동 핸들러: 스크롤 영역 내에서만 기본 동작 방지
+    const handleTouchMove = (e: TouchEvent) => {
+        const touchCurrentY = e.touches[0].clientY;
+        const deltaY = touchStartY.current - touchCurrentY;
+        
+        if (deltaY > 0 && step < MAX_STEPS) { // 아래로 스와이프
+            e.preventDefault();
+        } else if (deltaY < 0 && step > 1) { // 위로 스와이프
+            e.preventDefault();
+        }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const touchEndY = e.changedTouches[0].clientY;
+      const deltaY = touchStartY.current - touchEndY;
+      const SWIPE_THRESHOLD = 50;
+
+      if (Math.abs(deltaY) > SWIPE_THRESHOLD) {
+        if (deltaY > 0) {
+            if(step < MAX_STEPS) changeStep('down');
+        } else {
+            if(step > 1) changeStep('up');
+        }
+      }
+    };
+
+    element.addEventListener('wheel', handleWheel, { passive: false });
+    element.addEventListener('touchstart', handleTouchStart, { passive: false });
+    element.addEventListener('touchend', handleTouchEnd, { passive: false });
+    element.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      element.removeEventListener('wheel', handleWheel);
+      element.removeEventListener('touchstart', handleTouchStart);
+      element.removeEventListener('touchend', handleTouchEnd);
+      element.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [step, isAnimating]);
+
+  const variants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+    exit: { opacity: 0, y: -50, transition: { duration: 0.5, ease: "easeIn" } },
+  };
 
   return (
-    // 부모 요소를 relative로 설정하여 자식의 absolute 위치 기준점으로 삼음
-    <section className="relative h-screen w-screen snap-start bg-gradient-to-b from-black to-gray-800 flex items-center justify-center px-4 py-20">
-      {/*
-        [개발자 노트]
-        - h-screen, w-screen, snap-start: 풀페이지 스크롤 섹션의 표준 스타일입니다.
-      */}
-      <motion.div
-        className="text-center max-w-4xl"
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{
-          duration: 2.0,
-          ease: "easeOut",
-        }}
-      >
-        {/* 메인 헤드라인 */}
-        <motion.h1
-          className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-8 leading-tight"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{
-            duration: 1.5, // 속도 저하 (1.0s -> 1.5s)
-            delay: 0.5, // 지연 증가 (0.4s -> 0.5s)
-            ease: "easeOut",
-          }}
-        >
-          실패가 <br />
-          <span className="bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
-            두렵지 않은 세상,
-          </span>
-        </motion.h1>
-
-        {/* 등장 효과를 위한 추가 애니메이션 요소 */}
-        <motion.div
-          className="mt-8"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{
-            duration: 1.8,
-            delay: 1.2,
-            ease: "easeOut",
-          }}
-        >
-          <div className="bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent text-xl md:text-2xl font-bold">
-            케어온이 <br />
-            사장님의 성공에 투자하겠습니다.
-          </div>
-        </motion.div>
-      </motion.div>
-
-      {/* 스크롤 다운 유도 애니메이션 */}
-      {showScroll && (
-        <motion.div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{
-            opacity: [0, 1, 1, 0], // 나타났다 -> 유지 -> 사라짐
-            y: [-20, 0, 10, -20], // 위에서 내려와서 아래로 살짝 더 갔다가 위로 사라짐
-          }}
-          transition={{
-            duration: 3, // 전체 애니메이션 지속 시간
-            times: [0, 0.2, 0.8, 1], // 각 키프레임의 시간 위치
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatDelay: 2,
-          }}
-          onAnimationComplete={() => setShowScroll(false)} // 애니메이션이 끝나면 컴포넌트 숨김
-        >
-          <ChevronDown className="w-10 h-10 text-white" />
+    <section 
+        ref={sectionRef}
+        className="relative h-screen w-screen snap-start bg-gradient-to-b from-black to-gray-800 flex items-center justify-center px-4 overflow-hidden"
+    >
+      <AnimatePresence mode="wait">
+        {step === 1 && (
+            <motion.h1 key="step1" className="text-4xl md:text-6xl font-black text-white text-center" variants={variants} initial="hidden" animate="visible" exit="exit">
+                실패가 두렵지 않은 이유?
+            </motion.h1>
+        )}
+        {step === 2 && (
+            <motion.div key="step2" className="text-center" variants={variants} initial="hidden" animate="visible" exit="exit">
+                <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight">
+                    소중한 내 도전, <br />
+                    <span className="bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
+                        &apos;케어&apos;받을 수 있으니까
+                    </span>
+                </h2>
+            </motion.div>
+        )}
+        {step === 3 && (
+            <motion.div key="step3" className="text-center max-w-4xl" variants={variants} initial="hidden" animate="visible" exit="exit">
+                <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-8 leading-tight">
+                    실패가 <br />
+                    <span className="bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
+                        두렵지 않은 세상,
+                    </span>
+                </h1>
+                <div className="mt-8 bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent text-xl md:text-2xl font-bold">
+                    케어온이 <br />
+                    사장님의 성공에 투자하겠습니다.
+                </div>
+            </motion.div>
+        )}
+      </AnimatePresence>
+      {step === MAX_STEPS && (
+        <motion.div className="absolute bottom-10 left-1/2 -translate-x-1/2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 1 }}>
+          <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
+            <ChevronDown className="w-10 h-10 text-white" />
+          </motion.div>
         </motion.div>
       )}
     </section>
-  )
-}
+  );
+});
+
+WhyCheer.displayName = "WhyCheer";
