@@ -74,7 +74,13 @@ export function WhatHeroSection({ onVideoEnd }: WhatHeroSectionProps) {
   }, [onVideoEnd])
 
   return (
-    <section className="min-h-screen bg-black flex items-center justify-center px-4">
+    <section className="h-screen w-screen snap-start bg-black flex items-center justify-center px-4">
+      {/* 
+        [개발자 노트]
+        - h-screen, w-screen: 섹션이 화면 전체를 꽉 채우도록 합니다.
+        - snap-start: 이 섹션의 시작 부분이 부모의 스냅 지점이 되도록 설정합니다.
+                      스크롤 시 이 섹션의 상단에 '착'하고 붙게 됩니다.
+      */}
       <div 
         className="w-full max-w-md bg-black rounded-xl overflow-hidden"
         style={{ aspectRatio: '9/16' }}

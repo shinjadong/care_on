@@ -11,13 +11,13 @@ interface WhatCTASectionProps {
 
 export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
   return (
-    <section className="py-20 md:py-24 bg-gradient-to-br from-teal-600 via-blue-600 to-purple-700">
+    <section className="h-screen w-screen snap-start py-20 md:py-24 bg-gradient-to-br from-teal-600 via-blue-600 to-purple-700 flex items-center justify-center">
       <div className="container mx-auto px-4 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
         >
           <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
             케어온 스타트케어

@@ -1,48 +1,43 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { WhatHeroSection } from "@/components/what/hero-section"
 import { WhyCheer } from "@/components/what/why-cheer"
 import { WhatStorySection } from "@/components/what/story-section"
-import { WhatCTASection } from "@/components/what/cta-section"
 import { WhatOfferSection } from "@/components/what/offer-section"
+import { WhatCTASection } from "@/components/what/cta-section"
 
-// 🎬 YouTube 쇼츠 영상 기반 스토리텔링 페이지
-// 영상 종료 후 다음 섹션으로 자동 스크롤되는 인터랙티브 구조
+// 🌐 /what 페이지 - 풀페이지 스크롤 컨테이너
+// 이 컴포넌트는 모든 'what' 관련 섹션을 담는 껍데기 역할을 합니다.
+// CSS의 'scroll-snap' 기능을 사용하여, 사용자가 스크롤할 때마다
+// 자식 섹션들이 화면에 착 달라붙는 효과를 만듭니다.
 
 export default function WhatPage() {
-  const whyCheerRef = useRef<HTMLDivElement>(null)
+  const [isVideoEnded, setIsVideoEnded] = useState(false)
 
-  // 💡 투자자 메시지 표시 함수 - 브랜드 경험의 핵심 순간
-  const showInvestorMessage = () => {
-    alert('축하합니다! 당신은 이제 투자받는 사장님입니다.\n\n담당 매니저가 24시간 내 연락드립니다.\n케어온이 당신의 첫 투자자가 되겠습니다.')
-  }
-
-  // 🎥 영상 종료 핸들러 -> 자동 스크롤 실행
+  // 자식 컴포넌트(HeroSection)에서 비디오 재생이 끝나면 호출될 함수
   const handleVideoEnd = () => {
-    // useRef로 지정된 'WhyCheer' 컴포넌트 위치로 부드럽게 스크롤합니다.
-    whyCheerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    setIsVideoEnded(true)
+    // 필요하다면, 비디오가 끝난 후 다음 섹션으로 자동 스크롤하는 로직을 추가할 수 있습니다.
+    // 예: document.getElementById('why-cheer-section')?.scrollIntoView({ behavior: 'smooth' });
   }
 
   return (
-    <div className="bg-white text-gray-800 min-h-screen">
-      {/* 🎭 YouTube 쇼츠 영상 섹션 */}
+    <main className="h-screen w-screen overflow-y-scroll snap-y snap-mandatory">
+      {/* 
+        [개발자 노트]
+        - h-screen, w-screen: 컨테이너가 화면 전체 높이와 너비를 차지하도록 합니다.
+        - overflow-y-scroll: 세로 스크롤을 항상 활성화합니다.
+        - snap-y snap-mandatory:
+          - snap-y: Y축(세로)으로 스크롤 스냅을 활성화합니다.
+          - snap-mandatory: 스크롤이 멈출 때, 반드시 스냅 지점(자식 섹션의 시작점)에 위치하도록 강제합니다.
+          - 이것이 바로 한 페이지씩 넘어가는 마법의 핵심입니다.
+      */}
       <WhatHeroSection onVideoEnd={handleVideoEnd} />
-      
-      {/* 🤔 왜 박수치는지 설명 섹션 - 스크롤의 목표 지점 */}
-      <div ref={whyCheerRef}>
-        {/* 이제 isVisible 프롭이 필요 없습니다. */}
-        <WhyCheer />
-        </div>
-        
-      {/* 📖 스토리 섹션 - 투자자 격차의 현실 */}
+      <WhyCheer />
       <WhatStorySection />
-      
-      {/* 🎯 CTA 섹션 - 첫 투자자 제안 */}
-      <WhatCTASection onInvestorClick={showInvestorMessage} />
-      
-      {/* 💎 오퍼 섹션 - 구체적 투자 패키지 */}
       <WhatOfferSection />
-        </div>
+      <WhatCTASection onInvestorClick={() => {}} />
+    </main>
   )
 }

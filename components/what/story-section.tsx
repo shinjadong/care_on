@@ -1,135 +1,143 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { useState, useEffect, useRef } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Monitor, Wifi, ShieldCheck, Video } from "lucide-react"
+import Image from "next/image"
 
-// 📖 스토리 섹션 - 감정적 여정을 통한 공감대 형성
-// 투자자가 있는 세상과 없는 세상의 극명한 대비를 통해 문제의식 각인
+// 📖 스토리 섹션 - 스마트폰 UI를 활용한 인터랙티브 프레젠테이션
+// 사용자의 스크롤에 반응하여 스마트폰 화면 속 카드가 좌우로 슬라이드되는 효과를 구현합니다.
+
+const features = [
+    {
+        id: 1,
+        icon: Video,
+        title: "지능형 AI CCTV",
+        description: "AI가 사람, 동물, 차량을 정확히 인식합니다.",
+        gifUrl: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/ai-cctv-2.gif",
+    },
+    {
+        id: 2,
+        icon: Wifi,
+        title: "GIGA 인터넷",
+        description: "끊김 없는 인터넷으로 사업을 안정적으로 지원합니다.",
+        gifUrl: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/5g-internet.gif",
+        logos: [
+            { src: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/1.png", alt: "KT" },
+            { src: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/2.png", alt: "SKT" },
+            { src: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/3.png", alt: "LGU+" },
+        ],
+    },
+    { id: 3, icon: Monitor, title: "선명한 화질의 TV", description: "고객의 시선을 사로잡는 다양한 콘텐츠를 활용하세요." },
+    { id: 4, icon: ShieldCheck, title: "세이프 케어", description: "예기치 못한 위험에 대비하는 든든한 보험 솔루션입니다." },
+];
+
+const MAX_STEPS = 5; // 0:시작, 1:카드1, 2:카드2(gif), 3:카드2(logo), 4:카드3, 5:카드4
 
 export function WhatStorySection() {
-  return (
-    <section className="py-20 md:py-32 bg-white">
-      <div className="container mx-auto px-4 max-w-4xl">
-        
-        {/* 1️⃣ 투자자가 있는 세상의 차이 */}
-        <motion.div 
-          className="mb-20"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-gray-900">
-            그들에겐 <span className="bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">투자자</span>가 있으니까
-          </h2>
-          <div className="space-y-6 text-lg leading-relaxed text-gray-700">
-            <p>
-              일론 머스크의 SpaceX는 로켓 3번 실패했습니다.<br />
-              실패 원인: "알 수 없음"<br />
-              손실액: 1,000억원<br />
-              <strong className="text-gray-900">하지만 아무도 빚쟁이가 되지 않았습니다.</strong>
-            </p>
-            <p>
-              왜? 투자자가 있으니까.<br />
-              실패는 데이터고, 데이터는 다음 성공의 발판이니까.
-            </p>
-          </div>
-        </motion.div>
+    const [step, setStep] = useState(0);
+    const [isWheeling, setIsWheeling] = useState(false);
+    const sectionRef = useRef<HTMLElement>(null);
 
-        {/* 2️⃣ 현실의 벽 - 투자자 없는 창업자의 현실 */}
-        <motion.div 
-          className="mb-20"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-gray-900">
-            당신에겐 <span className="bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">투자자</span>가 없나요?
-          </h2>
-          <div className="space-y-6 text-lg leading-relaxed text-gray-700">
-            <p>
-              서울대 출신 창업자가 스타트업 3개 말아먹어도<br />
-              또 투자받는 이유를 아시나요?
-            </p>
-            <p>
-              <strong className="text-gray-900">"실패 경험이 있는 창업자"</strong>라는 스펙이 되거든요.
-            </p>
-          </div>
-        </motion.div>
+    useEffect(() => {
+        const element = sectionRef.current;
+        if (!element) return;
+        const handleWheel = (e: WheelEvent) => {
+            if (isWheeling) { e.preventDefault(); return; }
+            const scrollDown = e.deltaY > 0;
+            const scrollUp = e.deltaY < 0;
+            if (scrollDown && step < MAX_STEPS) {
+                e.preventDefault();
+                setIsWheeling(true);
+                setStep(s => s + 1);
+                setTimeout(() => setIsWheeling(false), 1000);
+            } else if (scrollUp && step > 0) {
+                e.preventDefault();
+                setIsWheeling(true);
+                setStep(s => s - 1);
+                setTimeout(() => setIsWheeling(false), 1000);
+            }
+        };
+        element.addEventListener('wheel', handleWheel, { passive: false });
+        return () => element.removeEventListener('wheel', handleWheel);
+    }, [step, isWheeling]);
 
-        {/* 📊 현실적 비교 차트 - 데이터로 보는 격차 */}
-        <motion.div 
-          className="grid md:grid-cols-2 gap-8 my-16 p-8 bg-gray-50 rounded-2xl"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          {/* 좌측: 서울대 창업자 */}
-          <div className="bg-white p-8 rounded-xl shadow-lg text-center">
-            <h3 className="text-2xl font-bold mb-6 text-gray-900">🎓 서울대 창업자</h3>
-            <div className="space-y-4">
-              <div>
-                <div className="text-3xl font-black text-teal-600">2.7회</div>
-                <div className="text-sm text-gray-500">평균 실패 횟수</div>
-              </div>
-              <div>
-                <div className="text-3xl font-black text-teal-600">15억원</div>
-                <div className="text-sm text-gray-500">누적 투자액</div>
-              </div>
-              <div>
-                <div className="text-3xl font-black text-teal-600">0원</div>
-                <div className="text-sm text-gray-500">개인 부채</div>
-              </div>
-            </div>
-          </div>
+    const getSlideIndex = () => {
+        if (step === 1) return 0;
+        if (step === 2 || step === 3) return 1;
+        if (step === 4) return 2;
+        if (step === 5) return 3;
+        return 0; // 초기 또는 비활성 상태
+    };
+    const slideIndex = getSlideIndex();
 
-          {/* 우측: 동네 사장님 */}
-          <div className="bg-white p-8 rounded-xl shadow-lg text-center">
-            <h3 className="text-2xl font-bold mb-6 text-gray-900">🍗 동네 사장님</h3>
-            <div className="space-y-4">
-              <div>
-                <div className="text-3xl font-black text-red-600">1.2회</div>
-                <div className="text-sm text-gray-500">평균 실패 횟수</div>
-              </div>
-              <div>
-                <div className="text-3xl font-black text-red-600">5천만원</div>
-                <div className="text-sm text-gray-500">투자액(대출)</div>
-              </div>
-              <div>
-                <div className="text-3xl font-black text-red-600">3천만원</div>
-                <div className="text-sm text-gray-500">남은 빚</div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+    return (
+        <section ref={sectionRef} className="relative h-screen w-screen snap-start overflow-hidden bg-gradient-to-t from-gray-50 to-gray-100 flex flex-col items-center justify-center p-4">
+            {/* 상단으로 이동하는 카피라이팅 */}
+            <motion.h2
+                className="absolute text-2xl md:text-3xl text-center z-20"
+                animate={ step === 0 ? { opacity: 1, top: "50%", y: "-50%" } : { opacity: 1, top: "15%", y: "-50%" }}
+                transition={{ duration: 0.7, ease: "easeInOut" }}
+            >
+                <span className="font-bold text-gray-900">사장님</span>
+                <span className="font-semibold text-gray-700">을 위한,</span>
+                <br />
+                <span className="font-semibold text-gray-700">케어온의 </span>
+                <span className="font-bold text-gray-900">선물</span>
+            </motion.h2>
 
-        {/* 3️⃣ 솔루션 제시 - 케어온의 독특한 가치 제안 */}
-        <motion.div 
-          className="text-center"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-gray-900">
-            이제 당신에게도 <span className="bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">투자자</span>가 생겼습니다
-          </h2>
-          <div className="space-y-6 text-lg leading-relaxed text-gray-700 max-w-3xl mx-auto">
-            <p>
-              <strong className="text-2xl text-gray-900">케어온이 당신의 첫 투자자가 되겠습니다.</strong>
-            </p>
-            <p>
-              Y Combinator가 실리콘밸리 스타트업을 키우듯<br />
-              케어온이 대한민국 자영업자를 키웁니다.
-            </p>
-            <p>
-              실패해도 괜찮습니다.<br />
-              아니, <strong className="text-xl text-gray-900">실패가 축하받는 세상</strong>을 만들겠습니다.
-            </p>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  )
+            {/* 스마트폰 프레임 */}
+            <motion.div
+                className="w-[300px] h-[550px] md:w-[350px] md:h-[700px] bg-gray-300 rounded-[30px] p-3 shadow-2xl flex items-center justify-center z-10"
+                initial={{ opacity: 0, scale: 0.8, y: 0 }}
+                animate={{ 
+                    opacity: step > 0 ? 1 : 0, 
+                    scale: step > 0 ? 1 : 0.8,
+                    y: step > 0 ? 50 : 0 // 프레임 나타날 때 아래로 살짝 이동
+                }}
+                transition={{ duration: 0.7, ease: "easeInOut" }}
+            >
+                <div className="w-full h-full bg-white rounded-[24px] overflow-hidden">
+                    {/* 가로 슬라이드 컨테이너 */}
+                    <motion.div
+                        className="h-full flex"
+                        animate={{ x: `-${slideIndex * 100}%` }}
+                        transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                        {features.map((feature) => (
+                            <div key={feature.id} className="w-full h-full flex-shrink-0 flex flex-col items-center justify-center p-6">
+                                {/* 미디어 영역 */}
+                                <div className="relative w-full h-60 mb-6 rounded-lg bg-gray-200 overflow-hidden">
+                                    <AnimatePresence>
+                                        { (feature.id !== 2 || step !== 3) && feature.gifUrl && (
+                                            <motion.div key={`${feature.id}-gif`} className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                                                <Image src={feature.gifUrl} alt={feature.title} layout="fill" objectFit="cover" unoptimized />
+                                            </motion.div>
+                                        )}
+                                        { feature.id === 2 && step === 3 && (
+                                            <motion.div key="logos" className="w-full h-full flex items-center justify-around" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                                {feature.logos?.map((logo) => (
+                                                    <motion.div key={logo.alt} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+                                                        <Image src={logo.src} alt={logo.alt} width={50} height={50} objectFit="contain" />
+                                                    </motion.div>
+                                                ))}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                                {/* 텍스트 영역 */}
+                                <div className="text-center">
+                                    <div className="flex items-center justify-center mb-2">
+                                        <feature.icon className="w-6 h-6 text-teal-500 mr-2" />
+                                        <h3 className="text-xl font-bold text-gray-900">{feature.title}</h3>
+                                    </div>
+                                    <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </motion.div>
+                </div>
+            </motion.div>
+        </section>
+    );
 }

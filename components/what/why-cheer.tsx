@@ -1,69 +1,98 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { ChevronDown } from "lucide-react"
+import { useEffect, useState } from "react"
 
 // 🎯 실패를 축하하는 이유를 설명하는 섹션
 // 이제 isVisible 프롭 대신, 사용자가 스크롤하여 컴포넌트가 화면에 보일 때 애니메이션이 실행됩니다.
 
 export function WhyCheer() {
+  const [showScroll, setShowScroll] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowScroll(true)
+    }, 3000) // 3초 후에 스크롤 아이콘을 보여줌
+
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
-    <section className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex items-center justify-center px-4 py-20">
+    // 부모 요소를 relative로 설정하여 자식의 absolute 위치 기준점으로 삼음
+    <section className="relative h-screen w-screen snap-start bg-gradient-to-b from-black to-gray-800 flex items-center justify-center px-4 py-20">
       {/*
-        [애니메이션 로직 변경]
-        - animate -> whileInView: 'isVisible' 상태에 의존하지 않고, 컴포넌트가 뷰포트에 들어올 때 애니메이션을 실행합니다.
-        - viewport={{ once: true }}: 애니메이션이 딱 한 번만 실행되도록 설정합니다. 사용자가 스크롤을 올렸다 내려도 다시 실행되지 않습니다.
-        - 마치 무대(viewport)에 배우(컴포넌트)가 처음 등장할 때만 스포트라이트를 받는 것과 같습니다.
+        [개발자 노트]
+        - h-screen, w-screen, snap-start: 풀페이지 스크롤 섹션의 표준 스타일입니다.
       */}
-      <motion.div 
+      <motion.div
         className="text-center max-w-4xl"
-        initial={{ opacity: 0, y: 50, scale: 0.9 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ 
-          duration: 2.0, // 속도 저하 (1.5s -> 2.0s)
+        transition={{
+          duration: 2.0,
           ease: "easeOut",
-          type: "spring",
-          stiffness: 80,
-          damping: 20
         }}
       >
         {/* 메인 헤드라인 */}
-        <motion.h1 
+        <motion.h1
           className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-8 leading-tight"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ 
+          transition={{
             duration: 1.5, // 속도 저하 (1.0s -> 1.5s)
-            delay: 0.5,    // 지연 증가 (0.4s -> 0.5s)
-            ease: "easeOut" 
+            delay: 0.5, // 지연 증가 (0.4s -> 0.5s)
+            ease: "easeOut",
           }}
         >
-          실패했는데 <br className="md:hidden" />
+          실패가 <br />
           <span className="bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
-            왜 박수칠까요?
+            두렵지 않은 세상,
           </span>
         </motion.h1>
 
         {/* 등장 효과를 위한 추가 애니메이션 요소 */}
         <motion.div
           className="mt-8"
-          initial={{ opacity: 0, scale: 0 }}
-          whileInView={{ 
-            opacity: 1, 
-            scale: [0, 1.2, 1],
-            rotate: [0, 5, -5, 0]
-          }}
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ 
-            duration: 1.8, // 속도 저하 (1.2s -> 1.8s)
-            delay: 1.2,    // 지연 증가 (1.0s -> 1.2s)
-            ease: "easeOut" 
+          transition={{
+            duration: 1.8,
+            delay: 1.2,
+            ease: "easeOut",
           }}
         >
-          <div className="text-6xl">👏</div>
+          <div className="bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent text-xl md:text-2xl font-bold">
+            케어온이 <br />
+            사장님의 성공에 투자하겠습니다.
+          </div>
         </motion.div>
       </motion.div>
+
+      {/* 스크롤 다운 유도 애니메이션 */}
+      {showScroll && (
+        <motion.div
+          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{
+            opacity: [0, 1, 1, 0], // 나타났다 -> 유지 -> 사라짐
+            y: [-20, 0, 10, -20], // 위에서 내려와서 아래로 살짝 더 갔다가 위로 사라짐
+          }}
+          transition={{
+            duration: 3, // 전체 애니메이션 지속 시간
+            times: [0, 0.2, 0.8, 1], // 각 키프레임의 시간 위치
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatDelay: 2,
+          }}
+          onAnimationComplete={() => setShowScroll(false)} // 애니메이션이 끝나면 컴포넌트 숨김
+        >
+          <ChevronDown className="w-10 h-10 text-white" />
+        </motion.div>
+      )}
     </section>
   )
 }
