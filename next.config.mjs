@@ -14,6 +14,15 @@ const nextConfig = {
     optimizePackageImports: ['framer-motion'],
   },
   transpilePackages: ['framer-motion'],
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: 'https://careon.ai.kr/what',
+        permanent: false,
+      },
+    ]
+  },
 }
 
 export default nextConfig
