@@ -1,6 +1,7 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
+import { useStepScroll } from "@/hooks/use-step-scroll"
 
 // 타겟팅 체크리스트 섹션 - 적합한 대상을 명확히 정의하는 구간
 // 마치 의사가 환자를 선별하는 것처럼, 정확한 타겟을 설정
@@ -16,36 +17,46 @@ export function TargetChecklist() {
     "같은 고민을 하는 창업자들과의 모임/교류를 만들고 싶은 분"
   ]
 
+  const { sectionRef, step } = useStepScroll({ maxSteps: 1, animationMs: 700, requireExtraScrollOnLastStep: true })
+
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section ref={sectionRef} className="h-screen bg-white flex items-center">
       <div className="container mx-auto px-4 max-w-4xl">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }} // 체크리스트가 서서히 나타나는 것처럼
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-            해당하신다면, <br />
-            주저하지 마세요.
-          </h2>
-          
-          <div className="space-y-4 mb-12">
-            {targetItems.map((item, index) => (
-              <motion.div
-                key={index}
-                className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg"
-                initial={{ opacity: 0, x: -20 }} // 각 항목이 좌측에서 순차적으로 등장 (체크리스트가 작성되는 것처럼)
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <span className="text-teal-600 font-bold text-xl">✓</span>
-                <span className="text-gray-700 text-lg">{item}</span>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        <AnimatePresence mode="wait">
+          {step === 0 && (
+            <motion.h2
+              key="t-step-0"
+              className="text-2xl md:text-4xl font-bold text-gray-900 mb-12 text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              해당하신다면, <br />
+              주저하지 마세요.
+            </motion.h2>
+          )}
+
+          {step === 1 && (
+            <motion.div
+              key="t-step-1"
+              className="space-y-4 mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              {targetItems.map((item, index) => (
+                <div key={index} className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+                  <span className="text-teal-600 font-bold text-xl">✓</span>
+                  <span className="text-gray-700 text-lg">{item}</span>
+                </div>
+              ))}
+            </motion.div>
+          )}
+
+          {/* 마지막 안내 문구 제거 */}
+        </AnimatePresence>
       </div>
     </section>
   )
