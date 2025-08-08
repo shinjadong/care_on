@@ -20,7 +20,7 @@ const services = [
 export function WhatOfferSection() {
   const [step, setStep] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [step3ScrollCount, setStep3ScrollCount] = useState(0); // Step 3에서 스크롤 횟수 추적
+  const [step3ScrollCount, setStep3ScrollCount] = useState(0); // Step 3(마지막 스텝)에서 추가 스크롤 1회 요구
   const sectionRef = useRef<HTMLElement>(null);
   const touchStartY = useRef(0);
 
@@ -32,19 +32,12 @@ export function WhatOfferSection() {
     const changeStep = (direction: 'up' | 'down') => {
       if (isAnimating) return;
       
-      // Step 3에서 아래로 스크롤할 때 특별 처리
+      // 마지막 스텝(3)에서 아래로 스크롤할 때: 첫 번째만 잡고 머무름
       if (step === 3 && direction === 'down') {
         if (step3ScrollCount === 0) {
-          // 첫 번째 스크롤: 카운트만 증가, step은 유지
           setStep3ScrollCount(1);
-          return;
-        } else {
-          // 두 번째 스크롤: 다음 섹션으로 이동 (MAX_STEPS를 넘어감)
-          setIsAnimating(true);
-          setStep(step + 1);
-          setTimeout(() => setIsAnimating(false), 800);
-          return;
         }
+        return; // 두 번째 이후는 기본 스크롤 허용(핸들러에서 prevent 안 함)
       }
       
       // 일반적인 스크롤 처리
@@ -61,17 +54,25 @@ export function WhatOfferSection() {
     };
 
     const handleWheel = (e: WheelEvent) => {
-      // Step 3에서 아래로 스크롤할 때 특별 처리
-      if (step === 3 && e.deltaY > 0) {
-        e.preventDefault(); 
-        changeStep('down');
+      const goingDown = e.deltaY > 0;
+      const goingUp = e.deltaY < 0;
+
+      // Step 3: 첫 번째 아래 스크롤만 막고 체류, 그 다음은 기본 스크롤 허용해 다음 섹션 이동
+      if (step === 3 && goingDown) {
+        if (step3ScrollCount === 0) {
+          e.preventDefault();
+          changeStep('down');
+          return;
+        }
+        // 두 번째 이후: prevent 하지 않음 → 다음 섹션으로 넘어감
+        return;
       }
+
       // 일반적인 스크롤 처리
-      else if (step < MAX_STEPS && e.deltaY > 0) { 
+      if (step < MAX_STEPS && goingDown) { 
         e.preventDefault(); 
         changeStep('down'); 
-      }
-      else if (step > 0 && e.deltaY < 0) { 
+      } else if (step > 0 && goingUp) { 
         e.preventDefault(); 
         changeStep('up'); 
       }
@@ -80,34 +81,49 @@ export function WhatOfferSection() {
     const handleTouchStart = (e: TouchEvent) => { touchStartY.current = e.touches[0].clientY; };
     const handleTouchMove = (e: TouchEvent) => {
       const deltaY = touchStartY.current - e.touches[0].clientY;
-      // Step 3에서 아래로 스와이프할 때 특별 처리
-      if (step === 3 && deltaY > 0) {
+      const goingDown = deltaY > 0;
+      const goingUp = deltaY < 0;
+
+      // Step 3: 첫 아래 스와이프만 막고 체류, 그 다음은 허용
+      if (step === 3 && goingDown && step3ScrollCount === 0) {
         e.preventDefault();
+        return;
       }
+
       // 일반적인 터치 처리
-      else if (deltaY > 0 && step < MAX_STEPS) e.preventDefault();
-      else if (deltaY < 0 && step > 0) e.preventDefault();
+      if (goingDown && step < MAX_STEPS) e.preventDefault();
+      else if (goingUp && step > 0) e.preventDefault();
     };
     const handleTouchEnd = (e: TouchEvent) => {
       const deltaY = touchStartY.current - e.changedTouches[0].clientY;
-      if (Math.abs(deltaY) > 50) {
-        if (deltaY > 0) {
-          // Step 3에서 아래로 스와이프하거나 일반적인 경우
-          if (step === 3 || step < MAX_STEPS) changeStep('down');
+      const goingDown = deltaY > 0;
+      const goingUp = deltaY < 0;
+      const SWIPE_THRESHOLD = 50;
+      if (Math.abs(deltaY) <= SWIPE_THRESHOLD) return;
+
+      if (goingDown) {
+        if (step === 3) {
+          if (step3ScrollCount === 0) {
+            setStep3ScrollCount(1);
+            return; // 첫 스와이프는 체류
+          }
+          return; // 두 번째 이후는 허용
         }
-        else if (deltaY < 0 && step > 0) changeStep('up');
+        if (step < MAX_STEPS) changeStep('down');
+      } else if (goingUp && step > 0) {
+        changeStep('up');
       }
     };
     
-    element.addEventListener('wheel', handleWheel, { passive: false });
-    element.addEventListener('touchstart', handleTouchStart, { passive: false });
-    element.addEventListener('touchend', handleTouchEnd, { passive: false });
-    element.addEventListener('touchmove', handleTouchMove, { passive: false });
+    element.addEventListener('wheel', handleWheel, { passive: false, capture: true });
+    element.addEventListener('touchstart', handleTouchStart, { passive: false, capture: true });
+    element.addEventListener('touchend', handleTouchEnd, { passive: false, capture: true });
+    element.addEventListener('touchmove', handleTouchMove, { passive: false, capture: true });
     return () => {
-      element.removeEventListener('wheel', handleWheel);
-      element.removeEventListener('touchstart', handleTouchStart);
-      element.removeEventListener('touchend', handleTouchEnd);
-      element.removeEventListener('touchmove', handleTouchMove);
+      element.removeEventListener('wheel', handleWheel, { capture: true } as any);
+      element.removeEventListener('touchstart', handleTouchStart, { capture: true } as any);
+      element.removeEventListener('touchend', handleTouchEnd, { capture: true } as any);
+      element.removeEventListener('touchmove', handleTouchMove, { capture: true } as any);
     };
   }, [step, isAnimating, step3ScrollCount]);
 

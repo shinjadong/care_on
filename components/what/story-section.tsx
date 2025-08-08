@@ -7,6 +7,7 @@ import Image from "next/image"
 import { useIsMobile } from "@/hooks/use-mobile" // 정확한 함수 이름으로 수정
 
 const features = [
+    // 1) CCTV
     {
         id: 1,
         icon: Video,
@@ -14,6 +15,14 @@ const features = [
         description: "AI가 사람, 동물, 차량을 정확히 인식합니다.",
         gifUrl: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/ai-cctv-2.gif",
     },
+    // 2) 세이프 케어
+    { 
+        id: 4, 
+        icon: ShieldCheck, 
+        title: "세이프 케어", 
+        description: "예기치 못한 위험에 대비하는 든든한 보험 솔루션입니다." 
+    },
+    // 3) 인터넷
     {
         id: 2,
         icon: Wifi,
@@ -26,8 +35,8 @@ const features = [
             { src: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/3.png", alt: "LGU+" },
         ],
     },
+    // 4) TV
     { id: 3, icon: Monitor, title: "선명한 화질의 TV", description: "고객의 시선을 사로잡는 다양한 콘텐츠를 활용하세요." },
-    { id: 4, icon: ShieldCheck, title: "세이프 케어", description: "예기치 못한 위험에 대비하는 든든한 보험 솔루션입니다." },
 ];
 
 const MAX_STEPS = 5;
@@ -38,6 +47,7 @@ export function WhatStorySection() {
     const sectionRef = useRef<HTMLElement>(null);
     const touchStartY = useRef(0);
     const isMobile = useIsMobile(); // 정확한 함수 이름으로 수정
+    const lastStepScrollCount = useRef(0); // 마지막 스텝에서 한 번 더 스크롤 요구
 
     useEffect(() => {
         const element = sectionRef.current;
@@ -50,44 +60,83 @@ export function WhatStorySection() {
                 setIsAnimating(true);
                 setStep(newStep);
                 setTimeout(() => setIsAnimating(false), 1000);
+                // 마지막 스텝 진입 시 카운터 초기화
+                if (newStep === MAX_STEPS) {
+                    lastStepScrollCount.current = 0;
+                }
             }
         };
 
         const handleWheel = (e: WheelEvent) => {
-            if (step < MAX_STEPS && e.deltaY > 0) { e.preventDefault(); changeStep('down'); }
-            else if (step > 0 && e.deltaY < 0) { e.preventDefault(); changeStep('up'); }
+            const goingDown = e.deltaY > 0;
+            const goingUp = e.deltaY < 0;
+
+            // 마지막 스텝에서 아래로 스크롤 시 한 번 더 스크롤 요구
+            if (goingDown && step === MAX_STEPS) {
+                if (lastStepScrollCount.current < 1) {
+                    e.preventDefault();
+                    lastStepScrollCount.current += 1;
+                    return;
+                }
+                // 요구 충족 후에는 기본 스크롤 허용하여 다음 섹션으로 이동
+                return;
+            }
+
+            if (goingDown && step < MAX_STEPS) { e.preventDefault(); changeStep('down'); }
+            else if (goingUp && step > 0) { e.preventDefault(); lastStepScrollCount.current = 0; changeStep('up'); }
         };
         const handleTouchStart = (e: TouchEvent) => { touchStartY.current = e.touches[0].clientY; };
         const handleTouchMove = (e: TouchEvent) => {
             const deltaY = touchStartY.current - e.touches[0].clientY;
-            if (deltaY > 0 && step < MAX_STEPS) e.preventDefault();
-            else if (deltaY < 0 && step > 0) e.preventDefault();
+            const goingDown = deltaY > 0;
+            const goingUp = deltaY < 0;
+
+            // 마지막 스텝에서 추가 스크롤 요구 중에는 기본 스크롤 막기
+            if (goingDown && step === MAX_STEPS && lastStepScrollCount.current < 1) {
+                e.preventDefault();
+                return;
+            }
+
+            if (goingDown && step < MAX_STEPS) e.preventDefault();
+            else if (goingUp && step > 0) e.preventDefault();
         };
         const handleTouchEnd = (e: TouchEvent) => {
             const deltaY = touchStartY.current - e.changedTouches[0].clientY;
-            if (Math.abs(deltaY) > 50) {
-                if (deltaY > 0 && step < MAX_STEPS) changeStep('down');
-                else if (deltaY < 0 && step > 0) changeStep('up');
+            const goingDown = deltaY > 0;
+            const goingUp = deltaY < 0;
+            const SWIPE_THRESHOLD = 50;
+            if (Math.abs(deltaY) <= SWIPE_THRESHOLD) return;
+
+            // 마지막 스텝에서 아래로 스와이프 시 한 번 더 스크롤 요구
+            if (goingDown && step === MAX_STEPS) {
+                if (lastStepScrollCount.current < 1) {
+                    lastStepScrollCount.current += 1;
+                    return;
+                }
+                return;
             }
+
+            if (goingDown && step < MAX_STEPS) changeStep('down');
+            else if (goingUp && step > 0) { lastStepScrollCount.current = 0; changeStep('up'); }
         };
         
-        element.addEventListener('wheel', handleWheel, { passive: false });
-        element.addEventListener('touchstart', handleTouchStart, { passive: false });
-        element.addEventListener('touchend', handleTouchEnd, { passive: false });
-        element.addEventListener('touchmove', handleTouchMove, { passive: false });
+        element.addEventListener('wheel', handleWheel, { passive: false, capture: true });
+        element.addEventListener('touchstart', handleTouchStart, { passive: false, capture: true });
+        element.addEventListener('touchend', handleTouchEnd, { passive: false, capture: true });
+        element.addEventListener('touchmove', handleTouchMove, { passive: false, capture: true });
         return () => {
-            element.removeEventListener('wheel', handleWheel);
-            element.removeEventListener('touchstart', handleTouchStart);
-            element.removeEventListener('touchend', handleTouchEnd);
-            element.removeEventListener('touchmove', handleTouchMove);
+            element.removeEventListener('wheel', handleWheel, { capture: true } as any);
+            element.removeEventListener('touchstart', handleTouchStart, { capture: true } as any);
+            element.removeEventListener('touchend', handleTouchEnd, { capture: true } as any);
+            element.removeEventListener('touchmove', handleTouchMove, { capture: true } as any);
         };
     }, [step, isAnimating]);
 
     const getSlideIndex = () => {
-        if (step === 1) return 0;
-        if (step >= 2 && step <= 3) return 1;
-        if (step === 4) return 2;
-        if (step === 5) return 3;
+        if (step === 1) return 0;       // CCTV
+        if (step === 2) return 1;       // 세이프 케어
+        if (step >= 3 && step <= 4) return 2; // 인터넷 (두 단계 배정: 3 -> gif, 4 -> logos)
+        if (step === 5) return 3;       // TV
         return 0;
     };
     const slideIndex = getSlideIndex();
@@ -114,7 +163,7 @@ export function WhatStorySection() {
     };
 
     return (
-        <section ref={sectionRef} className="relative h-screen w-screen snap-start overflow-hidden bg-gradient-to-t from-gray-50 to-gray-100 flex flex-col items-center justify-center p-4">
+        <section ref={sectionRef} className="relative h-screen w-screen snap-start overflow-hidden overscroll-contain bg-gradient-to-t from-gray-50 to-gray-100 flex flex-col items-center justify-center p-4">
             <motion.h2
                 className="absolute text-2xl md:text-3xl text-center z-20"
                 variants={textAnimation}
@@ -159,12 +208,12 @@ export function WhatStorySection() {
                                 <div key={feature.id} className="w-full h-full flex-shrink-0 flex flex-col items-center justify-center translate-y-1 md:translate-y-0 p-5 md:p-6 gap-3">
                                     <div className="relative w-full h-64 md:h-72 mt-2 mb-3 md:mt-3 md:mb-4 rounded-2xl bg-white/90 backdrop-blur-[2px] ring-1 ring-black/5 overflow-hidden shadow-md">
                                         <AnimatePresence>
-                                            { (feature.id !== 2 || step !== 3) && feature.gifUrl && (
+                                            { (feature.id !== 2 || step !== 4) && feature.gifUrl && (
                                                 <motion.div key={`${feature.id}-gif`} className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                                                     <Image src={feature.gifUrl} alt={feature.title} layout="fill" objectFit="cover" unoptimized />
                                                 </motion.div>
                                             )}
-                                            { feature.id === 2 && step === 3 && (
+                                            { feature.id === 2 && step === 4 && (
                                                 <motion.div key="logos" className="w-full h-full flex items-center justify-center gap-x-2 md:gap-x-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                                                     {feature.logos?.map((logo) => (
                                                         <motion.div key={logo.alt} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
