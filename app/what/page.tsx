@@ -5,6 +5,7 @@ import { WhatIntroSection } from "@/components/what/intro-section"
 import { WhatHeroSection } from "@/components/what/hero-section"
 import { WhyCheer } from "@/components/what/why-cheer"
 import { WhatStorySection } from "@/components/what/story-section"
+import { WhyDoThis } from "@/components/what/why-dothis"
 import { WhatOfferSection } from "@/components/what/offer-section"
 import { WhatCTASection } from "@/components/what/cta-section"
 
@@ -23,6 +24,7 @@ export default function WhatPage() {
       <WhatHeroSection onVideoEnd={handleVideoEnd} />
       <WhyCheer ref={whyCheerRef} />
       <WhatStorySection />
+      <WhyDoThis />
       <WhatOfferSection />
       <WhatCTASection onInvestorClick={() => {}} />
     </main>

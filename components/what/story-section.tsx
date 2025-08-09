@@ -163,7 +163,7 @@ export function WhatStorySection() {
     };
 
     return (
-        <section ref={sectionRef} className="relative h-screen w-screen snap-start overflow-hidden overscroll-contain bg-gradient-to-t from-gray-50 to-gray-100 flex flex-col items-center justify-center p-4">
+        <section ref={sectionRef} className="relative h-screen w-screen snap-start overflow-hidden overscroll-contain bg-gradient-to-t from-[#f7f3ed] to-gray-100 flex flex-col items-center justify-center p-4">
             <motion.h2
                 className="absolute text-2xl md:text-3xl text-center z-20"
                 variants={textAnimation}
