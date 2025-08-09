@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef } from "react"
+import { WhatIntroSection } from "@/components/what/intro-section"
 import { WhatHeroSection } from "@/components/what/hero-section"
 import { WhyCheer } from "@/components/what/why-cheer"
 import { WhatStorySection } from "@/components/what/story-section"
@@ -18,6 +19,7 @@ export default function WhatPage() {
 
   return (
     <main className="h-screen w-screen overflow-y-scroll snap-y snap-mandatory">
+      <WhatIntroSection />
       <WhatHeroSection onVideoEnd={handleVideoEnd} />
       <WhyCheer ref={whyCheerRef} />
       <WhatStorySection />
