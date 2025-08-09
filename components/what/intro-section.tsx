@@ -2,13 +2,17 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronDown } from "lucide-react"
 
 // 🎭 What 페이지 인트로 섹션 
-// 스크롤에 반응하여 순차적으로 텍스트가 나타나는 3단계 애니메이션
-// 다른 컴포넌트들과 일관된 스크롤 핸들링 패턴 적용
+// 스크롤할 때마다 텍스트가 한 줄씩 위에서 아래로 쌓이는 애니메이션
 
 const MAX_STEPS = 3;
+
+const TEXT_LINES = [
+  "사장님,",
+  "케어온이 1년간", 
+  "모든걸 보장해 드립니다."
+];
 
 export function WhatIntroSection() {
   const [step, setStep] = useState(1); // 1단계부터 시작
@@ -16,7 +20,7 @@ export function WhatIntroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const touchStartY = useRef(0);
 
-  // 🔄 스크롤/터치 이벤트 제어 (다른 컴포넌트와 동일한 패턴)
+  // 🔄 스크롤/터치 이벤트 제어
   useEffect(() => {
     const element = sectionRef.current;
     if (!element) return;
@@ -29,11 +33,11 @@ export function WhatIntroSection() {
       if (newStep >= 1 && newStep <= MAX_STEPS) {
         setIsAnimating(true);
         setStep(newStep);
-        setTimeout(() => setIsAnimating(false), 1000);
+        setTimeout(() => setIsAnimating(false), 450);
       }
     };
 
-    // 마우스 휠 핸들러: 마지막/첫 스텝에서는 기본 스크롤을 허용
+    // 마우스 휠 핸들러
     const handleWheel = (e: WheelEvent) => {
       const goingDown = e.deltaY > 0;
       const goingUp = e.deltaY < 0;
@@ -51,7 +55,6 @@ export function WhatIntroSection() {
       touchStartY.current = e.touches[0].clientY;
     };
     
-    // 터치 이동 핸들러: 스크롤 영역 내에서만 기본 동작 방지
     const handleTouchMove = (e: TouchEvent) => {
       const touchCurrentY = e.touches[0].clientY;
       const deltaY = touchStartY.current - touchCurrentY;
@@ -90,93 +93,37 @@ export function WhatIntroSection() {
     };
   }, [step, isAnimating]);
 
-  // 애니메이션 variants 정의
-  const variants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
-    exit: { opacity: 0, y: -50, transition: { duration: 0.5, ease: "easeIn" } },
-  };
-
   return (
     <section 
       ref={sectionRef}
       className="h-screen w-screen snap-start bg-[#f7f3ed] flex flex-col items-center justify-center px-4 relative overflow-hidden"
     >
-      {/* 
-        [개발자 노트]
-        - h-screen, w-screen: 섹션이 화면 전체를 꽉 채우도록 합니다.
-        - snap-start: 이 섹션의 시작 부분이 부모의 스냅 지점이 되도록 설정합니다.
-        - overflow-hidden: 애니메이션 중 텍스트가 화면 밖으로 나가는 것을 방지합니다.
-        - 무채색 테마 적용: bg-gray-50
-      */}
-      
-      <AnimatePresence mode="wait">
-        {/* Step 1: "사장님," */}
-        {step === 1 && (
-          <motion.div 
-            key="step1"
-            className="text-center"
-            variants={variants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-[#222222]">
-              사장님,
-            </h1>
-          </motion.div>
-        )}
-
-        {/* Step 2: "케어온이 1년간" */}
-        {step === 2 && (
-          <motion.div 
-            key="step2"
-            className="text-center"
-            variants={variants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-[#222222] leading-tight">
-              케어온이 1년간
-            </h2>
-          </motion.div>
-        )}
-
-        {/* Step 3: "모든걸 보장해 드립니다." */}
-        {step === 3 && (
-          <motion.div 
-            key="step3"
-            className="text-center max-w-4xl"
-            variants={variants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <h3 className="text-3xl md:text-5xl lg:text-6xl font-semibold text-[#222222] leading-tight">
-              모든걸 보장해 드립니다.
-            </h3>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* 스크롤 인디케이터 - 마지막 스텝에서만 표시 */}
-      {step === MAX_STEPS && (
-        <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
-        >
+      {/* 쌓이는 텍스트 컨테이너 */}
+      <div className="text-center max-w-4xl">
+        {/* 각 스텝까지의 모든 텍스트를 표시 */}
+        {TEXT_LINES.slice(0, step).map((text, index) => (
           <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            key={index}
+            initial={{ opacity: 0, y: 50, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ 
+              duration: 0.4, 
+              ease: [0.25, 0.46, 0.45, 0.94],
+              delay: index === step - 1 ? 0 : 0 // 새로 추가되는 텍스트만 딜레이 없음
+            }}
+            className={`
+              ${index === 0 ? 'text-5xl md:text-7xl lg:text-8xl font-black' : ''}
+              ${index === 1 ? 'text-4xl md:text-6xl lg:text-7xl font-bold' : ''}
+              ${index === 2 ? 'text-3xl md:text-5xl lg:text-6xl font-semibold' : ''}
+              text-[#222222] leading-tight
+            `}
           >
-            <ChevronDown className="w-8 h-8 text-gray-400" />
+            {text}
           </motion.div>
-          <p className="text-sm text-gray-500 mt-2 text-center">스크롤하세요</p>
-        </motion.div>
-      )}
+        ))}
+      </div>
+
+
     </section>
   )
 }

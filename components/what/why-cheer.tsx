@@ -1,7 +1,6 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronDown } from "lucide-react"
 import { useEffect, useState, useRef, forwardRef } from "react"
 
 const MAX_STEPS = 3;
@@ -140,13 +139,7 @@ export const WhyCheer = forwardRef<HTMLElement>((props, ref) => {
             </motion.div>
         )}
       </AnimatePresence>
-      {step === MAX_STEPS && (
-        <motion.div className="absolute bottom-10 left-1/2 -translate-x-1/2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 1 }}>
-          <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
-            <ChevronDown className="w-10 h-10 text-white" />
-          </motion.div>
-        </motion.div>
-      )}
+
     </section>
   );
 });
