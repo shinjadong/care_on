@@ -9,8 +9,9 @@ import { WhenVisible } from "@/components/common/when-visible"
 const WhatStorySection = dynamic(() => import("@/components/what/story-section").then(m => m.WhatStorySection))
 const WhyDoThis = dynamic(() => import("@/components/what/why-dothis").then(m => m.WhyDoThis))
 const WhatOfferSection = dynamic(() => import("@/components/what/offer-section").then(m => m.WhatOfferSection))
-const WhatIsItSection = dynamic(() => import("@/components/what/what-isit").then(m => m.WhatIsItSection))
+
 const WhatCTASection = dynamic(() => import("@/components/what/cta-section").then(m => m.WhatCTASection))
+const WhatFAQSection = dynamic(() => import("@/components/what/faq-section").then(m => m.WhatFAQSection))
 const StartCareSlidesSection = dynamic(() => import("@/components/what/startcare-slides").then(m => m.StartCareSlidesSection))
 
 export default function WhatPage() {
@@ -22,8 +23,9 @@ export default function WhatPage() {
       <WhenVisible minHeight={600}><WhatStorySection /></WhenVisible>
       <WhenVisible minHeight={600}><WhatOfferSection /></WhenVisible>
       <WhenVisible minHeight={600}><StartCareSlidesSection /></WhenVisible>
-      <WhenVisible minHeight={600}><WhatIsItSection /></WhenVisible>
+      
       <WhenVisible minHeight={600}><WhatCTASection onInvestorClick={() => {}} /></WhenVisible>
+      <WhenVisible minHeight={600}><WhatFAQSection /></WhenVisible>
     </main>
   )
 }

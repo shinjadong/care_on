@@ -7,7 +7,7 @@ import { Clock, Users, CheckCircle } from "lucide-react"
 // 🎯 CTA 섹션 - 스크롤 기반 스텝별 한정성 메시지와 강력한 행동 유도
 // 기존 컴포넌트들과 일관된 흐름으로 재구성
 
-const MAX_STEPS = 3;
+const MAX_STEPS = 2;
 
 interface WhatCTASectionProps {
   onInvestorClick: () => void // 부모 컴포넌트에서 전달받는 콜백 함수
@@ -68,32 +68,11 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
   return (
     <section 
       ref={sectionRef}
-      className="relative h-screen w-screen snap-start overflow-hidden bg-gradient-to-b from-[#f7f3ed] to-gray-100 flex items-center justify-center p-4"
+      className="relative h-screen w-screen snap-start overflow-hidden bg-gradient-to-b from-[#f7f3ed] to-gray-50 flex items-center justify-center p-4"
     >
       <AnimatePresence mode="wait">
-        {/* Step 0: 초기 브랜드 메시지 */}
+        {/* Step 0: 한정성 메시지 */}
         {step === 0 && (
-          <motion.div 
-            key="step0"
-            className="text-center"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -30 }}
-            transition={{ duration: 0.64, ease: "easeOut" }}
-          >
-            <h2 className="text-4xl md:text-6xl font-black text-[#222222] mb-6">
-              케어온 스타트케어란?
-            </h2>
-            <p className="text-lg md:text-2xl text-[#222222] leading-relaxed">
-              Start-up이 아닌 Start-care<br />
-              올라가는 게 아니라 돌봄이 필요한,<br />
-              당신을 위해
-            </p>
-          </motion.div>
-        )}
-
-        {/* Step 1: 한정성 메시지 */}
-        {step === 1 && (
           <motion.div 
             key="step1"
             className="text-center max-w-lg"
@@ -120,8 +99,8 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
           </motion.div>
         )}
 
-        {/* Step 2: 긴급성 메시지 */}
-        {step === 2 && (
+        {/* Step 1: 긴급성 메시지 */}
+        {step === 1 && (
           <motion.div 
             key="step2"
             className="text-center"
@@ -159,8 +138,8 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
           </motion.div>
         )}
 
-        {/* Step 3: 최종 CTA */}
-        {step === 3 && (
+        {/* Step 2: 최종 CTA */}
+        {step === 2 && (
           <motion.div 
             key="step3"
             className="text-center max-w-lg"
@@ -177,9 +156,8 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
             >
               <CheckCircle className="w-10 h-10 text-white" />
             </motion.div>
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 leading-tight">
-              이 약속, 언제까지<br />
-              할 수 있을지 모릅니다.
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-700 mb-6 leading-tight">
+              지금 시작하세요!
             </h3>
             <motion.button
               className="inline-flex items-center px-8 py-4 bg-white text-teal-600 text-lg md:text-xl font-bold rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 group"
@@ -190,7 +168,7 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              지금 시작하세요
+              예약 대기 신청
               <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
             </motion.button>
           </motion.div>

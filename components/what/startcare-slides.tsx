@@ -174,7 +174,7 @@ export function StartCareSlidesSection() {
                     <span style={{color: '#148777'}}>A/S 걱정 </span>없는<br /> 전문적인<br /> 대기업 협력사
                   </h3>
                   <p className="text-base md:text-xl font-medium text-gray-600 leading-snug whitespace-pre-line">
-                    {`고장, 수리? 걱정마세요!\n사업에만 집중하세요\n신뢰할 수 있는\n국내 최고수준의\n 파트너사`}
+                    {`고장, 수리? 걱정마세요!\n사업에만 집중하세요\n신뢰할 수 있는\n국내 최고수준의\n 파트너사와\n 함께합니다`}
                   </p>
                 </div>
               </div>

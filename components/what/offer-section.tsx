@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Video, Wifi, Monitor, ShieldCheck, Heart } from "lucide-react"
+import { Video, Wifi, Monitor, ShieldCheck } from "lucide-react"
+import Image from "next/image"
 
 // 🎁 케어온의 오퍼 섹션 - 1년 무료 제공의 철학 전달
 // 기존 story-section에서 소개한 4가지 서비스를 1년간 무상 지원하는 메시지 전달
 // 스크롤 기반 스텝별 연출로 세련된 오퍼 경험 제공
 
-const MAX_STEPS = 2;
+const MAX_STEPS = 3;
 
 const services = [
   { icon: Video, name: "지능형 AI CCTV" },
@@ -17,10 +18,17 @@ const services = [
   { icon: ShieldCheck, name: "세이프 케어" },
 ];
 
+// 서비스별 이미지 URL
+const serviceImages = [
+  "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-1.png", // KT CCTV
+  "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-2.png", // 초고속 인터넷
+  "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-3.png", // IPTV
+  "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-4.png", // 화재, 도난, 파손 보험
+];
+
 export function WhatOfferSection() {
   const [step, setStep] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  // const [step3ScrollCount, setStep3ScrollCount] = useState(0); // Step 3(마지막 스텝)에서 추가 스크롤 1회 요구
   const sectionRef = useRef<HTMLElement>(null);
   const touchStartY = useRef(0);
 
@@ -28,6 +36,14 @@ export function WhatOfferSection() {
   useEffect(() => {
     const element = sectionRef.current;
     if (!element) return;
+
+    // Step 3에 도달하면 body 스크롤도 막기
+    if (step === 3) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = 'unset';
+      };
+    }
     
     const changeStep = (direction: 'up' | 'down') => {
       if (isAnimating) return;
@@ -160,7 +176,7 @@ export function WhatOfferSection() {
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.64, ease: "easeOut" }}
           >
-            <div className="mb-6">
+            <motion.div className="mb-6" layoutId="free-year-text">
               <motion.div
                 className="text-6xl md:text-8xl font-black bg-gradient-to-r from-teal-500 to-blue-500 bg-clip-text text-transparent mb-2"
                 initial={{ scale: 0.5 }}
@@ -177,43 +193,154 @@ export function WhatOfferSection() {
               >
                 완전 무료
               </motion.p>
-            </div>
+            </motion.div>
           </motion.div>
         )}
 
-        {/* Step 3: 케어온의 철학 메시지 - 임시 숨김 */}
-        {/* {step === 3 && (
+        {/* Step 3: 제품 테이블 및 메뉴 설명 */}
+        {step === 3 && (
           <motion.div 
             key="step3"
-            className="text-center max-w-lg"
+            className="text-center max-w-md w-full px-4"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.64, ease: "easeOut" }}
           >
-            <div className="mb-6">
-              <motion.div
-                className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full flex items-center justify-center"
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ duration: 0.64, type: "spring", bounce: 0.3 }}
-              >
-                <Heart className="w-8 h-8 text-white" />
-              </motion.div>
-              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
-                사장님의 성공이 <br />
-                <span className="bg-gradient-to-r from-teal-500 to-blue-500 bg-clip-text text-transparent">
-                  우리의 성공
-                </span>
-              </h3>
-              <p className="text-lg md:text-xl font-medium text-gray-700 leading-relaxed">
-                가장 어려운 첫 시작, <br />
-                케어온이 함께하겠습니다
+            <motion.div layoutId="free-year-text" className="mb-4">
+              <div className="text-4xl md:text-5xl font-black bg-gradient-to-r from-teal-500 to-blue-500 bg-clip-text text-transparent mb-1">
+                1년
+              </div>
+              <p className="text-lg md:text-xl font-bold text-gray-900">
+                완전 무료
               </p>
-            </div>
-          </motion.div>
-        )} */}
+            </motion.div>
+            
+            {/* 제품 카드들을 세로로 배치 */}
+            <motion.div
+              className="space-y-2 mt-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              {/* KT CCTV 카드 */}
+              <motion.div
+                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.7 }}
+              >
+                <div className="bg-teal-600 text-white text-center py-1 px-2">
+                  <h4 className="font-bold text-lg">KT CCTV</h4>
+                </div>
+                <div className="p-2 flex items-center gap-2">
+                  <div className="relative">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
+                      <Image
+                        src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-1.png"
+                        alt="KT CCTV"
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="absolute right-0 top-0 bg-teal-600 text-white rounded-full w-7 h-7 flex items-center justify-center shadow-lg">
+                      <span className="text-xs font-bold">x4</span>
+                    </div>
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-medium text-gray-700">설치비 무료, 1년 요금 무료</p>
+                  </div>
+                </div>
+              </motion.div>
 
+              {/* 초고속 인터넷 카드 */}
+              <motion.div
+                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8 }}
+              >
+                <div className="bg-teal-600 text-white text-center py-1 px-2">
+                  <h4 className="font-bold text-lg">초고속 인터넷</h4>
+                </div>
+                <div className="p-2 flex items-center gap-2">
+                  <div className="relative">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
+                      <Image
+                        src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-2.png"
+                        alt="초고속 인터넷"
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="absolute right-0 top-0 bg-teal-600 text-white rounded-full w-8 h-7 flex items-center justify-center shadow-lg">
+                      <span className="text-xs font-bold">500M</span>
+                    </div>
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-medium text-gray-700">설치비 무료 , 1년 요금  무료</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* IPTV 카드 */}
+              <motion.div
+                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.9 }}
+              >
+                <div className="bg-teal-600 text-white text-center py-1 px-2">
+                  <h4 className="font-bold text-lg">IPTV</h4>
+                </div>
+                <div className="p-2 flex items-center gap-2">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
+                    <Image
+                      src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-3.png"
+                      alt="IPTV"
+                      width={64}
+                      height={64}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-medium text-gray-700">설치비 무료, 1년 요금 무료</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* 화재, 도난, 파손 보험 카드 */}
+              <motion.div
+                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.0 }}
+              >
+                <div className="bg-teal-600 text-white text-center py-1 px-2">
+                  <h4 className="font-bold text-lg">화재, 도난, 파손 보험</h4>
+                </div>
+                <div className="p-2 flex items-center gap-2">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
+                    <Image
+                      src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-4.png"
+                      alt="화재, 도난, 파손 보험"
+                      width={64}
+                      height={64}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="text-left space-y-1">
+                    <p className="text-sm font-medium text-gray-700">1년 만기</p>
+                    <p className="text-sm font-medium text-gray-700">1년 요금 무료</p>
+                    <p className="text-xs text-gray-600">1년 후 추가 가입 여부 선택 가능</p>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
 
       </AnimatePresence>
     </section>
