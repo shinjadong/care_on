@@ -8,6 +8,12 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'aet4p1ka2mfpbmiq.public.blob.vercel-storage.com',
+      },
+    ],
   },
   experimental: {
     // Framer Motion과 App Router 호환성 개선

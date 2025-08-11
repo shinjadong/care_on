@@ -1,13 +1,28 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { motion } from "framer-motion"
-import { ReviewHeader } from "@/components/review/review-header"
-import { CategoryFilter } from "@/components/review/category-filter"
-import { ReviewCard } from "@/components/review/review-card"
-import { ReviewPagination } from "@/components/review/review-pagination"
-import { SearchBar } from "@/components/review/search-bar"
+import dynamic from "next/dynamic"
+import { WhenVisible } from "@/components/common/when-visible"
 import { reviewsData } from "@/lib/reviews-data"
+
+// 교육자 모드 설명:
+// - framer-motion은 비교적 무거운 의존성입니다. 페이지 초기 진입에서 필요하지 않다면 뒤로 미룹니다.
+// - 리스트의 각 카드도 가시 영역에서만 마운트하면 렌더 비용을 절약할 수 있습니다.
+
+const MotionDiv = dynamic(async () => {
+  const fm = await import("framer-motion")
+  return ({ children, className }: { children: React.ReactNode, className?: string }) => (
+    <fm.motion.div className={className} layout>
+      {children}
+    </fm.motion.div>
+  )
+}, { ssr: false })
+
+const ReviewHeader = dynamic(() => import("@/components/review/review-header").then(m => m.ReviewHeader))
+const CategoryFilter = dynamic(() => import("@/components/review/category-filter").then(m => m.CategoryFilter))
+const ReviewCard = dynamic(() => import("@/components/review/review-card").then(m => m.ReviewCard))
+const ReviewPagination = dynamic(() => import("@/components/review/review-pagination").then(m => m.ReviewPagination))
+const SearchBar = dynamic(() => import("@/components/review/search-bar").then(m => m.SearchBar))
 
 export default function ReviewPage() {
   const [selectedCategory, setSelectedCategory] = useState("전체")
@@ -66,26 +81,13 @@ export default function ReviewPage() {
         />
 
         {/* 후기 리스트 */}
-        <motion.div 
-          className="grid gap-4 mb-12"
-          layout
-        >
+        <MotionDiv className="grid gap-4 mb-12">
           {currentReviews.map((review, index) => (
-            <motion.div
-              key={review.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: 0.4, 
-                delay: index * 0.1,
-                ease: "easeOut" 
-              }}
-              layout
-            >
+            <WhenVisible key={review.id} minHeight={160}>
               <ReviewCard review={review} />
-            </motion.div>
+            </WhenVisible>
           ))}
-        </motion.div>
+        </MotionDiv>
 
         {/* 페이지네이션과 검색 */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
