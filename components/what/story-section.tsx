@@ -200,8 +200,8 @@ export function WhatStorySection() {
 
                         {/* 카드 컨텐츠 레이어 */}
         <motion.div 
-                            className="relative z-10 h-full flex"
-                            animate={{ x: `-${slideIndex * 100}%` }}
+                            className={`relative z-10 h-full flex ${isMobile ? 'flex-col' : ''}`}
+                            animate={isMobile ? { y: `-${slideIndex * 100}%` } : { x: `-${slideIndex * 100}%` }}
                             transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
                         >
                             {features.map((feature) => (

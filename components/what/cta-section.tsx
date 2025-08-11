@@ -68,7 +68,7 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
   return (
     <section 
       ref={sectionRef}
-      className="relative h-screen w-screen snap-start overflow-hidden bg-gradient-to-br from-teal-600 via-blue-600 to-purple-700 flex items-center justify-center p-4"
+      className="relative h-screen w-screen snap-start overflow-hidden bg-gradient-to-b from-[#f7f3ed] to-gray-100 flex items-center justify-center p-4"
     >
       <AnimatePresence mode="wait">
         {/* Step 0: 초기 브랜드 메시지 */}
@@ -81,10 +81,10 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.64, ease: "easeOut" }}
           >
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-6">
-              케어온 스타트케어
+            <h2 className="text-4xl md:text-6xl font-black text-[#222222] mb-6">
+              케어온 스타트케어란?
             </h2>
-            <p className="text-lg md:text-2xl text-white/90 leading-relaxed">
+            <p className="text-lg md:text-2xl text-[#222222] leading-relaxed">
               Start-up이 아닌 Start-care<br />
               올라가는 게 아니라 돌봄이 필요한,<br />
               당신을 위해
@@ -103,17 +103,17 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
             transition={{ duration: 0.56, ease: "easeOut" }}
           >
             <motion.div
-              className="w-20 h-20 mx-auto mb-6 bg-white/20 rounded-full flex items-center justify-center"
+              className="w-20 h-20 mx-auto mb-6 bg-gradient-to-t from-[#148777] to-[#148777]/70 rounded-full flex items-center justify-center"
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ duration: 0.64, type: "spring", bounce: 0.3 }}
             >
               <Users className="w-10 h-10 text-white" />
             </motion.div>
-            <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
+            <h3 className="text-3xl md:text-4xl font-bold text-[#222222] mb-6 leading-tight">
               모두에게 드릴 순 없습니다
             </h3>
-            <p className="text-lg md:text-xl text-white/80 leading-relaxed">
+            <p className="text-md md:text-xl text-[#222222] leading-relaxed">
               정말 필요한 분들에게만 <br />
               제대로 된 케어를 제공하고 싶습니다
             </p>
@@ -140,7 +140,7 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
             </motion.div>
             <div className="mb-6">
               <motion.div
-                className="text-5xl md:text-7xl font-black text-red-200 mb-2"
+                className="text-5xl md:text-7xl font-black text-red-500 mb-2"
                 initial={{ scale: 0.5 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.64, delay: 0.16, type: "spring", bounce: 0.4 }}
@@ -148,7 +148,7 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
                 딱, 3일
               </motion.div>
               <motion.p
-                className="text-xl md:text-2xl font-bold text-white"
+                className="text-xl md:text-2xl font-bold text-[#222222]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.48 }}
@@ -170,14 +170,14 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
             transition={{ duration: 0.64, ease: "easeOut" }}
           >
             <motion.div
-              className="w-20 h-20 mx-auto mb-6 bg-white/20 rounded-full flex items-center justify-center"
+              className="w-20 h-20 mx-auto mb-6 bg-gradient-to-t from-[#148777] to-[#148777]/70 rounded-full flex items-center justify-center"
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ duration: 0.64, type: "spring", bounce: 0.3 }}
             >
               <CheckCircle className="w-10 h-10 text-white" />
             </motion.div>
-            <h3 className="text-2xl md:text-3xl font-bold text-white mb-6 leading-tight">
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 leading-tight">
               이 약속, 언제까지<br />
               할 수 있을지 모릅니다.
             </h3>
