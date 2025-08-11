@@ -1,7 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
-import { Footer } from "@/components/footer"
+import { ConditionalFooter } from "@/components/conditional-footer"
 import { Header } from "@/components/header"
 import { FloatingBanner } from "@/components/floating-banner"
 
@@ -38,7 +38,7 @@ export default function RootLayout({
       <body className="font-sans">
         <Header />
         {children}
-        <Footer />
+        <ConditionalFooter />
         <FloatingBanner />
       </body>
     </html>
