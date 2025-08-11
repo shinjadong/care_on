@@ -16,15 +16,26 @@ export function StartCareSlidesSection() {
   const MAX_STEPS = 3
   const [step, setStep] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [isScrollLocked, setIsScrollLocked] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
   const touchStartY = useRef(0)
+
+  useEffect(() => {
+    if (step === 3) {
+      setIsScrollLocked(true)
+      const timer = setTimeout(() => {
+        setIsScrollLocked(false)
+      }, 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [step])
 
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
 
     const changeStep = (direction: "up" | "down") => {
-      if (isAnimating) return
+      if (isAnimating || (direction === "down" && isScrollLocked)) return
       const next = direction === "down" ? step + 1 : step - 1
       if (next >= 0 && next <= MAX_STEPS) {
         setIsAnimating(true)
@@ -62,7 +73,7 @@ export function StartCareSlidesSection() {
       el.removeEventListener("touchmove", onTouchMove)
       el.removeEventListener("touchend", onTouchEnd)
     }
-  }, [step, isAnimating])
+  }, [step, isAnimating, isScrollLocked])
 
   const slideVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -80,7 +91,7 @@ export function StartCareSlidesSection() {
         initial={false}
         animate={step === 0
           ? { top: "40%", left: "50%", x: "-50%", y: "-50%", opacity: 1 }
-          : { top: "13%", left: "50%", x: "-50%", y: "0%", opacity: 1 }
+          : { top: "15%", left: "50%", x: "-50%", y: "0%", opacity: 1 }
         }
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
@@ -100,24 +111,24 @@ export function StartCareSlidesSection() {
         {step === 1 && (
           <motion.div key="s1" className="w-full flex items-center justify-center"
             variants={slideVariants} initial="hidden" animate="visible" exit="exit">
-            <div className="relative w-[88vw] max-w-xl aspect-square rounded-3xl bg-white/90 ring-1 ring-gray-200 p-5 md:p-7">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center max-w-sm">
+            <div className="relative w-[80vw] max-w-lg aspect-square rounded-[5rem] bg-[#f8f8fc] p-4 md:p-6">
+              <div className="absolute inset-0 flex items-start justify-start">
+                <div className="max-w-sm text-left pl-12 md:pl-16 pt-12 md:pt-16">
                   <h3 className="text-2xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-3 whitespace-pre-line">
-                    폐업 걱정 없는<br />안정적인 사업의 시작
+                    <span style={{color: '#148777'}}>폐업 걱정</span> 없는<br /> 안정적인<br />사업의 시작
                   </h3>
-                  <p className="text-base md:text-xl font-semibold text-gray-800 leading-snug whitespace-pre-line">
-                    {`1년 안에 폐업 시,\n이용요금을\n전액 환급 보장해드려요`}
+                  <p className="text-base md:text-xl font-medium text-gray-600 leading-snug whitespace-pre-line">
+                    {`1년 안에 폐업 시,\n이용요금을\n전액 환급\n보장해드려요`}
                   </p>
                 </div>
               </div>
-              <div className="absolute right-3 bottom-3 md:right-4 md:bottom-4 w-24 h-24 md:w-32 md:h-32">
+              <div className="absolute -right-8 -bottom-8 md:-right-10 md:-bottom-10 w-48 h-48 md:w-64 md:h-64 pointer-events-none">
                 <Image
                   src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EB%A7%88%EC%8A%A4%EC%BD%94%ED%8A%B81.png"
                   alt="StartCare 보장 이미지"
                   fill
                   className="object-contain"
-                  sizes="(max-width: 768px) 30vw, 128px"
+                  sizes="(max-width: 768px) 50vw, 256px"
                   priority={false}
                 />
               </div>
@@ -128,24 +139,24 @@ export function StartCareSlidesSection() {
         {step === 2 && (
           <motion.div key="s2" className="w-full flex items-center justify-center"
             variants={slideVariants} initial="hidden" animate="visible" exit="exit">
-            <div className="relative w-[88vw] max-w-xl aspect-square rounded-3xl bg-white/90 ring-1 ring-gray-200 p-5 md:p-7">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center max-w-sm">
+            <div className="relative w-[80vw] max-w-lg aspect-square rounded-[5rem] bg-[#f8f8fc] p-4 md:p-6">
+              <div className="absolute inset-0 flex items-start justify-start">
+                <div className="max-w-sm text-left pl-12 md:pl-16 pt-14 md:pt-16">
                   <h3 className="text-2xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-3 whitespace-pre-line">
-                    비용 부담 없는\n합리적인 가격의 구성
+                    <span style={{color: '#148777'}}>비용 부담</span> 없는<br />합리적인<br /> 가격의 구성
                   </h3>
-                  <p className="text-base md:text-xl font-semibold text-gray-800 leading-snug whitespace-pre-line">
+                  <p className="text-base md:text-xl font-medium text-gray-600 leading-snug whitespace-pre-line">
                     {`1년 지나도\n국내 최저가 수준의\n정직한 이용요금`}
                   </p>
                 </div>
               </div>
-              <div className="absolute right-3 bottom-3 md:right-4 md:bottom-4 w-24 h-24 md:w-32 md:h-32">
+              <div className="absolute -right-8 -bottom-8 md:-right-10 md:-bottom-10 w-48 h-48 md:w-64 md:h-64 pointer-events-none">
                 <Image
                   src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EB%A7%88%EC%8A%A4%EC%BD%94%ED%8A%B82.png"
                   alt="합리적 가격 이미지"
                   fill
                   className="object-contain"
-                  sizes="(max-width: 768px) 30vw, 128px"
+                  sizes="(max-width: 768px) 50vw, 256px"
                   priority={false}
                 />
               </div>
@@ -156,24 +167,24 @@ export function StartCareSlidesSection() {
         {step === 3 && (
           <motion.div key="s3" className="w-full flex items-center justify-center"
             variants={slideVariants} initial="hidden" animate="visible" exit="exit">
-            <div className="relative w-[88vw] max-w-xl aspect-square rounded-3xl bg-white/90 ring-1 ring-gray-200 p-5 md:p-7">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center max-w-sm">
+            <div className="relative w-[80vw] max-w-lg aspect-square rounded-[5rem] bg-[#f8f8fc] p-4 md:p-6">
+              <div className="absolute inset-0 flex items-start justify-start">
+                <div className="max-w-sm text-left pl-12 md:pl-16 pt-12 md:pt-16">
                   <h3 className="text-2xl md:text-4xl font-extrabold text-gray-900 leading-tight whitespace-pre-line mb-3">
-                    {`A/S 걱정 없는\n전문적인 대기업 협력사`}
+                    <span style={{color: '#148777'}}>A/S 걱정 </span>없는<br /> 전문적인<br /> 대기업 협력사
                   </h3>
-                  <p className="text-base md:text-xl font-semibold text-gray-800 leading-snug whitespace-pre-line">
-                    {`고장, 수리? 걱정마세요!\n사업에만 집중하세요\n신뢰할 수 있는 \n국내 최고수준의 파트너사`}
+                  <p className="text-base md:text-xl font-medium text-gray-600 leading-snug whitespace-pre-line">
+                    {`고장, 수리? 걱정마세요!\n사업에만 집중하세요\n신뢰할 수 있는\n국내 최고수준의\n 파트너사`}
                   </p>
                 </div>
               </div>
-              <div className="absolute right-3 bottom-3 md:right-4 md:bottom-4 w-24 h-24 md:w-32 md:h-32">
+              <div className="absolute -right-8 -bottom-8 md:-right-10 md:-bottom-10 w-48 h-48 md:w-64 md:h-64 pointer-events-none">
                 <Image
-                  src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EB%A7%88%EC%8A%A4%EC%BD%94%ED%8A%B83-M126FV1aucxE9omrzoi97Yni3EthOu"
+                  src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EB%A7%88%EC%8A%A4%EC%BD%94%ED%8A%B8-3"
                   alt="대기업 협력사 이미지"
                   fill
                   className="object-contain"
-                  sizes="(max-width: 768px) 30vw, 128px"
+                  sizes="(max-width: 768px) 50vw, 256px"
                   priority={false}
                 />
               </div>
