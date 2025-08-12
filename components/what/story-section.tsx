@@ -12,7 +12,7 @@ const features = [
         id: 1,
         icon: Video,
         title: "지능형 AI CCTV",
-        description: "AI가 사람, 동물, 차량을 정확히 인식합니다.",
+        description: "소 잃고 외양간 고치는 일은 이제 없습니다. 실시간 AI 감지로 위험한 순간을 미리 차단하세요.",
         gifUrl: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/ai-cctv-2.gif",
     },
     // 2) 세이프 케어
@@ -20,7 +20,7 @@ const features = [
         id: 4, 
         icon: ShieldCheck, 
         title: "세이프 케어", 
-        description: "예기치 못한 위험에 대비하는 든든한 보험 솔루션입니다.",
+        description: "화재, 파손, 도난... 만약의 순간이 닥쳤을 때 보험금 때문에 걱정할 일은 없습니다.",
         gifUrl: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/rain-insure.gif"
     },
     // 3) 인터넷
@@ -28,7 +28,7 @@ const features = [
         id: 2,
         icon: Wifi,
         title: "GIGA 인터넷",
-        description: "끊김 없는 인터넷으로 사업을 안정적으로 지원합니다.",
+        description: "주문 폭주 시간에 카드 결제가 끊어진다면? 안정적 인터넷으로 매출 기회를 놓치지 마세요.",
         gifUrl: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/5g-internet.gif",
         logos: [
             { src: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/1.png", alt: "KT" },
@@ -41,7 +41,7 @@ const features = [
         id: 3, 
         icon: Monitor, 
         title: "선명한 화질의 TV", 
-        description: "고객의 시선을 사로잡는 다양한 콘텐츠를 활용하세요.",
+        description: "빈 매장보다 사람 있는 매장에 손님이 몰립니다. 체류시간 30% 늘려 자연스럽게 매출을 키우세요.",
         gifUrl: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/careon-ipt"
     },
 ];

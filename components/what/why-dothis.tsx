@@ -85,7 +85,7 @@ export function WhyDoThis() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.25, duration: 0.5 }}
                 >
-                  하나 드릴게요
+                  드릴게요
                 </motion.h3>
               </div>
             </motion.div>
@@ -129,7 +129,7 @@ export function WhyDoThis() {
                 transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
               >
                 케어온이<br />
-                보장해드리겠습니다.
+                지원해드리겠습니다.
               </motion.h3>
             </motion.div>
           )}

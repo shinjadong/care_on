@@ -38,11 +38,11 @@ export default function WhatPage() {
       <Suspense fallback={<div className="h-screen w-screen bg-gradient-to-b from-[#f7f3ed] to-gray-100 animate-pulse" />}>
         <WhenVisible minHeight={600} rootMargin="50px 0px"><WhatOfferSection /></WhenVisible>
       </Suspense>
-      <Suspense fallback={<div className="h-screen w-screen bg-gradient-to-t from-[#f7f3ed] to-gray-100 animate-pulse" />}>
-        <WhenVisible minHeight={600} rootMargin="50px 0px"><WhatStorySection /></WhenVisible>
-      </Suspense>
       <Suspense fallback={<div className="h-screen w-screen bg-gradient-to-b from-[#f7f3ed] to-gray-100 animate-pulse" />}>
         <WhenVisible minHeight={600} rootMargin="50px 0px"><StartCareSlidesSection /></WhenVisible>
+      </Suspense>
+      <Suspense fallback={<div className="h-screen w-screen bg-gradient-to-t from-[#f7f3ed] to-gray-100 animate-pulse" />}>
+        <WhenVisible minHeight={600} rootMargin="50px 0px"><WhatStorySection /></WhenVisible>
       </Suspense>
       
       <Suspense fallback={<div className="h-screen w-screen bg-gradient-to-b from-[#f7f3ed] to-gray-50 animate-pulse" />}>

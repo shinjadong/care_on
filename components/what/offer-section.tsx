@@ -181,11 +181,11 @@ export function WhatOfferSection() {
             transition={{ duration: 0.64, ease: "easeOut" }}
           >
             <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
-              이 모든 것을
+              케어온의 선물,
             </h2>
             <div className="flex items-center justify-center gap-2">
               <span className="text-2xl md:text-4xl font-semibold bg-gradient-to-r from-teal-500 to-blue-500 bg-clip-text text-transparent">
-                케어온이 선물합니다
+                스타트 케어
               </span>
             </div>
           </motion.div>
