@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Video, Wifi, Monitor, ShieldCheck } from "lucide-react"
+import { Video, Wifi, Monitor, ShieldCheck, Check } from "lucide-react"
 import Image from "next/image"
 
 // 🎁 케어온의 오퍼 섹션 - 1년 무료 제공의 철학 전달
@@ -24,6 +24,36 @@ const serviceImages = [
   "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-2.png", // 초고속 인터넷
   "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-3.png", // IPTV
   "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-4.png", // 화재, 도난, 파손 보험
+];
+
+const productDetails = [
+  {
+    title: "KT CCTV",
+    image: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-1.png",
+    badge: "x4",
+    features: ["설치비 무료", "1년 요금 무료"],
+    highlight: "4대 설치"
+  },
+  {
+    title: "초고속 인터넷",
+    image: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-2.png",
+    badge: "500M",
+    features: ["설치비 무료", "1년 요금 무료"],
+    highlight: "기가급 속도"
+  },
+  {
+    title: "IPTV",
+    image: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-3.png",
+    features: ["설치비 무료", "1년 요금 무료"],
+    highlight: "프리미엄 채널"
+  },
+  {
+    title: "종합 보험",
+    image: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-4.png",
+    features: ["화재·도난·파손 보장", "1년 무료 가입"],
+    note: "1년 후 선택 연장",
+    highlight: "3종 보장"
+  }
 ];
 
 export function WhatOfferSection() {
@@ -138,30 +168,51 @@ export function WhatOfferSection() {
       className="relative h-screen w-screen snap-start overflow-hidden bg-gradient-to-b from-[#f7f3ed] to-gray-100 flex items-center justify-center p-4"
     >
       <AnimatePresence mode="wait">
-        {/* Step 0: 서비스 목록 표시 */}
+        {/* Step 0: 케어온 선물 메시지 */}
         {step === 0 && (
           <motion.div 
             key="step0"
-            className="text-center max-w-md"
+            className="text-center px-4"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -30 }}
+            transition={{ duration: 0.64, ease: "easeOut" }}
+          >
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
+              케어온의 선물,
+            </h2>
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-xl sm:text-2xl md:text-4xl font-semibold bg-gradient-to-r from-teal-500 to-blue-500 bg-clip-text text-transparent">
+                스타트 케어
+              </span>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Step 1: 서비스 목록 표시 */}
+        {step === 1 && (
+          <motion.div 
+            key="step1"
+            className="text-center w-full max-w-md px-4"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.56, ease: "easeOut" }}
           >
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">
               4가지 필수 서비스
             </h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {services.map((service, index) => (
                 <motion.div
                   key={service.name}
-                  className="flex flex-col items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100"
+                  className="flex flex-col items-center p-3 sm:p-4 bg-white rounded-xl shadow-sm border border-gray-100"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.24 + index * 0.08 }}
                 >
-                  <service.icon className="w-8 h-8 md:w-10 md:h-10 text-teal-500 mb-2" />
-                  <span className="text-sm md:text-base font-medium text-gray-800 text-center leading-tight">
+                  <service.icon className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-teal-500 mb-2" />
+                  <span className="text-xs sm:text-sm md:text-base font-medium text-gray-800 text-center leading-tight">
                     {service.name}
                   </span>
                 </motion.div>
@@ -170,40 +221,19 @@ export function WhatOfferSection() {
           </motion.div>
         )}
 
-        {/* Step 1: 케어온 선물 메시지 */}
-        {step === 1 && (
-          <motion.div 
-            key="step1"
-            className="text-center"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -30 }}
-            transition={{ duration: 0.64, ease: "easeOut" }}
-          >
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
-              케어온의 선물,
-            </h2>
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-2xl md:text-4xl font-semibold bg-gradient-to-r from-teal-500 to-blue-500 bg-clip-text text-transparent">
-                스타트 케어
-              </span>
-            </div>
-          </motion.div>
-        )}
-
         {/* Step 2: 1년 무료 강조 */}
         {step === 2 && (
           <motion.div 
             key="step2"
-            className="text-center"
+            className="text-center px-4"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.64, ease: "easeOut" }}
           >
-            <motion.div className="mb-6" layoutId="free-year-text">
+            <motion.div className="mb-4 sm:mb-6" layoutId="free-year-text">
               <motion.div
-                className="text-6xl md:text-8xl font-black bg-gradient-to-r from-teal-500 to-blue-500 bg-clip-text text-transparent mb-2"
+                className="text-5xl sm:text-6xl md:text-8xl font-black bg-gradient-to-r from-teal-500 to-blue-500 bg-clip-text text-transparent mb-2"
                 initial={{ scale: 0.5 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.64, delay: 0.16, type: "spring", bounce: 0.4 }}
@@ -211,7 +241,7 @@ export function WhatOfferSection() {
                 1년
               </motion.div>
               <motion.p
-                className="text-xl md:text-2xl font-bold text-gray-900"
+                className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.48 }}
@@ -222,150 +252,81 @@ export function WhatOfferSection() {
           </motion.div>
         )}
 
-        {/* Step 3: 제품 테이블 및 메뉴 설명 */}
+        {/* Step 3: 제품 상세 정보 - 개선된 디자인 유지 */}
         {step === 3 && (
           <motion.div 
             key="step3"
-            className="text-center max-w-md w-full px-4"
+            className="w-full max-w-3xl px-4"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
             transition={{ duration: 0.64, ease: "easeOut" }}
           >
-            <motion.div layoutId="free-year-text" className="mb-4">
-              <div className="text-4xl md:text-5xl font-black bg-gradient-to-r from-teal-500 to-blue-500 bg-clip-text text-transparent mb-1">
-                1년
+            <motion.div layoutId="free-year-text" className="text-center mb-4 sm:mb-6 md:mb-8">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-black bg-gradient-to-r from-teal-500 to-blue-500 bg-clip-text text-transparent">
+                1년 완전 무료
               </div>
-              <p className="text-lg md:text-xl font-bold text-gray-900">
-                완전 무료
-              </p>
             </motion.div>
             
-            {/* 제품 카드들을 세로로 배치 */}
-            <motion.div
-              className="space-y-2 mt-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              {/* KT CCTV 카드 */}
-              <motion.div
-                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100"
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.7 }}
-              >
-                <div className="bg-teal-600 text-white text-center py-1 px-2">
-                  <h4 className="font-bold text-lg">KT CCTV</h4>
-                </div>
-                <div className="p-2 flex items-center gap-2">
-                  <div className="relative">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
-                      <Image
-                        src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-1.png"
-                        alt="KT CCTV"
-                        width={64}
-                        height={64}
-                        className="w-full h-full object-contain"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="absolute right-0 top-0 bg-teal-600 text-white rounded-full w-7 h-7 flex items-center justify-center shadow-lg">
-                      <span className="text-xs font-bold">x4</span>
-                    </div>
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-gray-700">설치비 무료, 1년 요금 무료</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* 초고속 인터넷 카드 */}
-              <motion.div
-                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100"
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.8 }}
-              >
-                <div className="bg-teal-600 text-white text-center py-1 px-2">
-                  <h4 className="font-bold text-lg">초고속 인터넷</h4>
-                </div>
-                <div className="p-2 flex items-center gap-2">
-                  <div className="relative">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
-                      <Image
-                        src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-2.png"
-                        alt="초고속 인터넷"
-                        width={64}
-                        height={64}
-                        className="w-full h-full object-contain"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="absolute right-0 top-0 bg-teal-600 text-white rounded-full w-8 h-7 flex items-center justify-center shadow-lg">
-                      <span className="text-xs font-bold">500M</span>
+            {/* 제품 카드 그리드 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+              {productDetails.map((product, index) => (
+                <motion.div
+                  key={product.title}
+                  className="bg-white rounded-2xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1 + index * 0.1 }}
+                  whileHover={{ y: -4 }}
+                >
+                  <div className="p-3 sm:p-4 md:p-5">
+                    <div className="flex items-start gap-3 sm:gap-4">
+                      {/* 제품 이미지 */}
+                      <div className="relative flex-shrink-0">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg sm:rounded-xl p-1.5 sm:p-2 overflow-hidden">
+                          <Image
+                            src={product.image}
+                            alt={product.title}
+                            width={80}
+                            height={80}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        {product.badge && (
+                          <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-gradient-to-r from-teal-500 to-teal-600 text-white text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full shadow-lg">
+                            {product.badge}
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* 제품 정보 */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start gap-2 mb-1.5 sm:mb-2 flex-wrap">
+                          <h4 className="font-bold text-base sm:text-lg text-gray-900">{product.title}</h4>
+                          {product.highlight && (
+                            <span className="text-[10px] sm:text-xs bg-teal-100 text-teal-700 px-1.5 sm:px-2 py-0.5 rounded-full font-medium whitespace-nowrap">
+                              {product.highlight}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="space-y-0.5 sm:space-y-1">
+                          {product.features.map((feature, idx) => (
+                            <div key={idx} className="flex items-start gap-1.5 sm:gap-2">
+                              <Check className="w-3 h-3 sm:w-4 sm:h-4 text-teal-500 flex-shrink-0 mt-0.5" />
+                              <span className="text-xs sm:text-sm text-gray-700 leading-tight">{feature}</span>
+                            </div>
+                          ))}
+                          {product.note && (
+                            <p className="text-[10px] sm:text-xs text-gray-500 mt-1.5 sm:mt-2">{product.note}</p>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-gray-700">설치비 무료 , 1년 요금  무료</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* IPTV 카드 */}
-              <motion.div
-                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100"
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.9 }}
-              >
-                <div className="bg-teal-600 text-white text-center py-1 px-2">
-                  <h4 className="font-bold text-lg">IPTV</h4>
-                </div>
-                <div className="p-2 flex items-center gap-2">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
-                    <Image
-                      src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-3.png"
-                      alt="IPTV"
-                      width={64}
-                      height={64}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-gray-700">설치비 무료, 1년 요금 무료</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* 화재, 도난, 파손 보험 카드 */}
-              <motion.div
-                className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100"
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.0 }}
-              >
-                <div className="bg-teal-600 text-white text-center py-1 px-2">
-                  <h4 className="font-bold text-lg">화재, 도난, 파손 보험</h4>
-                </div>
-                <div className="p-2 flex items-center gap-2">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
-                    <Image
-                      src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/products-table-4.png"
-                      alt="화재, 도난, 파손 보험"
-                      width={64}
-                      height={64}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div className="text-left space-y-1">
-                    <p className="text-sm font-medium text-gray-700">1년 만기</p>
-                    <p className="text-sm font-medium text-gray-700">1년 요금 무료</p>
-                    <p className="text-xs text-gray-600">1년 후 추가 가입 여부 선택 가능</p>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
         )}
 

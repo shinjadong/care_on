@@ -12,7 +12,7 @@ const features = [
         id: 1,
         icon: Video,
         title: "지능형 AI CCTV",
-        description: "소 잃고 외양간 고치는 일은 이제 없습니다. 실시간 AI 감지로 위험한 순간을 미리 차단하세요.",
+        description: "소 잃고 외양간 고치는 일은 이제 없습니다.\n실시간 AI 감지로 위험한 순간을 미리 차단하세요.",
         gifUrl: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/ai-cctv-2.gif",
     },
     // 2) 세이프 케어
@@ -20,7 +20,7 @@ const features = [
         id: 4, 
         icon: ShieldCheck, 
         title: "세이프 케어", 
-        description: "화재, 파손, 도난... 만약의 순간이 닥쳤을 때 보험금 때문에 걱정할 일은 없습니다.",
+        description: "화재, 파손, 도난...\n만약의 순간이 닥쳤을 때 보험금 때문에 걱정할 일은 없습니다.",
         gifUrl: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/rain-insure.gif"
     },
     // 3) 인터넷
@@ -28,7 +28,7 @@ const features = [
         id: 2,
         icon: Wifi,
         title: "GIGA 인터넷",
-        description: "주문 폭주 시간에 카드 결제가 끊어진다면? 안정적 인터넷으로 매출 기회를 놓치지 마세요.",
+        description: "주문 폭주 시간에 카드 결제가 끊어진다면?\n안정적 인터넷으로 매출 기회를 놓치지 마세요.",
         gifUrl: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/5g-internet.gif",
         logos: [
             { src: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/1.png", alt: "KT" },
@@ -41,7 +41,7 @@ const features = [
         id: 3, 
         icon: Monitor, 
         title: "선명한 화질의 TV", 
-        description: "빈 매장보다 사람 있는 매장에 손님이 몰립니다. 체류시간 30% 늘려 자연스럽게 매출을 키우세요.",
+        description: "빈 매장보다 사람 있는 매장에 손님이 몰립니다.\n체류시간 30% 늘려 자연스럽게 매출을 키우세요.",
         gifUrl: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/careon-ipt"
     },
 ];
@@ -156,7 +156,7 @@ export function WhatStorySection() {
 
     return (
         <section ref={sectionRef} className="relative h-screen w-full snap-start overflow-hidden overscroll-contain bg-gradient-to-t from-[#f7f3ed] to-gray-100 flex flex-col items-center justify-center px-4 py-8">
-            <div className="absolute top-20 left-1/2 -translate-x-1/2 text-2xl md:text-3xl text-center z-30">
+            <div className="absolute top-8 sm:top-12 md:top-16 left-1/2 -translate-x-1/2 text-lg sm:text-xl md:text-2xl lg:text-3xl text-center z-30 px-4">
                 <span className="font-bold text-gray-900">사장님</span>
                 <span className="font-semibold text-gray-700">을 위한,</span>
                 <br />
@@ -165,7 +165,7 @@ export function WhatStorySection() {
             </div>
       
         <motion.div 
-                className="relative w-[300px] h-[610px] md:w-[350px] md:h-[712px] mx-auto z-10"
+                className="relative w-[260px] h-[530px] sm:w-[280px] sm:h-[570px] md:w-[320px] md:h-[650px] lg:w-[350px] lg:h-[712px] mx-auto z-10"
                 variants={frameAnimation}
                 initial="initial"
                 animate={step === 0 ? "initial" : "animate"}
@@ -192,8 +192,8 @@ export function WhatStorySection() {
                             transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
                         >
                             {features.map((feature) => (
-                                <div key={feature.id} className="w-full h-full flex-shrink-0 flex flex-col items-center justify-center translate-y-1 md:translate-y-0 p-5 md:p-6 gap-3">
-                                    <div className="relative w-full h-64 md:h-72 mt-2 mb-3 md:mt-3 md:mb-4 rounded-2xl bg-white/90 backdrop-blur-[2px] ring-1 ring-black/5 overflow-hidden shadow-md">
+                                <div key={feature.id} className="w-full h-full flex-shrink-0 flex flex-col items-center justify-center translate-y-1 md:translate-y-0 p-3 sm:p-4 md:p-5 lg:p-6 gap-2 sm:gap-3">
+                                    <div className="relative w-full h-44 sm:h-52 md:h-60 lg:h-72 mt-1 mb-2 sm:mt-2 sm:mb-3 md:mt-3 md:mb-4 rounded-xl sm:rounded-2xl bg-white/90 backdrop-blur-[2px] ring-1 ring-black/5 overflow-hidden shadow-md">
                                         <AnimatePresence>
                                             { (feature.id !== 2 || step !== 4) && feature.gifUrl && (
                                                 <motion.div key={`${feature.id}-gif`} className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -211,12 +211,12 @@ export function WhatStorySection() {
                                             )}
                                         </AnimatePresence>
               </div>
-                                    <div className="w-full bg-white/90 backdrop-blur-[2px] rounded-2xl py-4 md:py-5 px-3 md:px-4 shadow-md">
-                                        <div className="flex items-center gap-2 mb-1.5">
-                                            <feature.icon className="w-5 h-5 text-teal-500" />
-                                            <h3 className="text-base md:text-xl font-semibold text-gray-900">{feature.title}</h3>
+                                    <div className="w-full bg-white/90 backdrop-blur-[2px] rounded-xl sm:rounded-2xl py-2.5 sm:py-3 md:py-4 lg:py-5 px-3 sm:px-3.5 md:px-4 shadow-md">
+                                        <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-1.5">
+                                            <feature.icon className="w-4 h-4 sm:w-5 sm:h-5 text-teal-500" />
+                                            <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-gray-900">{feature.title}</h3>
               </div>
-                                        <p className="text-sm md:text-base text-gray-700 leading-relaxed">{feature.description}</p>
+                                        <p className="text-xs sm:text-sm md:text-base text-gray-700 leading-relaxed whitespace-pre-line">{feature.description}</p>
               </div>
             </div>
                             ))}

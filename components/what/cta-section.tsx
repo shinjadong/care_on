@@ -89,12 +89,14 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
             >
               <Users className="w-10 h-10 text-white" />
             </motion.div>
-            <h3 className="text-3xl md:text-4xl font-bold text-[#222222] mb-6 leading-tight">
-              모두에게 드릴 순 없습니다
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#222222] mb-4 sm:mb-6 leading-tight px-4">
+              폐업을 보장하는 '스타트 케어'
             </h3>
-            <p className="text-md md:text-xl text-[#222222] leading-relaxed">
-              정말 필요한 분들에게만 <br />
-              제대로 된 케어를 제공하고 싶습니다
+            <p className="text-base sm:text-lg md:text-xl text-[#222222] leading-relaxed px-4">
+              1년 내 폐업할 시, 최대 100% 환급 <br className="hidden sm:block" />
+              <span className="sm:hidden">1년 내 폐업할 시, 최대 100% 환급</span>
+              <br className="sm:hidden" />
+              그리고, '단 한번'만 진행하는 특별한 혜택
             </p>
           </motion.div>
         )}
@@ -119,20 +121,20 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
             </motion.div>
             <div className="mb-6">
               <motion.div
-                className="text-5xl md:text-7xl font-black text-red-500 mb-2"
+                className="text-4xl sm:text-5xl md:text-7xl font-black text-red-500 mb-2"
                 initial={{ scale: 0.5 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.64, delay: 0.16, type: "spring", bounce: 0.4 }}
               >
-                딱, 3일
+                단 3일 동안
               </motion.div>
               <motion.p
-                className="text-xl md:text-2xl font-bold text-[#222222]"
+                className="text-lg sm:text-xl md:text-2xl font-bold text-[#222222] px-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.48 }}
               >
-                동안만 모집합니다
+                스타트 케어 체험단을 모집합니다.
               </motion.p>
             </div>
           </motion.div>
@@ -156,11 +158,11 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
             >
               <CheckCircle className="w-10 h-10 text-white" />
             </motion.div>
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-700 mb-6 leading-tight">
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-700 mb-4 sm:mb-6 leading-tight">
               지금 시작하세요!
             </h3>
             <motion.button
-              className="inline-flex items-center px-8 py-4 bg-white text-teal-600 text-lg md:text-xl font-bold rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 group"
+              className="inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-teal-600 text-base sm:text-lg md:text-xl font-bold rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 group"
               onClick={() => window.location.href = 'https://forms.gle/xUcRxNYcFnYGZjga7'}
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
@@ -171,6 +173,16 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
               예약 대기 신청
               <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
             </motion.button>
+            
+            {/* 남은 자리 표시 */}
+            <motion.p
+              className="mt-4 text-sm text-gray-600"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              체험단 <span className="font-bold text-red-500">50명 중 42명</span> 신청 완료
+            </motion.p>
           </motion.div>
         )}
       </AnimatePresence>

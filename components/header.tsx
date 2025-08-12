@@ -208,13 +208,10 @@ export function Header() {
           {/* 로고 영역 - 케어온 브랜드 아이덴티티 */}
           <div className="flex items-center space-x-4">
             <Link href="/" className="flex items-center space-x-3 group">
-              {/* 로고 이미지 - 스크롤 상태에 따라 다른 이미지 표시 */}
+              {/* 로고 이미지 - 항상 원래 색상(민트)으로 표시 */}
               <div className="relative h-12 w-12 transition-all duration-300 group-hover:scale-105">
                 <Image
-                  src={isScrolled 
-                    ? "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EC%BC%80%EC%96%B4%EC%98%A8%EB%A1%9C%EA%B3%A0-%EC%97%AC%EB%B0%B1%EC%A0%9C%EA%B1%B0-mint.png"
-                    : "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EC%BC%80%EC%96%B4%EC%98%A8%EB%A1%9C%EA%B3%A0-%EC%97%AC%EB%B0%B1%EC%A0%9C%EA%B1%B0-white.png"
-                  }
+                  src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EC%BC%80%EC%96%B4%EC%98%A8%EB%A1%9C%EA%B3%A0-%EC%97%AC%EB%B0%B1%EC%A0%9C%EA%B1%B0-mint.png"
                   alt="케어온 로고"
                   fill
                   className="object-contain"

@@ -122,7 +122,7 @@ export function StartCareSlidesSection() {
                   </p>
                 </div>
               </div>
-              <div className="absolute -right-8 -bottom-8 md:-right-10 md:-bottom-10 w-48 h-48 md:w-64 md:h-64 pointer-events-none">
+              <div className="absolute -right-6 -bottom-6 sm:-right-8 sm:-bottom-8 md:-right-10 md:-bottom-10 w-36 h-36 sm:w-48 sm:h-48 md:w-64 md:h-64 pointer-events-none">
                 <Image
                   src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EB%A7%88%EC%8A%A4%EC%BD%94%ED%8A%B81.png"
                   alt="StartCare 보장 이미지"
@@ -150,7 +150,7 @@ export function StartCareSlidesSection() {
                   </p>
                 </div>
               </div>
-              <div className="absolute -right-8 -bottom-8 md:-right-10 md:-bottom-10 w-48 h-48 md:w-64 md:h-64 pointer-events-none">
+              <div className="absolute -right-6 -bottom-6 sm:-right-8 sm:-bottom-8 md:-right-10 md:-bottom-10 w-36 h-36 sm:w-48 sm:h-48 md:w-64 md:h-64 pointer-events-none">
                 <Image
                   src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EB%A7%88%EC%8A%A4%EC%BD%94%ED%8A%B82.png"
                   alt="합리적 가격 이미지"
@@ -178,7 +178,7 @@ export function StartCareSlidesSection() {
                   </p>
                 </div>
               </div>
-              <div className="absolute -right-8 -bottom-8 md:-right-10 md:-bottom-10 w-48 h-48 md:w-64 md:h-64 pointer-events-none">
+              <div className="absolute -right-6 -bottom-6 sm:-right-8 sm:-bottom-8 md:-right-10 md:-bottom-10 w-36 h-36 sm:w-48 sm:h-48 md:w-64 md:h-64 pointer-events-none">
                 <Image
                   src="https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/%EB%A7%88%EC%8A%A4%EC%BD%94%ED%8A%B8-3"
                   alt="대기업 협력사 이미지"

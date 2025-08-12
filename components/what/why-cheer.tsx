@@ -139,7 +139,6 @@ export const WhyCheer = forwardRef<HTMLElement>((props, ref) => {
             </motion.div>
         )}
       </AnimatePresence>
-
     </section>
   );
 });

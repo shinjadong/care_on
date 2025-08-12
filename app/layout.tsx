@@ -4,6 +4,7 @@ import "./globals.css"
 import { ConditionalFooter } from "@/components/conditional-footer"
 import { Header } from "@/components/header"
 import { FloatingBanner } from "@/components/floating-banner"
+import { FloatingCTAButton } from "@/components/floating-cta-button"
 
 export const metadata: Metadata = {
   title: "케어온 - 창업자의 든든한 파트너",
@@ -40,6 +41,7 @@ export default function RootLayout({
         {children}
         <ConditionalFooter />
         <FloatingBanner />
+        <FloatingCTAButton />
       </body>
     </html>
   )
