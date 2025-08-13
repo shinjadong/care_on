@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { Menu, Phone, Shield, Lightbulb, Star } from "lucide-react"
 import {
   NavigationMenu,
@@ -290,6 +290,10 @@ export function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px] rounded-l-2xl">
+                <SheetHeader className="sr-only">
+                  <SheetTitle>메뉴</SheetTitle>
+                  <SheetDescription>사이트 네비게이션 메뉴입니다</SheetDescription>
+                </SheetHeader>
                 <div className="flex flex-col h-full">
                   {/* 모바일 메뉴 헤더 */}
                   <div className="flex flex-col space-y-3 py-6 border-b">
