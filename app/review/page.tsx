@@ -1,11 +1,24 @@
 "use client"
+
+import type React from "react"
 import { Button } from "@/components/ui/button"
 import { PlusIcon } from "@heroicons/react/24/outline"
 import { useState, useRef, useEffect } from "react"
 import dynamic from "next/dynamic"
 import { WhenVisible } from "@/components/common/when-visible"
-import { motion } from "framer-motion"
 import type { Review } from "@/components/review/review-card"
+
+const MotionDiv = dynamic(
+  async () => {
+    const fm = await import("framer-motion")
+    return ({ children, className, ...props }: { children: React.ReactNode; className?: string; [key: string]: any }) => (
+      <fm.motion.div className={className} layout {...props}>
+        {children}
+      </fm.motion.div>
+    )
+  },
+  { ssr: false },
+)
 
 const ReviewHeader = dynamic(() => import("@/components/review/review-header").then((m) => m.ReviewHeader))
 const CategoryFilter = dynamic(() => import("@/components/review/category-filter").then((m) => m.CategoryFilter))
@@ -21,7 +34,7 @@ interface ReviewsResponse {
 }
 
 export default function ReviewPage() {
-  const [selectedCategory, setSelectedCategory] = useState("전체")
+  const [selectedBusinessType, setSelectedBusinessType] = useState("전체")
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [reviews, setReviews] = useState<Review[]>([])
@@ -29,7 +42,7 @@ export default function ReviewPage() {
   const [totalPages, setTotalPages] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const reviewsPerPage = 20
+  const reviewsPerPage = 12
 
   const reviewsSectionRef = useRef<HTMLDivElement>(null)
 
@@ -47,8 +60,8 @@ export default function ReviewPage() {
         limit: reviewsPerPage.toString(),
       })
 
-      if (selectedCategory !== "전체") {
-        params.append("category", selectedCategory)
+      if (selectedBusinessType !== "전체") {
+        params.append("businessType", selectedBusinessType)
       }
 
       if (searchTerm) {
@@ -76,10 +89,10 @@ export default function ReviewPage() {
 
   useEffect(() => {
     fetchReviews()
-  }, [selectedCategory, searchTerm, currentPage])
+  }, [selectedBusinessType, searchTerm, currentPage])
 
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category)
+  const handleBusinessTypeChange = (businessType: string) => {
+    setSelectedBusinessType(businessType)
     setCurrentPage(1)
   }
 
@@ -89,121 +102,78 @@ export default function ReviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-gray-50">
       <ReviewHeader totalCount={totalCount} onScrollClick={handleScrollDown} />
 
-      <div ref={reviewsSectionRef} className="container mx-auto px-4 py-12 max-w-7xl">
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-600 to-pink-500 bg-clip-text text-transparent mb-4">
-            Share Your Experience
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Help Others Make Informed Choices
-          </p>
+      <div ref={reviewsSectionRef} className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+              고객 후기
+            </h1>
+            <p className="text-gray-600 mt-1">케어온과 함께한 창업자들의 생생한 경험담</p>
+          </div>
+          <Button
+            asChild
+            className="bg-[#148777] hover:bg-[#0f6b5c] text-white px-6 py-3 rounded-lg font-medium transition-all duration-200"
+          >
+            <a href="/review/write" className="flex items-center gap-2">
+              <PlusIcon className="w-5 h-5" />
+              <span>후기 작성하기</span>
+            </a>
+          </Button>
+        </div>
 
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button
-              asChild
-              className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300"
-            >
-              <a href="/review/write" className="flex items-center gap-3">
-                <PlusIcon className="w-6 h-6" />
-                Write a Review
-              </a>
-            </Button>
-          </motion.div>
-        </motion.div>
-
-        <CategoryFilter selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
+        <CategoryFilter selectedCategory={selectedBusinessType} onCategoryChange={handleBusinessTypeChange} />
 
         {isLoading && (
-          <motion.div className="text-center py-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="relative">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-cyan-200 border-t-cyan-600 mx-auto mb-6"></div>
-              <div
-                className="absolute inset-0 rounded-full h-16 w-16 border-4 border-pink-200 border-t-pink-500 mx-auto animate-spin"
-                style={{ animationDirection: "reverse", animationDuration: "1.5s" }}
-              ></div>
-            </div>
-            <p className="text-gray-600 text-lg">Loading amazing stories...</p>
-          </motion.div>
+          <div className="flex flex-col items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-3 border-gray-200 border-t-[#148777]"></div>
+            <p className="text-gray-600 mt-4">후기를 불러오는 중...</p>
+          </div>
         )}
 
         {error && (
-          <motion.div
-            className="text-center py-20"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-8 max-w-md mx-auto">
-              <div className="text-red-500 text-2xl mb-4">⚠️ Something went wrong</div>
-              <p className="text-gray-600 mb-6">{error}</p>
-              <Button
-                onClick={fetchReviews}
-                className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full transition-colors"
-              >
-                Try Again
-              </Button>
-            </div>
-          </motion.div>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <div className="text-red-600 font-semibold mb-2">오류가 발생했습니다</div>
+            <p className="text-gray-600 mb-4 text-sm">{error}</p>
+            <button
+              onClick={fetchReviews}
+              className="px-4 py-2 bg-[#148777] text-white rounded-lg hover:bg-[#0f6b5c] transition-colors"
+            >
+              다시 시도
+            </button>
+          </div>
         )}
 
         {!isLoading && !error && (
           <>
-            <motion.div
-              className="grid gap-8 mb-16"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
+            <MotionDiv className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
               {reviews.map((review, index) => (
-                <motion.div
-                  key={review.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: index * 0.1,
-                    ease: "easeOut",
-                  }}
-                >
-                  <WhenVisible minHeight={200}>
-                    <ReviewCard review={review} />
-                  </WhenVisible>
-                </motion.div>
+                <WhenVisible key={review.id} minHeight={200}>
+                  <ReviewCard review={review} />
+                </WhenVisible>
               ))}
-            </motion.div>
+            </MotionDiv>
 
-            <motion.div
-              className="flex flex-col lg:flex-row justify-between items-center gap-8 bg-white rounded-2xl p-8 shadow-lg border border-gray-100"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6">
               <ReviewPagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+
               <SearchBar searchTerm={searchTerm} onSearchChange={handleSearchChange} />
-            </motion.div>
+            </div>
 
             {reviews.length === 0 && (
-              <motion.div
-                className="text-center py-20"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+              <MotionDiv
+                className="text-center py-12"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-12 max-w-lg mx-auto">
-                  <div className="text-6xl mb-6">🔍</div>
-                  <div className="text-gray-600 text-xl mb-4">
-                    {searchTerm ? `No results found for "${searchTerm}"` : "No reviews in this category yet"}
-                  </div>
-                  <p className="text-gray-500">Try a different search term or category</p>
+                <div className="text-gray-500">
+                  {searchTerm ? `"${searchTerm}"에 대한 검색 결과가 없습니다.` : "해당 업종의 후기가 없습니다."}
                 </div>
-              </motion.div>
+                <p className="text-gray-400 text-sm mt-2">다른 검색어나 카테고리를 시도해보세요.</p>
+              </MotionDiv>
             )}
           </>
         )}
