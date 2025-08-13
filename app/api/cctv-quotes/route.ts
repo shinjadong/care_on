@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 
 export async function POST(request: Request) {
   const payload = await request.json()
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     // Basic validation

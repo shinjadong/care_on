@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { id } = params
 
     const { data: review, error } = await supabase
@@ -14,11 +14,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       .single()
 
     if (error) {
-      if (error.code === "PGRST116") {
-        return NextResponse.json({ error: "Review not found" }, { status: 404 })
-      }
       console.error("Database error:", error)
-      return NextResponse.json({ error: "Failed to fetch review" }, { status: 500 })
+      return NextResponse.json({ error: "Review not found" }, { status: 404 })
     }
 
     return NextResponse.json({ review })
@@ -30,33 +27,41 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+    // Basic auth check - in production, implement proper authentication
     const authHeader = request.headers.get("authorization")
     if (!authHeader || authHeader !== "Bearer admin-temp-key") {
       return NextResponse.json({ error: "Unauthorized access" }, { status: 401 })
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
     const { id } = params
     const body = await request.json()
 
     // Only allow updating specific fields
-    const allowedFields = ["is_approved", "category", "business", "content", "highlight", "rating", "period"]
-    const updateData: any = {}
+    const allowedFields = ["is_approved", "highlight", "rating", "period"]
+    const updateData: Record<string, any> = {}
 
     for (const field of allowedFields) {
-      if (body[field] !== undefined) {
+      if (field in body) {
         updateData[field] = body[field]
       }
     }
 
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "No valid fields to update" }, { status: 400 })
+    }
+
+    // Add updated_at timestamp
     updateData.updated_at = new Date().toISOString()
 
-    const { data: review, error } = await supabase.from("reviews").update(updateData).eq("id", id).select().single()
+    const { data: review, error } = await supabase
+      .from("reviews")
+      .update(updateData)
+      .eq("id", id)
+      .select()
+      .single()
 
     if (error) {
-      if (error.code === "PGRST116") {
-        return NextResponse.json({ error: "Review not found" }, { status: 404 })
-      }
       console.error("Database error:", error)
       return NextResponse.json({ error: "Failed to update review" }, { status: 500 })
     }

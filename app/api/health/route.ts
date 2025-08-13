@@ -1,4 +1,10 @@
-import { createClient, isSupabaseConfigured } from "@/lib/supabase/server"
+import { createClient } from "@/lib/supabase/server"
+
+// Helper function to check if Supabase is configured
+const isSupabaseConfigured = !!(
+  (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL) &&
+  (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+)
 
 export async function GET() {
   try {
@@ -25,7 +31,7 @@ export async function GET() {
     }
 
     // Test database connection
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data, error } = await supabase.from("reviews").select("count(*)").limit(1)
 
     if (error) {

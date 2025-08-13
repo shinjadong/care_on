@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   try {
     console.log("🔍 Starting reviews API request")
 
-    const supabase = createClient()
+    const supabase = await createClient()
     console.log("✅ Supabase client created")
 
     const { searchParams } = new URL(request.url)
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const body = await request.json()
 
     // Validate required fields

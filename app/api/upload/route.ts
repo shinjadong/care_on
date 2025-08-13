@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "파일 크기가 너무 큽니다 (최대 100MB)" }, { status: 413 })
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
     const formData = await request.formData()
     const file = formData.get("file") as File
 
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const fileName = searchParams.get("fileName")
 
