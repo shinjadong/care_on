@@ -111,7 +111,7 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
     >
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">후기 작성하기</h2>
-        <p className="text-gray-600">케어온과 함께한 경험을 공유해주세요. 다른 사장님들께  큰 도움이 됩니다.</p>
+        <p className="text-gray-600">케어온과 함께한 경험을 공유해주세요. 다른 창업자들에게 큰 도움이 됩니다.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -123,7 +123,7 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
               id="author_name"
               value={formData.author_name}
               onChange={(e) => handleInputChange("author_name", e.target.value)}
-              placeholder="성함을 입력해주세요"
+              placeholder="실명을 입력해주세요"
               required
             />
           </div>
@@ -134,7 +134,7 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
               type="email"
               value={formData.author_email}
               onChange={(e) => handleInputChange("author_email", e.target.value)}
-              placeholder="후기 이벤트 당첨 결과를 확인 할 수 있는 이메일"
+              placeholder="연락 가능한 이메일"
               required
             />
           </div>
@@ -143,10 +143,10 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
         {/* 사업 정보 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="category">창업 연차 *</Label>
+            <Label htmlFor="category">카테고리 *</Label>
             <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
               <SelectTrigger>
-                <SelectValue placeholder=" 선택해주세요" />
+                <SelectValue placeholder="카테고리를 선택하세요" />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((category) => (
@@ -169,7 +169,15 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
           </div>
         </div>
 
-        
+        <div className="space-y-2">
+          <Label htmlFor="period">사업 기간</Label>
+          <Input
+            id="period"
+            value={formData.period}
+            onChange={(e) => handleInputChange("period", e.target.value)}
+            placeholder="예: 2023년 3월 ~ 현재"
+          />
+        </div>
 
         {/* 후기 내용 */}
         <div className="space-y-2">
@@ -178,21 +186,21 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
             id="content"
             value={formData.content}
             onChange={(e) => handleInputChange("content", e.target.value)}
-            placeholder="케어온과 함께한 경험을 자유롭게 작성해주세요."
+            placeholder="케어온과 함께한 경험을 자세히 작성해주세요. 구체적인 도움을 받은 내용, 성과, 추천 이유 등을 포함해주시면 좋습니다."
             className="min-h-[120px]"
             required
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="highlight">다른 사장님과 공유할 꿀팁이 있다면(선택사항)</Label>
+          <Label htmlFor="highlight">강조하고 싶은 문구</Label>
           <Input
             id="highlight"
             value={formData.highlight}
             onChange={(e) => handleInputChange("highlight", e.target.value)}
-            placeholder="후기에서 하이라이트로 표시됩니다. (선택사항)"
+            placeholder="후기에서 하이라이트로 표시할 핵심 문구 (선택사항)"
           />
-          <p className="text-sm text-gray-500">꿀팁은 강조 표시됩니다.</p>
+          <p className="text-sm text-gray-500">입력하신 문구는 후기에서 노란색으로 강조 표시됩니다.</p>
         </div>
 
         {/* 사진 및 동영상 첨부 */}
@@ -207,7 +215,7 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
             />
           </div>
           <p className="text-sm text-gray-500">
-            설치 완료 사진 등 자유롭게 케어온 서비스와 관련된 것이라면 무엇이든 첨부하실 수 있습니다.
+            사업장 사진, 제품 이미지, 성과를 보여주는 자료 등을 첨부하시면 더욱 생생한 후기가 됩니다.
           </p>
         </div>
 
@@ -277,7 +285,7 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
           <ul className="space-y-1 text-xs">
             <li>• 제출된 후기는 검토 후 게시됩니다.</li>
             <li>• 허위 정보나 부적절한 내용은 게시되지 않을 수 있습니다.</li>
-            <li>• 업로드된 이미지와 동영상은 안전하게 저장됩니다.</li>
+            <li>• 업로드된 이미지와 동영상은 Supabase Storage에 안전하게 저장됩니다.</li>
             <li>• 개인정보는 후기 관리 목적으로만 사용됩니다.</li>
             <li>• 문의사항이 있으시면 고객센터로 연락해주세요.</li>
           </ul>
