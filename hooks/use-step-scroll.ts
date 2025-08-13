@@ -148,5 +148,3 @@ export function useStepScroll(options: UseStepScrollOptions): UseStepScrollRetur
 
   return { sectionRef, step, setStep, isAnimating }
 }
-
-

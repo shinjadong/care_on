@@ -15,33 +15,33 @@
 
 ### 1. 의존성 설치
 
-```bash
+\`\`\`bash
 npm install
-```
+\`\`\`
 
 ### 2. 개발 서버 실행
 
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 개발 서버가 [http://localhost:3000](http://localhost:3000)에서 실행됩니다.
 
 ### 3. 빌드
 
-```bash
+\`\`\`bash
 npm run build
-```
+\`\`\`
 
 ### 4. 프로덕션 서버 실행
 
-```bash
+\`\`\`bash
 npm start
-```
+\`\`\`
 
 ## 프로젝트 구조
 
-```
+\`\`\`
 care_on/
 ├── app/                 # Next.js App Router
 ├── components/          # 재사용 가능한 컴포넌트
@@ -50,7 +50,7 @@ care_on/
 ├── public/             # 정적 파일
 ├── styles/             # 스타일 파일
 └── ...
-```
+\`\`\`
 
 ## 기능
 

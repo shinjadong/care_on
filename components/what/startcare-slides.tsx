@@ -95,18 +95,9 @@ export function StartCareSlidesSection() {
         }
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        케어온<br /> 스타트케어란?
+        케어온의<br /> 스타트케어란?
       </motion.h2>
       <AnimatePresence mode="wait">
-
-        {step === 0 && (
-          <motion.div key="s0" className="text-center max-w-3xl"
-            variants={slideVariants} initial="hidden" animate="visible" exit="exit">
-            <p className="text-lg md:text-2xl text-[#222222] leading-relaxed whitespace-pre-line mt-24 md:mt-28">
-              {`Start-up이 아닌 Start-care\n올라가는 게 아니라 돌봄이 필요한,\n당신을 위해`}
-            </p>
-          </motion.div>
-        )}
 
         {step === 1 && (
           <motion.div key="s1" className="w-full flex items-center justify-center"
@@ -174,7 +165,7 @@ export function StartCareSlidesSection() {
                     <span style={{color: '#148777'}}>A/S 걱정 </span>없는<br /> 전문적인<br /> 대기업 협력사
                   </h3>
                   <p className="text-base md:text-xl font-medium text-gray-600 leading-snug whitespace-pre-line">
-                    {`고장, 수리? 걱정마세요!\n사업에만 집중하세요\n신뢰할 수 있는\n국내 최고수준의\n 파트너사와\n 함께합니다`}
+                    {`고장, 수리? 걱정마세요!\n 신뢰할 수 있는\n국내 최고의\n 파트너사와\n 함께합니다`}
                   </p>
                 </div>
               </div>
@@ -198,4 +189,3 @@ export function StartCareSlidesSection() {
 }
 
 export default StartCareSlidesSection
-

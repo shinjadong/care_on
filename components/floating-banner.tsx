@@ -117,4 +117,4 @@ export function FloatingBanner() {
       </div>
     </div>
   )
-} 
+}
