@@ -204,24 +204,23 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
           <div className="flex items-center justify-between">
             {steps.map((step, index) => (
               <div key={step.number} className="flex items-center">
-                <motion.button
+                <button
+                  type="button"
                   onClick={() => isStepValid(step.number - 1) || step.number <= currentStep ? setCurrentStep(step.number) : null}
                   className={`flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 ${
                     currentStep === step.number
                       ? "bg-[#148777] text-white shadow-lg scale-110"
                       : currentStep > step.number
-                      ? "bg-green-100 text-green-700 cursor-pointer hover:bg-green-200"
+                      ? "bg-green-100 text-green-700 cursor-pointer hover:bg-green-200 hover:scale-110 active:scale-95"
                       : "bg-gray-100 text-gray-400"
                   }`}
-                  whileHover={currentStep > step.number ? { scale: 1.1 } : {}}
-                  whileTap={currentStep > step.number ? { scale: 0.95 } : {}}
                 >
                   {currentStep > step.number ? (
                     <CheckCircleIcon className="w-6 h-6" />
                   ) : (
                     <step.icon className="w-6 h-6" />
                   )}
-                </motion.button>
+                </button>
                 <div className="ml-3 mr-8">
                   <p className={`text-sm font-medium ${
                     currentStep === step.number ? "text-[#148777]" : "text-gray-500"
@@ -307,22 +306,20 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
                           <label htmlFor="category" className="text-sm font-medium text-gray-700">카테고리 *</label>
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                             {categories.map((category) => (
-                              <motion.button
+                              <button
                                 key={category.value}
                                 type="button"
                                 onClick={() => handleInputChange("category", category.value)}
-                                className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                                className={`p-4 rounded-xl border-2 transition-all duration-200 hover:scale-105 active:scale-95 ${
                                   formData.category === category.value
                                     ? "border-[#148777] bg-[#148777]/10 shadow-md"
                                     : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                                 }`}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
                               >
                                 <div className="text-2xl mb-2">{category.icon}</div>
                                 <div className="text-sm font-medium text-gray-900">{category.label}</div>
                                 <div className="text-xs text-gray-500 mt-1">{category.description}</div>
-                              </motion.button>
+                              </button>
                             ))}
                           </div>
                         </div>
@@ -333,21 +330,19 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
                           </label>
                           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                             {businessTypes.map((type) => (
-                              <motion.button
+                              <button
                                 key={type.value}
                                 type="button"
                                 onClick={() => handleInputChange("business", type.value)}
-                                className={`p-3 rounded-lg border-2 transition-all duration-200 flex items-center justify-center ${
+                                className={`p-3 rounded-lg border-2 transition-all duration-200 flex items-center justify-center hover:scale-105 active:scale-95 ${
                                   formData.business === type.value
                                     ? "border-[#148777] bg-[#148777]/10 shadow-md"
                                     : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                                 }`}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
                               >
                                 <span className="text-xl mr-2">{type.icon}</span>
                                 <span className="text-sm font-medium text-gray-900">{type.label}</span>
-                              </motion.button>
+                              </button>
                             ))}
                           </div>
                         </div>
@@ -406,20 +401,18 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
                         <div className="flex flex-wrap gap-2 mt-3">
                           <span className="text-xs text-gray-500">추천 키워드:</span>
                           {highlightKeywords.map((keyword) => (
-                            <motion.button
+                            <button
                               key={keyword}
                               type="button"
                               onClick={() => handleInputChange("highlight", keyword)}
-                              className={`px-3 py-1 text-xs rounded-full transition-colors duration-200 ${
+                              className={`px-3 py-1 text-xs rounded-full transition-all duration-200 hover:scale-105 active:scale-95 ${
                                 formData.highlight === keyword
                                   ? "bg-[#148777] text-white"
                                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                               }`}
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
                             >
                               {keyword}
-                            </motion.button>
+                            </button>
                           ))}
                         </div>
                         <p className="text-xs text-gray-500 flex items-center">
@@ -460,22 +453,20 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
                           <div className="flex flex-col items-center">
                             <div className="flex items-center gap-2 mb-3">
                               {[1, 2, 3, 4, 5].map((star) => (
-                                <motion.button
+                                <button
                                   key={star}
                                   type="button"
                                   onClick={() => handleRatingClick(star)}
                                   onMouseEnter={() => handleRatingHover(star)}
                                   onMouseLeave={handleRatingLeave}
-                                  className="p-1 transition-all duration-200"
-                                  whileHover={{ scale: 1.2 }}
-                                  whileTap={{ scale: 0.9 }}
+                                  className="p-1 transition-all duration-200 hover:scale-110 active:scale-90"
                                 >
                                   {star <= (hoveredRating || formData.rating) ? (
                                     <StarIcon className="w-10 h-10 text-yellow-500 drop-shadow-md" />
                                   ) : (
                                     <StarOutlineIcon className="w-10 h-10 text-gray-300" />
                                   )}
-                                </motion.button>
+                                </button>
                               ))}
                             </div>
                             <AnimatePresence mode="wait">
