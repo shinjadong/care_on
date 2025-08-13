@@ -8,7 +8,7 @@ export function AnxietyCheck() {
       <div className="container mx-auto px-4 text-center">
         <motion.h2 
           className="text-3xl md:text-5xl lg:text-6xl font-bold font-serif text-white mb-8"
-          initial={{ opacity: 0, y: 30 }} // 첫 번째 문장이 아래에서 올라옴 (진실이 드러나는 것처럼)
+          initial={{ opacity: 0, y: 30 }} // 첫 ��째 문장이 아래에서 올라옴 (진실이 드러나는 것처럼)
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.5 }}

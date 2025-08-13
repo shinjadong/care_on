@@ -194,11 +194,11 @@ export function MediaUpload({
 
       {/* YouTube URL Section */}
       <div>
-        <Label className="text-sm font-medium mb-2 block">YouTube 동영상 링크</Label>
+        <Label className="text-sm font-medium mb-2 block">YouTube 링크</Label>
         <div className="flex gap-2">
           <Input
             type="url"
-            placeholder="YouTube URL을 입력하세요"
+            placeholder="YouTube에 올리셨다면, URL을 입력하세요"
             value={youtubeInput}
             onChange={(e) => setYoutubeInput(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && addYoutubeUrl()}

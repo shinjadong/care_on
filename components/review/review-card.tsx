@@ -115,6 +115,16 @@ function YouTubeEmbed({ url }: { url: string }) {
   )
 }
 
+function maskAuthorName(name: string): string {
+  if (!name || name.length <= 2) return name
+
+  const firstChar = name.charAt(0)
+  const lastChar = name.charAt(name.length - 1)
+  const middleStars = "*".repeat(name.length - 2)
+
+  return `${firstChar}${middleStars}${lastChar}`
+}
+
 export function ReviewCard({ review }: ReviewCardProps) {
   const categoryStyle = categoryColors[review.category as keyof typeof categoryColors] || categoryColors["전체"]
   const hasMedia = (review.images && review.images.length > 0) || (review.videos && review.videos.length > 0)
@@ -122,27 +132,34 @@ export function ReviewCard({ review }: ReviewCardProps) {
 
   return (
     <motion.div
-      className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-300"
+      className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 hover:shadow-2xl transition-all duration-500 group overflow-hidden relative"
       whileHover={{
-        y: -2,
-        transition: { duration: 0.2 },
+        y: -8,
+        transition: { duration: 0.3, ease: "easeOut" },
       }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
     >
-      <div className="flex flex-col gap-4">
-        {/* 헤더: 카테고리 배지와 업종 정보 */}
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-cyan-50/50 to-pink-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"
+        initial={false}
+      />
+
+      <div className="relative z-10 flex flex-col gap-6">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
           <div className="flex-shrink-0">
             <motion.div
-              className={`inline-block px-3 py-1 rounded-full text-xs md:text-sm font-medium border ${categoryStyle}`}
+              className={`inline-block px-4 py-2 rounded-full text-sm font-semibold border-2 ${categoryStyle} shadow-sm`}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
+              whileHover={{ scale: 1.05 }}
             >
               {review.category}
             </motion.div>
 
             <motion.div
-              className="mt-2 text-sm font-semibold text-gray-800"
+              className="mt-3 text-lg font-bold text-gray-800"
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.1, ease: "easeOut" }}
@@ -150,28 +167,28 @@ export function ReviewCard({ review }: ReviewCardProps) {
               {review.business}
             </motion.div>
 
-            {/* 기간 정보 (있는 경우) */}
             {review.period && (
               <motion.div
-                className="mt-1 text-xs text-gray-500"
+                className="mt-2 text-sm text-gray-500 flex items-center gap-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, delay: 0.2, ease: "easeOut" }}
               >
-                📅 {review.period}
+                <span className="w-2 h-2 bg-cyan-500 rounded-full"></span>
+                {review.period}
               </motion.div>
             )}
           </div>
 
-          {/* 케어온 로고 워터마크 */}
           <motion.div
-            className="hidden md:block flex-shrink-0 opacity-10"
+            className="hidden lg:block flex-shrink-0"
             initial={{ opacity: 0, rotate: -10 }}
             animate={{ opacity: 0.1, rotate: 0 }}
             transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+            whileHover={{ opacity: 0.2, scale: 1.1 }}
           >
-            <div className="w-12 h-12 bg-[#148777] rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-sm">C</span>
+            <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-lg">✨</span>
             </div>
           </motion.div>
         </div>
@@ -181,60 +198,71 @@ export function ReviewCard({ review }: ReviewCardProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
+            className="rounded-2xl overflow-hidden shadow-lg"
           >
             <MediaCarousel images={review.images} videos={review.videos} />
           </motion.div>
         )}
 
-        {/* 후기 내용 */}
         <motion.div
           className="flex-1"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
         >
-          <blockquote className="text-gray-700 leading-relaxed">
-            <span className="text-[#148777] text-lg">"</span>
+          <blockquote className="text-gray-700 leading-relaxed text-lg">
+            <span className="text-cyan-600 text-3xl font-serif">"</span>
             {review.highlight ? (
               <span>
                 {review.content.split(review.highlight)[0]}
-                <span className="bg-yellow-200 px-1 rounded font-medium">{review.highlight}</span>
+                <span className="bg-gradient-to-r from-yellow-200 to-yellow-300 px-2 py-1 rounded-lg font-semibold text-gray-800 shadow-sm">
+                  {review.highlight}
+                </span>
                 {review.content.split(review.highlight)[1]}
               </span>
             ) : (
               review.content
             )}
-            <span className="text-[#148777] text-lg">"</span>
+            <span className="text-cyan-600 text-3xl font-serif">"</span>
           </blockquote>
 
-          {/* 평점 (있는 경우) */}
           {review.rating && (
             <motion.div
-              className="mt-3 flex items-center gap-2"
+              className="mt-4 flex items-center gap-3"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3, delay: 0.3, ease: "easeOut" }}
             >
-              <div className="flex text-yellow-500">
+              <div className="flex text-yellow-500 text-xl">
                 {[...Array(5)].map((_, i) => (
-                  <span key={i} className={i < review.rating! ? "★" : "☆"}>
+                  <motion.span
+                    key={i}
+                    className={i < review.rating! ? "★" : "☆"}
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.2, delay: 0.4 + i * 0.1 }}
+                  >
                     ★
-                  </span>
+                  </motion.span>
                 ))}
               </div>
-              <span className="text-sm text-gray-500">{review.rating}/5</span>
+              <span className="text-sm text-gray-500 font-medium bg-gray-100 px-3 py-1 rounded-full">
+                {review.rating}/5
+              </span>
             </motion.div>
           )}
 
-          {/* 작성자 정보 (있는 경우) */}
           {review.author_name && (
             <motion.div
-              className="mt-3 text-sm text-gray-500"
+              className="mt-4 text-sm text-gray-500 flex items-center gap-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3, delay: 0.4, ease: "easeOut" }}
             >
-              작성자: {review.author_name}
+              <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-pink-400 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                {maskAuthorName(review.author_name).charAt(0)}
+              </div>
+              <span>by {maskAuthorName(review.author_name)}</span>
             </motion.div>
           )}
         </motion.div>
@@ -246,26 +274,40 @@ export function ReviewCard({ review }: ReviewCardProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}
           >
-            <h4 className="text-sm font-medium text-gray-700">관련 동영상</h4>
-            <div className="grid gap-4">
+            <h4 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+              <span className="w-6 h-6 bg-red-500 rounded flex items-center justify-center text-white text-xs">▶</span>
+              Related Videos
+            </h4>
+            <div className="grid gap-6">
               {review.youtube_urls!.map((url, index) => (
-                <YouTubeEmbed key={index} url={url} />
+                <div key={index} className="rounded-2xl overflow-hidden shadow-lg">
+                  <YouTubeEmbed url={url} />
+                </div>
               ))}
             </div>
           </motion.div>
         )}
 
-        {/* 메타 정보 */}
         <motion.div
-          className="flex flex-wrap gap-4 text-xs text-gray-500 pt-2 border-t border-gray-100"
+          className="flex flex-wrap gap-4 text-sm text-gray-500 pt-4 border-t border-gray-100"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3, delay: 0.5, ease: "easeOut" }}
         >
-          {review.created_at && <span>작성일: {new Date(review.created_at).toLocaleDateString("ko-KR")}</span>}
+          {review.created_at && (
+            <span className="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded-full">
+              <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+              {new Date(review.created_at).toLocaleDateString("ko-KR")}
+            </span>
+          )}
           {review.is_approved !== undefined && (
-            <span className={review.is_approved ? "text-green-600" : "text-orange-600"}>
-              {review.is_approved ? "승인됨" : "검토중"}
+            <span
+              className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+                review.is_approved ? "bg-green-50 text-green-600" : "bg-orange-50 text-orange-600"
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full ${review.is_approved ? "bg-green-500" : "bg-orange-500"}`}></span>
+              {review.is_approved ? "Verified" : "Under Review"}
             </span>
           )}
         </motion.div>
