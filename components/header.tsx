@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Phone, Shield, Lightbulb } from "lucide-react"
+import { Menu, Phone, Shield, Lightbulb, Star } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -89,12 +89,12 @@ const navItems = [
     icon: Lightbulb,
     description: "돌봄이 필요한 당신을 위해",
   },
-  // {
-  //   name: "실제 후기",
-  //   href: "/review",
-  //   icon: Star,
-  //   description: "결과를 직접 확인해보세요."
-  // },
+  {
+    name: "실제 후기",
+    href: "/review",
+    icon: Star,
+    description: "결과를 직접 확인해보세요",
+  },
 ]
 
 export function Header() {

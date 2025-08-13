@@ -4,6 +4,12 @@ import { createClient } from "@/lib/supabase/server"
 // Admin endpoint to get all reviews (including unapproved ones)
 export async function GET(request: NextRequest) {
   try {
+    // Basic auth check - in production, implement proper authentication
+    const authHeader = request.headers.get("authorization")
+    if (!authHeader || authHeader !== "Bearer admin-temp-key") {
+      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 })
+    }
+
     const supabase = createClient()
     const { searchParams } = new URL(request.url)
 

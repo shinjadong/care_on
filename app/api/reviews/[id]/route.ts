@@ -30,6 +30,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+    const authHeader = request.headers.get("authorization")
+    if (!authHeader || authHeader !== "Bearer admin-temp-key") {
+      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 })
+    }
+
     const supabase = createClient()
     const { id } = params
     const body = await request.json()
@@ -68,6 +73,11 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+    const authHeader = request.headers.get("authorization")
+    if (!authHeader || authHeader !== "Bearer admin-temp-key") {
+      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 })
+    }
+
     const supabase = createClient()
     const { id } = params
 
