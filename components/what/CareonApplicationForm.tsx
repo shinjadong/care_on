@@ -6,7 +6,7 @@ import BusinessTypeGrid from "./BusinessTypeGrid"
 import BusinessTypeGridCompact from "./BusinessTypeGridCompact"
 import BusinessTypeToggle from "./BusinessTypeToggle"
 import AddressSearch from "./AddressSearch"
-import { createClient } from "@/lib/supabase/client"
+import { createClient } from "@/lib/supabase/client-with-fallback"
 
 type FormData = {
   name: string
