@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic"
 import { WhenVisible } from "@/components/common/when-visible"
 import { Suspense } from "react"
-import { GlobalScrollIndicator } from "@/components/common/global-scroll-indicator"
+
 
 // 교육자 모드 설명:
 // - 동적 임포트로 비디오/이미지/애니메이션이 포함된 섹션의 초기 비용을 뒤로 미룹니다.
@@ -53,8 +53,7 @@ export default function WhatPage() {
         <WhenVisible minHeight={600} rootMargin="50px 0px"><WhatFAQSection /></WhenVisible>
       </Suspense>
       
-      {/* 전역 스크롤 인디케이터 */}
-      <GlobalScrollIndicator />
+      
     </main>
   )
 }
