@@ -115,22 +115,8 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
 
       if (error) throw error
       
-      // SMS 발송 시도 (실패해도 신청은 완료 처리)
-      try {
-        await fetch('/api/send-sms', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: payload.name,
-            phone_number: payload.phone_number,
-            company_name: payload.company_name,
-            business_type: payload.business_type
-          })
-        })
-      } catch (smsError) {
-        console.error('SMS 발송 실패:', smsError)
-        // SMS 실패해도 계속 진행
-      }
+      // SMS 기능은 API 키 발급 후 활성화 예정
+      // 현재는 Supabase 저장만 진행
       
       setSuccess(true)
       e.currentTarget.reset()

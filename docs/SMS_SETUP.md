@@ -1,4 +1,6 @@
-# SMS 자동발송 설정 가이드
+# SMS 자동발송 설정 가이드 (준비중)
+
+> ⚠️ **현재 상태**: SMS 기능은 구현되어 있으나, API 키 발급 대기중으로 비활성화 상태입니다.
 
 ## 뿌리오(Ppurio) SMS 연동
 
@@ -28,7 +30,31 @@ PPURIO_API_KEY=your_api_key
 SENDER_PHONE=15880000  # 등록한 발신번호
 ```
 
-### 4. SMS 발송 흐름
+### 4. SMS 활성화 방법
+
+API 키 발급 완료 후, `/components/what/CareonApplicationForm.tsx` 파일의 118-119 라인 주석을 해제:
+
+```typescript
+// SMS 기능 활성화 시 아래 주석 해제
+/*
+try {
+  await fetch('/api/send-sms', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: payload.name,
+      phone_number: payload.phone_number,
+      company_name: payload.company_name,
+      business_type: payload.business_type
+    })
+  })
+} catch (smsError) {
+  console.error('SMS 발송 실패:', smsError)
+}
+*/
+```
+
+### 5. SMS 발송 흐름 (활성화 후)
 
 1. 고객이 무료체험단 신청 폼 제출
 2. Supabase에 데이터 저장
