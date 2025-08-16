@@ -21,7 +21,7 @@ const MotionDiv = dynamic(
 )
 
 const ReviewHeader = dynamic(() => import("@/components/review/review-header").then((m) => m.ReviewHeader))
-const CategoryFilter = dynamic(() => import("@/components/review/category-filter").then((m) => m.CategoryFilter))
+const ReviewFilters = dynamic(() => import("@/components/review/category-filter").then((m) => m.ReviewFilters))
 const ReviewCard = dynamic(() => import("@/components/review/review-card").then((m) => m.ReviewCard))
 const ReviewPagination = dynamic(() => import("@/components/review/review-pagination").then((m) => m.ReviewPagination))
 const SearchBar = dynamic(() => import("@/components/review/search-bar").then((m) => m.SearchBar))
@@ -34,11 +34,13 @@ interface ReviewsResponse {
 }
 
 export default function ReviewPage() {
-  const [selectedBusinessType, setSelectedBusinessType] = useState("전체")
+  const [selectedCategory, setSelectedCategory] = useState("전체")
+  const [selectedBusiness, setSelectedBusiness] = useState("전체")
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [reviews, setReviews] = useState<Review[]>([])
   const [totalCount, setTotalCount] = useState(0)
+  const [falseReviewCount, setFalseReviewCount] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -60,8 +62,12 @@ export default function ReviewPage() {
         limit: reviewsPerPage.toString(),
       })
 
-      if (selectedBusinessType !== "전체") {
-        params.append("businessType", selectedBusinessType)
+      if (selectedCategory !== "전체") {
+        params.append("category", selectedCategory)
+      }
+
+      if (selectedBusiness !== "전체") {
+        params.append("business", selectedBusiness)
       }
 
       if (searchTerm) {
@@ -79,6 +85,13 @@ export default function ReviewPage() {
       setReviews(data.reviews)
       setTotalCount(data.totalCount)
       setTotalPages(data.totalPages)
+      
+      // Fetch false review count
+      const falseResponse = await fetch('/api/reviews/false-count')
+      if (falseResponse.ok) {
+        const falseData = await falseResponse.json()
+        setFalseReviewCount(falseData.count || 0)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
       console.error("Error fetching reviews:", err)
@@ -89,10 +102,15 @@ export default function ReviewPage() {
 
   useEffect(() => {
     fetchReviews()
-  }, [selectedBusinessType, searchTerm, currentPage])
+  }, [selectedCategory, selectedBusiness, searchTerm, currentPage])
 
-  const handleBusinessTypeChange = (businessType: string) => {
-    setSelectedBusinessType(businessType)
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category)
+    setCurrentPage(1)
+  }
+
+  const handleBusinessChange = (business: string) => {
+    setSelectedBusiness(business)
     setCurrentPage(1)
   }
 
@@ -103,7 +121,7 @@ export default function ReviewPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ReviewHeader totalCount={totalCount} onScrollClick={handleScrollDown} />
+      <ReviewHeader totalCount={totalCount} falseReviewCount={falseReviewCount} onScrollClick={handleScrollDown} />
 
       <div ref={reviewsSectionRef} className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -111,11 +129,12 @@ export default function ReviewPage() {
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
               고객 후기
             </h1>
-            <p className="text-gray-600 mt-1">케어온과 함께한 창업자들의 생생한 경험담</p>
+            <p className="text-gray-600 mt-1">케어온과 함께한 리얼 후기</p>
           </div>
           <Button
             asChild
-            className="bg-[#148777] hover:bg-[#0f6b5c] text-white px-6 py-3 rounded-lg font-medium transition-all duration-200"
+            variant="outline"
+            className="bg-transparent hover:bg-[#148777]/5 text-[#148777] border-2 border-[#148777] hover:border-[#0f6b5c] hover:text-[#0f6b5c] px-6 py-3 rounded-lg font-medium transition-all duration-200"
           >
             <a href="/review/write" className="flex items-center gap-2">
               <PlusIcon className="w-5 h-5" />
@@ -124,7 +143,12 @@ export default function ReviewPage() {
           </Button>
         </div>
 
-        <CategoryFilter selectedCategory={selectedBusinessType} onCategoryChange={handleBusinessTypeChange} />
+        <ReviewFilters 
+          selectedCategory={selectedCategory} 
+          selectedBusiness={selectedBusiness}
+          onCategoryChange={handleCategoryChange} 
+          onBusinessChange={handleBusinessChange}
+        />
 
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-16">

@@ -12,12 +12,13 @@ export async function GET(request: NextRequest) {
 
     // Query parameters
     const category = searchParams.get("category")
+    const business = searchParams.get("business")
     const search = searchParams.get("search")
     const page = Number.parseInt(searchParams.get("page") || "1")
     const limit = Number.parseInt(searchParams.get("limit") || "20")
     const offset = (page - 1) * limit
 
-    console.log("📊 Query params:", { category, search, page, limit, offset })
+    console.log("📊 Query params:", { category, business, search, page, limit, offset })
 
     console.log("🔗 Testing Supabase connection...")
     const { data: testData, error: testError } = await supabase
@@ -52,8 +53,13 @@ export async function GET(request: NextRequest) {
       console.log("🏷️ Category filter applied:", category)
     }
 
+    if (business && business !== "전체") {
+      query = query.eq("business", business)
+      console.log("🏢 Business filter applied:", business)
+    }
+
     if (search) {
-      query = query.or(`content.ilike.%${search}%,business.ilike.%${search}%`)
+      query = query.or(`content.ilike.%${search}%,business.ilike.%${search}%,title.ilike.%${search}%`)
       console.log("🔍 Search filter applied:", search)
     }
 

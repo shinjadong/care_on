@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
-import { Menu, Phone, Shield, Lightbulb, Star } from "lucide-react"
+import { Menu, Phone, Shield, Lightbulb, Star, HelpCircle } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -76,24 +76,31 @@ const LiveStatus = ({ isScrolled }: { isScrolled: boolean }) => {
 // 고객 여정 중심으로 재구성하여 감정적 연결과 긴급성 강화
 const navItems = [
   {
-    name: "케어온이란?",
+    name: "오픈 이벤트",
     href: "/what",
     icon: Shield,
-    description: "실패가 축하받는 세상",
+    description: "실패가 두렵지 않은 세상",
     badge: "20개 한정",
     urgency: true,
+    hasEvent: true,
   },
   {
-    name: "스타트 케어",
+    name: "스타트케어",
     href: "/start-care",
     icon: Lightbulb,
-    description: "돌봄이 필요한 당신을 위해",
+    description: "시작부터 케어받기",
   },
   {
-    name: "실제 후기",
+    name: "리얼 후기",
     href: "/review",
     icon: Star,
     description: "결과를 직접 확인해보세요",
+  },
+  {
+    name: "자주 묻는 질문",
+    href: "/faq",
+    icon: HelpCircle,
+    description: "궁금한 점을 해결해보세요",
   },
 ]
 
@@ -242,7 +249,7 @@ export function Header() {
                       <span className="text-xs opacity-75">(2,847명)</span>
                     </span>
                     <span>|</span>
-                    <span className="font-semibold">폐업보장100%</span>
+                    <span className="font-semibold">실패가 두렵지 않은 세상</span>
                     <span>|</span>
                     <LiveStatus isScrolled={isScrolled} />
                   </div>
@@ -283,7 +290,9 @@ export function Header() {
                   variant="ghost"
                   size="icon"
                   className={`transition-colors duration-300 ${
-                    isScrolled ? "text-gray-900 hover:bg-gray-100" : "text-white hover:bg-white/20"
+                    isScrolled 
+                      ? "text-[#148777]/50 hover:bg-[#148777]/8 hover:text-[#148777]/70" 
+                      : "text-[#148777]/30 hover:bg-[#148777]/15 hover:text-[#148777]/50"
                   }`}
                 >
                   <Menu className="h-6 w-6" />
@@ -318,7 +327,7 @@ export function Header() {
                       <div key={item.name}>
                         <Link
                           href={item.href}
-                          className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                          className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors relative"
                           onClick={() => setIsSheetOpen(false)}
                         >
                           {item.icon && <item.icon className="w-5 h-5 text-teal-600" />}
@@ -326,6 +335,11 @@ export function Header() {
                             <span className="font-semibold text-gray-900">{item.name}</span>
                             {item.description && <span className="text-sm text-gray-500">{item.description}</span>}
                           </div>
+                          {item.hasEvent && (
+                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold animate-bounce">
+                              +event
+                            </span>
+                          )}
                         </Link>
                       </div>
                     ))}
@@ -373,13 +387,18 @@ export function Header() {
                 <NavigationMenuItem key={item.name}>
                   <Link href={item.href} legacyBehavior passHref>
                     <NavigationMenuLink
-                      className={`${navigationMenuTriggerStyle()} transition-colors duration-300 ${
+                      className={`${navigationMenuTriggerStyle()} transition-colors duration-300 relative ${
                         isScrolled
                           ? "text-gray-700 hover:text-gray-900 bg-transparent hover:bg-gray-100"
                           : "text-white hover:text-white !bg-transparent hover:!bg-transparent"
                       }`}
                     >
                       {item.name}
+                      {item.hasEvent && (
+                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold animate-bounce">
+                          +event
+                        </span>
+                      )}
                     </NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>

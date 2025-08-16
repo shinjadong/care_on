@@ -49,9 +49,11 @@ export default function WhatPage() {
       <Suspense fallback={<div className="h-screen w-screen bg-gradient-to-b from-[#f7f3ed] to-gray-50 animate-pulse" />}>
         <WhenVisible minHeight={600} rootMargin="50px 0px"><WhatCTASection onInvestorClick={() => {}} /></WhenVisible>
       </Suspense>
-      <Suspense fallback={<div className="w-screen bg-white animate-pulse" style={{ minHeight: 600 }} />}>
-        <WhenVisible minHeight={600} rootMargin="50px 0px"><WhatFAQSection /></WhenVisible>
-      </Suspense>
+      <div id="faq-section-wrapper">
+        <Suspense fallback={<div className="w-screen bg-white animate-pulse" style={{ minHeight: 600 }} />}>
+          <WhenVisible minHeight={600} rootMargin="50px 0px"><WhatFAQSection /></WhenVisible>
+        </Suspense>
+      </div>
       
       
     </main>

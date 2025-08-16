@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { Clock, Users, CheckCircle, X } from "lucide-react"
 import dynamic from "next/dynamic"
+import { FAQSection } from "./faq-section"
 
 const CareonApplicationForm = dynamic(() => import("./CareonApplicationForm"), { 
   ssr: false,
@@ -19,12 +20,41 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
   const [step, setStep] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showApplicationModal, setShowApplicationModal] = useState(false);
+  const [currentUsers, setCurrentUsers] = useState(0);
+  const [remainingSlots, setRemainingSlots] = useState(8);
+  const [showFAQ, setShowFAQ] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const touchStartY = useRef(0);
+
+  // 플로팅 배너와 동일한 로직으로 신청중 숫자 표시
+  useEffect(() => {
+    // Use fixed initial value to avoid hydration mismatch
+    setCurrentUsers(18)
+    setRemainingSlots(50 - (35 + 18 - 15)) // 38명 신청 완료
+
+    const interval = setInterval(() => {
+      setCurrentUsers(prev => {
+        const change = Math.floor(Math.random() * 5) - 2
+        const newValue = prev + change
+        
+        if (newValue < 12) return 12
+        if (newValue > 28) return 28
+        
+        setRemainingSlots(50 - (35 + newValue - 15))
+        return newValue
+      })
+    }, 4000)
+
+    return () => clearInterval(interval)
+  }, [])
+
 
   useEffect(() => {
     const element = sectionRef.current;
     if (!element) return;
+    
+    // FAQ가 열려있으면 스크롤 이벤트 처리하지 않음
+    if (showFAQ) return;
     
     const changeStep = (direction: 'up' | 'down') => {
       if (isAnimating) return;
@@ -65,7 +95,7 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
       element.removeEventListener('touchend', handleTouchEnd);
       element.removeEventListener('touchmove', handleTouchMove);
     };
-  }, [step, isAnimating]);
+  }, [step, isAnimating, showFAQ]);
 
   return (
     <section 
@@ -80,13 +110,13 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
               <Users className="w-10 h-10 text-white" />
             </div>
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#222222] mb-4 sm:mb-6 leading-tight px-4">
-              폐업을 보장하는 '스타트 케어'
+              실패가 두렵지 않은 세상,
             </h3>
             <p className="text-base sm:text-lg md:text-xl text-[#222222] leading-relaxed px-4">
-              1년 내 폐업할 시, 최대 100% 환급 <br className="hidden sm:block" />
-              <span className="sm:hidden">1년 내 폐업할 시, 최대 100% 환급</span>
+              단 한번뿐인<br className="hidden sm:block" />
+              <span className="sm:hidden"></span>
               <br className="sm:hidden" />
-              그리고, '단 한번'만 진행하는 특별한 혜택
+               특별한 혜택
             </p>
           </div>
         )}
@@ -126,11 +156,35 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
             </button>
             
             <p className="mt-4 text-sm text-gray-600">
-              체험단 <span className="font-bold text-red-500">50명 중 42명</span> 신청 완료
+              체험단 <span className="font-bold text-red-500">50명 중 {50 - remainingSlots}명</span> 신청 완료
             </p>
+            
+            {/* FAQ 토글 버튼 */}
+            <button
+              onClick={() => setShowFAQ(!showFAQ)}
+              className="mt-4 text-sm text-teal-600 hover:text-teal-700 underline transition-colors"
+            >
+              궁금한 게 있으신가요?
+            </button>
           </div>
         )}
       </div>
+
+      {/* FAQ 섹션 토글 */}
+      {showFAQ && (
+        <div className="fixed inset-0 bg-white z-50 animate-slide-up-from-bottom">
+          <div className="relative h-full overflow-y-auto">
+            {/* FAQ 닫기 버튼 - 고정 위치 */}
+            <button
+              onClick={() => setShowFAQ(false)}
+              className="fixed right-6 top-6 z-[60] p-3 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-200"
+            >
+              <X className="w-5 h-5 text-gray-600" />
+            </button>
+            <FAQSection />
+          </div>
+        </div>
+      )}
 
       {/* 신청 모달 */}
       {showApplicationModal && (

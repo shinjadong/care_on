@@ -28,3 +28,6 @@ next-env.d.ts
 
 # project documentation
 PROJECT_STRUCTURE.md
+
+.claude/
+
