@@ -37,6 +37,7 @@ const categoryColors = {
 
 function MediaCarousel({ images = [], videos = [] }: { images?: string[]; videos?: string[] }) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
   
   // null/undefined 체크 추가
   const safeImages = images || []
@@ -57,8 +58,14 @@ function MediaCarousel({ images = [], videos = [] }: { images?: string[]; videos
     setCurrentIndex((prev) => (prev - 1 + allMedia.length) % allMedia.length)
   }
 
+  const hasMultipleImages = allMedia.length > 1
+
   return (
-    <div className="relative w-full h-56 bg-gradient-to-br from-gray-100 to-gray-50 rounded-xl overflow-hidden shadow-inner">
+    <div 
+      className="relative w-full h-56 bg-gradient-to-br from-gray-100 to-gray-50 rounded-xl overflow-hidden shadow-inner group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {allMedia[currentIndex].type === "image" ? (
         <img
           src={allMedia[currentIndex].url || "/placeholder.svg"}
@@ -74,28 +81,64 @@ function MediaCarousel({ images = [], videos = [] }: { images?: string[]; videos
         </div>
       )}
 
-      {allMedia.length > 1 && (
+      {hasMultipleImages && (
         <>
+          {/* 이미지 카운터 - 항상 표시 */}
+          <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white px-2.5 py-1 rounded-full text-xs font-medium">
+            {currentIndex + 1} / {allMedia.length}
+          </div>
+
+          {/* 네비게이션 버튼 - 호버 시 표시 */}
           <button
             onClick={prevSlide}
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 bg-white/90 backdrop-blur-sm text-gray-700 p-2 rounded-full hover:bg-white shadow-lg transition-all duration-200 hover:scale-110"
+            className={`
+              absolute left-3 top-1/2 transform -translate-y-1/2 
+              bg-white/90 backdrop-blur-sm text-gray-700 
+              p-2 rounded-full shadow-lg 
+              transition-all duration-300
+              ${isHovered ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2"}
+              hover:bg-white hover:scale-110
+            `}
           >
             <ChevronLeftIcon className="w-5 h-5" />
           </button>
+          
           <button
             onClick={nextSlide}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-white/90 backdrop-blur-sm text-gray-700 p-2 rounded-full hover:bg-white shadow-lg transition-all duration-200 hover:scale-110"
+            className={`
+              absolute right-3 top-1/2 transform -translate-y-1/2 
+              bg-white/90 backdrop-blur-sm text-gray-700 
+              p-2 rounded-full shadow-lg 
+              transition-all duration-300
+              ${isHovered ? "opacity-100 translate-x-0" : "opacity-0 translate-x-2"}
+              hover:bg-white hover:scale-110
+            `}
           >
             <ChevronRightIcon className="w-5 h-5" />
           </button>
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
+
+          {/* 더 보기 프롬프트 - 첫 이미지에서만, 호버 안 했을 때 */}
+          {currentIndex === 0 && !isHovered && (
+            <div className="absolute bottom-3 right-3 flex items-center gap-2 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full animate-pulse">
+              <span className="text-xs font-medium text-gray-700">더 보기</span>
+              <ChevronRightIcon className="w-3.5 h-3.5 text-gray-700" />
+            </div>
+          )}
+
+          {/* 페이지 인디케이터 - 더 미니멀하게 */}
+          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5">
             {allMedia.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`rounded-full transition-all duration-300 ${
-                  index === currentIndex ? "w-8 h-2 bg-white" : "w-2 h-2 bg-white/60 hover:bg-white/80"
-                }`}
+                className={`
+                  transition-all duration-300 rounded-full
+                  ${index === currentIndex 
+                    ? "w-6 h-1.5 bg-white" 
+                    : "w-1.5 h-1.5 bg-white/50 hover:bg-white/75"
+                  }
+                `}
+                aria-label={`이미지 ${index + 1}`}
               />
             ))}
           </div>

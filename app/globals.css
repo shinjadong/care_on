@@ -86,6 +86,59 @@
   }
 }
 
+/* ---- iOS brand token & utilities ---- */
+@layer base {
+  :root {
+    /* #148777 -> HSL(171 74% 30%) */
+    --brand: 171 74% 30%;
+    --brand-foreground: 0 0% 100%;
+  }
+  .dark {
+    /* 다크 모드에서는 살짝 더 밝게 */
+    --brand: 171 60% 40%;
+    --brand-foreground: 0 0% 100%;
+  }
+}
+
+@layer utilities {
+  /* iOS Safe Area */
+  .safe-top { padding-top: max(12px, env(safe-area-inset-top)); }
+  .safe-bottom { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+
+  /* iOS 감성: 반투명 + 블러 */
+  .ios-blur {
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: rgba(255,255,255,.92);
+  }
+  .dark .ios-blur { background: rgba(22,22,22,.8); }
+
+  /* 터치/모멘텀 스크롤 */
+  .ios-content {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: manipulation;
+  }
+
+  /* 브랜드 색상 클래스 */
+  .text-brand { color: hsl(var(--brand)); }
+  .bg-brand { background-color: hsl(var(--brand)); }
+  .ring-brand { --tw-ring-color: hsl(var(--brand)); }
+  .brand-foreground { color: hsl(var(--brand-foreground)); }
+  
+  /* Apple 스타일 카드 호버 */
+  .apple-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .apple-card:hover {
+    transform: scale(1.015);
+    box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.12);
+  }
+}
+
+/* 터치 하이라이트 제거 */
+* { -webkit-tap-highlight-color: transparent; }
+
 @layer base {
   * {
     @apply border-border;

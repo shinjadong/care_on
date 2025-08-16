@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Clock, X } from "lucide-react"
+import { X } from "lucide-react"
 import dynamic from "next/dynamic"
 
 const CareonApplicationForm = dynamic(() => import("./what/CareonApplicationForm"), { 
@@ -9,77 +9,11 @@ const CareonApplicationForm = dynamic(() => import("./what/CareonApplicationForm
   loading: () => <div className="p-8 text-center">로딩중...</div>
 })
 
-// 카운트다운 훅
-const useCountdown = (targetDate: Date) => {
-  const [timeLeft, setTimeLeft] = useState("")
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date().getTime()
-      const distance = targetDate.getTime() - now
-
-      if (distance < 0) {
-        setTimeLeft("마감됨")
-        return
-      }
-
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000)
-
-      setTimeLeft(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`)
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [targetDate])
-
-  return timeLeft
-}
-
-// 가중치 랜덤 함수 (낮은 숫자가 더 높은 확률)
-const getWeightedRandomSlots = () => {
-  const weights = [30, 25, 20, 15, 7, 3] // 4:30%, 5:25%, 6:20%, 7:15%, 8:7%, 9:3%
-  const numbers = [4, 5, 6, 7, 8, 9]
-  
-  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0)
-  const random = Math.random() * totalWeight
-  
-  let currentWeight = 0
-  for (let i = 0; i < weights.length; i++) {
-    currentWeight += weights[i]
-    if (random <= currentWeight) {
-      return numbers[i]
-    }
-  }
-  return 4 // 기본값
-}
-
 // 하단 고정 플로팅 배너 컴포넌트
 export function FloatingBanner() {
-  const [remainingSlots, setRemainingSlots] = useState(4)
   const [isScrollVisible, setIsScrollVisible] = useState(false)
   const [showApplicationModal, setShowApplicationModal] = useState(false)
   
-  // 이번 주 일요일 자정으로 설정
-  const thisWeekEnd = new Date()
-  const daysUntilSunday = 7 - thisWeekEnd.getDay()
-  thisWeekEnd.setDate(thisWeekEnd.getDate() + daysUntilSunday)
-  thisWeekEnd.setHours(23, 59, 59)
-  
-  const timeLeft = useCountdown(thisWeekEnd)
-
-  useEffect(() => {
-    // 컴포넌트 마운트 시 랜덤 슬롯 설정
-    setRemainingSlots(getWeightedRandomSlots())
-    
-    // 10분마다 랜덤하게 변경
-    const interval = setInterval(() => {
-      setRemainingSlots(getWeightedRandomSlots())
-    }, 600000) // 10분 = 600,000ms
-    
-    return () => clearInterval(interval)
-  }, [])
-
   // 스크롤 기반 등장 애니메이션 및 푸터 감지
   useEffect(() => {
     const handleScroll = () => {
@@ -109,30 +43,68 @@ export function FloatingBanner() {
   if (!isScrollVisible) return null
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 z-50 w-full flex justify-center">
-      <div className="animate-slide-up-bounce">
-      <div className="relative w-full max-w-4xl">
-        <div className="flex justify-center">
-            <button 
-              onClick={handleApply}
-            className="bg-gradient-to-b from-[#048777]/90 to-[#036558]/90 hover:from-[#059a88]/95 hover:to-[#047264]/95 backdrop-blur-sm text-white py-2 px-24 rounded-lg font-semibold text-lg transition-all duration-300 border-0 border-gray-100/50 shadow-lg"
-            >
-              지금 신청하기
-            </button>
+    <>
+      {/* 플로팅 배너 - 미니멀 Apple 스타일 */}
+      <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-auto md:left-1/2 md:-translate-x-1/2 z-40 max-w-sm md:max-w-md">
+        <div className="relative">
+          {/* 배너 본체 - 투명 배경에 테두리만 */}
+          <button
+            onClick={handleApply}
+            className="
+              relative w-full
+              px-6 py-3 md:px-8 md:py-3.5
+              bg-white/60 backdrop-blur-md
+              border border-brand/30
+              rounded-full
+              transition-all duration-500
+              hover:bg-white/80 hover:border-brand/50
+              group
+              overflow-hidden
+            "
+          >
+            {/* 반짝이는 애니메이션 효과 */}
+            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out">
+              <div className="h-full w-32 bg-gradient-to-r from-transparent via-brand/10 to-transparent skew-x-12" />
+            </div>
+            
+            {/* 텍스트 */}
+            <div className="relative flex items-center justify-center gap-2">
+              <span className="text-sm md:text-base font-medium text-gray-900">
+                무료 체험단 신청하기
+              </span>
+              <span className="hidden md:inline-block text-xs text-gray-500 ml-1">
+                12개월 무료
+              </span>
+            </div>
+
+            {/* 모바일용 짧은 텍스트 */}
+            <div className="md:hidden absolute top-full left-0 right-0 text-center mt-1">
+              <span className="text-[10px] text-gray-500">12개월 무료</span>
+            </div>
+          </button>
         </div>
-      </div>
       </div>
 
       {/* 신청 모달 */}
       {showApplicationModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50">
-          <div className="relative max-h-[90vh] overflow-y-auto bg-white rounded-2xl">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          {/* 배경 오버레이 */}
+          <div 
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setShowApplicationModal(false)}
+          />
+          
+          {/* 모달 컨텐츠 */}
+          <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto bg-white rounded-2xl shadow-xl">
+            {/* 닫기 버튼 */}
             <button
               onClick={() => setShowApplicationModal(false)}
-              className="absolute right-4 top-4 z-10 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="absolute right-4 top-4 z-10 p-2 rounded-full bg-white/80 backdrop-blur hover:bg-gray-100 transition-colors"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 text-gray-600" />
             </button>
+            
+            {/* 폼 */}
             <CareonApplicationForm 
               useGrid={true}
               onSuccess={() => {
@@ -142,6 +114,6 @@ export function FloatingBanner() {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
