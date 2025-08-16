@@ -1,8 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
+import { createBrowserClient } from "@supabase/ssr"
 import { Plus, Save, Trash2, Eye, EyeOff, ChevronUp, ChevronDown, Edit2, Bold, Italic, Underline, List } from "lucide-react"
+
+// 하드코딩된 Supabase 설정
+const SUPABASE_URL = "https://pkehcfbjotctvneordob.supabase.co"
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrZWhjZmJqb3RjdHZuZW9yZG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMxOTI2ODEsImV4cCI6MjA2ODc2ODY4MX0.jX3JE0uKyeE_nEm7EcecUwtWd23oHkBrggLhntVHVjc"
 
 interface FAQItem {
   id?: number
@@ -55,7 +59,7 @@ export default function FAQAdminPage() {
   const [isAdding, setIsAdding] = useState(false)
   const [textareaRef, setTextareaRef] = useState<HTMLTextAreaElement | null>(null)
   
-  const supabase = createClient()
+  const supabase = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
   useEffect(() => {
     fetchFAQs()
