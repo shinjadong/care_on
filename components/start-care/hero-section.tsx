@@ -15,7 +15,7 @@ export function HeroSection() {
   } = useScrollVideo({
     videoUrl: "https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/hero-start-care",
     scrollHeight: 300, // 3페이지 높이로 설정
-    throttleDelay: 32 // 60fps
+    throttleDelay: 16 // 60fps
   })
 
   // 타이틀 - 처음에 보임, 위로 사라짐
