@@ -65,9 +65,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // 로그인 성공 시 리다이렉트 처리
         if (event === 'SIGNED_IN' && session) {
-          const urlParams = new URLSearchParams(window.location.search)
-          const redirectTo = urlParams.get('redirectTo') || '/'
-          window.location.href = redirectTo
+          // 프로덕션 환경이면 무조건 careon.ai.kr로 리다이렉트
+          if (window.location.hostname === 'localhost' && process.env.NODE_ENV === 'production') {
+            window.location.href = 'https://careon.ai.kr'
+          } else if (window.location.hostname.includes('localhost')) {
+            // 로컬 개발 환경에서도 프로덕션처럼 동작하려면
+            // window.location.href = 'https://careon.ai.kr'
+            const urlParams = new URLSearchParams(window.location.search)
+            const redirectTo = urlParams.get('redirectTo') || '/'
+            window.location.href = redirectTo
+          } else {
+            // 이미 careon.ai.kr 도메인이면 홈으로
+            window.location.href = '/'
+          }
         }
       }
     )
@@ -82,7 +92,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: getRedirectUrl('/auth/callback'),
+          // 항상 프로덕션 도메인으로 리다이렉트
+          redirectTo: 'https://careon.ai.kr/auth/callback',
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',

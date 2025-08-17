@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { getServerRedirectUrl } from '@/lib/utils/get-redirect-url'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -18,13 +17,12 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!error) {
-      // 환경에 맞는 리다이렉트 URL 생성
-      const redirectUrl = getServerRedirectUrl(request, next)
-      return NextResponse.redirect(redirectUrl)
+      // 항상 프로덕션 도메인(careon.ai.kr)으로 리다이렉트
+      return NextResponse.redirect(`https://careon.ai.kr${next}`)
     }
   }
 
   // return the user to an error page with instructions
-  const errorUrl = getServerRedirectUrl(request, '/auth/auth-code-error')
-  return NextResponse.redirect(errorUrl)
+  // 에러 페이지도 프로덕션 도메인으로
+  return NextResponse.redirect('https://careon.ai.kr/auth/auth-code-error')
 }
