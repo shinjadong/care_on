@@ -575,3 +575,163 @@
 .animate-slide-up-from-bottom {
   animation: slide-up-from-bottom 0.4s ease-out;
 }
+
+/* === AJD Form Theme (drop-in) === */
+@layer base {
+  :root {
+    /* 브랜드 #148777 → HSL(171 74% 30%) */
+    --brand: 171 74% 30%;
+    --brand-foreground: 0 0% 100%;
+  }
+}
+
+/* 공용 브랜드 유틸(클래스) */
+@layer utilities {
+  .text-brand { color: hsl(var(--brand)); }
+  .bg-brand { background-color: hsl(var(--brand)); }
+  .ring-brand { --tw-ring-color: hsl(var(--brand)); }
+}
+
+/* 컴포넌트 스킨 - 모바일 최적화 */
+@layer components {
+  /* 카드/섹션 */
+  .ajd-card { 
+    @apply bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden;
+    @apply sm:rounded-2xl;
+  }
+  
+  .ajd-head-btn { 
+    @apply w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors;
+    @apply sm:px-6 sm:py-4;
+  }
+  
+  .ajd-body { 
+    @apply px-4 pb-4 space-y-3 border-t border-gray-100;
+    @apply sm:px-6 sm:pb-6 sm:space-y-4;
+  }
+
+  /* 헤더 타이틀 - 모바일에서 작게 */
+  .ajd-title { 
+    @apply text-lg font-bold mb-1;
+    @apply sm:text-xl md:text-2xl sm:mb-2;
+  }
+  
+  .ajd-sub { 
+    @apply text-xs text-muted-foreground;
+    @apply sm:text-sm;
+  }
+
+  /* 라벨/인풋 기본형 - 모바일 최적화 */
+  .ajd-label { 
+    @apply block text-xs font-medium mb-1.5;
+    @apply sm:text-sm sm:mb-2;
+  }
+  
+  .ajd-input-base { 
+    @apply rounded-lg border border-gray-200 px-3 py-2 text-sm;
+    @apply focus:outline-none focus:ring-2 focus:border-gray-300;
+    @apply sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-base;
+  }
+  
+  .ajd-input { @apply w-full ajd-input-base; }
+  .ajd-select { @apply w-full ajd-input-base pr-8 sm:pr-9; }
+
+  /* 라디오/체크 카드 - 모바일 패딩 조정 */
+  .ajd-choice { 
+    @apply flex items-start gap-2 p-2.5 border border-gray-200 rounded-lg;
+    @apply hover:bg-gray-50 cursor-pointer transition-colors;
+    @apply sm:gap-3 sm:p-3 sm:rounded-xl;
+  }
+  
+  .ajd-choice:has(input[type="radio"]:checked),
+  .ajd-choice:has(input[type="checkbox"]:checked) { 
+    @apply border-brand bg-brand/5;
+  }
+  
+  /* 라디오/체크 내부 텍스트 크기 */
+  .ajd-choice p:first-child {
+    @apply text-xs font-medium;
+    @apply sm:text-sm;
+  }
+  
+  .ajd-choice p:last-child {
+    @apply text-[10px] text-gray-600 mt-0.5;
+    @apply sm:text-xs;
+  }
+
+  /* 섹션 아이콘 원 - 모바일에서 작게 */
+  .ajd-bullet { 
+    @apply w-7 h-7 rounded-full flex items-center justify-center text-xs;
+    @apply sm:w-8 sm:h-8 sm:text-sm;
+  }
+  
+  .ajd-bullet.done { @apply bg-brand text-white; }
+  .ajd-bullet.idle { @apply bg-gray-100 text-gray-600; }
+
+  /* 혜택 박스 - 모바일 패딩 조정 */
+  .ajd-benefit { 
+    @apply bg-gradient-to-br from-brand/5 to-brand/10 rounded-xl p-4;
+    @apply sm:rounded-2xl sm:p-5;
+  }
+  
+  .ajd-benefit .icon { 
+    @apply w-7 h-7 bg-brand/20 rounded-full flex items-center justify-center flex-shrink-0;
+    @apply sm:w-8 sm:h-8;
+  }
+  
+  /* 혜택 박스 텍스트 */
+  .ajd-benefit h4 {
+    @apply font-semibold text-xs mb-1.5;
+    @apply sm:text-sm sm:mb-2;
+  }
+  
+  .ajd-benefit ul {
+    @apply space-y-0.5 text-[10px] text-gray-700;
+    @apply sm:space-y-1 sm:text-xs;
+  }
+
+  /* 제출 버튼 - 모바일 높이 조정 */
+  .ajd-submit { 
+    @apply w-full rounded-xl px-4 py-3 text-sm font-semibold transition-all;
+    @apply sm:rounded-2xl sm:py-4 sm:text-base;
+  }
+  
+  .ajd-submit.enabled { 
+    @apply bg-brand text-white hover:bg-brand/90;
+  }
+  
+  .ajd-submit.disabled { 
+    @apply bg-gray-100 text-gray-400 cursor-not-allowed;
+  }
+}
+
+/* 후손 셀렉터로 폼 전체 스타일 자동 적용 */
+@layer components {
+  .ajd-form input[type="text"],
+  .ajd-form input[type="tel"],
+  .ajd-form input[type="date"],
+  .ajd-form input[type="email"],
+  .ajd-form input[type="number"],
+  .ajd-form select,
+  .ajd-form textarea { 
+    @apply ajd-input;
+  }
+  
+  /* 모바일 폼 간격 최적화 */
+  @media (max-width: 640px) {
+    .ajd-form {
+      @apply space-y-3;
+    }
+    
+    /* 입력 필드 라벨 간격 */
+    .ajd-form label {
+      @apply text-xs;
+    }
+    
+    /* 체크박스/라디오 내부 간격 */
+    .ajd-form input[type="checkbox"],
+    .ajd-form input[type="radio"] {
+      @apply w-3.5 h-3.5;
+    }
+  }
+}

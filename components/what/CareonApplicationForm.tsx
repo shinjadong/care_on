@@ -203,42 +203,42 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
   }
 
   return (
-    <form onSubmit={onSubmit} className="mx-auto max-w-xl space-y-4">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold mb-2">케어온 무료체험단 신청</h2>
-        <p className="text-sm text-gray-600">사장님의 첫 투자자가 되겠습니다</p>
+    <form onSubmit={onSubmit} className="ajd-form mx-auto max-w-xl space-y-4">
+      <div className="text-center mb-4 sm:mb-8">
+        <h2 className="ajd-title">케어온 무료체험단 신청</h2>
+        <p className="ajd-sub">사장님의 첫 투자자가 되겠습니다</p>
       </div>
 
       {/* 기본 정보 섹션 */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="ajd-card">
         <button
           type="button"
           onClick={() => toggleSection("basic")}
-          className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          className="ajd-head-btn"
         >
-          <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              completedSections.has("basic") ? "bg-brand text-white" : "bg-gray-100 text-gray-600"
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className={`ajd-bullet ${
+              completedSections.has("basic") ? "done" : "idle"
             }`}>
-              {completedSections.has("basic") ? <Check className="w-4 h-4" /> : <User className="w-4 h-4" />}
+              {completedSections.has("basic") ? <Check className="w-3 h-3 sm:w-4 sm:h-4" /> : <User className="w-3 h-3 sm:w-4 sm:h-4" />}
             </div>
             <div className="text-left">
-              <h3 className="font-semibold">기본 정보</h3>
+              <h3 className="text-sm font-semibold sm:text-base">기본 정보</h3>
               {completedSections.has("basic") && (
-                <p className="text-xs text-gray-500 mt-0.5">입력 완료</p>
+                <p className="text-[10px] text-gray-500 mt-0.5 sm:text-xs">입력 완료</p>
               )}
             </div>
           </div>
           {expandedSections.has("basic") ? 
-            <ChevronDown className="w-5 h-5 text-gray-400" /> : 
-            <ChevronRight className="w-5 h-5 text-gray-400" />
+            <ChevronDown className="w-4 h-4 text-gray-400 sm:w-5 sm:h-5" /> : 
+            <ChevronRight className="w-4 h-4 text-gray-400 sm:w-5 sm:h-5" />
           }
         </button>
         
         {expandedSections.has("basic") && (
-          <div className="px-6 pb-6 space-y-4 border-t border-gray-100">
-            <div className="pt-4">
-              <label className="block text-sm font-medium mb-2">가입자 성함 *</label>
+          <div className="ajd-body">
+            <div className="pt-3 sm:pt-4">
+              <label className="ajd-label">가입자 성함 *</label>
               <input 
                 name="name" 
                 required 
@@ -248,12 +248,12 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">연락처 *</label>
-              <div className="flex gap-2">
+              <label className="ajd-label">연락처 *</label>
+              <div className="flex gap-1.5 sm:gap-2">
                 <select 
                   value={phoneNumber.first}
                   onChange={(e) => setPhoneNumber({ ...phoneNumber, first: e.target.value })}
-                  className="w-24 rounded-xl border border-gray-200 px-3 py-2.5 focus:border-brand focus:outline-none"
+                  className="w-20 text-sm rounded-lg border border-gray-200 px-2 py-2 focus:border-brand focus:outline-none sm:w-24 sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-base"
                 >
                   <option value="010">010</option>
                   <option value="011">011</option>
@@ -268,7 +268,7 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
                   placeholder="0000"
                   value={phoneNumber.middle}
                   onChange={(e) => setPhoneNumber({ ...phoneNumber, middle: e.target.value.replace(/\D/g, '') })}
-                  className="flex-1 rounded-xl border border-gray-200 px-3 py-2.5 focus:border-brand focus:outline-none"
+                  className="flex-1 text-sm rounded-lg border border-gray-200 px-2 py-2 focus:border-brand focus:outline-none sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-base"
                 />
                 <input 
                   type="tel"
@@ -276,21 +276,21 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
                   placeholder="0000"
                   value={phoneNumber.last}
                   onChange={(e) => setPhoneNumber({ ...phoneNumber, last: e.target.value.replace(/\D/g, '') })}
-                  className="flex-1 rounded-xl border border-gray-200 px-3 py-2.5 focus:border-brand focus:outline-none"
+                  className="flex-1 text-sm rounded-lg border border-gray-200 px-2 py-2 focus:border-brand focus:outline-none sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-base"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">생년월일 *</label>
-              <div className="flex items-center gap-2">
+              <label className="ajd-label">생년월일 *</label>
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <input 
                   type="text"
                   maxLength={6}
                   placeholder="940101"
                   value={birthNumber.birth}
                   onChange={(e) => setBirthNumber({ ...birthNumber, birth: e.target.value.replace(/\D/g, '') })}
-                  className="w-32 rounded-xl border border-gray-200 px-3 py-2.5 focus:border-brand focus:outline-none text-center"
+                  className="w-28 text-sm rounded-lg border border-gray-200 px-2 py-2 focus:border-brand focus:outline-none text-center sm:w-32 sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-base"
                 />
                 <span className="text-gray-400">-</span>
                 <input 
@@ -299,11 +299,11 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
                   placeholder="1"
                   value={birthNumber.gender}
                   onChange={(e) => setBirthNumber({ ...birthNumber, gender: e.target.value.replace(/\D/g, '') })}
-                  className="w-12 rounded-xl border border-gray-200 px-3 py-2.5 focus:border-brand focus:outline-none text-center"
+                  className="w-10 text-sm rounded-lg border border-gray-200 px-2 py-2 focus:border-brand focus:outline-none text-center sm:w-12 sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-base"
                 />
-                <span className="text-xs text-gray-400">●●●●●●</span>
+                <span className="text-[10px] text-gray-400 sm:text-xs">●●●●●●</span>
               </div>
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-[10px] text-gray-500 sm:text-xs">
                 예: 1994년 1월 1일생 남성 → 940101 - 1
               </p>
             </div>
@@ -312,35 +312,35 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
       </div>
 
       {/* 사업장 정보 섹션 */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="ajd-card">
         <button
           type="button"
           onClick={() => toggleSection("business")}
-          className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          className="ajd-head-btn"
         >
-          <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              completedSections.has("business") ? "bg-brand text-white" : "bg-gray-100 text-gray-600"
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className={`ajd-bullet ${
+              completedSections.has("business") ? "done" : "idle"
             }`}>
-              {completedSections.has("business") ? <Check className="w-4 h-4" /> : <Store className="w-4 h-4" />}
+              {completedSections.has("business") ? <Check className="w-3 h-3 sm:w-4 sm:h-4" /> : <Store className="w-3 h-3 sm:w-4 sm:h-4" />}
             </div>
             <div className="text-left">
-              <h3 className="font-semibold">사업장 정보</h3>
+              <h3 className="text-sm font-semibold sm:text-base">사업장 정보</h3>
               {completedSections.has("business") && (
-                <p className="text-xs text-gray-500 mt-0.5">입력 완료</p>
+                <p className="text-[10px] text-gray-500 mt-0.5 sm:text-xs">입력 완료</p>
               )}
             </div>
           </div>
           {expandedSections.has("business") ? 
-            <ChevronDown className="w-5 h-5 text-gray-400" /> : 
-            <ChevronRight className="w-5 h-5 text-gray-400" />
+            <ChevronDown className="w-4 h-4 text-gray-400 sm:w-5 sm:h-5" /> : 
+            <ChevronRight className="w-4 h-4 text-gray-400 sm:w-5 sm:h-5" />
           }
         </button>
         
         {expandedSections.has("business") && (
-          <div className="px-6 pb-6 space-y-4 border-t border-gray-100">
-            <div className="pt-4">
-              <label className="block text-sm font-medium mb-2">업체명</label>
+          <div className="ajd-body">
+            <div className="pt-3 sm:pt-4">
+              <label className="ajd-label">업체명</label>
               <input 
                 name="company_name" 
                 placeholder="예: OO치킨, OO카페" 
@@ -349,7 +349,7 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">사업장 주소 *</label>
+              <label className="ajd-label">사업장 주소 *</label>
               <AddressSearch 
                 value={businessAddress}
                 onComplete={(data) => setBusinessAddress(data.address)}
@@ -368,7 +368,7 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">창업 시기 *</label>
+              <label className="ajd-label">창업 시기 *</label>
               <select 
                 name="startup_period" 
                 required
@@ -383,14 +383,14 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">사업장 현재 상태 *</label>
+              <label className="ajd-label">사업장 현재 상태 *</label>
               <div className="space-y-2">
                 {[
                   { value: "immediate", label: "현재 영업중 - 5일 이내 설치 필요 🔥", desc: "바로 설치가 가능한 상태입니다" },
                   { value: "interior", label: "5일 이후에 설치 가능", desc: "원하는 일정에 맞춰 설치 진행" },
                   { value: "preparing", label: "창업 준비중 (매장 없음)", desc: "사업장 확정 후 설치 가능" }
                 ].map(status => (
-                  <label key={status.value} className="flex items-start gap-3 p-3 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer">
+                  <label key={status.value} className="ajd-choice">
                     <input
                       type="radio"
                       name="business_status"
@@ -400,8 +400,8 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
                       className="mt-1"
                     />
                     <div>
-                      <p className="font-medium text-sm">{status.label}</p>
-                      <p className="text-xs text-gray-600">{status.desc}</p>
+                      <p className="text-xs font-medium sm:text-sm">{status.label}</p>
+                      <p className="text-[10px] text-gray-600 sm:text-xs">{status.desc}</p>
                     </div>
                   </label>
                 ))}
@@ -409,7 +409,7 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
 
               {businessStatus === "interior" && (
                 <div className="mt-3">
-                  <label className="block text-sm font-medium mb-2">원하시는 일정 *</label>
+                  <label className="ajd-label">원하시는 일정 *</label>
                   <input
                     type="date"
                     value={openDate}
@@ -423,12 +423,12 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">업종 선택 *</label>
+              <label className="ajd-label">업종 선택 *</label>
               <BusinessTypeToggle value={businessType} onChange={setBusinessType} />
             </div>
 
-            <div className="p-3 bg-gray-50 rounded-xl">
-              <p className="text-xs font-medium mb-2">현재 이용중인 서비스 (선택)</p>
+            <div className="p-2.5 bg-gray-50 rounded-lg sm:p-3 sm:rounded-xl">
+              <p className="text-[10px] font-medium mb-1.5 sm:text-xs sm:mb-2">현재 이용중인 서비스 (선택)</p>
               <div className="flex gap-4">
                 {[
                   { key: "cctv", label: "CCTV" },
@@ -452,37 +452,37 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
       </div>
 
       {/* 상담 시간 섹션 */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="ajd-card">
         <button
           type="button"
           onClick={() => toggleSection("contact")}
-          className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          className="ajd-head-btn"
         >
-          <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-              completedSections.has("contact") ? "bg-brand text-white" : "bg-gray-100 text-gray-600"
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className={`ajd-bullet ${
+              completedSections.has("contact") ? "done" : "idle"
             }`}>
-              {completedSections.has("contact") ? <Check className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
+              {completedSections.has("contact") ? <Check className="w-3 h-3 sm:w-4 sm:h-4" /> : <Clock className="w-3 h-3 sm:w-4 sm:h-4" />}
             </div>
             <div className="text-left">
-              <h3 className="font-semibold">상담 시간</h3>
+              <h3 className="text-sm font-semibold sm:text-base">상담 시간</h3>
               {completedSections.has("contact") && (
-                <p className="text-xs text-gray-500 mt-0.5">입력 완료</p>
+                <p className="text-[10px] text-gray-500 mt-0.5 sm:text-xs">입력 완료</p>
               )}
             </div>
           </div>
           {expandedSections.has("contact") ? 
-            <ChevronDown className="w-5 h-5 text-gray-400" /> : 
-            <ChevronRight className="w-5 h-5 text-gray-400" />
+            <ChevronDown className="w-4 h-4 text-gray-400 sm:w-5 sm:h-5" /> : 
+            <ChevronRight className="w-4 h-4 text-gray-400 sm:w-5 sm:h-5" />
           }
         </button>
         
         {expandedSections.has("contact") && (
-          <div className="px-6 pb-6 space-y-4 border-t border-gray-100">
-            <div className="pt-4">
-              <label className="block text-sm font-medium mb-2">전화 상담 일정 (5분 내외) *</label>
+          <div className="ajd-body">
+            <div className="pt-3 sm:pt-4">
+              <label className="ajd-label">전화 상담 일정 (5분 내외) *</label>
               <div className="space-y-2">
-                <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer">
+                <label className="ajd-choice">
                   <input
                     type="radio"
                     name="call_preference"
@@ -494,12 +494,12 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
                     }}
                   />
                   <div>
-                    <p className="font-medium text-sm">가능한 빨리</p>
-                    <p className="text-xs text-gray-600">순차적으로 연락드립니다</p>
+                    <p className="text-xs font-medium sm:text-sm">가능한 빨리</p>
+                    <p className="text-[10px] text-gray-600 sm:text-xs">순차적으로 연락드립니다</p>
                   </div>
                 </label>
 
-                <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer">
+                <label className="ajd-choice">
                   <input
                     type="radio"
                     name="call_preference"
@@ -508,8 +508,8 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
                     onChange={() => setCallPreference("scheduled")}
                   />
                   <div>
-                    <p className="font-medium text-sm">원하는 날짜 선택</p>
-                    <p className="text-xs text-gray-600">편한 시간에 연락드립니다</p>
+                    <p className="text-xs font-medium sm:text-sm">원하는 날짜 선택</p>
+                    <p className="text-[10px] text-gray-600 sm:text-xs">편한 시간에 연락드립니다</p>
                   </div>
                 </label>
               </div>
@@ -528,7 +528,7 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
               
               {callPreference && (
                 <div className="mt-3">
-                  <label className="block text-xs font-medium mb-2">선호 시간대 *</label>
+                  <label className="ajd-label">선호 시간대 *</label>
                   <select
                     value={callTime}
                     onChange={(e) => setCallTime(e.target.value)}
@@ -549,29 +549,29 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
       </div>
 
       {/* 동의사항 섹션 */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="ajd-card">
         <button
           type="button"
           onClick={() => toggleSection("agreement")}
-          className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          className="ajd-head-btn"
         >
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center">
-              <FileText className="w-4 h-4" />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="ajd-bullet idle">
+              <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
             </div>
             <div className="text-left">
-              <h3 className="font-semibold">동의사항</h3>
+              <h3 className="text-sm font-semibold sm:text-base">동의사항</h3>
             </div>
           </div>
           {expandedSections.has("agreement") ? 
-            <ChevronDown className="w-5 h-5 text-gray-400" /> : 
-            <ChevronRight className="w-5 h-5 text-gray-400" />
+            <ChevronDown className="w-4 h-4 text-gray-400 sm:w-5 sm:h-5" /> : 
+            <ChevronRight className="w-4 h-4 text-gray-400 sm:w-5 sm:h-5" />
           }
         </button>
         
         {expandedSections.has("agreement") && (
           <div className="px-6 pb-6 border-t border-gray-100">
-            <div className="pt-4 space-y-3">
+            <div className="pt-3 space-y-2.5 sm:pt-4 sm:space-y-3">
               <label className="flex items-start gap-3">
                 <input 
                   type="checkbox" 
@@ -580,8 +580,8 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
                   className="mt-1 rounded border-gray-300"
                 />
                 <div>
-                  <span className="text-sm font-medium">개인정보 수집 및 이용 동의 *</span>
-                  <p className="text-xs text-gray-500 mt-0.5">신청에 필요한 정보를 수집합니다</p>
+                  <span className="text-xs font-medium sm:text-sm">개인정보 수집 및 이용 동의 *</span>
+                  <p className="text-[10px] text-gray-500 mt-0.5 sm:text-xs">신청에 필요한 정보를 수집합니다</p>
                 </div>
               </label>
 
@@ -592,8 +592,8 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
                   className="mt-1 rounded border-gray-300"
                 />
                 <div>
-                  <span className="text-sm font-medium">마케팅 정보 수신 동의</span>
-                  <p className="text-xs text-gray-500 mt-0.5">유용한 정보와 혜택을 받아보세요</p>
+                  <span className="text-xs font-medium sm:text-sm">마케팅 정보 수신 동의</span>
+                  <p className="text-[10px] text-gray-500 mt-0.5 sm:text-xs">유용한 정보와 혜택을 받아보세요</p>
                 </div>
               </label>
             </div>
@@ -602,9 +602,9 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
       </div>
 
       {/* 혜택 안내 */}
-      <div className="bg-gradient-to-br from-brand/5 to-brand/10 rounded-2xl p-5">
+      <div className="ajd-benefit">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 bg-brand/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+          <div className="icon mt-0.5">
             <Check className="w-4 h-4 text-brand" />
           </div>
           <div>
@@ -627,10 +627,10 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
       <button
         type="submit"
         disabled={loading || completedSections.size < 3}
-        className={`w-full rounded-2xl px-4 py-4 font-semibold transition-all ${
+        className={`ajd-submit ${
           completedSections.size >= 3 
-            ? "bg-brand text-white hover:bg-brand/90" 
-            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+            ? "enabled" 
+            : "disabled"
         }`}
       >
         {loading ? "신청 중..." : "무료체험단 신청하기"}
