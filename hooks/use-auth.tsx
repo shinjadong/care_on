@@ -63,22 +63,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(session?.user ?? null)
         setIsLoading(false)
         
-        // 로그인 성공 시 리다이렉트 처리
-        if (event === 'SIGNED_IN' && session) {
-          // 프로덕션 환경이면 무조건 careon.ai.kr로 리다이렉트
-          if (window.location.hostname === 'localhost' && process.env.NODE_ENV === 'production') {
-            window.location.href = 'https://careon.ai.kr'
-          } else if (window.location.hostname.includes('localhost')) {
-            // 로컬 개발 환경에서도 프로덕션처럼 동작하려면
-            // window.location.href = 'https://careon.ai.kr'
-            const urlParams = new URLSearchParams(window.location.search)
-            const redirectTo = urlParams.get('redirectTo') || '/'
-            window.location.href = redirectTo
-          } else {
-            // 이미 careon.ai.kr 도메인이면 홈으로
-            window.location.href = '/'
-          }
-        }
+        // 로그인 성공 시 리다이렉트 처리 제거
+        // OAuth 콜백에서 이미 리다이렉트를 처리하므로 여기서는 하지 않음
       }
     )
 
