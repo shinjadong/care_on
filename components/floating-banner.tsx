@@ -89,30 +89,32 @@ export function FloatingBanner() {
 
       {/* 신청 모달 */}
       {showApplicationModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4">
           {/* 배경 오버레이 */}
           <div 
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setShowApplicationModal(false)}
           />
           
-          {/* 모달 컨텐츠 */}
-          <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto bg-white rounded-2xl shadow-xl">
+          {/* 모달 컨텐츠 - 모바일 최적화 */}
+          <div className="relative w-full max-w-[95vw] sm:max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto bg-white rounded-xl sm:rounded-2xl shadow-xl">
             {/* 닫기 버튼 */}
             <button
               onClick={() => setShowApplicationModal(false)}
-              className="absolute right-4 top-4 z-10 p-2 rounded-full bg-white/80 backdrop-blur hover:bg-gray-100 transition-colors"
+              className="absolute right-2 top-2 sm:right-4 sm:top-4 z-10 p-1.5 sm:p-2 rounded-full bg-white/80 backdrop-blur hover:bg-gray-100 transition-colors"
             >
-              <X className="w-5 h-5 text-gray-600" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
             </button>
             
-            {/* 폼 */}
-            <CareonApplicationForm 
-              useGrid={true}
-              onSuccess={() => {
-                setTimeout(() => setShowApplicationModal(false), 2000)
-              }}
-            />
+            {/* 폼 - 모바일에서 패딩 조정 */}
+            <div className="p-4 sm:p-6">
+              <CareonApplicationForm 
+                useGrid={true}
+                onSuccess={() => {
+                  setTimeout(() => setShowApplicationModal(false), 2000)
+                }}
+              />
+            </div>
           </div>
         </div>
       )}

@@ -3,9 +3,15 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
-import { Menu, Phone, Shield, Lightbulb, Star, HelpCircle, User, LogOut } from "lucide-react"
+import { Menu, Phone, Shield, Lightbulb, Star, HelpCircle, X } from "lucide-react"
+
+const CareonApplicationForm = dynamic(() => import("@/components/what/CareonApplicationForm"), { 
+  ssr: false,
+  loading: () => <div className="p-8 text-center">로딩중...</div>
+})
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -13,7 +19,6 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { useAuth } from "@/hooks/use-auth"
 
 // 시간대별 다이나믹 메시지 함수 (간소화)
 const getTimeBasedMessage = () => {
@@ -112,7 +117,7 @@ export function Header() {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null)
   const [touchEnd, setTouchEnd] = useState<{ x: number; y: number } | null>(null)
-  const { user, isLoading, signOut } = useAuth()
+  const [showApplicationModal, setShowApplicationModal] = useState(false)
 
   // 스와이프 제스처 처리
   const handleTouchStart = (e: TouchEvent) => {
@@ -200,11 +205,6 @@ export function Header() {
     }
   }, [touchStart, touchEnd])
 
-  // 로그아웃 처리
-  const handleLogout = async () => {
-    await signOut()
-  }
-
   return (
     <header
       className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
@@ -277,52 +277,18 @@ export function Header() {
               1866-1845
             </a>
 
-            {/* 로그인/로그아웃 버튼 */}
-            {isLoading ? (
-              <div className="w-20 h-10 bg-gray-200 rounded-md animate-pulse"></div>
-            ) : user ? (
-              <div className="flex items-center space-x-3">
-                <span className={`text-sm transition-colors duration-300 ${
-                  isScrolled ? "text-gray-600" : "text-gray-200"
-                }`}>
-                  {user.user_metadata?.full_name || user.email?.split('@')[0]}님
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-300 border ${
-                    isScrolled
-                      ? "bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-200"
-                      : "bg-white/10 hover:bg-white/20 text-white border-white/30"
-                  }`}
-                >
-                  <LogOut className="w-4 h-4 mr-1" />
-                  로그아웃
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-3">
-                <Link
-                  href="/login"
-                  className={`inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 border ${
-                    isScrolled
-                      ? "bg-transparent hover:bg-gray-50 text-gray-700 border-gray-200"
-                      : "bg-transparent hover:bg-white/20 text-white border-white/30 hover:border-white/50"
-                  }`}
-                >
-                  로그인
-                </Link>
-                <Link
-                  href="/signup"
-                  className={`inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 ${
-                    isScrolled
-                      ? "bg-[#148777] hover:bg-[#0f6b5c] text-white"
-                      : "bg-white hover:bg-white/90 text-[#148777]"
-                  }`}
-                >
-                  회원가입
-                </Link>
-              </div>
-            )}
+            {/* 스타트 케어 접수 버튼 */}
+            <button
+              onClick={() => setShowApplicationModal(true)}
+              className={`inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold rounded-full transition-all duration-300 ${
+                isScrolled
+                  ? "bg-gradient-to-r from-[#148777] to-[#0f6b5c] hover:from-[#0f6b5c] hover:to-[#0a5249] text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+                  : "bg-white hover:bg-white/95 text-[#148777] shadow-lg hover:shadow-xl transform hover:scale-105"
+              }`}
+            >
+              <Shield className="w-4 h-4 mr-2" />
+              스타트 케어 접수
+            </button>
           </div>
           {/* 모바일 메뉴 버튼 - 스크롤 상태에 따른 색상 조정 */}
           <div className="lg:hidden">
@@ -397,38 +363,17 @@ export function Header() {
                       <span className="font-medium text-gray-900">1866-1845</span>
                     </a>
 
-                    {/* 모바일 로그인/로그아웃 버튼 */}
-                    {user ? (
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-center space-x-2 p-3 bg-gray-50 rounded-lg">
-                          <User className="w-4 h-4 text-[#148777]" />
-                          <span className="font-medium text-gray-900">
-                            {user.user_metadata?.full_name || user.email?.split('@')[0]}님
-                          </span>
-                        </div>
-                        <Button 
-                          onClick={handleLogout}
-                          variant="outline" 
-                          className="w-full"
-                        >
-                          <LogOut className="w-4 h-4 mr-2" />
-                          로그아웃
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex space-x-3">
-                        <Button asChild variant="outline" className="flex-1 bg-transparent">
-                          <Link href="/login" onClick={() => setIsSheetOpen(false)}>
-                            로그인
-                          </Link>
-                        </Button>
-                        <Button asChild className="flex-1 bg-[#148777] hover:bg-[#0f6b5c]">
-                          <Link href="/signup" onClick={() => setIsSheetOpen(false)}>
-                            회원가입
-                          </Link>
-                        </Button>
-                      </div>
-                    )}
+                    {/* 모바일 스타트 케어 접수 버튼 */}
+                    <Button 
+                      onClick={() => {
+                        setIsSheetOpen(false)
+                        setShowApplicationModal(true)
+                      }}
+                      className="w-full bg-gradient-to-r from-[#148777] to-[#0f6b5c] hover:from-[#0f6b5c] hover:to-[#0a5249] text-white font-semibold"
+                    >
+                      <Shield className="w-4 h-4 mr-2" />
+                      스타트 케어 접수
+                    </Button>
                   </div>
                 </div>
               </SheetContent>
@@ -468,6 +413,38 @@ export function Header() {
           </NavigationMenu>
         </nav>
       </div>
+
+      {/* 신청 모달 */}
+      {showApplicationModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4">
+          {/* 배경 오버레이 */}
+          <div 
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setShowApplicationModal(false)}
+          />
+          
+          {/* 모달 컨텐츠 - 모바일 최적화 */}
+          <div className="relative w-full max-w-[95vw] sm:max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto bg-white rounded-xl sm:rounded-2xl shadow-xl">
+            {/* 닫기 버튼 */}
+            <button
+              onClick={() => setShowApplicationModal(false)}
+              className="absolute right-2 top-2 sm:right-4 sm:top-4 z-10 p-1.5 sm:p-2 rounded-full bg-white/80 backdrop-blur hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+            </button>
+            
+            {/* 폼 - 모바일에서 패딩 조정 */}
+            <div className="p-4 sm:p-6">
+              <CareonApplicationForm 
+                useGrid={true}
+                onSuccess={() => {
+                  setTimeout(() => setShowApplicationModal(false), 2000)
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   )
 }
