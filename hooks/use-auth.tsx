@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, createContext, useContext } from "react"
 import { createClient } from "@/lib/supabase/client-with-fallback"
+import { getRedirectUrl } from "@/lib/utils/get-redirect-url"
 import type { User, Session } from "@supabase/supabase-js"
 
 // 인증 컨텍스트 타입 정의
@@ -81,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: getRedirectUrl('/auth/callback'),
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
