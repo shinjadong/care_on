@@ -24,14 +24,14 @@ const Marquee = ({ images, reverse = false }: { images: string[]; reverse?: bool
 }
 
 export function AuthorityCoCompanies() {
-  const partnerLogos1 = ["https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/1.png"]
-  const partnerLogos2 = ["https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/2.png"]
-  const partnerLogos3 = ["https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/3.png"]
+  const partnerLogos1 = ["https://pkehcfbjotctvneordob.supabase.co/storage/v1/object/public/care-on/1.png"]
+  const partnerLogos2 = ["https://pkehcfbjotctvneordob.supabase.co/storage/v1/object/public/care-on/2.png"]
+  const partnerLogos3 = ["https://pkehcfbjotctvneordob.supabase.co/storage/v1/object/public/care-on/3.png"]
   const partnerLogos4 = ["https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/4.png"]
   const partnerLogos5 = ["https://aet4p1ka2mfpbmiq.public.blob.vercel-storage.com/5.png"]
 
   return (
-    <section className="py-12 md:py-24 bg-white">
+    <section className="py-12 md:pt-48 pd-36 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <em className="text-[#b8860b] text-xl md:text-2xl text-bold font-serif italic">신뢰의 다른 이름 '케어온'</em>
