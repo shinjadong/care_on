@@ -47,39 +47,41 @@ export function FloatingBanner() {
       {/* 플로팅 배너 - 미니멀 Apple 스타일 */}
       <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-auto md:left-1/2 md:-translate-x-1/2 z-40 max-w-sm md:max-w-md">
         <div className="relative">
-          {/* 배너 본체 - 투명 배경에 테두리만 */}
+          {/* 배너 본체 - 브랜드 컬러 그라데이션 배경 */}
           <button
             onClick={handleApply}
             className="
               relative w-full
-              px-6 py-3 md:px-8 md:py-3.5
-              bg-white/60 backdrop-blur-md
-              border border-brand/30
+              px-6 py-2 md:px-8 md:py-2.5
+              bg-gradient-to-r from-[#148777] to-[#0f6b5c]
               rounded-full
-              transition-all duration-500
-              hover:bg-white/80 hover:border-brand/50
+              transition-all duration-300
+              hover:shadow-lg hover:shadow-[#148777]/15
+              hover:scale-[1.01]
               group
               overflow-hidden
             "
           >
             {/* 반짝이는 애니메이션 효과 */}
             <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out">
-              <div className="h-full w-32 bg-gradient-to-r from-transparent via-brand/10 to-transparent skew-x-12" />
+              <div className="h-full w-32 bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12" />
             </div>
             
             {/* 텍스트 */}
             <div className="relative flex items-center justify-center gap-2">
-              <span className="text-sm md:text-base font-medium text-gray-900">
+              <span className="text-sm md:text-[15px] font-semibold text-white">
                 무료 체험단 신청하기
               </span>
-              <span className="hidden md:inline-block text-xs text-gray-500 ml-1">
+              <span className="hidden md:inline-flex items-center px-2 py-0.5 text-xs font-medium bg-white/20 text-white rounded-full">
                 12개월 무료
               </span>
             </div>
 
             {/* 모바일용 짧은 텍스트 */}
-            <div className="md:hidden absolute top-full left-0 right-0 text-center mt-1">
-              <span className="text-[10px] text-gray-500">12개월 무료</span>
+            <div className="md:hidden absolute -bottom-5 left-1/2 -translate-x-1/2">
+              <span className="text-[10px] text-gray-600 bg-white/80 backdrop-blur px-2 py-0.5 rounded-full whitespace-nowrap">
+                12개월 무료
+              </span>
             </div>
           </button>
         </div>

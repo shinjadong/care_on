@@ -93,12 +93,12 @@ export function NoOneProtectsYou() {
           {/* 나머지 불안감 조성 텍스트 */}
           <div className="text-center mb-12 md:mb-16 max-w-3xl">
             <p className="text-base md:text-lg text-gray-400 leading-relaxed">
-              실력이 있다고 창업에 성공하는 시대는 지났습니다.
+              실력이 있어도,
               <br />
-              생각지도 못한 위험이 너무 많습니다. 치열한 경쟁 속에서,
+              <span className="font-semibold">1년을 버티지 못하는 경우가</span> 
               <br />
               <br />
-              <span className="text-white font-semibold" style={{fontFamily: 'Garamond, serif'}}>새로 시작하는 우리, 괜찮을까요?</span>
+              <span className="text-white font-semibold" style={{fontFamily: 'Garamond, serif'}}>생각보다 너무 많습니다. </span>
             </p>
           </div>
 
@@ -106,7 +106,7 @@ export function NoOneProtectsYou() {
           {/* 최종 메시지 */}
           <div className="text-center pt-8 md:pt-12 max-w-4xl">
             <p className="text-2xl md:text-4xl font-bold text-gray-400 leading-tight" style={{fontFamily: 'Garamond, serif'}}>
-              아무도 당신을 <span className="text-gray-400">지켜주지 않습니다</span>
+              하지만 <span className="text-gray-400">방법이 있습니다.</span>
             </p>
           </div>
         </div>

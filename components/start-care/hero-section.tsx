@@ -130,37 +130,39 @@ export function HeroSection() {
             
             {/* 메인 콘텐츠 영역 */}
             <div className="container mx-auto px-4">
-              <div className="max-w-2xl text-left">
+              <div className="w-full flex justify-center">
+                <div className="text-center">
+                  
+                  {/* 타이틀 섹션 - 처음에 보이고 서서히 사라짐 */}
+                  <div style={{ 
+                    opacity: titleText.opacity,
+                    transform: titleText.transform 
+                  }}>
+                    <span className="text-lg font-semibold">스타트 케어</span>
+                    <h1 className="text-4xl md:text-6xl font-extrabold my-4 leading-tight">
+                      1년 동안
+                      <br />
+                      폐업 보장
+                    </h1>
+                  </div>
                 
-                {/* 타이틀 섹션 - 처음에 보이고 서서히 사라짐 */}
-                <div style={{ 
-                  opacity: titleText.opacity,
-                  transform: titleText.transform 
-                }}>
-                  <span className="text-lg font-semibold">세이프 스타트 패키지</span>
-                  <h1 className="text-4xl md:text-6xl font-extrabold my-4 leading-tight">
-                    예비창업자를 위한
-                    <br />
-                    1:1 맞춤 세팅
-                  </h1>
-                </div>
-                
-                {/* 서브텍스트 - 아래에서 올라오며 나타남, 중앙 고정 후 위로 사라짐 */}
-                <div style={{ 
-                  opacity: Math.min(subText.opacity, subTextOut.opacity),
-                  transform: `translateY(${
-                    // 복합 애니메이션: 나타날 때와 사라질 때의 움직임 결합
-                    (1 - subText.opacity) * 100 + // 아래에서 올라옴
-                    (1 - subTextOut.opacity) * -100 // 위로 사라짐
-                  }px)`
-                }}>
-                  <p className="text-2xl md:text-3xl text-gray-300 leading-tight mt-8">
-                    떨리는 첫 사업,
-                    <br />
-                    실패하지 않게
-                    <br />
-                    다 케어해드릴게요
-                  </p>
+                  {/* 서브텍스트 - 아래에서 올라오며 나타남, 중앙 고정 후 위로 사라짐 */}
+                  <div style={{ 
+                    opacity: Math.min(subText.opacity, subTextOut.opacity),
+                    transform: `translateY(${
+                      // 복합 애니메이션: 나타날 때와 사라질 때의 움직임 결합
+                      (1 - subText.opacity) * 100 + // 아래에서 올라옴
+                      (1 - subTextOut.opacity) * -100 // 위로 사라짐
+                    }px)`
+                  }}>
+                    <p className="text-2xl md:text-3xl text-gray-300 leading-tight mt-8">
+                      우리에게 필요한 건
+                      <br />
+                      '안전망'
+                      <br />
+                      입니다.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

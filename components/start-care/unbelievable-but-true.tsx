@@ -249,7 +249,7 @@ export function UnbelievableButTrue() {
           <p className="text-gray-800 text-lg md:text-xl font-bold">
             <br />
             <br />
-            믿기지 않지만, 이것이 <span className="text-red-800 font-bold">현실</span>입니다.
+            믿기지 않지만, <span className="text-red-800 font-bold">현실</span>입니다.
           </p>
         </motion.div>
       </div>

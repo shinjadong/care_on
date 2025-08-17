@@ -106,7 +106,7 @@ export function FirstYearMatters() {
               transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
               viewport={{ once: true, amount: 0.3 }}
             >
-              그래서 우리가 결심했습니다
+              그래서, 결심했습니다
             </motion.p>
             <motion.h3 
               className="text-2xl md:text-3xl font-bold text-white leading-tight"
@@ -115,74 +115,12 @@ export function FirstYearMatters() {
               transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
               viewport={{ once: true, amount: 0.3 }}
             >
-              가장 위험한 그 1년,
+              가장 위험한 그 1년을
               <br />
-              <span className="text-[#148777] font-extrabold">케어온이 함께 걷겠습니다.</span>
+              <span className="text-[#148777] font-extrabold">함께 걷겠습니다.</span>
             </motion.h3>
           </motion.div>
 
-          {/* 성공 메시지 */}
-          <motion.div 
-            className="text-center mb-12 md:mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <motion.p 
-              className="text-2xl md:text-3xl font-bold text-white mb-4" 
-              style={{fontFamily: 'Garamond, serif'}}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
-              viewport={{ once: true, amount: 0.3 }}
-            >
-              "해냈다!"
-              <br />
-            </motion.p>
-            <motion.p 
-              className="text-lg text-gray-300 leading-relaxed"
-              initial={{ opacity: 0, y: 25 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-              viewport={{ once: true, amount: 0.3 }}
-            >
-              1년 후, 당신도 이렇게 말할 겁니다.
-              <br />
-              그런데 만약...
-              <br />
-              정말 만약에 그렇지 못하더라도
-            </motion.p>
-          </motion.div>
-
-          {/* 재시작 메시지 */}
-          <motion.div 
-            className="text-center mb-16 md:mb-20"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <motion.p 
-              className="text-xl md:text-2xl font-bold text-white mb-4" 
-              style={{fontFamily: 'Garamond, serif'}}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
-              viewport={{ once: true, amount: 0.3 }}
-            >
-              처음부터 다시 시작할 수 있습니다
-            </motion.p>
-            <motion.p 
-              className="text-lg text-gray-300"
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
-              viewport={{ once: true, amount: 0.3 }}
-            >
-              빚 없이. 부담 없이. 깨끗하게.
-            </motion.p>
-          </motion.div>
 
           {/* 케어온의 약속 */}
           <motion.div 
@@ -243,7 +181,7 @@ export function FirstYearMatters() {
             >
               실패가 두렵지 않은 세상.
               <br />
-              다시 일어설 수 있는 세상.
+
             </motion.p>
             <motion.p 
               className="text-xl md:text-2xl font-bold text-white"
@@ -252,35 +190,10 @@ export function FirstYearMatters() {
               transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
               viewport={{ once: true, amount: 0.3 }}
             >
-              그 세상을 <span className="text-[#148777] font-extrabold">케어온이 만들어갑니다.</span>
+               <span className="text-[#148777] font-extrabold">케어온이 만들어갑니다.</span>
             </motion.p>
           </motion.div>
 
-          {/* 최종 메시지 */}
-          <motion.div 
-            className="text-center"
-            initial={{ opacity: 0, y: 35 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <motion.p 
-              className="text-xl md:text-2xl font-medium text-white leading-relaxed" 
-              style={{fontFamily: 'Noto Serif KR, serif'}}
-              initial={{ opacity: 0, y: 25 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-              viewport={{ once: true, amount: 0.3 }}
-            >
-              두려워하지 마세요.
-              <br />
-              최악의 순간에도,
-              <br />
-              <br />
-              <br />
-              <span className="text-white font-bold">우리가 있으니까요.</span>
-            </motion.p>
-          </motion.div>
 
         </div>
       </div>

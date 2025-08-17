@@ -17,7 +17,6 @@ const Secrets1to3 = dynamic(() => import("@/components/start-care/secrets-1to3")
 const NoOneProtectsYou = dynamic(() => import("@/components/start-care/no-one-protects-you").then(m => m.NoOneProtectsYou))
 const ThreeNoFailSecrets = dynamic(() => import("@/components/start-care/three-no-fail-secrets").then(m => m.ThreeNoFailSecrets))
 const FirstYearMatters = dynamic(() => import("@/components/start-care/first-year-matters").then(m => m.FirstYearMatters))
-const FinalCta = dynamic(() => import("@/components/start-care/final-cta").then(m => m.FinalCta))
 const FaqSection = dynamic(() => import("@/components/start-care/faq-section").then(m => m.FaqSection))
 
 
@@ -43,7 +42,6 @@ export default function StartCarePage() {
           <WhenVisible minHeight={500}><ThreeNoFailSecrets /></WhenVisible>
         </div>
         <WhenVisible minHeight={500}><FirstYearMatters /></WhenVisible>
-        <WhenVisible minHeight={500}><FinalCta /></WhenVisible>
         <WhenVisible minHeight={500}><FaqSection /></WhenVisible>
       </main>
     </div>

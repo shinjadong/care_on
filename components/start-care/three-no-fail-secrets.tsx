@@ -12,15 +12,15 @@ const solutions = [
   },
   {
     number: "Solution 2", 
-    title: "잊지 마세요",
-    subtitle: "내 몸은 하나라는 걸",
-    description: "\"CCTV 고장났는데... 어디 전화해야하지?\"\n더 이상 헤매지 마세요.\n사장님은 장사만 하세요.\n나머지는 케어온이 합니다.",
+    title: "매출에만",
+    subtitle: "집중하세요",
+    description: "\"CCTV 고장났는데... 어디 전화해야하지?\"\n.\n매출에만 집중하세요.\n귀찮은 일은 위임하세요.",
   },
   {
     number: "Solution 3",
-    title: "그럼에도 불구하고,",
-    subtitle: "보장받으세요",
-    description: "대한민국 최초\n1년 내 폐업 시,\n100% 환급해드립니다.",
+    title: "만약의 위험에,",
+    subtitle: "대비하세요",
+    description: "\n1년 내 폐업 시,\n100% 환급해드립니다.",
   }
 ]
 
@@ -67,9 +67,7 @@ export function ThreeNoFailSecrets() {
           <p className="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
             불안해하지 마세요,
             <br />
-            오직,
-            <br />
-            <span className="text-gray-900 font-semibold">당신을 위한 해결책이 있습니다.</span>
+            <span className="text-gray-900 font-semibold">해결책이 있습니다.</span>
           </p>
         </div>
 
@@ -77,9 +75,9 @@ export function ThreeNoFailSecrets() {
         <div className="bg-white p-8 md:p-12 rounded-lg shadow-lg max-w-5xl mx-auto">
           <div className="space-y-10 md:space-y-12">
             {solutions.map((solution, index) => (
-              <div key={index} className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
-                {/* 텍스트 영역 */}
-                <div className="flex-1 max-w-2xl">
+              <div key={index} className="text-center">
+                {/* 텍스트 영역 - 중앙 정렬 */}
+                <div className="max-w-2xl mx-auto">
                   <div className="mb-4">
                     <div className="text-gray-500 font-medium text-xs mb-2">
                       {solution.number}
@@ -97,13 +95,6 @@ export function ThreeNoFailSecrets() {
                         {lineIndex < solution.description.split('\n').length - 1 && <br />}
                       </div>
                     ))}
-                  </div>
-                </div>
-
-                {/* 각 솔루션별 이미지 영역 */}
-                <div className="w-full lg:w-72 flex justify-center lg:justify-end flex-shrink-0">
-                  <div className="aspect-square md:aspect-video bg-gray-100 rounded-lg border border-gray-300 flex items-center justify-center h-48 md:h-auto md:min-h-[180px] w-full max-w-sm lg:max-w-72">
-                    <span className="text-gray-500 text-sm md:text-base font-medium">솔루션 {index + 1} 이미지</span>
                   </div>
                 </div>
               </div>
