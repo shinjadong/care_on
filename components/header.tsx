@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
-import { Menu, Phone, Shield, Lightbulb, Star, HelpCircle } from "lucide-react"
+import { Menu, Phone, Shield, Lightbulb, Star, HelpCircle, User, LogOut } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -13,6 +13,7 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+import { useAuth } from "@/hooks/use-auth"
 
 // 시간대별 다이나믹 메시지 함수 (간소화)
 const getTimeBasedMessage = () => {
@@ -111,6 +112,7 @@ export function Header() {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null)
   const [touchEnd, setTouchEnd] = useState<{ x: number; y: number } | null>(null)
+  const { user, isLoading, signOut } = useAuth()
 
   // 스와이프 제스처 처리
   const handleTouchStart = (e: TouchEvent) => {
@@ -198,6 +200,11 @@ export function Header() {
     }
   }, [touchStart, touchEnd])
 
+  // 로그아웃 처리
+  const handleLogout = async () => {
+    await signOut()
+  }
+
   return (
     <header
       className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
@@ -270,17 +277,52 @@ export function Header() {
               1866-1845
             </a>
 
-            {/* 로그인 버튼 */}
-            <Link
-              href="/login"
-              className={`inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 border ${
-                isScrolled
-                  ? "bg-teal-600 hover:bg-teal-700 text-white border-teal-600"
-                  : "bg-transparent hover:bg-white/20 text-white border-white/30 hover:border-white/50"
-              }`}
-            >
-              로그인
-            </Link>
+            {/* 로그인/로그아웃 버튼 */}
+            {isLoading ? (
+              <div className="w-20 h-10 bg-gray-200 rounded-md animate-pulse"></div>
+            ) : user ? (
+              <div className="flex items-center space-x-3">
+                <span className={`text-sm transition-colors duration-300 ${
+                  isScrolled ? "text-gray-600" : "text-gray-200"
+                }`}>
+                  {user.user_metadata?.full_name || user.email?.split('@')[0]}님
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className={`flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-300 border ${
+                    isScrolled
+                      ? "bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-200"
+                      : "bg-white/10 hover:bg-white/20 text-white border-white/30"
+                  }`}
+                >
+                  <LogOut className="w-4 h-4 mr-1" />
+                  로그아웃
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-3">
+                <Link
+                  href="/login"
+                  className={`inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 border ${
+                    isScrolled
+                      ? "bg-transparent hover:bg-gray-50 text-gray-700 border-gray-200"
+                      : "bg-transparent hover:bg-white/20 text-white border-white/30 hover:border-white/50"
+                  }`}
+                >
+                  로그인
+                </Link>
+                <Link
+                  href="/signup"
+                  className={`inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-all duration-300 ${
+                    isScrolled
+                      ? "bg-[#148777] hover:bg-[#0f6b5c] text-white"
+                      : "bg-white hover:bg-white/90 text-[#148777]"
+                  }`}
+                >
+                  회원가입
+                </Link>
+              </div>
+            )}
           </div>
           {/* 모바일 메뉴 버튼 - 스크롤 상태에 따른 색상 조정 */}
           <div className="lg:hidden">
@@ -355,19 +397,38 @@ export function Header() {
                       <span className="font-medium text-gray-900">1866-1845</span>
                     </a>
 
-                    {/* 모바일 로그인/회원가입 버튼 */}
-                    <div className="flex space-x-3">
-                      <Button asChild variant="outline" className="flex-1 bg-transparent">
-                        <Link href="/login" onClick={() => setIsSheetOpen(false)}>
-                          로그인
-                        </Link>
-                      </Button>
-                      <Button asChild className="flex-1 bg-teal-600 hover:bg-teal-700">
-                        <Link href="/signup" onClick={() => setIsSheetOpen(false)}>
-                          회원가입
-                        </Link>
-                      </Button>
-                    </div>
+                    {/* 모바일 로그인/로그아웃 버튼 */}
+                    {user ? (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-center space-x-2 p-3 bg-gray-50 rounded-lg">
+                          <User className="w-4 h-4 text-[#148777]" />
+                          <span className="font-medium text-gray-900">
+                            {user.user_metadata?.full_name || user.email?.split('@')[0]}님
+                          </span>
+                        </div>
+                        <Button 
+                          onClick={handleLogout}
+                          variant="outline" 
+                          className="w-full"
+                        >
+                          <LogOut className="w-4 h-4 mr-2" />
+                          로그아웃
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex space-x-3">
+                        <Button asChild variant="outline" className="flex-1 bg-transparent">
+                          <Link href="/login" onClick={() => setIsSheetOpen(false)}>
+                            로그인
+                          </Link>
+                        </Button>
+                        <Button asChild className="flex-1 bg-[#148777] hover:bg-[#0f6b5c]">
+                          <Link href="/signup" onClick={() => setIsSheetOpen(false)}>
+                            회원가입
+                          </Link>
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </SheetContent>

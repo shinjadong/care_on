@@ -107,19 +107,21 @@ export function FloatingCTAButton() {
       {/* 신청 모달 */}
       {showApplicationModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50">
-          <div className="relative max-h-[90vh] overflow-y-auto bg-white rounded-2xl">
+          <div className="relative max-h-[90vh] overflow-y-auto bg-white rounded-2xl w-full max-w-lg">
             <button
               onClick={() => setShowApplicationModal(false)}
               className="absolute right-4 top-4 z-10 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
-            <CareonApplicationForm 
-              useGrid={true}
-              onSuccess={() => {
-                setTimeout(() => setShowApplicationModal(false), 2000)
-              }}
-            />
+            <div className="p-4 sm:p-6">
+              <CareonApplicationForm 
+                useGrid={true}
+                onSuccess={() => {
+                  setTimeout(() => setShowApplicationModal(false), 2000)
+                }}
+              />
+            </div>
           </div>
         </div>
       )}
