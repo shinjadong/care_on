@@ -17,6 +17,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'aet4p1ka2mfpbmiq.public.blob.vercel-storage.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'pkehcfbjotctvneordob.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.youtube.com',
+      },
     ],
   },
   experimental: {

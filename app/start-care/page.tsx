@@ -20,7 +20,6 @@ const FirstYearMatters = dynamic(() => import("@/components/start-care/first-yea
 const ApplicationSection = dynamic(() => import("@/components/start-care/application-section").then(m => m.ApplicationSection))
 const FaqSection = dynamic(() => import("@/components/start-care/faq-section").then(m => m.FaqSection))
 const FinalCta = dynamic(() => import("@/components/start-care/final-cta").then(m => m.FinalCta))
-const ImageUploader = dynamic(() => import("@/components/start-care/image-uploader").then(m => m.ImageUploader))
 
 export default function StartCarePage() {
   return (
@@ -49,7 +48,6 @@ export default function StartCarePage() {
         </div>
         <WhenVisible minHeight={500}><FaqSection /></WhenVisible>
         <WhenVisible minHeight={500}><FinalCta /></WhenVisible>
-        <WhenVisible minHeight={400}><ImageUploader /></WhenVisible>
       </main>
     </div>
   )

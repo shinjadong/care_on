@@ -14,7 +14,7 @@ const solutions = [
     number: "Solution 2", 
     title: "잊지 마세요",
     subtitle: "내 몸은 하나라는 걸",
-    description: "\"CCTV 고장났는데... 어디 업체더라?\"\n더 이상 헤매지 마세요.\n사장님은 장사만 하세요.\n나머지는 케어온이 합니다.",
+    description: "\"CCTV 고장났는데... 어디 전화해야하지?\"\n더 이상 헤매지 마세요.\n사장님은 장사만 하세요.\n나머지는 케어온이 합니다.",
   },
   {
     number: "Solution 3",
