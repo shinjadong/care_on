@@ -12,6 +12,7 @@ interface IAuthContext {
   isLoading: boolean
   signOut: () => Promise<void>
   signInWithGoogle: () => Promise<{ error: Error | null }>
+  signInWithKakao: () => Promise<{ error: Error | null }>
   signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>
   signUpWithEmail: (email: string, password: string, options?: { data?: { full_name?: string } }) => Promise<{ error: Error | null }>
 }
@@ -99,6 +100,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  // 카카오 로그인
+  const signInWithKakao = async () => {
+    try {
+      setIsLoading(true)
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'kakao',
+        options: {
+          // 항상 프로덕션 도메인으로 리다이렉트
+          redirectTo: 'https://careon.ai.kr/auth/callback',
+        },
+      })
+
+      if (error) {
+        console.error("카카오 로그인 오류:", error)
+        return { error }
+      }
+
+      return { error: null }
+    } catch (error) {
+      console.error("카카오 로그인 실패:", error)
+      return { error: error as Error }
+    }
+  }
+
   // 이메일 로그인
   const signInWithEmail = async (email: string, password: string) => {
     try {
@@ -177,6 +202,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     signOut,
     signInWithGoogle,
+    signInWithKakao,
     signInWithEmail,
     signUpWithEmail,
   }
