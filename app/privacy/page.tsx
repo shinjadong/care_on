@@ -1,24 +1,35 @@
 import { Metadata } from "next"
-import fs from "fs"
-import path from "path"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
+import { getLegalDocument } from "@/lib/supabase/legal-documents"
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: "개인정보 처리방침 | 케어온",
   description: "케어온의 개인정보 처리방침입니다.",
 }
 
-async function getPrivacyContent() {
-  const filePath = path.join(process.cwd(), "content", "privacy-policy.md")
-  const content = fs.readFileSync(filePath, "utf8")
-  return content
-}
-
 export default async function PrivacyPage() {
-  const content = await getPrivacyContent()
+  // Supabase에서 문서 가져오기
+  const document = await getLegalDocument('privacy-policy')
+  
+  // 문서가 없거나 파일 시스템 폴백
+  let content = document?.content || ''
+  
+  // Supabase에 문서가 없으면 파일 시스템에서 읽기 (초기 설정용)
+  if (!content) {
+    try {
+      const fs = require('fs')
+      const path = require('path')
+      const filePath = path.join(process.cwd(), "content", "privacy-policy.md")
+      content = fs.readFileSync(filePath, "utf8")
+    } catch (error) {
+      content = "# 개인정보 처리방침\n\n문서를 불러올 수 없습니다."
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -42,6 +53,11 @@ export default async function PrivacyPage() {
       {/* 콘텐츠 */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="bg-white rounded-lg shadow-sm p-6 sm:p-10">
+          {document && (
+            <div className="text-xs text-gray-500 mb-4 text-right">
+              버전 {document.version} | 최종 수정: {new Date(document.updated_at).toLocaleDateString('ko-KR')}
+            </div>
+          )}
           <div className="prose prose-gray max-w-none">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
