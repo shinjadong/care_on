@@ -18,13 +18,13 @@ export function Footer() {
             <p className="text-xs mt-6">COPYRIGHT© 2024 케어온. ALL RIGHT RESERVED.</p>
           </div>
           <div className="flex flex-col space-y-2 text-sm">
-            <Link href="#" className="hover:text-white">
+            <Link href="/privacy" className="hover:text-white" target="_blank" rel="noopener noreferrer">
               개인정보 처리방침
             </Link>
-            <Link href="#" className="hover:text-white">
+            <Link href="/terms" className="hover:text-white">
               이용약관
             </Link>
-            <Link href="#" className="hover:text-white">
+            <Link href="/notice" className="hover:text-white">
               공지사항
             </Link>
           </div>
