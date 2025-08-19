@@ -30,6 +30,20 @@ type Props = {
 
 type SectionType = "basic" | "business" | "contact" | "agreement"
 
+// 업종 매핑
+const businessTypeMap: { [key: number]: string } = {
+  1: '요식업',
+  2: '카페/베이커리',
+  3: '미용/뷰티',
+  4: '의료/병원',
+  5: '학원/교육',
+  6: '소매/판매',
+  7: '사무실',
+  8: '헬스/운동',
+  9: '숙박업',
+  10: '기타',
+}
+
 export default function CareonApplicationForm({ useGrid = false, onSuccess }: Props) {
   const [businessType, setBusinessType] = useState<number | undefined>(undefined)
   const [loading, setLoading] = useState(false)
@@ -195,6 +209,18 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
         .insert(payload)
 
       if (error) throw error
+      
+      // SMS 전송 (비동기로 처리하여 사용자 경험 개선)
+      import('@/lib/ppurio/sms-client').then(({ sendSMS }) => {
+        sendSMS({
+          to: fullPhoneNumber,
+          name: name.trim(),
+          businessType: businessType ? businessTypeMap[businessType] : undefined,
+        }).catch(err => {
+          // SMS 실패는 무시 (콘솔에만 기록)
+          console.error('SMS 전송 실패:', err)
+        })
+      })
       
       setSuccess(true)
       // 모든 state 초기화

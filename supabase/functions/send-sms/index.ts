@@ -1,9 +1,54 @@
+// Supabase Edge Function for Ppurio SMS
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+// 토큰 캐시
+let tokenCache: { token: string; expiry: number } | null = null
+
+// Basic Auth 생성
+function getBasicAuth(username: string, apiKey: string): string {
+  const auth = btoa(`${username}:${apiKey}`)
+  return `Basic ${auth}`
+}
+
+// 액세스 토큰 발급
+async function getAccessToken(username: string, apiKey: string): Promise<string | null> {
+  try {
+    // 캐시된 토큰 확인
+    if (tokenCache && tokenCache.expiry > Date.now()) {
+      return tokenCache.token
+    }
+
+    const response = await fetch('https://message.ppurio.com/v1/token', {
+      method: 'POST',
+      headers: {
+        'Authorization': getBasicAuth(username, apiKey),
+      },
+    })
+
+    if (!response.ok) {
+      const error = await response.text()
+      console.error('토큰 발급 실패:', error)
+      return null
+    }
+
+    const data = await response.json()
+    
+    // 토큰 캐시 (23시간)
+    tokenCache = {
+      token: data.token,
+      expiry: Date.now() + (23 * 60 * 60 * 1000)
+    }
+
+    return data.token
+  } catch (error) {
+    console.error('토큰 발급 오류:', error)
+    return null
+  }
 }
 
 serve(async (req) => {
@@ -12,65 +57,94 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
-  try {
-    const { record } = await req.json()
-    
-    if (!record || !record.phone_number || !record.name) {
-      throw new Error('필수 정보가 없습니다')
-    }
-
-    // Solapi API 키 (환경변수로 관리)
-    const apiKey = Deno.env.get('SOLAPI_API_KEY')
-    const apiSecret = Deno.env.get('SOLAPI_API_SECRET')
-    const senderPhone = Deno.env.get('SENDER_PHONE') || '1588-0000' // 발신번호
-
-    if (!apiKey || !apiSecret) {
-      throw new Error('SMS API 키가 설정되지 않았습니다')
-    }
-
-    // 메시지 내용 구성
-    const message = `[케어온] ${record.name}님, 무료체험단 신청이 완료되었습니다.
-
-▶ 신청정보
-- 업체명: ${record.company_name || '미입력'}
-- 업종: ${getBusinessTypeName(record.business_type)}
-- 상태: ${getStatusName(record.business_status)}
-
-빠른 시일 내에 연락드리겠습니다.
-문의: 1588-0000`
-
-    // Solapi API 호출
-    const url = 'https://api.solapi.com/messages/v4/send'
-    
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Authorization': `HMAC-SHA256 apiKey=${apiKey}, date=${new Date().toISOString()}, salt=${generateSalt()}, signature=${generateSignature(apiSecret)}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: {
-          to: record.phone_number.replace(/-/g, ''),
-          from: senderPhone.replace(/-/g, ''),
-          text: message,
-          type: 'SMS'
-        }
-      })
-    })
-
-    const result = await response.json()
-
-    if (!response.ok) {
-      throw new Error(`SMS 발송 실패: ${result.message}`)
-    }
-
+  // IP 확인 엔드포인트
+  if (req.url.includes('/ip-check')) {
+    const ipResponse = await fetch('https://api.ipify.org?format=json')
+    const ipData = await ipResponse.json()
     return new Response(
-      JSON.stringify({ success: true, messageId: result.groupId }),
+      JSON.stringify({ 
+        ip: ipData.ip,
+        message: '이 IP를 뿌리오 관리자 페이지에 등록해주세요'
+      }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200 
       }
     )
+  }
+
+  try {
+    // 환경변수
+    const username = Deno.env.get('PPURIO_USERNAME') || 'nvr_7464463887'
+    const apiKey = Deno.env.get('PPURIO_API_KEY') || ''
+    const senderPhone = Deno.env.get('SENDER_PHONE') || '01032453385'
+
+    if (!apiKey) {
+      throw new Error('PPURIO_API_KEY가 설정되지 않았습니다')
+    }
+
+    // 요청 데이터
+    const { to, text, name, businessType } = await req.json()
+
+    // 메시지 생성
+    let message = text
+    if (!message && name) {
+      message = `[케어온]
+${name}님, 스타트케어 신청이 완료되었습니다.
+
+담당자가 곧 연락드릴 예정입니다.
+${businessType ? `업종: ${businessType}` : ''}
+
+문의: 1866-1845`
+    }
+
+    // 토큰 발급
+    const token = await getAccessToken(username, apiKey)
+    if (!token) {
+      throw new Error('인증 토큰 발급 실패')
+    }
+
+    // 메시지 타입 결정
+    const messageType = new TextEncoder().encode(message).length <= 90 ? 'SMS' : 'LMS'
+    
+    // SMS 전송
+    const requestData = {
+      account: username,
+      messageType: messageType,
+      content: message,
+      from: senderPhone.replace(/-/g, ''),
+      duplicateFlag: 'N',
+      targetCount: 1,
+      targets: [{ to: to.replace(/-/g, '') }],
+      refKey: `careon_${Date.now()}`,
+    }
+
+    const response = await fetch('https://message.ppurio.com/v1/message', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData),
+    })
+
+    const result = await response.json()
+
+    if (response.ok && result.code === '200') {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          messageKey: result.messageKey,
+          type: messageType,
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200 
+        }
+      )
+    } else {
+      throw new Error(result.description || '메시지 전송 실패')
+    }
 
   } catch (error) {
     console.error('SMS 발송 오류:', error)
@@ -83,48 +157,3 @@ serve(async (req) => {
     )
   }
 })
-
-// 업종 이름 반환
-function getBusinessTypeName(typeId: number): string {
-  const types = {
-    1: '음식·외식·배달',
-    2: '카페·베이커리',
-    3: '뷰티·미용',
-    4: '의료·건강',
-    5: '교육·학원',
-    6: '소매·판매',
-    7: '운동·스포츠',
-    8: '숙박·호텔',
-    9: '자동차',
-    10: '부동산',
-    11: '세탁·수선',
-    12: '애견·반려동물',
-    13: '엔터테인먼트',
-    14: '사무·서비스',
-    15: '제조·도매',
-    16: '기타'
-  }
-  return types[typeId] || '기타'
-}
-
-// 상태 이름 반환
-function getStatusName(status: string): string {
-  const statuses = {
-    'immediate': '5일내 설치필요',
-    'interior': '5일후 설치가능',
-    'preparing': '창업준비중'
-  }
-  return statuses[status] || status
-}
-
-// Salt 생성 (Solapi 인증용)
-function generateSalt(): string {
-  return Math.random().toString(36).substring(2, 15)
-}
-
-// Signature 생성 (실제 구현시 HMAC-SHA256 필요)
-function generateSignature(secret: string): string {
-  // 실제로는 HMAC-SHA256으로 서명 생성 필요
-  // Deno crypto API 사용
-  return 'dummy-signature'
-}
