@@ -210,25 +210,32 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
 
       if (error) throw error
       
-      // SMS 전송 - Vercel API만 사용 (Edge Function은 별도 배포 필요)
+      // SMS 전송 - Edge Function 우선, 실패시 Vercel API
       try {
-        fetch('/api/sms/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        // Supabase Edge Function 시도
+        const supabase = createClient()
+        supabase.functions.invoke('send-sms', {
+          body: {
             to: fullPhoneNumber,
             name: name.trim(),
             businessType: businessType ? businessTypeMap[businessType] : undefined,
-          }),
-        }).then(async (response) => {
-          const data = await response.json()
-          if (response.ok) {
-            console.log('SMS 전송 성공:', data)
-          } else {
-            console.error('SMS 전송 실패:', data)
           }
-        }).catch(err => {
-          console.error('SMS API 오류:', err)
+        }).then(({ data, error }) => {
+          if (error) {
+            console.error('Edge Function 실패, Vercel API 시도:', error)
+            // 폴백: Vercel API
+            fetch('/api/sms/send', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                to: fullPhoneNumber,
+                name: name.trim(),
+                businessType: businessType ? businessTypeMap[businessType] : undefined,
+              }),
+            }).catch(err => console.error('SMS API 오류:', err))
+          } else {
+            console.log('SMS 전송 성공 (Edge Function):', data)
+          }
         })
       } catch (err) {
         console.error('SMS 전송 실패:', err)
