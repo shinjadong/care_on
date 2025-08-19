@@ -210,17 +210,29 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
 
       if (error) throw error
       
-      // SMS 전송 (비동기로 처리하여 사용자 경험 개선)
-      import('@/lib/ppurio/sms-client').then(({ sendSMS }) => {
-        sendSMS({
-          to: fullPhoneNumber,
-          name: name.trim(),
-          businessType: businessType ? businessTypeMap[businessType] : undefined,
+      // SMS 전송 - Vercel API만 사용 (Edge Function은 별도 배포 필요)
+      try {
+        fetch('/api/sms/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: fullPhoneNumber,
+            name: name.trim(),
+            businessType: businessType ? businessTypeMap[businessType] : undefined,
+          }),
+        }).then(async (response) => {
+          const data = await response.json()
+          if (response.ok) {
+            console.log('SMS 전송 성공:', data)
+          } else {
+            console.error('SMS 전송 실패:', data)
+          }
         }).catch(err => {
-          // SMS 실패는 무시 (콘솔에만 기록)
-          console.error('SMS 전송 실패:', err)
+          console.error('SMS API 오류:', err)
         })
-      })
+      } catch (err) {
+        console.error('SMS 전송 실패:', err)
+      }
       
       setSuccess(true)
       // 모든 state 초기화

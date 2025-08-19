@@ -64,6 +64,7 @@
     "recharts": "latest",
     "remark-gfm": "^4.0.1",
     "sonner": "latest",
+    "supabase-cli": "^0.0.21",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "latest",

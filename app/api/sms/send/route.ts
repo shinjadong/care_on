@@ -17,25 +17,33 @@ const businessTypeMap: { [key: number]: string } = {
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, phoneNumber, businessType } = await request.json()
+    const body = await request.json()
+    const { name, phoneNumber, businessType, to } = body
+
+    // to 또는 phoneNumber 사용
+    const recipient = to || phoneNumber
 
     // 입력값 검증
-    if (!name || !phoneNumber) {
+    if (!name || !recipient) {
       return NextResponse.json(
         { error: '필수 정보가 누락되었습니다.' },
         { status: 400 }
       )
     }
 
-    // 업종 텍스트 변환
-    const businessTypeText = businessType ? businessTypeMap[businessType] || '기타' : ''
+    // 업종 텍스트 변환 (문자열이면 그대로 사용)
+    const businessTypeText = typeof businessType === 'string' 
+      ? businessType 
+      : (businessType ? businessTypeMap[businessType] || '기타' : '')
 
     // 메시지 생성
     const message = getApplicationCompleteMessage(name, businessTypeText)
 
+    console.log('SMS 전송 시도:', { recipient, name, businessTypeText })
+
     // SMS 전송
     const result = await sendSMS({
-      to: phoneNumber,
+      to: recipient,
       text: message,
     })
 
