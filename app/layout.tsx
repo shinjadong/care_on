@@ -6,6 +6,7 @@ import { Header } from "@/components/header"
 import { FloatingBanner } from "@/components/floating-banner"
 import { FloatingCTAButton } from "@/components/floating-cta-button"
 import { ClientAuthProvider } from "@/components/providers/auth-provider"
+import { ThemeProvider } from "@/components/theme-provider"
 
 export const metadata: Metadata = {
   title: "케어온 - 창업자의 든든한 파트너",
@@ -38,13 +39,21 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" />
       </head>
       <body className="font-sans">
-        <ClientAuthProvider>
-          <Header />
-          {children}
-          <ConditionalFooter />
-          <FloatingBanner />
-          <FloatingCTAButton />
-        </ClientAuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+          forcedTheme="light"
+        >
+          <ClientAuthProvider>
+            <Header />
+            {children}
+            <ConditionalFooter />
+            <FloatingBanner />
+            <FloatingCTAButton />
+          </ClientAuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
