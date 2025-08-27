@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { X } from "lucide-react"
 import dynamic from "next/dynamic"
 
-const CareonApplicationForm = dynamic(() => import("./what/CareonApplicationForm"), { 
+const QuickApplicationForm = dynamic(() => import("./what/QuickApplicationForm"), { 
   ssr: false,
   loading: () => <div className="p-8 text-center">로딩중...</div>
 })
@@ -105,8 +105,7 @@ export function FloatingBanner() {
             
             {/* 폼 - 모바일에서 패딩 조정 */}
             <div className="p-4 sm:p-6">
-              <CareonApplicationForm 
-                useGrid={true}
+              <QuickApplicationForm 
                 onSuccess={() => {
                   setTimeout(() => setShowApplicationModal(false), 2000)
                 }}
