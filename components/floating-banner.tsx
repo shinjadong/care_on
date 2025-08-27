@@ -45,7 +45,7 @@ export function FloatingBanner() {
   return (
     <>
       {/* 플로팅 배너 - 미니멀 Apple 스타일 */}
-      <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-auto md:left-1/2 md:-translate-x-1/2 z-40 max-w-sm md:max-w-md">
+      <div className="fixed bottom-4 left-16 right-16 md:left-1/2 md:right-auto md:-translate-x-1/2 z-40 max-w-xs md:max-w-md">
         <div className="relative">
           {/* 배너 본체 - 브랜드 컬러 그라데이션 배경 */}
           <button
@@ -70,10 +70,7 @@ export function FloatingBanner() {
             {/* 텍스트 */}
             <div className="relative flex items-center justify-center gap-2">
               <span className="text-sm md:text-[15px] font-semibold text-white">
-                무료 체험단 신청하기
-              </span>
-              <span className="hidden md:inline-flex items-center px-2 py-0.5 text-xs font-medium bg-white/20 text-white rounded-full">
-                12개월 무료
+                무료 체험단 대기 신청
               </span>
             </div>
 

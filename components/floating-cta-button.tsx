@@ -1,10 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X, Users, Star, ChevronRight } from "lucide-react"
+import { X, Users, ChevronRight } from "lucide-react"
 import dynamic from "next/dynamic"
-import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client-with-fallback"
 
 const CareonApplicationForm = dynamic(() => import("./what/CareonApplicationForm"), { 
   ssr: false,
@@ -14,9 +12,7 @@ const CareonApplicationForm = dynamic(() => import("./what/CareonApplicationForm
 export function FloatingCTAButton() {
   const [isVisible, setIsVisible] = useState(true)
   const [currentUsers, setCurrentUsers] = useState(0)
-  const [reviewCount, setReviewCount] = useState(0)
   const [showApplicationModal, setShowApplicationModal] = useState(false)
-  const router = useRouter()
 
   useEffect(() => {
     // Use a fixed initial value to avoid hydration mismatch
@@ -36,71 +32,47 @@ export function FloatingCTAButton() {
     return () => clearInterval(interval)
   }, [])
 
-  useEffect(() => {
-    const fetchReviewCount = async () => {
-      const supabase = createClient()
-      const { count, error } = await supabase
-        .from('reviews')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_approved', true)
-      
-      if (!error && count !== null) {
-        const multiplier = 3
-        setReviewCount(count * multiplier)
-      }
-    }
-    
-    fetchReviewCount()
-  }, [])
+
 
   if (!isVisible) return null
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-20 right-6 z-50">
         <div className="relative">
           {/* 닫기 버튼 */}
           <button
             onClick={() => setIsVisible(false)}
-            className="absolute -top-2 -right-2 w-4 h-4 bg-gray-600 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors z-10"
+            className="absolute -top-2 -right-2 w-4 h-4 bg-gray-600/80 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-gray-700/90 transition-colors z-10"
             aria-label="닫기"
           >
             <X className="w-2.5 h-2.5" />
           </button>
 
-          {/* 현재 신청중 표시 */}
-          <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 flex items-center gap-1 text-[10px] text-gray-500 whitespace-nowrap">
-            <Users className="w-2.5 h-2.5" />
-            <span>
-              <span className="font-medium">{currentUsers}명</span> 신청중
-            </span>
-          </div>
-
-          {/* 버튼 그룹 - 상하 배치 */}
-          <div className="flex flex-col gap-2">
-            
-            {/* 예약대기 신청 버튼 (위, 메인) */}
-            <button
-              onClick={() => setShowApplicationModal(true)}
-              className="group px-6 py-2 bg-gray-800 hover:bg-gray-900 text-white text-sm font-medium rounded-full transition-all duration-200 shadow-md"
-            >
-              <span className="flex items-center justify-center gap-1.5">
-                예약대기 신청
-                <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-              </span>
-            </button>
-
-            {/* 후기 보러가기 버튼 (아래, 서브) */}
-            <button
-              onClick={() => router.push('/review')}
-              className="px-4 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-xs font-medium rounded-full transition-all duration-200 shadow-sm"
-            >
-              <span className="flex items-center justify-center gap-1">
-                <Star className="w-3 h-3" />
-                후기 {reviewCount.toLocaleString()}개
-              </span>
-            </button>
-          </div>
+          {/* 신청 버튼 */}
+          <button
+            onClick={() => setShowApplicationModal(true)}
+            className="group p-0 bg-gray-800/80 hover:bg-gray-900/90 backdrop-blur-sm text-white text-sm font-medium rounded-xl transition-all duration-200 shadow-md min-w-0 overflow-hidden"
+          >
+            <div className="flex flex-col overflow-hidden">
+              {/* 브라우저 탭 영역 - 현재 신청중 표시 */}
+              <div className="flex items-center justify-center gap-1 text-[10px] text-gray-300 px-3 py-1.5">
+                <Users className="w-2 h-2" />
+                <span>
+                  <span className="font-medium">{currentUsers}명</span> 신청중
+                </span>
+              </div>
+              
+              {/* 브라우저 콘텐츠 영역 - 메인 텍스트 */}
+              <div className="bg-white/90 px-3 py-3 flex shadow-sm items-center gap-1">
+                <div className="text-center leading-tight text-gray-800">
+                  <div className="text-xs font-semibold">셀프 다이렉트</div>
+                  <div className="text-xs font-semibold">신청하러 가기</div>
+                </div>
+                <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform flex-shrink-0 text-gray-600" />
+              </div>
+            </div>
+          </button>
         </div>
       </div>
 
