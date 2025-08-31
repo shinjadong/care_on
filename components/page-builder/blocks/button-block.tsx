@@ -74,6 +74,19 @@ export function ButtonBlockRenderer({ block, isEditing, onUpdate }: ButtonBlockR
           </div>
         </div>
 
+        <div>
+          <label className="block text-sm font-medium mb-2">정렬</label>
+          <select
+            value={buttonData.alignment || 'left'}
+            onChange={(e) => setButtonData({ ...buttonData, alignment: e.target.value as 'left' | 'center' | 'right' })}
+            className="w-full px-3 py-2 border rounded"
+          >
+            <option value="left">왼쪽 정렬</option>
+            <option value="center">가운데 정렬</option>
+            <option value="right">오른쪽 정렬</option>
+          </select>
+        </div>
+
         <div className="flex gap-2">
           <button
             onClick={handleSave}
@@ -95,9 +108,20 @@ export function ButtonBlockRenderer({ block, isEditing, onUpdate }: ButtonBlockR
     );
   }
 
+  const getAlignmentClass = (alignment: string) => {
+    switch (alignment) {
+      case 'center':
+        return 'text-center flex justify-center'
+      case 'right':
+        return 'text-right flex justify-end'
+      default:
+        return 'text-left flex justify-start'
+    }
+  }
+
   return (
     <div
-      className={`${isEditing ? 'cursor-pointer hover:opacity-80' : ''}`}
+      className={`${getAlignmentClass(block.content.alignment || 'left')} ${isEditing ? 'cursor-pointer hover:opacity-80' : ''}`}
       onClick={() => isEditing && setIsEditingButton(true)}
     >
       <Button

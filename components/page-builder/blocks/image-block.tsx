@@ -20,6 +20,8 @@ interface StoryImage {
   caption?: string
   width?: number
   height?: number
+  link?: string
+  linkTarget?: '_blank' | '_self'
 }
 
 interface ImageBlockRendererProps {
@@ -297,6 +299,13 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                     onChange={(e) => handleUpdateImage(image.id, { caption: e.target.value })}
                     className="w-full px-3 py-1 text-sm border border-gray-300 rounded"
                   />
+                  <input
+                    type="text"
+                    placeholder="클릭 시 이동할 링크 (선택사항)"
+                    value={image.link || ''}
+                    onChange={(e) => handleUpdateImage(image.id, { link: e.target.value })}
+                    className="w-full px-3 py-1 text-sm border border-gray-300 rounded"
+                  />
                   <div className="flex space-x-2">
                     <input
                       type="number"
@@ -312,6 +321,15 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                       onChange={(e) => handleUpdateImage(image.id, { height: parseInt(e.target.value) || undefined })}
                       className="w-20 px-2 py-1 text-sm border border-gray-300 rounded"
                     />
+                    <select
+                      value={image.linkTarget || '_blank'}
+                      onChange={(e) => handleUpdateImage(image.id, { linkTarget: e.target.value as '_blank' | '_self' })}
+                      className="px-2 py-1 text-sm border border-gray-300 rounded"
+                      disabled={!image.link}
+                    >
+                      <option value="_blank">새 창</option>
+                      <option value="_self">같은 창</option>
+                    </select>
                   </div>
                 </div>
                 {displayMode === 'story' && (
@@ -391,19 +409,44 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
             <div className="text-center">
               {images.map((image) => (
                 <div key={image.id}>
-                  <img
-                    src={image.src}
-                    alt={image.alt || ''}
-                    style={{
-                      width: image.width ? `min(${image.width}px, 100%)` : 'auto',
-                      height: image.height ? `${image.height}px` : 'auto',
-                      maxWidth: '100%'
-                    }}
-                    className="mx-auto rounded-lg shadow-sm w-full sm:w-auto"
-                  />
+                  {image.link ? (
+                    <a
+                      href={image.link}
+                      target={image.linkTarget || '_blank'}
+                      rel="noopener noreferrer"
+                      className="inline-block cursor-pointer hover:opacity-90 transition-opacity"
+                    >
+                      <img
+                        src={image.src}
+                        alt={image.alt || ''}
+                        style={{
+                          width: image.width ? `min(${image.width}px, 100%)` : 'auto',
+                          height: image.height ? `${image.height}px` : 'auto',
+                          maxWidth: '100%'
+                        }}
+                        className="mx-auto rounded-lg shadow-sm w-full sm:w-auto"
+                      />
+                    </a>
+                  ) : (
+                    <img
+                      src={image.src}
+                      alt={image.alt || ''}
+                      style={{
+                        width: image.width ? `min(${image.width}px, 100%)` : 'auto',
+                        height: image.height ? `${image.height}px` : 'auto',
+                        maxWidth: '100%'
+                      }}
+                      className="mx-auto rounded-lg shadow-sm w-full sm:w-auto"
+                    />
+                  )}
                   {image.caption && (
                     <p className="text-sm text-gray-600 mt-3 italic px-4">
                       {image.caption}
+                    </p>
+                  )}
+                  {image.link && (
+                    <p className="text-xs text-blue-600 mt-1 opacity-75">
+                      🔗 클릭 시 이동: {image.link}
                     </p>
                   )}
                 </div>
@@ -414,23 +457,52 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
             <div className="space-y-0">
               {images.map((image) => (
                 <div key={image.id} className="text-center">
-                  <img
-                    src={image.src}
-                    alt={image.alt || ''}
-                    style={{
-                      display: 'block',
-                      verticalAlign: 'top',
-                      margin: '5px auto',
-                      textAlign: 'center',
-                      width: image.width ? `min(${image.width}px, 100%)` : 'auto',
-                      height: image.height ? `${image.height}px` : 'auto',
-                      maxWidth: '100%'
-                    }}
-                    className="story-image w-full sm:w-auto"
-                  />
+                  {image.link ? (
+                    <a
+                      href={image.link}
+                      target={image.linkTarget || '_blank'}
+                      rel="noopener noreferrer"
+                      className="inline-block cursor-pointer hover:opacity-90 transition-opacity"
+                    >
+                      <img
+                        src={image.src}
+                        alt={image.alt || ''}
+                        style={{
+                          display: 'block',
+                          verticalAlign: 'top',
+                          margin: '5px auto',
+                          textAlign: 'center',
+                          width: image.width ? `min(${image.width}px, 100%)` : 'auto',
+                          height: image.height ? `${image.height}px` : 'auto',
+                          maxWidth: '100%'
+                        }}
+                        className="story-image w-full sm:w-auto"
+                      />
+                    </a>
+                  ) : (
+                    <img
+                      src={image.src}
+                      alt={image.alt || ''}
+                      style={{
+                        display: 'block',
+                        verticalAlign: 'top',
+                        margin: '5px auto',
+                        textAlign: 'center',
+                        width: image.width ? `min(${image.width}px, 100%)` : 'auto',
+                        height: image.height ? `${image.height}px` : 'auto',
+                        maxWidth: '100%'
+                      }}
+                      className="story-image w-full sm:w-auto"
+                    />
+                  )}
                   {image.caption && (
                     <p className="text-sm text-gray-600 mt-2 italic px-4">
                       {image.caption}
+                    </p>
+                  )}
+                  {image.link && (
+                    <p className="text-xs text-blue-600 mt-1 opacity-75">
+                      🔗 클릭하여 이동
                     </p>
                   )}
                 </div>
