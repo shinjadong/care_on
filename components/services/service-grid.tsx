@@ -1,102 +1,159 @@
 "use client"
 
-import { PackageType } from "@/app/services/page"
-import { ServiceCard } from "./service-card"
-import { Camera, Wifi, Shield, Tv, Phone, Home, Lock, Heart } from "lucide-react"
+import Link from "next/link"
+import { PackageType } from "./packageforme"
+// Icons removed - using Apple Music tile system
 
+// 실제 케어온 서비스 데이터 (PDF 문서 기반)
 const services = {
-  basic: [
+  mini: [
     {
-      id: "ai-cctv",
-      title: "지능형 AI CCTV",
-      subtitle: "24시간 스마트 보안",
-      description: "인공지능이 실시간으로 이상 상황을 감지하고 즉시 알려드립니다",
-      icon: Camera,
-      color: "from-purple-500 to-purple-700",
-      features: ["실시간 모니터링", "AI 이상감지", "클라우드 저장", "모바일 알림"],
-      price: "월 29,900원",
-      href: "/services/ai-cctv",
+      id: "cctv-basic",
+      title: "KT AI CCTV",
+      eyebrow: "보안",
+      headline: "지능형 보안의<br/>새로운 기준.",
+      description: "AI 기반 지능형 CCTV로 매장 보안을 24시간 책임집니다",
+      backgroundImage: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=800&h=600&fit=crop",
+      backgroundVideo: null,
+      features: ["KT AI CCTV 1대", "클라우드 저장", "모바일 모니터링", "셀프 설치"],
+      href: "/services/cctv",
+      size: "large", // large, medium, small
     },
     {
-      id: "internet",
+      id: "pos-basic",
+      title: "갤럭시탭 POS",
+      eyebrow: "결제",
+      headline: "간편한 결제와<br/>매출 관리의 만남.",
+      description: "토스 프론트로 간편 결제부터 매출 분석까지 한번에",
+      backgroundImage: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=600&fit=crop",
+      backgroundVideo: null,
+      features: ["갤럭시탭", "토스 프론트", "QR결제", "매출분석"],
+      href: "/services/pos",
+      size: "medium",
+    },
+    {
+      id: "internet-basic",
       title: "초고속 인터넷",
-      subtitle: "기가급 속도",
-      description: "끊김 없는 초고속 인터넷으로 스마트한 일상을 경험하세요",
-      icon: Wifi,
-      color: "from-blue-500 to-blue-700",
-      features: ["최대 1Gbps", "무제한 사용", "24시간 A/S", "공유기 무료"],
-      price: "월 39,900원",
+      eyebrow: "인터넷",
+      headline: "끊김 없는<br/>연결의 힘.",
+      description: "매장 운영에 필요한 안정적인 인터넷 서비스",
+      backgroundImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=600&fit=crop",
+      backgroundVideo: null,
+      features: ["100M 속도", "매장 인터넷전화", "24시간 A/S", "무료 설치"],
       href: "/services/internet",
+      size: "medium",
+    },
+  ],
+  standard: [
+    {
+      id: "cctv-standard",
+      title: "KT AI CCTV",
+      eyebrow: "보안",
+      headline: "전방위 보안<br/>모니터링의 완성.",
+      description: "4대 CCTV로 매장을 완벽하게 보호하는 지능형 보안 시스템",
+      backgroundImage: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=800&h=600&fit=crop",
+      backgroundVideo: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+      features: ["KT AI CCTV 4대", "AI 이상감지", "클라우드 저장", "출장 무료설치"],
+      href: "/services/cctv",
+      size: "large",
     },
     {
-      id: "insurance",
-      title: "화재·안전 보험",
-      subtitle: "종합 안전보장",
-      description: "화재, 도난, 상해까지 한번에 보장하는 종합 안전보험",
-      icon: Shield,
-      color: "from-green-500 to-green-700",
-      features: ["화재보장 1억", "도난보장 500만", "상해보장", "즉시 보상"],
-      price: "월 19,900원",
+      id: "pos-standard",
+      title: "프리미엄 POS",
+      eyebrow: "결제",
+      headline: "배달앱 연동까지<br/>한번에 해결.",
+      description: "토스 프론트와 배달의민족, 네이버까지 완벽 연동",
+      backgroundImage: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=600&fit=crop",
+      backgroundVideo: null,
+      features: ["갤럭시탭+토스터미널", "배달의민족 연동", "네이버 세팅", "매출분석"],
+      href: "/services/pos",
+      size: "medium",
+    },
+    {
+      id: "internet-standard",
+      title: "SK 기가라이트",
+      eyebrow: "인터넷",
+      headline: "500M 초고속으로<br/>모든 업무가 빨라진다.",
+      description: "빠르고 안정적인 프리미엄 인터넷 서비스",
+      backgroundImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=600&fit=crop",
+      backgroundVideo: null,
+      features: ["500M 초고속", "매장 인터넷전화", "24시간 A/S", "출장 설치"],
+      href: "/services/internet",
+      size: "medium",
+    },
+    {
+      id: "insurance-standard",
+      title: "한화시큐리티보험",
+      eyebrow: "보험",
+      headline: "안심커버 300으로<br/>모든 위험을 차단.",
+      description: "사업장 종합보험으로 화재부터 도난까지 완벽 보장",
+      backgroundImage: null,
+      backgroundVideo: "https://pkehcfbjotctvneordob.supabase.co/storage/v1/object/public/care-on/small_2x.mp4",
+      features: ["화재보장", "도난보장", "배상책임", "90% 환급율"],
       href: "/services/insurance",
-    },
-    {
-      id: "tv",
-      title: "스마트 TV",
-      subtitle: "프리미엄 채널",
-      description: "200여개 채널과 OTT 서비스를 하나로 즐기세요",
-      icon: Tv,
-      color: "from-red-500 to-red-700",
-      features: ["200+ 채널", "OTT 통합", "4K 화질", "음성인식"],
-      price: "월 24,900원",
-      href: "/services/tv",
+      size: "small",
     },
   ],
   pro: [
     {
-      id: "phone",
-      title: "스마트폰 요금제",
-      subtitle: "무제한 데이터",
-      description: "데이터 걱정 없는 진짜 무제한 요금제",
-      icon: Phone,
-      color: "from-indigo-500 to-indigo-700",
-      features: ["무제한 데이터", "무제한 통화", "해외 로밍", "부가서비스"],
-      price: "월 59,900원",
-      href: "/services/phone",
+      id: "cctv-pro",
+      title: "KT AI CCTV",
+      eyebrow: "보안",
+      headline: "6대 프리미엄으로<br/>사각지대 제로.",
+      description: "최고급 보안 시스템으로 완벽한 매장 보안을 실현합니다",
+      backgroundImage: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=800&h=600&fit=crop",
+      backgroundVideo: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+      features: ["KT AI CCTV 6대", "AI 이상감지", "클라우드 저장", "출장 무료설치"],
+      href: "/services/cctv",
+      size: "large",
     },
     {
-      id: "smart-home",
-      title: "스마트홈 시스템",
-      subtitle: "IoT 통합 제어",
-      description: "집안의 모든 기기를 하나로 연결하고 제어하세요",
-      icon: Home,
-      color: "from-teal-500 to-teal-700",
-      features: ["음성제어", "자동화 시나리오", "에너지 절약", "원격제어"],
-      price: "월 34,900원",
-      href: "/services/smart-home",
-    },
-  ],
-  premium: [
-    {
-      id: "security",
-      title: "프리미엄 보안",
-      subtitle: "출동 서비스",
-      description: "24시간 보안요원 출동 서비스와 함께하는 완벽한 보안",
-      icon: Lock,
-      color: "from-gray-700 to-gray-900",
-      features: ["24시간 출동", "경비원 순찰", "비상벨", "CCTV 연동"],
-      price: "월 89,900원",
-      href: "/services/security",
+      id: "internet-pro",
+      title: "SK 기가",
+      eyebrow: "인터넷",
+      headline: "1G 초고속의<br/>무한한 가능성.",
+      description: "최고 속도의 프리미엄 인터넷으로 모든 업무를 원활하게",
+      backgroundImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=600&fit=crop",
+      backgroundVideo: null,
+      features: ["1G 초고속", "매장 인터넷전화", "24시간 A/S", "프리미엄 지원"],
+      href: "/services/internet",
+      size: "medium",
     },
     {
-      id: "health",
-      title: "헬스케어 서비스",
-      subtitle: "건강 관리",
-      description: "IoT 기기와 전문가 상담으로 건강을 지키세요",
-      icon: Heart,
-      color: "from-pink-500 to-pink-700",
-      features: ["건강 모니터링", "전문의 상담", "응급 알림", "건강 리포트"],
-      price: "월 49,900원",
-      href: "/services/health",
+      id: "iptv-pro",
+      title: "삼탠바이미 IPTV",
+      eyebrow: "엔터테인먼트",
+      headline: "프리미엄 채널로<br/>매장이 더 특별해진다.",
+      description: "최고급 IPTV 서비스로 매장 분위기를 업그레이드",
+      backgroundImage: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?w=600&h=600&fit=crop",
+      backgroundVideo: null,
+      features: ["프리미엄 채널", "4K 화질", "스포츠 전용", "음악 채널"],
+      href: "/services/iptv",
+      size: "medium",
+    },
+    {
+      id: "pos-pro",
+      title: "프리미엄 POS",
+      eyebrow: "결제",
+      headline: "모든 배달앱과<br/>완벽한 연동.",
+      description: "갤럭시탭과 토스터미널로 모든 결제를 한번에",
+      backgroundImage: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=600&fit=crop",
+      backgroundVideo: null,
+      features: ["갤럭시탭+토스터미널", "배달의민족 연동", "네이버 세팅", "고급 분석"],
+      href: "/services/pos",
+      size: "small",
+    },
+    {
+      id: "insurance-pro",
+      title: "한화시큐리티보험",
+      eyebrow: "보험",
+      headline: "안심커버 1000으로<br/>완벽한 보호.",
+      description: "최고 수준의 보장으로 모든 리스크를 완벽 차단",
+      backgroundImage: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&h=600&fit=crop",
+      backgroundVideo: null,
+      features: ["화재보장", "도난보장", "배상책임", "100% 환급율"],
+      href: "/services/insurance",
+      size: "small",
     },
   ],
 }
@@ -107,74 +164,124 @@ interface ServiceGridProps {
 
 export function ServiceGrid({ selectedPackage }: ServiceGridProps) {
   const currentServices = services[selectedPackage] || []
-  const isComingSoon = selectedPackage !== "basic"
-
+  
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {isComingSoon ? (
-        <div className="text-center py-32">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-6">
-            <Lock className="w-10 h-10 text-gray-400" />
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            준비 중입니다
+    <section className="section section-cards">
+      <div className="section-content">
+        <div className="cards-header fade-in">
+          <h2 className="typography-hero-headline">
+            {selectedPackage === "mini" ? "스타트케어 패키지 미니" : 
+             selectedPackage === "standard" ? "스타트케어 패키지" : 
+             "스타트케어 패키지 PRO"}
           </h2>
-          <p className="text-lg text-gray-600 max-w-md mx-auto">
-            {selectedPackage === "pro" ? "프로" : "프리미엄"} 패키지는 곧 출시 예정입니다.
-            <br />
-            더 나은 서비스로 찾아뵙겠습니다.
+          <p className="typography-hero-intro">
+            {selectedPackage === "mini" ? "기본 필수 서비스로 안전하게 시작하는 스마트한 선택" :
+             selectedPackage === "standard" ? "1년 무료 체험단 이벤트로 더 많은 혜택을 경험하세요" :
+             "올인원 프리미엄 패키지로 완벽한 비즈니스 환경을 구축하세요"}
           </p>
         </div>
-      ) : (
-        <>
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              베이직 패키지 서비스
-            </h2>
-            <p className="text-lg text-gray-600">
-              생활 필수 서비스를 합리적인 가격으로 만나보세요
-            </p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {currentServices.map((service, index) => (
-              <ServiceCard
+        {/* Apple Music Cards Container - 완전한 구조 */}
+        <div className="cards-container">
+          {currentServices.map((service) => {
+            const getTileClass = (size: string) => {
+              switch(size) {
+                case "large": return "tile-large"
+                case "medium": return "tile-medium" 
+                case "small": return "tile-small"
+                default: return "tile-medium"
+              }
+            }
+
+            return (
+              <div 
                 key={service.id}
-                service={service}
-                index={index}
-              />
-            ))}
-          </div>
+                className={`tile ${getTileClass(service.size)} tile-rounded theme-dark media-full-bleed near-card`}
+                data-component-list="TileOverlay"
+                data-analytics-section-engagement={`name:${service.id}`}
+              >
+                <div className="tile-foc">
+                  <div className="tile-content">
+                    <div className="tile-copy">
+                      <h3 className="tile-eyebrow typography-eyebrow-super fade-in">
+                        {service.eyebrow}
+                      </h3>
+                      <h4 
+                        className="tile-headline typography-headline-super text-gradient animate"
+                        dangerouslySetInnerHTML={{ __html: service.headline }}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Background Media */}
+                  <div className="tile-media">
+                    {service.backgroundVideo ? (
+                      <video
+                        className="tile-background-video"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                      >
+                        <source src={service.backgroundVideo || ""} type="video/mp4" />
+                      </video>
+                    ) : (
+                      <picture className="tile-background-picture loaded">
+                        <img 
+                          src={service.backgroundImage} 
+                          alt={service.title}
+                          className="tile-background-img"
+                        />
+                      </picture>
+                    )}
+                  </div>
+                </div>
 
-          <div className="mt-16 bg-gradient-to-br from-brand/5 to-brand/10 rounded-3xl p-8 text-center">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              베이직 패키지 특별 혜택
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white rounded-2xl p-6">
-                <div className="text-3xl font-bold text-brand mb-2">30%</div>
-                <p className="text-gray-600">패키지 할인</p>
+                {/* Tile Overlay Button */}
+                <input type="checkbox" id={`tile-boc-toggle-${service.id}`} className="tile-boc-toggle" />
+                <label 
+                  htmlFor={`tile-boc-toggle-${service.id}`}
+                  className="tile-boc-trigger" 
+                  role="button" 
+                  aria-expanded="false"
+                  aria-label={`${service.title}에 대해 더 알아보기`}
+                  data-analytics-title={`open | ${service.id}`}
+                >
+                  <span className="tile-button">
+                    <svg className="tile-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M17.25,8.51H11.5V2.75A1.5,1.5,0,0,0,10,1.25h0a1.5,1.5,0,0,0-1.5,1.5V8.5H2.75a1.5,1.5,0,0,0,0,3H8.5v5.75a1.5,1.5,0,0,0,1.5,1.5h0a1.5,1.5,0,0,0,1.5-1.5V11.5h5.75a1.5,1.5,0,0,0,0-3Z"></path>
+                    </svg>
+                  </span>
+                </label>
+
+                {/* Expanded Content */}
+                <div className="tile-boc">
+                  <div className="tile-boc-content" role="group" aria-label={`${service.title}에 대한 더 많은 콘텐츠`}>
+                    <div className="tile-boc-body">
+                      <div className="tile-boc-copy typography-body-elevated">
+                        <p>
+                          {service.description}
+                        </p>
+                        <div className="features-list">
+                          {service.features.map((feature, idx) => (
+                            <div key={idx} className="feature-item">
+                              <span className="feature-check">✓</span>
+                              <span className="feature-text">{feature}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <Link href={service.href} className="tile-cta-link">
+                          자세히 알아보기 →
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="bg-white rounded-2xl p-6">
-                <div className="text-3xl font-bold text-brand mb-2">무료</div>
-                <p className="text-gray-600">설치 및 개통</p>
-              </div>
-              <div className="bg-white rounded-2xl p-6">
-                <div className="text-3xl font-bold text-brand mb-2">24시간</div>
-                <p className="text-gray-600">고객 지원</p>
-              </div>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-4 bg-brand text-white font-semibold rounded-2xl hover:bg-brand/90 transition-colors">
-                패키지 신청하기
-              </button>
-              <button className="px-8 py-4 bg-white text-brand font-semibold rounded-2xl border-2 border-brand/20 hover:border-brand/40 transition-colors">
-                상담 예약하기
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+            )
+          })}
+        </div>
+      </div>
     </section>
   )
 }

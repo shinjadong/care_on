@@ -163,20 +163,8 @@ export function Header() {
       // 스크롤 배경 효과 (10px 이후)
       setIsScrolled(currentScrollY > 10)
 
-      // 헤더 숨김/표시 효과 (100px 이후부터 적용)
-      if (currentScrollY > 100) {
-        // 스크롤 다운: 헤더 숨김
-        if (currentScrollY > lastScrollY && currentScrollY > 100) {
-          setIsVisible(false)
-        }
-        // 스크롤 업: 헤더 표시
-        else if (currentScrollY < lastScrollY) {
-          setIsVisible(true)
-        }
-      } else {
-        // 상단 100px 이내에서는 항상 표시
-        setIsVisible(true)
-      }
+      // Apple 스타일: 헤더 항상 표시 (숨기지 않음)
+      setIsVisible(true)
 
       setLastScrollY(currentScrollY)
     }
@@ -207,8 +195,8 @@ export function Header() {
 
   return (
     <header
-      className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/95 shadow-lg backdrop-blur-sm" : "bg-transparent"
+      className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-out ${
+        isScrolled ? "ios-blur" : "bg-transparent"
       } ${isVisible ? "top-0" : "-top-full"}`}
     >
       <div className="container mx-auto px-4">
@@ -252,7 +240,7 @@ export function Header() {
                 >
                   <div className="flex items-center space-x-2">
                     <span className="flex items-center space-x-1">
-                      <span className="font-semibold">케어온, 창업자의 든든한 파트너</span>
+                      <span className="font-semibold">케어온, 사장님의 모든 것</span>
                       <span className="text-xs opacity-75">(2,847명)</span>
                     </span>
                     <span>|</span>
@@ -316,13 +304,13 @@ export function Header() {
                   <div className="flex flex-col space-y-3 py-6 border-b">
                     <h2 className="text-xl font-bold text-gray-900">케어온</h2>
                     <div className="space-y-2">
-                      <p className="text-sm font-semibold text-gray-700">창업자의 든든한 파트너</p>
+                      <p className="text-sm font-semibold text-gray-700">사장님의 모든 것</p>
                       <div className="flex items-center space-x-3 text-xs text-gray-500">
                         <span className="flex items-center space-x-1">
-                          <span>2,847명 이용중</span>
+                          <span></span>
                         </span>
                         <span>•</span>
-                        <span className="font-semibold text-teal-600">100% 환급보장</span>
+                        <span className="font-semibold text-teal-600">스타트케어 패키지</span>
                         <span>•</span>
                         <LiveStatus isScrolled={false} />
                       </div>
@@ -372,7 +360,7 @@ export function Header() {
                       className="w-full bg-gradient-to-r from-[#148777] to-[#0f6b5c] hover:from-[#0f6b5c] hover:to-[#0a5249] text-white font-semibold"
                     >
                       <Shield className="w-4 h-4 mr-2" />
-                      스타트 케어 접수
+                      12개월 무료체험하기
                     </Button>
                   </div>
                 </div>

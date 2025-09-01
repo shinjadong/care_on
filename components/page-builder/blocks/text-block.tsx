@@ -23,9 +23,15 @@ export function TextBlockRenderer({ block, isEditing, onUpdate }: TextBlockRende
       return;
     }
 
+    // 필요한 필드만 저장하여 구조 안정성 확보
+    const cleanContent = {
+      text: textData.text,
+      format: textData.format || 'plain'
+    };
+
     onUpdate?.({
       ...block,
-      content: textData,
+      content: cleanContent,
     });
     setIsEditingText(false);
   }, [block, textData, onUpdate]);

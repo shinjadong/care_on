@@ -105,13 +105,17 @@
   .safe-top { padding-top: max(12px, env(safe-area-inset-top)); }
   .safe-bottom { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
 
-  /* iOS 감성: 반투명 + 블러 */
+  /* Apple 감성: 반투명 + 블러 (더 투명하게) */
   .ios-blur {
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
-    background: rgba(255,255,255,.92);
+    background: rgba(255,255,255,.85);
+    border-bottom: 1px solid rgba(0,0,0,.05);
   }
-  .dark .ios-blur { background: rgba(22,22,22,.8); }
+  .dark .ios-blur { 
+    background: rgba(22,22,22,.7); 
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
 
   /* 터치/모멘텀 스크롤 */
   .ios-content {
@@ -733,5 +737,827 @@
     .ajd-form input[type="radio"] {
       @apply w-3.5 h-3.5;
     }
+  }
+}
+
+/* ========================================= */
+/* APPLE MUSIC DESIGN SYSTEM - COMPLETE CSS */
+/* ========================================= */
+
+/* Layout System */
+@layer components {
+  .section {
+    @apply py-20 relative;
+  }
+
+  .section-content {
+    @apply max-w-7xl mx-auto px-6;
+  }
+
+  .section-content-responsive {
+    @apply max-w-full mx-auto px-6;
+  }
+
+  /* Hero Section */
+  .section-hero {
+    @apply relative overflow-hidden min-h-screen flex items-center text-white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .hero-sticky-container {
+    @apply relative w-full;
+  }
+
+  .hero-sticky-content {
+    @apply relative z-10;
+  }
+
+  .hero-content-container {
+    @apply relative z-20 mx-auto max-w-4xl;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 60px 40px;
+    margin: 40px auto;
+  }
+
+  .hero-content-lockup {
+    @apply text-center;
+  }
+
+  .hero-content-eyebrow {
+    @apply text-lg font-semibold uppercase tracking-wider mb-6 opacity-90;
+  }
+
+  .hero-content-headline {
+    @apply font-bold leading-tight mb-8;
+    font-size: clamp(3rem, 8vw, 6rem);
+    background: linear-gradient(45deg, #ffffff, #f0f0f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-content-copy {
+    @apply text-xl leading-relaxed mb-10 opacity-95 max-w-3xl mx-auto;
+  }
+
+  .hero-content-cta-wrapper {
+    @apply mt-10;
+  }
+
+  /* Typography System */
+  .typography-hero-headline {
+    @apply font-bold leading-tight;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+  }
+
+  .typography-hero-intro {
+    @apply text-lg leading-relaxed font-normal;
+  }
+
+  .typography-eyebrow {
+    @apply text-sm font-semibold uppercase tracking-wider;
+  }
+
+  /* Button System */
+  .button {
+    @apply inline-flex items-center justify-center px-8 py-4 border-none rounded-3xl text-base font-semibold no-underline cursor-pointer relative overflow-hidden;
+    transition: all 0.3s ease;
+  }
+
+  .button-super {
+    @apply px-10 py-5 text-lg rounded-[28px];
+  }
+
+  .button-music {
+    @apply text-white;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3);
+  }
+
+  .button-music:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(255, 107, 107, 0.4);
+  }
+
+  .button-elevated {
+    @apply text-white border;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .button-elevated:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+  }
+
+  /* Cards Section */
+  .section-cards {
+    @apply py-20 bg-gray-50;
+  }
+
+  .cards-container {
+    @apply grid gap-8 mt-16;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .card {
+    @apply bg-white rounded-3xl p-10 shadow-lg transition-all duration-300;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Devices Section */
+  .section-devices {
+    @apply py-20 bg-gray-900 text-white;
+  }
+
+  /* Plans Section */
+  .section-plans {
+    @apply py-20 text-white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  /* FAQ Section */
+  .section-faq {
+    @apply py-20 bg-gray-50;
+  }
+
+  .accordion-item {
+    @apply bg-white rounded-2xl mb-4 overflow-hidden shadow-md;
+  }
+
+  .accordion-button {
+    @apply w-full px-8 py-6 bg-transparent border-none text-left text-lg font-semibold cursor-pointer flex justify-between items-center;
+  }
+
+  .accordion-content {
+    @apply px-8 pb-6 text-gray-600 leading-relaxed;
+  }
+
+  /* Theme System */
+  .theme-dark {
+    @apply bg-gray-900 text-white;
+  }
+
+  /* Offers */
+  .offers-container {
+    @apply grid gap-6 mt-10;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .offer-item {
+    @apply rounded-3xl p-8 border;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .offer-eyebrow {
+    @apply text-base font-semibold mb-4 opacity-90;
+  }
+
+  .offer-item-copy {
+    @apply text-sm leading-relaxed mb-6 opacity-80;
+  }
+}
+
+/* Animations */
+@layer utilities {
+  .fade-in {
+    animation: fadeIn 1s ease-out;
+  }
+
+  .swipe-up-reveal {
+    animation: swipeUpReveal 1s ease-out;
+  }
+
+  .animate {
+    animation: slideInUp 0.8s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes swipeUpReveal {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Utility Classes */
+  .visuallyhidden {
+    @apply absolute w-px h-px p-0 -m-px overflow-hidden border-0;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .footnote {
+    @apply text-xs;
+    vertical-align: super;
+  }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 1068px) {
+  .section {
+    @apply py-16;
+  }
+  
+  .section-content {
+    @apply px-5;
+  }
+  
+  .hero-content-container {
+    padding: 40px 24px;
+    margin: 20px 16px;
+  }
+}
+
+@media (max-width: 734px) {
+  .section {
+    @apply py-12;
+  }
+  
+  .section-content {
+    @apply px-4;
+  }
+  
+  .hero-content-container {
+    padding: 32px 20px;
+    margin: 16px 12px;
+  }
+  
+  .button-super {
+    @apply px-8 py-4 text-base;
+  }
+  
+  .cards-container {
+    @apply grid-cols-1 gap-6;
+  }
+}
+/* ============================================ */
+/* SERVICE-SPECIFIC APPLE MUSIC CSS ADDITIONS */
+/* ============================================ */
+
+@layer components {
+  /* Hero background gradient */
+  .hero-background-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    z-index: -1;
+  }
+
+  /* Cards Header */
+  .cards-header {
+    @apply text-center mb-16;
+  }
+
+  /* Service Card Enhancements */
+  .card-icon {
+    @apply mb-6;
+  }
+
+  .icon-container {
+    @apply w-16 h-16 rounded-2xl flex items-center justify-center transition-transform duration-300;
+  }
+  
+  .icon-container.blue { @apply bg-blue-500/20; }
+  .icon-container.purple { @apply bg-purple-500/20; }
+  .icon-container.green { @apply bg-green-500/20; }
+  .icon-container.orange { @apply bg-orange-500/20; }
+  .icon-container.red { @apply bg-red-500/20; }
+  .icon-container.cyan { @apply bg-cyan-500/20; }
+
+  .card:hover .icon-container {
+    @apply scale-110;
+  }
+
+  .icon {
+    @apply w-8 h-8;
+  }
+  
+  .icon-container.blue .icon { @apply text-blue-400; }
+  .icon-container.purple .icon { @apply text-purple-400; }
+  .icon-container.green .icon { @apply text-green-400; }
+  .icon-container.orange .icon { @apply text-orange-400; }
+  .icon-container.red .icon { @apply text-red-400; }
+  .icon-container.cyan .icon { @apply text-cyan-400; }
+
+  .card-headline {
+    @apply text-2xl font-bold mb-4;
+  }
+
+  .card-copy {
+    @apply text-gray-600 mb-6 leading-relaxed;
+  }
+
+  /* Card Features */
+  .card-features {
+    @apply space-y-3 mb-6;
+  }
+
+  .feature-item {
+    @apply flex items-center gap-3;
+  }
+
+  .feature-check {
+    @apply w-5 h-5 text-green-500 flex-shrink-0;
+  }
+
+  .feature-item span {
+    @apply text-sm text-gray-600;
+  }
+
+  /* Card Links */
+  .card-link {
+    @apply inline-flex items-center font-medium transition-colors no-underline;
+  }
+
+  .card-link.blue { @apply text-blue-500 hover:text-blue-600; }
+  .card-link.purple { @apply text-purple-500 hover:text-purple-600; }
+  .card-link.green { @apply text-green-500 hover:text-green-600; }
+  .card-link.orange { @apply text-orange-500 hover:text-orange-600; }
+  .card-link.red { @apply text-red-500 hover:text-red-600; }
+  .card-link.cyan { @apply text-cyan-500 hover:text-cyan-600; }
+
+  .link-arrow {
+    @apply w-4 h-4 ml-2 transition-transform;
+  }
+
+  .card-link:hover .link-arrow {
+    @apply translate-x-1;
+  }
+
+  /* Plans Section Headers */
+  .plans-header {
+    @apply text-center mb-12;
+  }
+
+  .plans-cta {
+    @apply flex flex-col sm:flex-row gap-6 justify-center items-center;
+  }
+}
+/* Apple Music Hero Section 완전 구현 */
+@layer components {
+  .hero-offers-content {
+    @apply mt-12;
+  }
+
+  .offers-wrapper {
+    @apply space-y-8;
+  }
+
+  .typography-offer-eyebrow {
+    @apply text-sm font-semibold text-white/90 mb-3;
+  }
+
+  .typography-offer-item-copy {
+    @apply text-xs text-white/70 leading-relaxed;
+  }
+
+  .offer-item-cta {
+    @apply text-white/80 hover:text-white transition-colors;
+  }
+
+  .icon-after.more::after {
+    content: "→";
+    @apply ml-1;
+  }
+
+  .icon-after.icon-chevrondown::after {
+    content: "⌄";
+    @apply ml-1;
+  }
+
+  .compare-link {
+    @apply text-center mt-8;
+  }
+
+  .compare-link a {
+    @apply text-white/80 hover:text-white text-sm transition-colors;
+  }
+
+  .devices-banner {
+    @apply mt-8 py-4 bg-white/10 backdrop-blur-sm rounded-lg;
+  }
+
+  .devices-banner-label {
+    @apply text-xs text-white/70 text-center;
+  }
+
+  .devices-banner-cta {
+    @apply text-white/80 hover:text-white transition-colors ml-4;
+  }
+
+  .footnote-supglyph {
+    @apply text-xs opacity-70;
+  }
+
+  .footnote-number {
+    @apply text-xs opacity-70;
+  }
+
+  .footnote-diamond {
+    @apply text-xs opacity-70;
+  }
+}
+
+/* ================================================= */
+/* APPLE MUSIC TILES SYSTEM - COMPLETE CARD SYSTEM */
+/* ================================================= */
+
+@layer components {
+  /* Tile System */
+  .tile {
+    @apply relative rounded-3xl overflow-hidden;
+    background: #1d1d1f;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .tile:hover {
+    transform: scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .tile-large {
+    grid-column: span 2;
+    grid-row: span 2;
+    min-height: 400px;
+  }
+
+  .tile-medium {
+    grid-column: span 1;
+    grid-row: span 1;
+    min-height: 300px;
+  }
+
+  .tile-small {
+    grid-column: span 1;
+    grid-row: span 1;
+    min-height: 200px;
+  }
+
+  .tile-rounded {
+    @apply rounded-3xl;
+  }
+
+  .media-full-bleed {
+    overflow: hidden;
+  }
+
+  .near-card {
+    @apply shadow-lg;
+  }
+
+  /* Tile Focus */
+  .tile-foc {
+    @apply relative w-full h-full;
+  }
+
+  /* Tile Content */
+  .tile-content {
+    @apply absolute inset-0 z-20 flex items-end;
+  }
+
+  .tile-copy {
+    @apply p-8 w-full;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  }
+
+  .tile-eyebrow {
+    @apply text-sm font-semibold uppercase tracking-wider mb-3 opacity-90;
+  }
+
+  .tile-headline {
+    @apply text-2xl md:text-3xl font-bold leading-tight;
+  }
+
+  .typography-eyebrow-super {
+    @apply text-xs font-semibold uppercase tracking-wider opacity-80;
+  }
+
+  .typography-headline-super {
+    @apply text-xl md:text-2xl lg:text-3xl font-bold leading-tight;
+  }
+
+  .text-gradient {
+    background: linear-gradient(45deg, #ffffff, #f0f0f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Tile Media */
+  .tile-media {
+    @apply absolute inset-0 z-10;
+  }
+
+  .tile-background-picture {
+    @apply w-full h-full;
+  }
+
+  .tile-background-img {
+    @apply w-full h-full object-cover;
+  }
+
+  .tile-background-video {
+    @apply w-full h-full object-cover;
+  }
+
+  /* Tile Overlay System */
+  .tile-boc-toggle {
+    @apply hidden;
+  }
+
+  .tile-boc-trigger {
+    @apply absolute top-6 right-6 z-30 cursor-pointer;
+  }
+
+  .tile-button {
+    @apply w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center;
+    transition: all 0.3s ease;
+  }
+
+  .tile-button:hover {
+    @apply bg-white/30 scale-110;
+  }
+
+  .tile-icon {
+    @apply w-6 h-6 text-white;
+  }
+
+  /* Tile Bottom of Card (BOC) */
+  .tile-boc {
+    @apply absolute inset-0 z-40 bg-black/95 backdrop-blur-md opacity-0 pointer-events-none;
+    transition: opacity 0.4s ease;
+  }
+
+  .tile-boc-toggle:checked + .tile-boc-trigger + .tile-boc {
+    @apply opacity-100 pointer-events-auto;
+  }
+
+  .tile-boc-toggle:checked + .tile-boc-trigger .tile-button {
+    @apply bg-white text-black rotate-45;
+  }
+
+  .tile-boc-content {
+    @apply h-full flex items-center justify-center p-8;
+  }
+
+  .tile-boc-body {
+    @apply text-center;
+  }
+
+  .tile-boc-copy {
+    @apply space-y-6;
+  }
+
+  .typography-body-elevated {
+    @apply text-base leading-relaxed text-white/90;
+  }
+
+  .features-list {
+    @apply grid grid-cols-2 gap-3 mt-6;
+  }
+
+  .feature-item {
+    @apply flex items-center gap-2 text-sm;
+  }
+
+  .feature-check {
+    @apply text-green-400 font-bold;
+  }
+
+  .feature-text {
+    @apply text-white/80;
+  }
+
+  .tile-cta-link {
+    @apply inline-block mt-6 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full text-white font-semibold hover:bg-white/30 transition-colors;
+  }
+
+  /* Cards Container Grid */
+  .cards-container {
+    @apply grid gap-6;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-auto-rows: minmax(200px, auto);
+  }
+
+  @media (min-width: 768px) {
+    .cards-container {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .cards-container {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+}
+
+/* ============================================ */
+/* APPLE MUSIC DEVICES SECTION - PACKAGE FORM */
+/* ============================================ */
+
+@layer components {
+  /* Section Devices */
+  .section-devices {
+    @apply py-20 bg-gray-50;
+  }
+
+  /* Devices Apple */
+  .devices-apple {
+    @apply mb-16;
+  }
+
+  .devices-intro {
+    @apply text-center mb-12;
+  }
+
+  .devices-headline {
+    @apply text-4xl md:text-5xl font-bold text-gray-900 leading-tight;
+  }
+
+  .typography-section-headline {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold leading-tight;
+  }
+
+  .column {
+    @apply max-w-4xl mx-auto;
+  }
+
+  /* Devices Item Container */
+  .devices-item-container {
+    @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-16;
+  }
+
+  .devices-item {
+    @apply text-center cursor-pointer transition-all duration-300 p-6 rounded-3xl;
+  }
+
+  .devices-item:hover {
+    @apply bg-white shadow-lg scale-105;
+  }
+
+  .devices-item.selected {
+    @apply bg-white shadow-xl scale-105 ring-2 ring-blue-500;
+  }
+
+  .devices-item-icon {
+    @apply w-12 h-12 mx-auto mb-3 rounded-xl overflow-hidden bg-gray-100 shadow-sm flex items-center justify-center;
+  }
+
+  .device-image {
+    @apply w-full h-full object-cover;
+  }
+
+  .devices-item-name {
+    @apply font-semibold text-lg text-gray-900 mb-2;
+  }
+
+  .typography-device-item-name {
+    @apply font-semibold text-base md:text-lg;
+  }
+
+  .devices-item-copy {
+    @apply text-sm text-gray-600;
+  }
+
+  .typography-device-item-copy {
+    @apply text-xs md:text-sm text-gray-600;
+  }
+
+  .business-selected-indicator {
+    @apply absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md;
+  }
+
+  /* Devices Other - Package Selection */
+  .devices-other {
+    @apply mt-16;
+  }
+
+  .package-options-container {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6 mt-8;
+  }
+
+  .package-option {
+    @apply relative cursor-pointer transition-all duration-300;
+  }
+
+  .package-option:hover {
+    @apply scale-105;
+  }
+
+  .package-option.selected {
+    @apply scale-105;
+  }
+
+  .package-option.recommended .package-card {
+    @apply ring-2 ring-yellow-400;
+  }
+
+  .package-badge {
+    @apply absolute top-4 right-4 z-10 px-3 py-1 bg-white/90 text-gray-900 text-xs font-semibold rounded-full;
+  }
+
+  .recommended-badge {
+    @apply absolute top-4 left-4 z-10 px-3 py-1 bg-yellow-400 text-yellow-900 text-xs font-semibold rounded-full;
+  }
+
+  .package-card {
+    @apply relative rounded-3xl p-8 text-white overflow-hidden;
+    min-height: 250px;
+  }
+
+  .package-name {
+    @apply text-xl font-bold mb-4;
+  }
+
+  .package-pricing {
+    @apply mb-4;
+  }
+
+  .monthly-fee {
+    @apply text-3xl font-bold block;
+  }
+
+  .yearly-fee {
+    @apply text-sm opacity-80 block mt-1;
+  }
+
+  .package-description {
+    @apply text-sm opacity-90 leading-relaxed;
+  }
+}
+
+/* Apple Music Devices Section - 아이콘 및 파트너사 스타일 */
+@layer components {
+  /* Partner Logo Styling */
+  .partner-logo {
+    @apply flex items-center justify-center bg-gray-100;
+  }
+
+  .devices-item-alt {
+    @apply opacity-80 hover:opacity-100;
+  }
+
+  .devices-item-container-alt {
+    @apply grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-6;
+  }
+
+  .device-partner-alt {
+    @apply p-4;
+  }
+
+  /* Icon Styling */
+  .icon-wrapper {
+    @apply text-blue-500 hover:text-blue-600 transition-colors;
+  }
+
+  .icon-after.icon-external::after {
+    content: "↗";
+    @apply ml-1 text-xs;
+  }
+
+  /* Business Type Selection Enhancement */
+  .devices-item {
+    @apply relative;
+  }
+
+  .devices-item.selected::after {
+    content: "✓";
+    @apply absolute top-2 right-2 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold;
+  }
+
+  /* Typography Enhancement */
+  .typography-eyebrow-super {
+    @apply text-lg md:text-xl font-semibold text-gray-900 leading-tight;
   }
 }

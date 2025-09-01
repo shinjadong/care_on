@@ -18,7 +18,69 @@ export default function LandingEditPage() {
           const result = await response.json();
           if (result.success && result.data && result.data.blocks && result.data.blocks.length > 0) {
             console.log('✅ 서버에서 페이지 데이터 불러오기 성공:', result.data.blocks.length, '개 블록');
-            setInitialBlocks(result.data.blocks);
+            
+            // 블록 데이터 검증 및 정제
+            const validatedBlocks = result.data.blocks.map((block: any) => {
+              try {
+                // 기본 블록 구조 검증
+                if (!block.id || !block.type || !block.content) {
+                  console.warn('⚠️ 잘못된 블록 구조 발견:', block);
+                  return null;
+                }
+
+                // 각 블록 타입별 콘텐츠 검증
+                let validatedContent = block.content;
+                
+                switch (block.type) {
+                  case 'text':
+                    validatedContent = {
+                      text: typeof block.content.text === 'string' ? block.content.text : '',
+                      format: block.content.format === 'markdown' ? 'markdown' : 'plain'
+                    };
+                    break;
+                  case 'image':
+                    if (block.content.images && Array.isArray(block.content.images)) {
+                      validatedContent = {
+                        images: block.content.images,
+                        displayMode: block.content.displayMode || 'single'
+                      };
+                    } else if (block.content.src) {
+                      // 레거시 단일 이미지 구조를 새 구조로 변환
+                      validatedContent = {
+                        images: [{
+                          id: 'legacy-img',
+                          src: block.content.src,
+                          alt: block.content.alt || '',
+                          caption: block.content.caption || '',
+                          width: block.content.width,
+                          height: block.content.height
+                        }],
+                        displayMode: 'single'
+                      };
+                    }
+                    break;
+                  case 'button':
+                    validatedContent = {
+                      text: block.content.text || '버튼',
+                      link: block.content.link || '#',
+                      variant: block.content.variant || 'default',
+                      size: block.content.size || 'default',
+                      alignment: block.content.alignment || 'left'
+                    };
+                    break;
+                }
+
+                return {
+                  ...block,
+                  content: validatedContent
+                };
+              } catch (error) {
+                console.error('❌ 블록 검증 중 오류:', error, block);
+                return null;
+              }
+            }).filter(Boolean); // null 값 제거
+
+            setInitialBlocks(validatedBlocks);
           } else {
             console.log('📝 서버에 페이지 데이터 없음, 빈 페이지로 시작');
             setInitialBlocks([]);
@@ -43,6 +105,82 @@ export default function LandingEditPage() {
     try {
       console.log('💾 페이지 저장 시작:', blocks.length, '개 블록');
       
+      // 저장 전 블록 데이터 검증 및 정제
+      const validatedBlocks = blocks.map((block) => {
+        try {
+          let cleanContent = { ...block.content };
+
+          // 각 블록 타입별 데이터 정제
+          switch (block.type) {
+            case 'text':
+              cleanContent = {
+                text: block.content.text || '',
+                format: block.content.format || 'plain'
+              };
+              break;
+            case 'image':
+              cleanContent = {
+                images: Array.isArray(block.content.images) ? block.content.images : [],
+                displayMode: block.content.displayMode || 'single'
+              };
+              break;
+            case 'button':
+              cleanContent = {
+                text: block.content.text || '버튼',
+                link: block.content.link || '#',
+                variant: block.content.variant || 'default',
+                size: block.content.size || 'default',
+                alignment: block.content.alignment || 'left'
+              };
+              break;
+            case 'heading':
+              cleanContent = {
+                text: block.content.text || '',
+                level: block.content.level || 1
+              };
+              break;
+            case 'html':
+              cleanContent = {
+                html: block.content.html || ''
+              };
+              break;
+            case 'hero':
+              cleanContent = {
+                title: block.content.title || '',
+                subtitle: block.content.subtitle || '',
+                backgroundImage: block.content.backgroundImage || '',
+                overlay: block.content.overlay || false,
+                overlayOpacity: block.content.overlayOpacity || 0.5,
+                buttons: Array.isArray(block.content.buttons) ? block.content.buttons : []
+              };
+              break;
+            case 'video':
+              cleanContent = {
+                src: block.content.src || '',
+                type: block.content.type || 'youtube'
+              };
+              break;
+            case 'spacer':
+              cleanContent = {
+                height: block.content.height || 50
+              };
+              break;
+          }
+
+          return {
+            id: block.id,
+            type: block.type,
+            content: cleanContent,
+            settings: block.settings || {}
+          };
+        } catch (error) {
+          console.error('❌ 블록 검증 중 오류:', error, block);
+          return null;
+        }
+      }).filter(Boolean) as Block[]; // null 값 제거
+
+      console.log('🔍 검증된 블록 수:', validatedBlocks.length);
+      
       // API 엔드포인트 호출
       const response = await fetch('/api/pages', {
         method: 'POST',
@@ -52,7 +190,7 @@ export default function LandingEditPage() {
         body: JSON.stringify({
           slug: 'landing',
           title: '케어온 랜딩 페이지',
-          blocks: blocks,
+          blocks: validatedBlocks,
         }),
       });
 
