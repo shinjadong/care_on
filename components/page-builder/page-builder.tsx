@@ -20,7 +20,10 @@ import { CSS } from '@dnd-kit/utilities';
 import { Block, BlockType } from '@/types/page-builder';
 import { BlockRenderer } from './block-renderer';
 import { Button } from '@/components/ui/button';
-import { Plus, Eye, Edit, Save, Download, Upload, FolderOpen, Images } from 'lucide-react';
+import { 
+  Plus, Eye, Edit, Save, Download, Upload, FolderOpen, Images, 
+  ChevronLeft, ChevronRight, Menu, X, Settings 
+} from 'lucide-react';
 import { FileManager } from './file-manager';
 import { BulkImageUploader } from '@/components/ui/bulk-image-uploader';
 
@@ -88,10 +91,30 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
   const [showFileManager, setShowFileManager] = useState(false);
   const [showBulkUploader, setShowBulkUploader] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarPosition, setSidebarPosition] = useState({ top: 100 });
 
   useEffect(() => {
     setMounted(true);
+    
+    // 스크롤 감지로 스마트 사이드바 포지셔닝
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const optimalTop = Math.max(100, Math.min(200, scrollY + windowHeight / 4));
+      setSidebarPosition({ top: optimalTop });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // 🔄 initialBlocks가 변경될 때 내부 상태 업데이트
+  useEffect(() => {
+    if (initialBlocks.length > 0) {
+      setBlocks(initialBlocks);
+    }
+  }, [initialBlocks]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -125,6 +148,7 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
       id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type,
       content: getDefaultContent(type),
+      settings: { padding: { top: 0, right: 0, bottom: 0, left: 0 } }, // 기본 패딩 0
     } as Block;
 
     setBlocks([...blocks, newBlock]);
@@ -218,7 +242,7 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
     { type: 'text', label: '텍스트', icon: '📄' },
     { type: 'video', label: '동영상', icon: '🎥' },
     { type: 'button', label: '버튼', icon: '🔘' },
-    { type: 'spacer', label: '공백', icon: '⬜' },
+    { type: 'spacer', label: '공백', icon: '📏' },
     { type: 'html', label: 'HTML', icon: '💻' },
   ];
 
@@ -226,156 +250,205 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 상단 툴바 */}
-      <div className="bg-white border-b border-gray-200 p-4 sticky top-0 z-50">
+      {/* 간소화된 상단 툴바 */}
+      <div className="bg-white border-b border-gray-200 p-4 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <h1 className="text-2xl font-bold text-gray-900">페이지 빌더</h1>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant={isEditing ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setIsEditing(!isEditing)}
-              >
-                {isEditing ? <Edit className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
-                {isEditing ? '편집 모드' : '미리보기'}
-              </Button>
-            </div>
+            <Button
+              variant={isEditing ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setIsEditing(!isEditing)}
+            >
+              {isEditing ? <Edit className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
+              {isEditing ? '편집 모드' : '미리보기'}
+            </Button>
           </div>
           
-          <div className="flex items-center space-x-1 sm:space-x-2 overflow-x-auto">
-            <input
-              type="file"
-              accept=".json"
-              onChange={handleImport}
-              className="hidden"
-              id="import-file"
-            />
-            
-            {/* 모바일에서는 주요 버튼만 표시 */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowBulkUploader(true)}
-              className="flex-shrink-0"
-            >
-              <Images className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">이미지 업로드</span>
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowFileManager(true)}
-              className="flex-shrink-0"
-            >
-              <FolderOpen className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">파일 관리</span>
-            </Button>
-            
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleSave}
-              className="flex-shrink-0"
-            >
-              <Save className="w-4 h-4 sm:mr-2" />
-              <span className="hidden xs:inline">저장</span>
-            </Button>
-
-            {/* 데스크톱에서만 표시되는 추가 버튼들 */}
-            <div className="hidden md:flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => document.getElementById('import-file')?.click()}
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                가져오기
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExport}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                내보내기
-              </Button>
-            </div>
-          </div>
+          {/* 사이드바 토글 (모바일용) */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="lg:hidden"
+          >
+            <Menu className="w-4 h-4" />
+          </Button>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-2 sm:p-4">
-        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-          {/* 사이드바 - 편집 모드에서만 표시 */}
-          {isEditing && (
-            <div className="w-full lg:w-64 bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 lg:h-fit lg:sticky lg:top-24">
-              <h3 className="font-semibold text-gray-900 mb-3 sm:mb-4 text-sm sm:text-base">블록 추가</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-1 gap-2">
-                {blockTypes.map((blockType) => (
-                  <button
-                    key={blockType.type}
-                    onClick={() => addBlock(blockType.type)}
-                    className="flex items-center justify-center lg:justify-start space-x-2 lg:space-x-3 p-2 sm:p-3 text-center lg:text-left hover:bg-gray-50 rounded-lg border border-gray-200 transition-colors"
+      {/* 플로팅 스마트 사이드바 */}
+      {isEditing && (
+        <div 
+          className={`fixed right-0 z-50 transition-transform duration-300 ${
+            sidebarOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+          style={{ top: `${sidebarPosition.top}px` }}
+        >
+          <div className="bg-white rounded-l-2xl shadow-2xl border border-gray-200 w-80 max-h-[70vh] overflow-y-auto">
+            {/* 사이드바 헤더 */}
+            <div className="sticky top-0 bg-white border-b border-gray-100 p-4 rounded-tl-2xl">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-gray-900 flex items-center">
+                  <Settings className="w-5 h-5 mr-2" />
+                  편집 도구
+                </h3>
+                <div className="flex items-center space-x-2">
+                  {/* 사이드바 위치 조절 버튼 */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSidebarPosition(prev => ({ top: Math.max(50, prev.top - 50) }))}
+                    className="p-1"
+                    title="위로"
                   >
-                    <span className="text-lg sm:text-xl lg:text-2xl">{blockType.icon}</span>
-                    <span className="font-medium text-gray-700 text-xs sm:text-sm lg:text-base">
-                      {blockType.label}
-                    </span>
-                  </button>
-                ))}
+                    <ChevronLeft className="w-4 h-4 rotate-90" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSidebarPosition(prev => ({ top: Math.min(400, prev.top + 50) }))}
+                    className="p-1"
+                    title="아래로"
+                  >
+                    <ChevronRight className="w-4 h-4 rotate-90" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSidebarOpen(false)}
+                    className="p-1"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </div>
-          )}
 
-          {/* 메인 콘텐츠 영역 */}
-          <div className={`flex-1 ${isEditing ? '' : 'max-w-none'}`}>
-            {mounted ? (
-              <DndContext
-                sensors={sensors}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext items={blocks.map(block => block.id)} strategy={verticalListSortingStrategy}>
-                  <div className="space-y-6">
-                    {blocks.map((block, index) => (
-                      <SortableBlock
-                        key={block.id}
-                        block={block}
-                        isEditing={isEditing}
-                        onUpdate={updateBlock}
-                        onDelete={deleteBlock}
-                        onMoveUp={moveBlockUp}
-                        onMoveDown={moveBlockDown}
-                        canMoveUp={index > 0}
-                        canMoveDown={index < blocks.length - 1}
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-                <DragOverlay>
-                  {activeBlock && (
-                    <div className="opacity-80">
-                      <BlockRenderer
-                        block={activeBlock}
-                        isEditing={false}
-                        onUpdate={() => {}}
-                        onDelete={() => {}}
-                        onMoveUp={() => {}}
-                        onMoveDown={() => {}}
-                        canMoveUp={false}
-                        canMoveDown={false}
-                      />
-                    </div>
-                  )}
-                </DragOverlay>
-              </DndContext>
-            ) : (
-              <div className="space-y-6">
-                {blocks.map((block, index) => (
-                  <div key={block.id}>
-                    <BlockRenderer
+            {/* 사이드바 컨텐츠 */}
+            <div className="p-4 space-y-6">
+              {/* 페이지 관리 섹션 */}
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3 text-sm">페이지 관리</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={handleSave}
+                    className="w-full"
+                  >
+                    <Save className="w-4 h-4 mr-1" />
+                    저장
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleExport}
+                    className="w-full"
+                  >
+                    <Download className="w-4 h-4 mr-1" />
+                    내보내기
+                  </Button>
+                </div>
+                <div className="mt-2">
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleImport}
+                    className="hidden"
+                    id="import-file"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => document.getElementById('import-file')?.click()}
+                    className="w-full"
+                  >
+                    <Upload className="w-4 h-4 mr-1" />
+                    가져오기
+                  </Button>
+                </div>
+              </div>
+
+              {/* 파일 관리 섹션 */}
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3 text-sm">파일 관리</h4>
+                <div className="space-y-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowBulkUploader(true)}
+                    className="w-full"
+                  >
+                    <Images className="w-4 h-4 mr-1" />
+                    이미지 업로드
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowFileManager(true)}
+                    className="w-full"
+                  >
+                    <FolderOpen className="w-4 h-4 mr-1" />
+                    파일 매니저
+                  </Button>
+                </div>
+              </div>
+
+              {/* 블록 추가 섹션 */}
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3 text-sm">블록 추가</h4>
+                <div className="grid grid-cols-1 gap-2">
+                  {blockTypes.map((blockType) => (
+                    <button
+                      key={blockType.type}
+                      onClick={() => addBlock(blockType.type)}
+                      className="flex items-center space-x-3 p-3 text-left hover:bg-gray-50 rounded-lg border border-gray-200 transition-colors"
+                    >
+                      <span className="text-xl">{blockType.icon}</span>
+                      <span className="font-medium text-gray-700 text-sm">
+                        {blockType.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 현재 블록 수 */}
+              <div className="text-center py-2 text-sm text-gray-500 border-t border-gray-100">
+                총 {blocks.length}개 블록
+              </div>
+            </div>
+          </div>
+
+          {/* 사이드바 토글 핸들 */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full">
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="rounded-r-none rounded-l-lg shadow-lg"
+            >
+              {sidebarOpen ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* 메인 콘텐츠 영역 */}
+      <div className={`transition-all duration-300 ${isEditing && sidebarOpen ? 'pr-80' : ''}`}>
+        <div className="max-w-7xl mx-auto p-2 sm:p-4">
+          {mounted ? (
+            <DndContext
+              sensors={sensors}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={blocks.map(block => block.id)} strategy={verticalListSortingStrategy}>
+                <div className="space-y-0"> {/* 간격 제거 */}
+                  {blocks.map((block, index) => (
+                    <SortableBlock
+                      key={block.id}
                       block={block}
                       isEditing={isEditing}
                       onUpdate={updateBlock}
@@ -385,25 +458,58 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
                       canMoveUp={index > 0}
                       canMoveDown={index < blocks.length - 1}
                     />
+                  ))}
+                </div>
+              </SortableContext>
+              <DragOverlay>
+                {activeBlock && (
+                  <div className="opacity-80">
+                    <BlockRenderer
+                      block={activeBlock}
+                      isEditing={false}
+                      onUpdate={() => {}}
+                      onDelete={() => {}}
+                      onMoveUp={() => {}}
+                      onMoveDown={() => {}}
+                      canMoveUp={false}
+                      canMoveDown={false}
+                    />
                   </div>
-                ))}
-              </div>
-            )}
-
-            {blocks.length === 0 && (
-              <div className="text-center py-12">
-                <div className="text-gray-400 text-6xl mb-4">📝</div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">페이지를 만들어보세요</h3>
-                <p className="text-gray-600 mb-4">왼쪽 사이드바에서 블록을 추가하여 페이지를 구성하세요.</p>
-                {isEditing && (
-                  <Button onClick={() => addBlock('text')}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    첫 번째 블록 추가
-                  </Button>
                 )}
-              </div>
-            )}
-          </div>
+              </DragOverlay>
+            </DndContext>
+          ) : (
+            <div className="space-y-0">
+              {blocks.map((block, index) => (
+                <div key={block.id}>
+                  <BlockRenderer
+                    block={block}
+                    isEditing={isEditing}
+                    onUpdate={updateBlock}
+                    onDelete={deleteBlock}
+                    onMoveUp={moveBlockUp}
+                    onMoveDown={moveBlockDown}
+                    canMoveUp={index > 0}
+                    canMoveDown={index < blocks.length - 1}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {blocks.length === 0 && (
+            <div className="text-center py-12">
+              <div className="text-gray-400 text-6xl mb-4">📝</div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">페이지를 만들어보세요</h3>
+              <p className="text-gray-600 mb-4">우측 플로팅 사이드바에서 블록을 추가하여 페이지를 구성하세요.</p>
+              {isEditing && (
+                <Button onClick={() => addBlock('text')}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  첫 번째 블록 추가
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -420,7 +526,6 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
         onClose={() => setShowBulkUploader(false)}
         onComplete={() => {
           setShowBulkUploader(false)
-          // 파일 매니저도 열려있다면 새로고침
           if (showFileManager) {
             setShowFileManager(false)
             setTimeout(() => setShowFileManager(true), 100)

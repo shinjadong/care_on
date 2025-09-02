@@ -35,7 +35,16 @@ export default function LandingEditPage() {
                   case 'text':
                     validatedContent = {
                       text: typeof block.content.text === 'string' ? block.content.text : '',
-                      format: block.content.format === 'markdown' ? 'markdown' : 'plain'
+                      format: block.content.format === 'markdown' ? 'markdown' : 'plain',
+                      // 타이포그래피 속성들 보존
+                      fontSize: block.content.fontSize || '16',
+                      color: block.content.color || '#000000',
+                      letterSpacing: block.content.letterSpacing || 'normal',
+                      lineHeight: block.content.lineHeight || '1.5',
+                      fontWeight: block.content.fontWeight || '400',
+                      textAlign: block.content.textAlign || 'left',
+                      fontFamily: block.content.fontFamily || 'default',
+                      fontStyle: block.content.fontStyle || 'normal',
                     };
                     break;
                   case 'image':
@@ -105,6 +114,13 @@ export default function LandingEditPage() {
     try {
       console.log('💾 페이지 저장 시작:', blocks.length, '개 블록');
       
+      // 🚀 모든 블록 데이터를 완전히 보존
+      const preservedBlocks = blocks.map(block => ({
+        ...block,
+        content: { ...block.content }, // 모든 content 속성 보존
+        settings: { ...block.settings }, // 모든 settings 속성 보존
+      }));
+      
       // 저장 전 블록 데이터 검증 및 정제
       const validatedBlocks = blocks.map((block) => {
         try {
@@ -115,7 +131,16 @@ export default function LandingEditPage() {
             case 'text':
               cleanContent = {
                 text: block.content.text || '',
-                format: block.content.format || 'plain'
+                format: block.content.format || 'plain',
+                // 타이포그래피 속성들 보존
+                fontSize: block.content.fontSize || '16',
+                color: block.content.color || '#000000',
+                letterSpacing: block.content.letterSpacing || 'normal',
+                lineHeight: block.content.lineHeight || '1.5',
+                fontWeight: block.content.fontWeight || '400',
+                textAlign: block.content.textAlign || 'left',
+                fontFamily: block.content.fontFamily || 'default',
+                fontStyle: block.content.fontStyle || 'normal',
               };
               break;
             case 'image':
@@ -136,7 +161,15 @@ export default function LandingEditPage() {
             case 'heading':
               cleanContent = {
                 text: block.content.text || '',
-                level: block.content.level || 1
+                level: block.content.level || 1,
+                // 타이포그래피 속성들 보존
+                fontSize: block.content.fontSize || 'default',
+                color: block.content.color || '#000000',
+                letterSpacing: block.content.letterSpacing || 'normal',
+                lineHeight: block.content.lineHeight || 'normal',
+                fontWeight: block.content.fontWeight || 'bold',
+                textAlign: block.content.textAlign || 'left',
+                fontFamily: block.content.fontFamily || 'default',
               };
               break;
             case 'html':
@@ -149,15 +182,40 @@ export default function LandingEditPage() {
                 title: block.content.title || '',
                 subtitle: block.content.subtitle || '',
                 backgroundImage: block.content.backgroundImage || '',
+                backgroundVideo: block.content.backgroundVideo || '',
                 overlay: block.content.overlay || false,
                 overlayOpacity: block.content.overlayOpacity || 0.5,
-                buttons: Array.isArray(block.content.buttons) ? block.content.buttons : []
+                buttons: Array.isArray(block.content.buttons) ? block.content.buttons : [],
+                // 타이포그래피 스타일 보존
+                titleStyle: {
+                  fontSize: block.content.titleStyle?.fontSize || '48',
+                  color: block.content.titleStyle?.color || '#ffffff',
+                  letterSpacing: block.content.titleStyle?.letterSpacing || 'normal',
+                  lineHeight: block.content.titleStyle?.lineHeight || 'normal',
+                  fontWeight: block.content.titleStyle?.fontWeight || '700',
+                  textAlign: block.content.titleStyle?.textAlign || 'center',
+                },
+                subtitleStyle: {
+                  fontSize: block.content.subtitleStyle?.fontSize || '20',
+                  color: block.content.subtitleStyle?.color || '#ffffff',
+                  letterSpacing: block.content.subtitleStyle?.letterSpacing || 'normal',
+                  lineHeight: block.content.subtitleStyle?.lineHeight || 'normal',
+                  fontWeight: block.content.subtitleStyle?.fontWeight || '400',
+                  textAlign: block.content.subtitleStyle?.textAlign || 'center',
+                },
               };
               break;
             case 'video':
               cleanContent = {
                 src: block.content.src || '',
-                type: block.content.type || 'youtube'
+                type: block.content.type || 'youtube',
+                // 비디오 설정 속성들 보존
+                width: block.content.width || 'auto',
+                height: block.content.height || 'auto',
+                autoplay: block.content.autoplay || false,
+                muted: block.content.muted || true,
+                loop: block.content.loop || false,
+                controls: block.content.controls !== false, // 기본값 true
               };
               break;
             case 'spacer':
@@ -181,6 +239,8 @@ export default function LandingEditPage() {
 
       console.log('🔍 검증된 블록 수:', validatedBlocks.length);
       
+      console.log('🔍 보존된 블록 수:', preservedBlocks.length);
+      
       // API 엔드포인트 호출
       const response = await fetch('/api/pages', {
         method: 'POST',
@@ -190,7 +250,7 @@ export default function LandingEditPage() {
         body: JSON.stringify({
           slug: 'landing',
           title: '케어온 랜딩 페이지',
-          blocks: validatedBlocks,
+          blocks: preservedBlocks, // 완전히 보존된 블록 사용
         }),
       });
 
@@ -206,6 +266,10 @@ export default function LandingEditPage() {
       if (result.success) {
         // 저장 성공 메시지
         console.log('✅ 페이지 저장 완료:', blocks.length, '개 블록');
+        
+        // 🔄 중요: 저장된 블록으로 초기 상태 업데이트 (완전히 보존된 데이터)
+        setInitialBlocks([...preservedBlocks]);
+        
         alert('페이지가 성공적으로 저장되었습니다!');
       } else {
         throw new Error('저장 실패: ' + result.error);

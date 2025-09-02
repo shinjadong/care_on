@@ -2,9 +2,9 @@
 
 import { useState, useCallback } from 'react'
 import { Block } from '@/types/page-builder'
-import { Upload, Settings, X, Plus, Trash2, MoveUp, MoveDown, Image as ImageIcon, Grid } from 'lucide-react'
+import { Upload, Settings, X, Plus, Trash2, MoveUp, MoveDown, Image as ImageIcon, Grid, FolderOpen } from 'lucide-react'
 import { FileUploader } from '@/components/ui/file-uploader'
-import { StorageImageGallery } from '@/components/ui/storage-image-gallery'
+import { FileManager } from '../file-manager'
 
 // UploadResult 타입 정의
 interface UploadResult {
@@ -43,7 +43,7 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
     }] : [])
   )
   const [uploadError, setUploadError] = useState<string | null>(null)
-  const [showImageGallery, setShowImageGallery] = useState(false)
+  const [showFileManager, setShowFileManager] = useState(false)
   const [displayMode, setDisplayMode] = useState<'single' | 'story'>(
     block.content.images ? 'story' : 'single'
   )
@@ -65,6 +65,28 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
     setIsEditingImages(false)
     setUploadError(null)
   }, [block.content.images])
+
+  // 파일 매니저에서 파일 선택 시
+  const handleFileSelect = (url: string, type: 'image' | 'video') => {
+    if (type === 'image') {
+      const filename = url.split('/').pop() || ''
+      const newImage: StoryImage = {
+        id: `img-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        src: url,
+        alt: filename,
+        caption: '',
+        width: 743,
+        height: undefined
+      }
+      
+      if (displayMode === 'single') {
+        setImages([newImage]);
+      } else {
+        setImages(prev => [...prev, newImage]);
+      }
+    }
+    setShowFileManager(false);
+  };
 
   // 이미지 업로드 핸들러
   const handleFileUpload = async (files: FileList) => {
@@ -130,20 +152,6 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
       }
       setImages(prev => [...prev, newImage])
     }
-  }
-
-  // 갤러리에서 이미지 선택
-  const handleSelectFromGallery = (imageUrl: string) => {
-    const filename = imageUrl.split('/').pop() || ''
-    const newImage: StoryImage = {
-      id: `img-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      src: imageUrl,
-      alt: filename,
-      caption: '',
-      width: 743,
-      height: undefined
-    }
-    setImages(prev => [...prev, newImage])
   }
 
   // 이미지 삭제
@@ -233,40 +241,38 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
           </div>
         )}
 
-        {/* 이미지 업로드 영역 */}
-        <div className="mb-6">
-          <FileUploader
-            accept="image/*"
-            multiple={displayMode === 'story'}
-            onUpload={handleFileUpload}
-            className="mb-4"
-          >
-            <div className="text-center">
-              <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-              <p className="text-gray-600">
-                이미지를 드래그하거나 클릭하여 업로드
-              </p>
-              <p className="text-sm text-gray-500 mt-1">
-                JPG, PNG, GIF 지원 (최대 10MB)
-                {displayMode === 'story' && ' | 여러 파일 선택 가능'}
-              </p>
-            </div>
-          </FileUploader>
-          
-          <div className="grid grid-cols-2 gap-2 mt-2">
+        {/* 이미지 추가 옵션 */}
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+          <h4 className="font-medium mb-3">이미지 추가</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {/* 파일 업로드 */}
+            <FileUploader
+              accept="image/*"
+              multiple={displayMode === 'story'}
+              onUpload={handleFileUpload}
+            >
+              <div className="text-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 transition-colors cursor-pointer">
+                <Upload className="w-6 h-6 mx-auto text-gray-400 mb-2" />
+                <p className="text-sm text-gray-600">파일 업로드</p>
+              </div>
+            </FileUploader>
+            
+            {/* 스토리지에서 선택 */}
+            <button
+              onClick={() => setShowFileManager(true)}
+              className="text-center p-4 border-2 border-dashed border-blue-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+            >
+              <FolderOpen className="w-6 h-6 mx-auto text-blue-500 mb-2" />
+              <p className="text-sm text-blue-700 font-medium">스토리지에서 선택</p>
+            </button>
+            
+            {/* URL로 추가 */}
             <button
               onClick={handleAddImageByUrl}
-              className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-sm"
+              className="text-center p-4 border-2 border-dashed border-green-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors"
             >
-              <Plus className="w-4 h-4 inline mr-2" />
-              URL 추가
-            </button>
-            <button
-              onClick={() => setShowImageGallery(true)}
-              className="px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 rounded hover:bg-blue-100 transition-colors text-sm"
-            >
-              <ImageIcon className="w-4 h-4 inline mr-2" />
-              Storage에서 선택
+              <Plus className="w-6 h-6 mx-auto text-green-500 mb-2" />
+              <p className="text-sm text-green-700 font-medium">URL로 추가</p>
             </button>
           </div>
         </div>
@@ -375,12 +381,13 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
           </div>
         )}
 
-        {/* 이미지 갤러리 모달 */}
-        <StorageImageGallery
-          isOpen={showImageGallery}
-          onClose={() => setShowImageGallery(false)}
-          onSelectImage={handleSelectFromGallery}
-          multiple={displayMode === 'story'}
+        {/* 파일 매니저 - 선택 모드 */}
+        <FileManager
+          isOpen={showFileManager}
+          onClose={() => setShowFileManager(false)}
+          onSelectFile={handleFileSelect}
+          fileType="image"
+          mode="select"
         />
       </div>
     )
@@ -388,43 +395,57 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
 
   // 보기 모드
   return (
-    <div className="image-block relative group">
+    <div className="image-block relative group m-0 p-0" style={{ margin: 0, padding: 0 }}>
       {isEditing && (
         <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button
-            onClick={() => setIsEditingImages(true)}
-            className="p-2 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
-            title="이미지 편집"
-          >
-            <Settings className="w-4 h-4" />
-          </button>
+          <div className="flex items-center space-x-1 bg-white rounded shadow-lg border">
+            <button
+              onClick={() => setShowFileManager(true)}
+              className="p-2 rounded transition-colors bg-purple-500 text-white hover:bg-purple-600"
+              title="스토리지에서 선택"
+            >
+              <FolderOpen className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setIsEditingImages(true)}
+              className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              title="이미지 편집"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
 
       {/* 이미지 렌더링 */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full">
         {images.length > 0 ? (
           displayMode === 'single' ? (
-            // 단일 이미지 모드
-            <div className="text-center">
+            // 단일 이미지 모드 - 완전한 제로 간격
+            <div className="text-center" style={{ margin: 0, padding: 0 }}>
               {images.map((image) => (
-                <div key={image.id}>
+                <div key={image.id} style={{ margin: 0, padding: 0 }}>
                   {image.link ? (
                     <a
                       href={image.link}
                       target={image.linkTarget || '_blank'}
                       rel="noopener noreferrer"
                       className="inline-block cursor-pointer hover:opacity-90 transition-opacity"
+                      style={{ margin: 0, padding: 0, display: 'block' }}
                     >
                       <img
                         src={image.src}
                         alt={image.alt || ''}
                         style={{
-                          width: image.width ? `min(${image.width}px, 100%)` : 'auto',
+                          width: image.width ? `${image.width}px` : '100%',
                           height: image.height ? `${image.height}px` : 'auto',
-                          maxWidth: '100%'
+                          maxWidth: '100%',
+                          margin: 0,
+                          padding: 0,
+                          display: 'block',
+                          verticalAlign: 'top'
                         }}
-                        className="mx-auto rounded-lg shadow-sm w-full sm:w-auto"
+                        className="w-full"
                       />
                     </a>
                   ) : (
@@ -432,11 +453,15 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                       src={image.src}
                       alt={image.alt || ''}
                       style={{
-                        width: image.width ? `min(${image.width}px, 100%)` : 'auto',
+                        width: image.width ? `${image.width}px` : '100%',
                         height: image.height ? `${image.height}px` : 'auto',
-                        maxWidth: '100%'
+                        maxWidth: '100%',
+                        margin: 0,
+                        padding: 0,
+                        display: 'block',
+                        verticalAlign: 'top'
                       }}
-                      className="mx-auto rounded-lg shadow-sm w-full sm:w-auto"
+                      className="w-full"
                     />
                   )}
                   {image.caption && (
@@ -453,16 +478,17 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
               ))}
             </div>
           ) : (
-            // 스토리 모드 (와디즈 스타일) - 모바일 최적화
-            <div className="space-y-0">
+            // 스토리 모드 - 완전한 제로 간격
+            <div style={{ margin: 0, padding: 0 }}>
               {images.map((image) => (
-                <div key={image.id} className="text-center">
+                <div key={image.id} style={{ margin: 0, padding: 0 }}>
                   {image.link ? (
                     <a
                       href={image.link}
                       target={image.linkTarget || '_blank'}
                       rel="noopener noreferrer"
                       className="inline-block cursor-pointer hover:opacity-90 transition-opacity"
+                      style={{ margin: 0, padding: 0, display: 'block' }}
                     >
                       <img
                         src={image.src}
@@ -470,13 +496,13 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                         style={{
                           display: 'block',
                           verticalAlign: 'top',
-                          margin: '5px auto',
-                          textAlign: 'center',
-                          width: image.width ? `min(${image.width}px, 100%)` : 'auto',
+                          margin: 0,
+                          padding: 0,
+                          width: image.width ? `${image.width}px` : '100%',
                           height: image.height ? `${image.height}px` : 'auto',
                           maxWidth: '100%'
                         }}
-                        className="story-image w-full sm:w-auto"
+                        className="story-image w-full"
                       />
                     </a>
                   ) : (
@@ -486,13 +512,13 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                       style={{
                         display: 'block',
                         verticalAlign: 'top',
-                        margin: '5px auto',
-                        textAlign: 'center',
-                        width: image.width ? `min(${image.width}px, 100%)` : 'auto',
+                        margin: 0,
+                        padding: 0,
+                        width: image.width ? `${image.width}px` : '100%',
                         height: image.height ? `${image.height}px` : 'auto',
                         maxWidth: '100%'
                       }}
-                      className="story-image w-full sm:w-auto"
+                      className="story-image w-full"
                     />
                   )}
                   {image.caption && (
@@ -517,16 +543,34 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
               </div>
               <p className="text-lg font-medium">이미지 블록</p>
               <p className="text-sm mt-1">이미지를 추가하여 콘텐츠를 만들어보세요</p>
-              <button
-                onClick={() => setIsEditingImages(true)}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-              >
-                이미지 추가하기
-              </button>
+              <div className="flex gap-2 justify-center mt-4">
+                <button
+                  onClick={() => setShowFileManager(true)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                >
+                  <FolderOpen className="w-4 h-4 mr-2 inline" />
+                  스토리지에서 선택
+                </button>
+                <button
+                  onClick={() => setIsEditingImages(true)}
+                  className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                >
+                  직접 업로드
+                </button>
+              </div>
             </div>
           )
         )}
       </div>
+
+      {/* 파일 매니저 - 선택 모드 */}
+      <FileManager
+        isOpen={showFileManager}
+        onClose={() => setShowFileManager(false)}
+        onSelectFile={handleFileSelect}
+        fileType="image"
+        mode="select"
+      />
     </div>
   )
 }

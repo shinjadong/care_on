@@ -151,6 +151,28 @@
     @apply bg-background text-foreground;
     font-family: "Spoqa Han Sans Neo", "sans-serif";
   }
+  
+  /* 페이지 빌더용 기본 간격 제거 - 고객 랜딩 페이지에서 완전한 제로 간격 */
+  .block-wrapper h1, .block-wrapper h2, .block-wrapper h3, 
+  .block-wrapper h4, .block-wrapper h5, .block-wrapper h6 {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .block-wrapper p, .block-wrapper div {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .block-wrapper ul, .block-wrapper ol {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .block-wrapper .prose * {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 }
 
 @charset "utf-8";
