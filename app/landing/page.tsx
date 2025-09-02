@@ -87,9 +87,9 @@ export default async function LandingPage() {
     }
 
     return (
-      <div className="min-h-screen bg-white">
-        {/* 페이지 빌더로 생성된 블록들 렌더링 */}
-        <div className="space-y-0">
+      <div className="min-h-screen bg-white w-full" style={{ width: '100%', margin: 0, padding: 0 }}>
+        {/* 페이지 빌더로 생성된 블록들 렌더링 - 전체 너비 */}
+        <div className="space-y-0 w-full" style={{ width: '100%', margin: 0, padding: 0 }}>
           {validBlocks.map((block) => (
             <BlockRenderer
               key={block.id}

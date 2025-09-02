@@ -427,7 +427,7 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
       )}
 
       {/* 이미지 렌더링 */}
-      <div className="w-full">
+      <div className="w-full" style={{ margin: 0, padding: 0 }}>
         {images.length > 0 ? (
           displayMode === 'single' ? (
             // 단일 이미지 모드 - 완전한 제로 간격

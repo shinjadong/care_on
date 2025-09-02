@@ -219,8 +219,11 @@ export function BlockRenderer({
 
   return (
     <div 
-      className={`block-wrapper relative group ${isEditing ? 'border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400' : ''}`}
-      style={getBlockStyles()}
+      className={`block-wrapper relative group w-full ${isEditing ? 'border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 max-w-7xl mx-auto' : 'max-w-none'}`}
+      style={{
+        ...getBlockStyles(),
+        width: isEditing ? getBlockStyles().width : '100%',
+      }}
     >
       {isEditing && (
         <>
