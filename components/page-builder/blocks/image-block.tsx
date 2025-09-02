@@ -446,15 +446,15 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                         src={image.src}
                         alt={image.alt || ''}
                         style={{
-                          width: isEditing && image.width ? `${image.width}px` : '100%',
+                          width: isEditing && image.width ? `${image.width}px` : 'auto',
                           height: image.height ? `${image.height}px` : 'auto',
-                          maxWidth: 'none',
-                          margin: 0,
+                          maxWidth: isEditing ? 'none' : '100%',
+                          margin: '0 auto',
                           padding: 0,
                           display: 'block',
                           verticalAlign: 'top'
                         }}
-                        className="w-full"
+                        className={isEditing ? "w-full" : "w-full max-w-screen-lg mx-auto"}
                       />
                     </a>
                   ) : (
@@ -462,15 +462,15 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                       src={image.src}
                       alt={image.alt || ''}
                       style={{
-                        width: isEditing && image.width ? `${image.width}px` : '100%',
+                        width: isEditing && image.width ? `${image.width}px` : 'auto',
                         height: image.height ? `${image.height}px` : 'auto',
-                        maxWidth: 'none',
-                        margin: 0,
+                        maxWidth: isEditing ? 'none' : '100%',
+                        margin: '0 auto',
                         padding: 0,
                         display: 'block',
                         verticalAlign: 'top'
                       }}
-                      className="w-full"
+                      className={isEditing ? "w-full" : "w-full max-w-screen-lg mx-auto"}
                     />
                   )}
                   {image.caption && (
@@ -505,13 +505,13 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                         style={{
                           display: 'block',
                           verticalAlign: 'top',
-                          margin: 0,
+                          margin: '0 auto',
                           padding: 0,
-                          width: isEditing && image.width ? `${image.width}px` : '100%',
+                          width: isEditing && image.width ? `${image.width}px` : 'auto',
                           height: image.height ? `${image.height}px` : 'auto',
-                          maxWidth: 'none'
+                          maxWidth: isEditing ? 'none' : '100%'
                         }}
-                        className="story-image w-full"
+                        className={isEditing ? "story-image w-full" : "story-image w-full max-w-screen-lg mx-auto"}
                       />
                     </a>
                   ) : (
@@ -521,13 +521,13 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                       style={{
                         display: 'block',
                         verticalAlign: 'top',
-                        margin: 0,
+                        margin: '0 auto',
                         padding: 0,
-                        width: isEditing && image.width ? `${image.width}px` : '100%',
+                        width: isEditing && image.width ? `${image.width}px` : 'auto',
                         height: image.height ? `${image.height}px` : 'auto',
-                        maxWidth: 'none'
+                        maxWidth: isEditing ? 'none' : '100%'
                       }}
-                      className="story-image w-full"
+                      className={isEditing ? "story-image w-full" : "story-image w-full max-w-screen-lg mx-auto"}
                     />
                   )}
                   {image.caption && (
