@@ -446,9 +446,9 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                         src={image.src}
                         alt={image.alt || ''}
                         style={{
-                          width: image.width ? `${image.width}px` : '100%',
+                          width: isEditing && image.width ? `${image.width}px` : '100%',
                           height: image.height ? `${image.height}px` : 'auto',
-                          maxWidth: '100%',
+                          maxWidth: 'none',
                           margin: 0,
                           padding: 0,
                           display: 'block',
@@ -462,9 +462,9 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                       src={image.src}
                       alt={image.alt || ''}
                       style={{
-                        width: image.width ? `${image.width}px` : '100%',
+                        width: isEditing && image.width ? `${image.width}px` : '100%',
                         height: image.height ? `${image.height}px` : 'auto',
-                        maxWidth: '100%',
+                        maxWidth: 'none',
                         margin: 0,
                         padding: 0,
                         display: 'block',
@@ -507,9 +507,9 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                           verticalAlign: 'top',
                           margin: 0,
                           padding: 0,
-                          width: image.width ? `${image.width}px` : '100%',
+                          width: isEditing && image.width ? `${image.width}px` : '100%',
                           height: image.height ? `${image.height}px` : 'auto',
-                          maxWidth: '100%'
+                          maxWidth: 'none'
                         }}
                         className="story-image w-full"
                       />
@@ -523,9 +523,9 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                         verticalAlign: 'top',
                         margin: 0,
                         padding: 0,
-                        width: image.width ? `${image.width}px` : '100%',
+                        width: isEditing && image.width ? `${image.width}px` : '100%',
                         height: image.height ? `${image.height}px` : 'auto',
-                        maxWidth: '100%'
+                        maxWidth: 'none'
                       }}
                       className="story-image w-full"
                     />
