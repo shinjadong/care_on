@@ -224,8 +224,8 @@ export function BlockRenderer({
     >
       {isEditing && (
         <>
-          {/* 기존 컨트롤 버튼들 */}
-          <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* 레이아웃 컨트롤 버튼들 - 하단 우측 */}
+          <div className="absolute bottom-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="flex items-center space-x-1 bg-white rounded shadow-lg border">
               {/* 크기 조절 버튼 */}
               <button
@@ -278,8 +278,8 @@ export function BlockRenderer({
           {/* 크기 조절 패널 */}
           {showSizeControls && <SizeControlsPanel />}
 
-          {/* 드래그 핸들 */}
-          <div className="absolute top-2 left-2 z-10 bg-gray-800 text-white p-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* 드래그 핸들 - 중앙 좌측 */}
+          <div className="absolute top-1/2 left-1 -translate-y-1/2 z-10 bg-gray-800 text-white p-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="cursor-move p-1" title="드래그하여 순서 변경">
               ⋮⋮
             </div>

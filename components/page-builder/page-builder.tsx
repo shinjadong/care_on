@@ -63,8 +63,8 @@ function SortableBlock({ block, isEditing, onUpdate, onDelete, onMoveUp, onMoveD
     <div ref={setNodeRef} style={style} {...attributes}>
       <div className={`relative group ${isEditing ? 'border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400' : ''}`}>
         {isEditing && (
-          <div className="absolute top-2 left-2 z-10 bg-gray-800 text-white p-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-            <div {...listeners} className="cursor-move p-1">
+          <div className="absolute top-1/2 left-2 -translate-y-1/2 z-10 bg-gray-800 text-white p-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+            <div {...listeners} className="cursor-move p-1" title="드래그하여 순서 변경">
               ⋮⋮
             </div>
           </div>

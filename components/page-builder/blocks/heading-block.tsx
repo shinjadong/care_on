@@ -311,26 +311,35 @@ export function HeadingBlockRenderer({ block, isEditing, onUpdate }: HeadingBloc
 
   return (
     <div className="relative">
-      {/* Typography Quick Controls (편집 모드에서만) */}
+      {/* 편집 컨트롤 분산 배치 */}
       {isEditing && (
-        <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="flex items-center space-x-1 bg-white rounded shadow-lg border">
-            <button
-              onClick={() => setShowTypography(!showTypography)}
-              className="p-2 rounded transition-colors bg-green-500 text-white hover:bg-green-600"
-              title="타이포그래피 설정"
-            >
-              <Type className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setIsEditingText(true)}
-              className="p-2 rounded transition-colors bg-blue-500 text-white hover:bg-blue-600"
-              title="텍스트 편집"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
+        <>
+          {/* 타이포그래피 버튼 - 상단 좌측 */}
+          <div className="absolute top-2 left-2 z-15 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center space-x-1 bg-white rounded shadow-lg border">
+              <button
+                onClick={() => setShowTypography(!showTypography)}
+                className="p-2 rounded transition-colors bg-green-500 text-white hover:bg-green-600"
+                title="타이포그래피 설정"
+              >
+                <Type className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-        </div>
+
+          {/* 편집 기능 버튼 - 상단 우측 */}
+          <div className="absolute top-2 right-2 z-15 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center space-x-1 bg-white rounded shadow-lg border">
+              <button
+                onClick={() => setIsEditingText(true)}
+                className="p-2 rounded transition-colors bg-blue-500 text-white hover:bg-blue-600"
+                title="텍스트 편집"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Typography Quick Panel */}

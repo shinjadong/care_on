@@ -415,31 +415,6 @@ export function TextBlockRenderer({ block, isEditing, onUpdate }: TextBlockRende
     </div>
   );
 
-  // Quick Format Buttons
-  const QuickFormatButtons = () => (
-    <div className="absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-      <div className="flex items-center space-x-1 bg-white/90 backdrop-blur rounded shadow border">
-        <button
-          onClick={() => setTextData(prev => ({ ...prev, fontWeight: prev.fontWeight === '700' ? '400' : '700' }))}
-          className={`p-2 rounded transition-colors ${
-            textData.fontWeight === '700' 
-              ? 'bg-blue-500 text-white' 
-              : 'text-gray-600 hover:bg-gray-100'
-          }`}
-          title="굵게"
-        >
-          <Bold className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => setTextData(prev => ({ ...prev, fontStyle: prev.fontStyle === 'italic' ? 'normal' : 'italic' }))}
-          className="p-2 rounded transition-colors text-gray-600 hover:bg-gray-100"
-          title="기울임"
-        >
-          <Italic className="w-4 h-4" />
-        </button>
-      </div>
-    </div>
-  );
 
   if (!isEditing) {
     // Display mode
@@ -477,8 +452,8 @@ export function TextBlockRenderer({ block, isEditing, onUpdate }: TextBlockRende
   // Editing mode display
   return (
     <div className="relative group">
-      {/* Quick Controls */}
-      <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+      {/* 타이포그래피 버튼 - 상단 좌측 */}
+      <div className="absolute top-2 left-2 z-15 opacity-0 group-hover:opacity-100 transition-opacity">
         <div className="flex items-center space-x-1 bg-white rounded shadow-lg border">
           <button
             onClick={() => setShowTypography(!showTypography)}
@@ -487,6 +462,12 @@ export function TextBlockRenderer({ block, isEditing, onUpdate }: TextBlockRende
           >
             <Type className="w-4 h-4" />
           </button>
+        </div>
+      </div>
+
+      {/* 편집 기능 버튼 - 상단 우측 */}
+      <div className="absolute top-2 right-2 z-15 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center space-x-1 bg-white rounded shadow-lg border">
           <button
             onClick={() => setIsEditingText(true)}
             className="p-2 rounded transition-colors bg-blue-500 text-white hover:bg-blue-600"
@@ -497,8 +478,31 @@ export function TextBlockRenderer({ block, isEditing, onUpdate }: TextBlockRende
         </div>
       </div>
 
+      {/* 포맷팅 퀵 버튼 - 하단 좌측 */}
+      <div className="absolute bottom-2 left-2 z-15 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center space-x-1 bg-white/90 backdrop-blur rounded shadow border">
+          <button
+            onClick={() => setTextData(prev => ({ ...prev, fontWeight: prev.fontWeight === '700' ? '400' : '700' }))}
+            className={`p-2 rounded transition-colors ${
+              textData.fontWeight === '700' 
+                ? 'bg-blue-500 text-white' 
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+            title="굵게"
+          >
+            <Bold className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setTextData(prev => ({ ...prev, fontStyle: prev.fontStyle === 'italic' ? 'normal' : 'italic' }))}
+            className="p-2 rounded transition-colors text-gray-600 hover:bg-gray-100"
+            title="기울임"
+          >
+            <Italic className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
       {showTypography && <TypographyQuickPanel />}
-      <QuickFormatButtons />
 
       {/* Text Display */}
       <div

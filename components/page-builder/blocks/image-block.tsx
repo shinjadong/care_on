@@ -397,24 +397,33 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
   return (
     <div className="image-block relative group m-0 p-0" style={{ margin: 0, padding: 0 }}>
       {isEditing && (
-        <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="flex items-center space-x-1 bg-white rounded shadow-lg border">
-            <button
-              onClick={() => setShowFileManager(true)}
-              className="p-2 rounded transition-colors bg-purple-500 text-white hover:bg-purple-600"
-              title="스토리지에서 선택"
-            >
-              <FolderOpen className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setIsEditingImages(true)}
-              className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-              title="이미지 편집"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
+        <>
+          {/* 미디어 관련 버튼 - 상단 좌측 */}
+          <div className="absolute top-2 left-2 z-15 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center space-x-1 bg-white rounded shadow-lg border">
+              <button
+                onClick={() => setShowFileManager(true)}
+                className="p-2 rounded transition-colors bg-purple-500 text-white hover:bg-purple-600"
+                title="스토리지에서 선택"
+              >
+                <FolderOpen className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-        </div>
+
+          {/* 편집 기능 버튼 - 상단 우측 */}
+          <div className="absolute top-2 right-2 z-15 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center space-x-1 bg-white rounded shadow-lg border">
+              <button
+                onClick={() => setIsEditingImages(true)}
+                className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                title="이미지 편집"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </>
       )}
 
       {/* 이미지 렌더링 */}

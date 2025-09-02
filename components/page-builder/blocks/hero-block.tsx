@@ -496,36 +496,45 @@ export function HeroBlockRenderer({ block, isEditing, onUpdate }: HeroBlockRende
 
   return (
     <div className="relative">
-      {/* Quick Controls */}
+      {/* 히어로 편집 컨트롤 분산 배치 */}
       {isEditing && (
-        <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="flex items-center space-x-1 bg-white/90 backdrop-blur rounded shadow-lg border">
-            <button
-              onClick={() => setShowTypography(!showTypography)}
-              className="p-2 rounded transition-colors bg-green-500 text-white hover:bg-green-600"
-              title="타이포그래피"
-            >
-              <Type className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setIsEditingHero(true)}
-              className="p-2 rounded transition-colors bg-blue-500 text-white hover:bg-blue-600"
-              title="상세 편집"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => {
-                setFileManagerTarget('background');
-                setShowFileManager(true);
-              }}
-              className="p-2 rounded transition-colors bg-purple-500 text-white hover:bg-purple-600"
-              title="배경 변경"
-            >
-              <Image className="w-4 h-4" />
-            </button>
+        <>
+          {/* 배경 관련 버튼 - 상단 좌측 */}
+          <div className="absolute top-2 left-2 z-15 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center space-x-1 bg-white/90 backdrop-blur rounded shadow-lg border">
+              <button
+                onClick={() => {
+                  setFileManagerTarget('background');
+                  setShowFileManager(true);
+                }}
+                className="p-2 rounded transition-colors bg-purple-500 text-white hover:bg-purple-600"
+                title="배경 변경"
+              >
+                <Image className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-        </div>
+
+          {/* 편집 기능 버튼 - 상단 우측 */}
+          <div className="absolute top-2 right-2 z-15 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center space-x-1 bg-white/90 backdrop-blur rounded shadow-lg border">
+              <button
+                onClick={() => setShowTypography(!showTypography)}
+                className="p-2 rounded transition-colors bg-green-500 text-white hover:bg-green-600"
+                title="타이포그래피"
+              >
+                <Type className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setIsEditingHero(true)}
+                className="p-2 rounded transition-colors bg-blue-500 text-white hover:bg-blue-600"
+                title="상세 편집"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Hero Display */}
