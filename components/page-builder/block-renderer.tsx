@@ -10,7 +10,8 @@ import { ButtonBlockRenderer } from './blocks/button-block';
 import { SpacerBlockRenderer } from './blocks/spacer-block';
 import { HeroBlockRenderer } from './blocks/hero-block';
 import { HtmlBlockRenderer } from './blocks/html-block';
-import { ChevronUp, ChevronDown, Trash2, Settings, Maximize2 } from 'lucide-react';
+import { ChevronUp, ChevronDown, Trash2, Settings, Maximize2, Zap } from 'lucide-react';
+import { MotionWrapper, animationPresets } from './motion-wrapper';
 
 interface BlockRendererProps {
   block: Block;
@@ -41,6 +42,11 @@ export function BlockRenderer({
     right: block.settings?.padding?.right || 0,
     bottom: block.settings?.padding?.bottom || 0,
     left: block.settings?.padding?.left || 0,
+  });
+  const [animationSettings, setAnimationSettings] = useState({
+    type: block.settings?.animation?.type || 'none',
+    duration: block.settings?.animation?.duration || 0.6,
+    delay: block.settings?.animation?.delay || 0,
   });
 
   const renderBlock = (block: Block) => {
@@ -74,6 +80,7 @@ export function BlockRenderer({
         width: customWidth,
         height: customHeight !== 'auto' ? customHeight : undefined,
         padding: customPadding,
+        animation: animationSettings,
       },
     });
     setShowSizeControls(false);
@@ -199,6 +206,53 @@ export function BlockRenderer({
           </div>
         </div>
 
+        {/* 애니메이션 설정 */}
+        <div>
+          <label className="block text-xs font-medium mb-2">애니메이션</label>
+          <div className="space-y-2">
+            <select
+              value={animationSettings.type}
+              onChange={(e) => setAnimationSettings(prev => ({...prev, type: e.target.value}))}
+              className="w-full text-xs border rounded px-2 py-1"
+            >
+              <option value="none">애니메이션 없음</option>
+              <option value="fadeIn">페이드 인</option>
+              <option value="slideUp">위로 슬라이드</option>
+              <option value="slideDown">아래로 슬라이드</option>
+              <option value="slideLeft">좌로 슬라이드</option>
+              <option value="slideRight">우로 슬라이드</option>
+              <option value="scale">확대</option>
+              <option value="bounce">바운스</option>
+              <option value="rotate">회전</option>
+            </select>
+            
+            {animationSettings.type !== 'none' && (
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0.1"
+                  max="3"
+                  value={animationSettings.duration}
+                  onChange={(e) => setAnimationSettings(prev => ({...prev, duration: parseFloat(e.target.value)}))}
+                  className="text-xs border rounded px-2 py-1"
+                  placeholder="지속시간(초)"
+                />
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="2"
+                  value={animationSettings.delay}
+                  onChange={(e) => setAnimationSettings(prev => ({...prev, delay: parseFloat(e.target.value)}))}
+                  className="text-xs border rounded px-2 py-1"
+                  placeholder="지연시간(초)"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
         <div className="flex gap-2 pt-2">
           <button
             onClick={handleSizeUpdate}
@@ -227,6 +281,40 @@ export function BlockRenderer({
     >
       {isEditing && (
         <>
+          {/* 애니메이션 퀵 버튼 - 상단 중앙 */}
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-15 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center space-x-1 bg-white rounded shadow-lg border">
+              <button
+                onClick={() => {
+                  const nextAnimation = animationSettings.type === 'none' ? 'fadeIn' : 
+                    animationSettings.type === 'fadeIn' ? 'slideUp' :
+                    animationSettings.type === 'slideUp' ? 'scale' :
+                    animationSettings.type === 'scale' ? 'bounce' : 'none';
+                  
+                  const newSettings = { ...animationSettings, type: nextAnimation };
+                  setAnimationSettings(newSettings);
+                  
+                  // 즉시 적용
+                  onUpdate?.({
+                    ...block,
+                    settings: {
+                      ...block.settings,
+                      animation: newSettings,
+                    },
+                  });
+                }}
+                className={`p-2 rounded transition-colors ${
+                  animationSettings.type !== 'none' 
+                    ? 'bg-yellow-500 text-white hover:bg-yellow-600' 
+                    : 'bg-gray-400 text-white hover:bg-gray-500'
+                }`}
+                title={`애니메이션: ${animationSettings.type}`}
+              >
+                <Zap className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
           {/* 레이아웃 컨트롤 버튼들 - 하단 우측 */}
           <div className="absolute bottom-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="flex items-center space-x-1 bg-white rounded shadow-lg border">
@@ -290,9 +378,11 @@ export function BlockRenderer({
         </>
       )}
       
-      <div className={isEditing ? 'min-h-[20px]' : ''}>
-        {renderBlock(block)}
-      </div>
+      <MotionWrapper block={block} isEditing={isEditing}>
+        <div className={isEditing ? 'min-h-[20px]' : ''}>
+          {renderBlock(block)}
+        </div>
+      </MotionWrapper>
     </div>
   );
 }

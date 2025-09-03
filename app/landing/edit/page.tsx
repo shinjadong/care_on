@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { PageBuilder } from "@/components/page-builder/page-builder";
+import { PuckPageBuilder } from "@/components/page-builder/puck-page-builder";
 import { Block } from "@/types/page-builder";
+import { Button } from "@/components/ui/button";
+import { Zap, Settings, ArrowRight } from "lucide-react";
 
 // 관리자용 랜딩 페이지 편집기
 export default function LandingEditPage() {
   const [initialBlocks, setInitialBlocks] = useState<Block[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [editorMode, setEditorMode] = useState<'classic' | 'puck' | 'select'>('select');
 
   // 컴포넌트 마운트 시 기존 페이지 데이터 불러오기
   useEffect(() => {
@@ -292,42 +296,134 @@ export default function LandingEditPage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-100">
-      {/* 편집자 헤더 - 모바일 최적화 */}
-      <div className="bg-white border-b px-4 py-3 shadow-sm">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            <h1 className="text-lg sm:text-xl font-semibold text-gray-900">
-              <span className="hidden sm:inline">랜딩 페이지 편집기</span>
-              <span className="sm:hidden">페이지 편집</span>
+  // 에디터 선택 화면
+  if (editorMode === 'select') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-6">
+        <div className="max-w-4xl w-full">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              페이지 에디터 선택
             </h1>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              Live
-            </span>
+            <p className="text-xl text-gray-600">
+              원하는 편집 방식을 선택하세요
+            </p>
           </div>
-          <div className="flex items-center space-x-2 sm:space-x-4">
-            <a 
-              href="/landing" 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
-            >
-              <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-              <span className="hidden sm:inline">실제 페이지 보기</span>
-              <span className="sm:hidden">미리보기</span>
-            </a>
-            <div className="text-xs sm:text-sm text-gray-500 hidden lg:block">
-              편집 후 저장하면 실제 웹사이트에 바로 반영됩니다
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* 클래식 에디터 */}
+            <div className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Settings className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">클래식 에디터</h3>
+                <p className="text-gray-600 mb-4">기존 블록 기반 편집기</p>
+              </div>
+              
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center text-sm text-gray-600">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                  정밀한 설정 제어
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                  안정적이고 검증된 시스템
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                  프로페셔널 편집 도구
+                </div>
+              </div>
+
+              <Button
+                onClick={() => setEditorMode('classic')}
+                variant="outline"
+                className="w-full"
+              >
+                클래식 에디터 사용
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
             </div>
+
+            {/* Puck 에디터 */}
+            <div className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow border-2 border-yellow-200">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Zap className="w-8 h-8 text-yellow-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Puck 에디터</h3>
+                <p className="text-yellow-600 font-medium mb-1">🆕 캔바 수준 WYSIWYG</p>
+                <p className="text-gray-600 text-sm">직관적인 드래그 앤 드롭</p>
+              </div>
+              
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center text-sm text-gray-600">
+                  <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
+                  완전한 WYSIWYG 편집
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
+                  자유로운 드래그 앤 드롭
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
+                  캔바 수준의 직관성
+                </div>
+              </div>
+
+              <Button
+                onClick={() => setEditorMode('puck')}
+                className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                Puck 에디터 체험
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <p className="text-sm text-gray-500">
+              언제든지 에디터를 전환할 수 있습니다
+            </p>
           </div>
         </div>
       </div>
+    );
+  }
 
-      {/* 페이지 빌더 */}
-      <PageBuilder initialBlocks={initialBlocks} onSave={handleSave} />
+  // Puck 에디터 모드
+  if (editorMode === 'puck') {
+    return (
+      <PuckPageBuilder
+        initialBlocks={initialBlocks}
+        onSave={handleSave}
+        onBack={() => setEditorMode('select')}
+      />
+    );
+  }
+
+  // 클래식 에디터 모드
+  return (
+    <div>
+      <div className="bg-white border-b p-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <h2 className="text-lg font-semibold">클래식 에디터</h2>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setEditorMode('select')}
+          >
+            에디터 변경
+          </Button>
+        </div>
+      </div>
+      
+      <PageBuilder
+        initialBlocks={initialBlocks}
+        onSave={handleSave}
+      />
     </div>
   );
 }

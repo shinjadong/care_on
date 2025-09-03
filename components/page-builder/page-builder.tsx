@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { FileManager } from './file-manager';
 import { BulkImageUploader } from '@/components/ui/bulk-image-uploader';
+import { TemplateGallery } from './template-gallery';
 
 interface PageBuilderProps {
   initialBlocks?: Block[];
@@ -90,6 +91,7 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [showFileManager, setShowFileManager] = useState(false);
   const [showBulkUploader, setShowBulkUploader] = useState(false);
+  const [showTemplateGallery, setShowTemplateGallery] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarPosition, setSidebarPosition] = useState({ top: 100 });
@@ -148,10 +150,17 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
       id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type,
       content: getDefaultContent(type),
-      settings: { padding: { top: 0, right: 0, bottom: 0, left: 0 } }, // 기본 패딩 0
+      settings: { 
+        padding: { top: 0, right: 0, bottom: 0, left: 0 },
+        animation: { type: 'none', duration: 0.6, delay: 0 }
+      },
     } as Block;
 
     setBlocks([...blocks, newBlock]);
+  };
+
+  const addTemplate = (templateBlocks: Block[]) => {
+    setBlocks([...blocks, ...templateBlocks]);
   };
 
   const getDefaultContent = (type: BlockType): any => {
@@ -395,9 +404,23 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
                 </div>
               </div>
 
+              {/* 템플릿 섹션 */}
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3 text-sm">빠른 시작</h4>
+                <Button
+                  onClick={() => setShowTemplateGallery(true)}
+                  variant="outline"
+                  size="sm"
+                  className="w-full mb-4"
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  템플릿 갤러리
+                </Button>
+              </div>
+
               {/* 블록 추가 섹션 */}
               <div>
-                <h4 className="font-semibold text-gray-900 mb-3 text-sm">블록 추가</h4>
+                <h4 className="font-semibold text-gray-900 mb-3 text-sm">개별 블록</h4>
                 <div className="grid grid-cols-1 gap-2">
                   {blockTypes.map((blockType) => (
                     <button
@@ -531,6 +554,13 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
             setTimeout(() => setShowFileManager(true), 100)
           }
         }}
+      />
+
+      {/* Template Gallery Modal */}
+      <TemplateGallery
+        isOpen={showTemplateGallery}
+        onClose={() => setShowTemplateGallery(false)}
+        onSelectTemplate={addTemplate}
       />
     </div>
   );
