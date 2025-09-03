@@ -12,65 +12,98 @@ import { HtmlBlockRenderer } from './blocks/html-block';
 const HeadingComponent: ComponentConfig<{
   text: string;
   level: 1 | 2 | 3 | 4 | 5 | 6;
-  fontSize?: string;
+  fontSize?: number;
   color?: string;
-  letterSpacing?: string;
-  lineHeight?: string;
-  fontWeight?: string;
+  letterSpacing?: number;
+  lineHeight?: number;
+  fontWeight?: number;
   textAlign?: string;
-  fontFamily?: string;
 }> = {
   fields: {
-    text: { type: "text", label: "제목 텍스트" },
+    text: { type: "text", label: "📝 제목 텍스트" },
     level: { 
       type: "select", 
-      label: "제목 레벨",
+      label: "📊 제목 레벨",
       options: [
-        { label: "H1 - 가장 큰 제목", value: 1 },
-        { label: "H2 - 큰 제목", value: 2 },
-        { label: "H3 - 중간 제목", value: 3 },
-        { label: "H4 - 작은 제목", value: 4 },
-        { label: "H5 - 더 작은 제목", value: 5 },
-        { label: "H6 - 가장 작은 제목", value: 6 },
+        { label: "🔥 H1 - 가장 큰 제목", value: 1 },
+        { label: "⭐ H2 - 큰 제목", value: 2 },
+        { label: "✨ H3 - 중간 제목", value: 3 },
+        { label: "💫 H4 - 작은 제목", value: 4 },
+        { label: "🌟 H5 - 더 작은 제목", value: 5 },
+        { label: "⚡ H6 - 가장 작은 제목", value: 6 },
       ]
     },
     fontSize: { 
+      type: "number",
+      label: "📏 폰트 크기 (px)",
+      min: 12,
+      max: 84
+    },
+    color: { 
+      type: "text", 
+      label: "🎨 텍스트 색상",
+      placeholder: "#000000"
+    },
+    letterSpacing: {
+      type: "number",
+      label: "📐 자간 (px)",
+      min: -3,
+      max: 8,
+      step: 0.1
+    },
+    lineHeight: {
+      type: "number", 
+      label: "📏 행간",
+      min: 1.0,
+      max: 2.5,
+      step: 0.1
+    },
+    fontWeight: {
       type: "select",
-      label: "폰트 크기",
+      label: "💪 굵기",
       options: [
-        { label: "기본값", value: "default" },
-        { label: "16px", value: "16" },
-        { label: "20px", value: "20" },
-        { label: "24px", value: "24" },
-        { label: "32px", value: "32" },
-        { label: "48px", value: "48" },
-        { label: "64px", value: "64" }
+        { label: "얇게 (100)", value: 100 },
+        { label: "연하게 (300)", value: 300 },
+        { label: "보통 (400)", value: 400 },
+        { label: "준굵게 (600)", value: 600 },
+        { label: "굵게 (700)", value: 700 },
+        { label: "매우굵게 (900)", value: 900 }
       ]
     },
-    color: { type: "text", label: "텍스트 색상" },
     textAlign: {
       type: "radio",
-      label: "정렬",
+      label: "📍 정렬",
       options: [
-        { label: "왼쪽", value: "left" },
-        { label: "가운데", value: "center" },
-        { label: "오른쪽", value: "right" }
+        { label: "⬅️ 왼쪽", value: "left" },
+        { label: "🎯 가운데", value: "center" },
+        { label: "➡️ 오른쪽", value: "right" }
       ]
     }
   },
   defaultProps: {
     text: "새 제목",
     level: 2,
-    fontSize: "default",
+    fontSize: 32,
     color: "#000000",
+    letterSpacing: 0,
+    lineHeight: 1.2,
+    fontWeight: 700,
     textAlign: "left"
   },
-  render: ({ text, level, fontSize, color, letterSpacing, lineHeight, fontWeight, textAlign, fontFamily }) => {
-    // 기존 HeadingBlockRenderer 로직 재사용
+  render: ({ text, level, fontSize, color, letterSpacing, lineHeight, fontWeight, textAlign }) => {
     const block = {
       id: 'puck-heading',
       type: 'heading',
-      content: { text, level, fontSize, color, letterSpacing, lineHeight, fontWeight, textAlign, fontFamily }
+      content: { 
+        text, 
+        level, 
+        fontSize: fontSize?.toString(), 
+        color, 
+        letterSpacing: letterSpacing?.toString(), 
+        lineHeight: lineHeight?.toString(), 
+        fontWeight: fontWeight?.toString(), 
+        textAlign 
+      }
     } as any;
     
     return <HeadingBlockRenderer block={block} isEditing={false} />;
@@ -80,50 +113,95 @@ const HeadingComponent: ComponentConfig<{
 const TextComponent: ComponentConfig<{
   text: string;
   format?: 'plain' | 'markdown';
-  fontSize?: string;
+  fontSize?: number;
   color?: string;
-  letterSpacing?: string;
-  lineHeight?: string;
-  fontWeight?: string;
+  letterSpacing?: number;
+  lineHeight?: number;
+  fontWeight?: number;
   textAlign?: string;
 }> = {
   fields: {
-    text: { type: "textarea", label: "텍스트 내용" },
+    text: { type: "textarea", label: "📝 텍스트 내용" },
     format: {
       type: "radio",
-      label: "형식",
+      label: "📄 형식",
       options: [
         { label: "일반 텍스트", value: "plain" },
         { label: "마크다운", value: "markdown" }
       ]
     },
     fontSize: { 
-      type: "text",
-      label: "폰트 크기 (px)"
+      type: "number",
+      label: "📏 폰트 크기 (px)",
+      min: 8,
+      max: 72
     },
-    color: { type: "text", label: "텍스트 색상" },
+    color: { 
+      type: "text", 
+      label: "🎨 텍스트 색상",
+      placeholder: "#000000"
+    },
+    letterSpacing: {
+      type: "number",
+      label: "📐 자간 (px)", 
+      min: -5,
+      max: 10,
+      step: 0.1
+    },
+    lineHeight: {
+      type: "number",
+      label: "📏 행간",
+      min: 1.0,
+      max: 3.0,
+      step: 0.1
+    },
+    fontWeight: {
+      type: "select",
+      label: "💪 굵기",
+      options: [
+        { label: "얇게 (100)", value: 100 },
+        { label: "연하게 (300)", value: 300 },
+        { label: "보통 (400)", value: 400 },
+        { label: "중간 (500)", value: 500 },
+        { label: "준굵게 (600)", value: 600 },
+        { label: "굵게 (700)", value: 700 },
+        { label: "매우굵게 (900)", value: 900 }
+      ]
+    },
     textAlign: {
       type: "radio", 
-      label: "정렬",
+      label: "📍 정렬",
       options: [
-        { label: "왼쪽", value: "left" },
-        { label: "가운데", value: "center" },
-        { label: "오른쪽", value: "right" }
+        { label: "⬅️ 왼쪽", value: "left" },
+        { label: "🎯 가운데", value: "center" },
+        { label: "➡️ 오른쪽", value: "right" }
       ]
     }
   },
   defaultProps: {
     text: "새 텍스트를 입력하세요...",
     format: "plain",
-    fontSize: "16",
+    fontSize: 16,
     color: "#000000",
+    letterSpacing: 0,
+    lineHeight: 1.5,
+    fontWeight: 400,
     textAlign: "left"
   },
   render: ({ text, format, fontSize, color, letterSpacing, lineHeight, fontWeight, textAlign }) => {
     const block = {
       id: 'puck-text',
       type: 'text',
-      content: { text, format, fontSize, color, letterSpacing, lineHeight, fontWeight, textAlign }
+      content: { 
+        text, 
+        format, 
+        fontSize: fontSize?.toString(), 
+        color, 
+        letterSpacing: letterSpacing?.toString(), 
+        lineHeight: lineHeight?.toString(), 
+        fontWeight: fontWeight?.toString(), 
+        textAlign 
+      }
     } as any;
     
     return <TextBlockRenderer block={block} isEditing={false} />;
@@ -243,40 +321,91 @@ const ButtonComponent: ComponentConfig<{
   link: string;
   variant?: 'default' | 'outline' | 'ghost';
   size?: 'sm' | 'default' | 'lg';
+  alignment?: 'left' | 'center' | 'right';
+  marginTop?: number;
+  marginBottom?: number;
+  marginLeft?: number;
+  marginRight?: number;
 }> = {
   fields: {
-    text: { type: "text", label: "버튼 텍스트" },
-    link: { type: "text", label: "링크 URL" },
+    text: { type: "text", label: "🔘 버튼 텍스트" },
+    link: { type: "text", label: "🔗 링크 URL" },
     variant: {
       type: "select",
-      label: "스타일",
+      label: "🎨 스타일",
       options: [
-        { label: "기본", value: "default" },
-        { label: "테두리", value: "outline" },
-        { label: "투명", value: "ghost" }
+        { label: "🟦 기본", value: "default" },
+        { label: "⚪ 테두리", value: "outline" },
+        { label: "👻 투명", value: "ghost" }
       ]
     },
     size: {
       type: "select",
-      label: "크기", 
+      label: "📏 크기", 
       options: [
-        { label: "작게", value: "sm" },
-        { label: "보통", value: "default" },
-        { label: "크게", value: "lg" }
+        { label: "🤏 작게", value: "sm" },
+        { label: "📦 보통", value: "default" },
+        { label: "🎯 크게", value: "lg" }
       ]
+    },
+    alignment: {
+      type: "radio",
+      label: "📍 정렬",
+      options: [
+        { label: "⬅️ 왼쪽", value: "left" },
+        { label: "🎯 가운데", value: "center" },
+        { label: "➡️ 오른쪽", value: "right" }
+      ]
+    },
+    marginTop: {
+      type: "number",
+      label: "⬆️ 위 여백 (px)",
+      min: 0,
+      max: 100
+    },
+    marginBottom: {
+      type: "number",
+      label: "⬇️ 아래 여백 (px)",
+      min: 0,
+      max: 100
+    },
+    marginLeft: {
+      type: "number",
+      label: "⬅️ 왼쪽 여백 (px)",
+      min: 0,
+      max: 100
+    },
+    marginRight: {
+      type: "number",
+      label: "➡️ 오른쪽 여백 (px)",
+      min: 0,
+      max: 100
     }
   },
   defaultProps: {
     text: "버튼",
     link: "#",
     variant: "default",
-    size: "default"
+    size: "default",
+    alignment: "center",
+    marginTop: 0,
+    marginBottom: 0,
+    marginLeft: 0,
+    marginRight: 0
   },
-  render: ({ text, link, variant, size }) => {
+  render: ({ text, link, variant, size, alignment, marginTop, marginBottom, marginLeft, marginRight }) => {
     const block = {
       id: 'puck-button',
       type: 'button',
-      content: { text, link, variant, size }
+      content: { text, link, variant, size, alignment },
+      settings: {
+        padding: {
+          top: marginTop || 0,
+          bottom: marginBottom || 0,
+          left: marginLeft || 0,
+          right: marginRight || 0
+        }
+      }
     } as any;
     
     return <ButtonBlockRenderer block={block} isEditing={false} />;
@@ -308,28 +437,62 @@ const SpacerComponent: ComponentConfig<{
   }
 };
 
-// Puck 설정
+// HTML 컴포넌트 추가
+const HtmlComponent: ComponentConfig<{
+  html: string;
+}> = {
+  fields: {
+    html: { 
+      type: "textarea", 
+      label: "HTML 코드",
+      placeholder: "<div>HTML 코드를 입력하세요</div>"
+    }
+  },
+  defaultProps: {
+    html: "<p>HTML 코드를 입력하세요</p>"
+  },
+  render: ({ html }) => {
+    const block = {
+      id: 'puck-html',
+      type: 'html',
+      content: { html }
+    } as any;
+    
+    return <HtmlBlockRenderer block={block} isEditing={false} />;
+  }
+};
+
+// Puck 설정 - 한국어 커스터마이징
 export const puckConfig: Config = {
   components: {
-    Hero: HeroComponent,
-    Heading: HeadingComponent,
-    Text: TextComponent,
-    Image: ImageComponent,
-    Button: ButtonComponent,
-    Spacer: SpacerComponent,
+    "히어로 섹션": HeroComponent,
+    "제목": HeadingComponent,
+    "텍스트": TextComponent,
+    "이미지": ImageComponent,
+    "버튼": ButtonComponent,
+    "공백": SpacerComponent,
+    "HTML 코드": HtmlComponent,
   },
   categories: {
     layout: {
-      title: "레이아웃",
-      components: ["Hero", "Spacer"]
+      title: "📐 레이아웃",
+      components: ["히어로 섹션", "공백"]
     },
     content: {
-      title: "콘텐츠", 
-      components: ["Heading", "Text", "Image"]
+      title: "📝 콘텐츠", 
+      components: ["제목", "텍스트", "이미지"]
     },
     interactive: {
-      title: "인터랙티브",
-      components: ["Button"]
+      title: "🎯 인터랙티브",
+      components: ["버튼", "HTML 코드"]
+    }
+  },
+  root: {
+    fields: {
+      title: { type: "text", label: "페이지 제목" }
+    },
+    defaultProps: {
+      title: "케어온 랜딩 페이지"
     }
   }
 };
