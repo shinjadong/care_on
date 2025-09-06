@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { useState } from "react"
 import { ChevronLeftIcon, ChevronRightIcon, PlayIcon } from "@heroicons/react/24/outline"
 
@@ -21,20 +20,14 @@ export interface Review {
   images?: string[]
   videos?: string[]
   youtube_urls?: string[]
+  business_experience?: '신규창업' | '1년 이상' | '3년 이상'
+  package_name?: string
 }
 
 interface ReviewCardProps {
   review: Review
 }
 
-// 카테고리별 색상 테마
-const categoryColors = {
-  "창업 준비": "bg-blue-50 text-blue-700 border border-blue-200",
-  "첫 1년": "bg-emerald-50 text-emerald-700 border border-emerald-200",
-  "성장기": "bg-green-50 text-green-700 border border-green-200",
-  "안정기": "bg-purple-50 text-purple-700 border border-purple-200",
-  "전체": "bg-gray-50 text-gray-700 border border-gray-200",
-}
 
 function MediaCarousel({ images = [], videos = [], title }: { images?: string[]; videos?: string[]; title?: string }) {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -213,139 +206,175 @@ function YouTubeEmbed({ url }: { url: string }) {
   )
 }
 
+// 서비스별 고유 컬러 정의
+const serviceColors = {
+  'CCTV': 'bg-orange-400 text-white',
+  'POS': 'bg-cyan-500 text-white', 
+  'TV': 'bg-purple-500 text-white',
+  '인터넷': 'bg-blue-500 text-white',
+  '보험': 'bg-green-500 text-white',
+  'AI-CCTV': 'bg-red-500 text-white',
+  '기타': 'bg-gray-500 text-white',
+  '전체': 'bg-gray-400 text-white'
+}
+
+// 패키지명 랜덤 선택 함수 
+const getRandomPackage = () => {
+  const packages = ['스타트케어', '스타트케어 미니', '스타트케어 프로']
+  return packages[Math.floor(Math.random() * packages.length)]
+}
+
 export function ReviewCard({ review }: ReviewCardProps) {
-  const categoryStyle = categoryColors[review.category as keyof typeof categoryColors] || categoryColors["전체"]
   const hasMedia = (review.images && review.images.length > 0 && review.images.some(img => img)) || 
                    (review.videos && review.videos.length > 0 && review.videos.some(vid => vid))
   const hasYoutube = review.youtube_urls && review.youtube_urls.length > 0 && review.youtube_urls.some(url => url)
+  
+  // 패키지명 (리뷰 데이터에 없으면 랜덤 선택)
+  const packageName = review.package_name || getRandomPackage()
+  
+  // 사업 경험 레벨 (리뷰 데이터에 없으면 랜덤 선택)
+  const experienceOptions = ['신규창업', '1년 이상', '3년 이상']
+  const experienceLevel = review.business_experience || experienceOptions[Math.floor(Math.random() * experienceOptions.length)]
+
+  // 사용자 이름 마스킹 함수
+  const maskName = (name: string) => {
+    if (name.length > 2) {
+      return `${name[0]}${'*'.repeat(name.length - 2)}${name[name.length - 1]}`
+    } else if (name.length === 2) {
+      return `${name[0]}*`
+    }
+    return name
+  }
+
+  // 시간 표시 함수
+  const formatTime = (dateString: string) => {
+    const now = new Date()
+    const reviewDate = new Date(dateString)
+    const diffInMs = now.getTime() - reviewDate.getTime()
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60))
+    const diffInDays = Math.floor(diffInHours / 24)
+    
+    if (diffInHours < 1) {
+      const diffInMinutes = Math.floor(diffInMs / (1000 * 60))
+      return `${diffInMinutes}분 전`
+    } else if (diffInHours < 24) {
+      return `${diffInHours}시간 전`
+    } else {
+      return `${diffInDays}일 전`
+    }
+  }
 
   return (
-    <motion.div
-      className="bg-white rounded-xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden"
-      whileHover={{
-        y: -4,
-        transition: { duration: 0.2, ease: "easeOut" },
-      }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      <div className="flex flex-col gap-3 p-5">
-        {/* 헤더: 카테고리 배지와 업종 정보 */}
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-          <div className="flex-shrink-0">
-            <span className={`inline-block px-3 py-1.5 rounded-md text-xs font-medium ${categoryStyle}`}>
-              {review.category}
-            </span>
-
-            <div className="mt-2 text-sm font-semibold text-gray-900">
-              {review.business}
+    <div className="bg-white border-b border-gray-100 overflow-hidden">
+      <div className="p-4 space-y-3">
+        {/* 헤더: 프로필 정보 */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            {/* 프로필 이미지 */}
+            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+              <span className="text-sm font-medium text-gray-600">
+                {review.author_name ? maskName(review.author_name)[0] : '익'}
+              </span>
             </div>
+            
+            {/* 이름과 시간 */}
+            <div>
+              <div className="text-sm font-bold text-gray-900">
+                {review.author_name ? maskName(review.author_name) : '익명'}
+              </div>
+              <div className="text-xs text-gray-400">
+                {review.created_at ? formatTime(review.created_at) : '최근'}
+              </div>
+            </div>
+          </div>
+          
+          {/* 우상단 버튼들 */}
+          <div className="flex items-center space-x-2">
+            <span className="px-3 py-1 text-xs font-medium text-cyan-600 bg-cyan-50 border border-cyan-200 rounded-full">
+              + 승인됨
+            </span>
+            <button className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+              </svg>
+            </button>
           </div>
         </div>
 
-        {/* Title 표시 (이미지가 없을 때) */}
-        {review.title && !hasMedia && (
-          <div className="mb-3">
-            <h3 className="text-lg font-semibold text-gray-900">{review.title}</h3>
+        {/* 태그들과 별점 */}
+        <div className="flex items-center justify-between">
+          <div className="flex flex-wrap gap-2">
+            {review.highlight && (
+              <span className="inline-flex px-3 py-1 text-xs font-medium text-white bg-orange-400 rounded-full">
+                {review.highlight}
+              </span>
+            )}
+            <span className="inline-flex px-3 py-1 text-xs font-medium text-white bg-blue-500 rounded-full">
+              {experienceLevel}
+            </span>
           </div>
-        )}
-
-        {/* Highlight 섹션 - 은은하게 별도 표시 */}
-        {review.highlight && (
-          <motion.div
-            className="bg-gray-50 border-l-4 border-gray-300 py-2 px-3 rounded-r-lg"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
-            <div className="flex items-start gap-2">
-              <svg className="w-4 h-4 text-gray-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          
+          {/* 별점 */}
+          {review.rating && review.rating > 0 && (
+            <div className="flex items-center space-x-1">
+              <svg className="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
-              <div>
-                <p className="text-xs text-gray-500 mb-0.5">이런게 좋았어요</p>
-                <p className="text-sm font-medium text-gray-800">{review.highlight}</p>
-              </div>
+              <span className="text-sm font-bold text-gray-900">{Number(review.rating).toFixed(1)}</span>
             </div>
-          </motion.div>
-        )}
+          )}
+        </div>
+
+        {/* 업체 정보 */}
+        <div className="text-sm text-gray-500">
+          [{packageName}] {review.business}
+        </div>
+
+        {/* 메인 콘텐츠 */}
+        <div className="text-sm text-gray-900 leading-relaxed">
+          {review.content}
+        </div>
 
         {hasMedia && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
+          <div className="-mx-4">
             <MediaCarousel images={review.images} videos={review.videos} title={review.title} />
-          </motion.div>
+          </div>
         )}
 
-        {/* 후기 내용 */}
-        <motion.div
-          className="flex-1"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
-        >
-          <div className="text-gray-700 text-sm leading-relaxed">
-            {review.content}
-          </div>
-
-          {/* 평점 (있는 경우) */}
-          {review.rating && (
-            <div className="mt-3 flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  className={`w-4 h-4 ${i < review.rating! ? "text-yellow-400 fill-current" : "text-gray-200 fill-current"}`}
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-            </div>
-          )}
-
-          {/* 작성자 정보 (있는 경우) */}
-          {review.author_name && (
-            <div className="mt-3 text-xs text-gray-500">
-              작성자: {review.author_name.length > 2 
-                ? `${review.author_name[0]}${'*'.repeat(review.author_name.length - 2)}${review.author_name[review.author_name.length - 1]}`
-                : review.author_name.length === 2
-                ? `${review.author_name[0]}*`
-                : review.author_name
-              }
-            </div>
-          )}
-        </motion.div>
-
         {hasYoutube && (
-          <motion.div
-            className="space-y-4"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-          >
-            <h4 className="text-sm font-medium text-gray-700">관련 동영상</h4>
-            <div className="grid gap-4">
+          <div className="space-y-3">
+            <div className="grid gap-3">
               {review.youtube_urls!.map((url, index) => (
                 <YouTubeEmbed key={index} url={url} />
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
 
-        {/* 메타 정보 */}
-        <div className="flex items-center justify-between text-xs text-gray-400 pt-3 mt-3 border-t border-gray-50">
-          {review.created_at && (
-            <span>{new Date(review.created_at).toLocaleDateString("ko-KR")}</span>
-          )}
-          {review.is_approved !== undefined && review.is_approved && (
-            <span className="text-green-600">✓ 인증됨</span>
-          )}
+        {/* 좋아요와 댓글 */}
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+          <div className="flex items-center space-x-4">
+            {/* 좋아요 */}
+            <button className="flex items-center space-x-1 text-gray-500 hover:text-gray-700">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <span className="text-sm font-medium">0</span>
+            </button>
+            
+            {/* 댓글 */}
+            <button className="flex items-center space-x-1 text-gray-500 hover:text-gray-700">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              <span className="text-sm font-medium">0</span>
+              <svg className="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }

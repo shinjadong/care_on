@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { Button } from "@/components/ui/button"
-import { PlusIcon } from "@heroicons/react/24/outline"
+import { PlusIcon, PencilIcon } from "@heroicons/react/24/outline"
 import { useState, useRef, useEffect } from "react"
 import dynamic from "next/dynamic"
 import { WhenVisible } from "@/components/common/when-visible"
@@ -131,16 +131,6 @@ export default function ReviewPage() {
             </h1>
             <p className="text-gray-600 mt-1">케어온과 함께한 리얼 후기</p>
           </div>
-          <Button
-            asChild
-            variant="outline"
-            className="bg-transparent hover:bg-[#148777]/5 text-[#148777] border-2 border-[#148777] hover:border-[#0f6b5c] hover:text-[#0f6b5c] px-6 py-3 rounded-lg font-medium transition-all duration-200"
-          >
-            <a href="/review/write" className="flex items-center gap-2">
-              <PlusIcon className="w-5 h-5" />
-              <span>후기 작성하기</span>
-            </a>
-          </Button>
         </div>
 
         <ReviewFilters 
@@ -172,7 +162,7 @@ export default function ReviewPage() {
 
         {!isLoading && !error && (
           <>
-            <MotionDiv className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+            <MotionDiv className="grid grid-cols-1 gap-4 mb-12">
               {reviews.map((review, index) => (
                 <WhenVisible key={review.id} minHeight={200}>
                   <ReviewCard review={review} />
@@ -201,6 +191,18 @@ export default function ReviewPage() {
             )}
           </>
         )}
+      </div>
+
+      {/* 플로팅 글쓰기 버튼 */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button
+          asChild
+          className="w-14 h-14 rounded-full bg-gray-800 hover:bg-gray-900 text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center"
+        >
+          <a href="/review/write">
+            <PencilIcon className="w-6 h-6" />
+          </a>
+        </Button>
       </div>
     </div>
   )

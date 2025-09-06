@@ -5,15 +5,13 @@ import { usePathname } from "next/navigation"
 
 
 const Footer = dynamic(() => import("@/components/footer").then(m => m.Footer), {
-  // 동적 임포트: `/what` 경로에선 렌더되지 않아 네트워크/실행 비용도 피함
+  // 동적 임포트로 Footer 컴포넌트 로드
   ssr: false,
 })
 
 export function ConditionalFooter() {
   const pathname = usePathname()
-  if (pathname?.startsWith("/what")) {
-    return null
-  }
+  // 이제 /what이 메인 페이지이므로 항상 Footer를 표시
   return <Footer />
 }
 

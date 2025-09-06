@@ -41,6 +41,13 @@ const businessTypes = [
   { value: "기타", label: "기타", icon: "📦" },
 ]
 
+// 사업 경험 레벨
+const businessExperienceLevels = [
+  { value: "신규창업", label: "신규창업", description: "창업 준비 또는 시작 단계" },
+  { value: "1년 이상", label: "1년 이상", description: "사업 운영 경험 1년 이상" },
+  { value: "3년 이상", label: "3년 이상", description: "사업 운영 경험 3년 이상" },
+]
+
 const highlightKeywords = [
   "합리적인 가격",
   "친절한 상담원",
@@ -65,6 +72,7 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
     images: [] as string[],
     videos: [] as string[],
     youtube_urls: [] as string[],
+    business_experience: "" as "" | "신규창업" | "1년 이상" | "3년 이상",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState("")
@@ -238,6 +246,24 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
                   {businessTypes.map((type) => (
                     <option key={type.value} value={type.value}>
                       {type.icon} {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* 사업 경험 레벨 선택 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-2">사업 경험</label>
+                <select
+                  value={formData.business_experience}
+                  onChange={(e) => handleInputChange("business_experience", e.target.value)}
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:border-[#148777] focus:ring-[#148777] focus:ring-1"
+                  required
+                >
+                  <option value="">사업 경험을 선택하세요</option>
+                  {businessExperienceLevels.map((level) => (
+                    <option key={level.value} value={level.value}>
+                      {level.label} - {level.description}
                     </option>
                   ))}
                 </select>
