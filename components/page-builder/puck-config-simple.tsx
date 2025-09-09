@@ -2,6 +2,7 @@ import { Config, ComponentConfig } from '@measured/puck';
 
 // 간단한 순수 Puck 컴포넌트들 (기존 렌더러 없이)
 const HeadingComponent: ComponentConfig<{
+  name?: string;
   text: string;
   level: 1 | 2 | 3 | 4 | 5 | 6;
   color: string;
@@ -9,6 +10,7 @@ const HeadingComponent: ComponentConfig<{
   textAlign: string;
 }> = {
   fields: {
+    name: { type: "text", label: "🏷️ 블록 이름 (Outline용)", placeholder: "예: 메인 제목" },
     text: { type: "text", label: "📝 제목 텍스트" },
     level: { 
       type: "select", 
@@ -43,11 +45,16 @@ const HeadingComponent: ComponentConfig<{
     }
   },
   defaultProps: {
+    name: "",
     text: "새 제목",
     level: 2,
     fontSize: 32,
     color: "#1f2937",
     textAlign: "center"
+  },
+  // Outline에서 표시될 이름 커스터마이징
+  getItemSummary: (props) => {
+    return props.name || `${props.text?.slice(0, 20)}${props.text?.length > 20 ? '...' : ''}` || '제목';
   },
   render: ({ text, level, color, fontSize, textAlign }) => {
     const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
@@ -70,6 +77,7 @@ const HeadingComponent: ComponentConfig<{
 };
 
 const TextComponent: ComponentConfig<{
+  name?: string;
   text: string;
   fontSize: number;
   color: string;
@@ -77,6 +85,7 @@ const TextComponent: ComponentConfig<{
   lineHeight: number;
 }> = {
   fields: {
+    name: { type: "text", label: "🏷️ 블록 이름 (Outline용)", placeholder: "예: 소개 텍스트" },
     text: { type: "textarea", label: "📝 텍스트 내용" },
     fontSize: { 
       type: "number",
@@ -106,11 +115,16 @@ const TextComponent: ComponentConfig<{
     }
   },
   defaultProps: {
+    name: "",
     text: "새 텍스트를 입력하세요...",
     fontSize: 16,
     color: "#374151",
     lineHeight: 1.6,
     textAlign: "left"
+  },
+  // Outline에서 표시될 이름 커스터마이징
+  getItemSummary: (props) => {
+    return props.name || `${props.text?.slice(0, 25)}${props.text?.length > 25 ? '...' : ''}` || '텍스트';
   },
   render: ({ text, fontSize, color, textAlign, lineHeight }) => {
     return (
@@ -132,12 +146,14 @@ const TextComponent: ComponentConfig<{
 };
 
 const ButtonComponent: ComponentConfig<{
+  name?: string;
   text: string;
   link: string;
   variant: 'default' | 'outline';
   size: 'sm' | 'default' | 'lg';
 }> = {
   fields: {
+    name: { type: "text", label: "🏷️ 블록 이름 (Outline용)", placeholder: "예: CTA 버튼" },
     text: { type: "text", label: "🔘 버튼 텍스트" },
     link: { type: "text", label: "🔗 링크 URL" },
     variant: {
@@ -159,10 +175,15 @@ const ButtonComponent: ComponentConfig<{
     }
   },
   defaultProps: {
+    name: "",
     text: "클릭하세요",
     link: "#",
     variant: "default",
     size: "default"
+  },
+  // Outline에서 표시될 이름 커스터마이징
+  getItemSummary: (props) => {
+    return props.name || `🔘 ${props.text}` || '버튼';
   },
   render: ({ text, link, variant, size }) => {
     const sizeMap = {
@@ -207,9 +228,11 @@ const ButtonComponent: ComponentConfig<{
 };
 
 const SpacerComponent: ComponentConfig<{
+  name?: string;
   height: number;
 }> = {
   fields: {
+    name: { type: "text", label: "🏷️ 블록 이름 (Outline용)", placeholder: "예: 섹션 구분" },
     height: { 
       type: "number", 
       label: "📏 높이 (px)",
@@ -218,7 +241,12 @@ const SpacerComponent: ComponentConfig<{
     }
   },
   defaultProps: {
+    name: "",
     height: 50
+  },
+  // Outline에서 표시될 이름 커스터마이징
+  getItemSummary: (props) => {
+    return props.name || `📏 공백 (${props.height}px)`;
   },
   render: ({ height }) => {
     return (
@@ -234,11 +262,13 @@ const SpacerComponent: ComponentConfig<{
 };
 
 const ImageComponent: ComponentConfig<{
+  name?: string;
   src: string;
   alt: string;
   width: number;
 }> = {
   fields: {
+    name: { type: "text", label: "🏷️ 블록 이름 (Outline용)", placeholder: "예: 메인 이미지" },
     src: { type: "text", label: "🖼️ 이미지 URL" },
     alt: { type: "text", label: "📝 설명 (ALT)" },
     width: {
@@ -249,9 +279,14 @@ const ImageComponent: ComponentConfig<{
     }
   },
   defaultProps: {
+    name: "",
     src: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop",
     alt: "샘플 이미지",
     width: 800
+  },
+  // Outline에서 표시될 이름 커스터마이징
+  getItemSummary: (props) => {
+    return props.name || `🖼️ ${props.alt}` || '이미지';
   },
   render: ({ src, alt, width }) => {
     return (

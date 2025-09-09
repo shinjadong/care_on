@@ -36,6 +36,7 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
         case 'heading':
           puckProps = {
             id: block.id,
+            name: block.content.name || "",
             text: block.content.text || '제목',
             level: block.content.level || 2,
             fontSize: parseInt(block.content.fontSize) || 32,
@@ -47,6 +48,7 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
         case 'text':
           puckProps = {
             id: block.id,
+            name: block.content.name || "",
             text: block.content.text || '텍스트',
             fontSize: parseInt(block.content.fontSize) || 16,
             color: block.content.color || '#000000',
@@ -58,6 +60,7 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
         case 'button':
           puckProps = {
             id: block.id,
+            name: block.content.name || "",
             text: block.content.text || '버튼',
             link: block.content.link || '#',
             variant: block.content.variant || 'default',
@@ -68,6 +71,7 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
         case 'spacer':
           puckProps = {
             id: block.id,
+            name: block.content.name || "",
             height: block.content.height || 50
           };
           break;
@@ -76,6 +80,7 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
           const firstImage = block.content.images?.[0];
           puckProps = {
             id: block.id,
+            name: block.content.name || "",
             src: firstImage?.src || 'https://via.placeholder.com/800x600',
             alt: firstImage?.alt || '이미지',
             width: firstImage?.width || 800
@@ -196,6 +201,7 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
         switch (item.type) {
           case '제목':
             content = {
+              name: props.name || "",
               text: props.text || '제목',
               level: props.level || 2,
               fontSize: props.fontSize?.toString() || '32',
@@ -207,6 +213,7 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
           
           case '텍스트':
             content = {
+              name: props.name || "",
               text: props.text || '텍스트',
               format: 'plain',
               fontSize: props.fontSize?.toString() || '16',
@@ -218,6 +225,7 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
           
           case '버튼':
             content = {
+              name: props.name || "",
               text: props.text || '버튼',
               link: props.link || '#',
               variant: props.variant || 'default',
@@ -227,12 +235,14 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
           
           case '공백':
             content = {
+              name: props.name || "",
               height: props.height || 50
             };
             break;
           
           case '이미지':
             content = {
+              name: props.name || "",
               images: [{
                 id: `img-${Date.now()}`,
                 src: props.src || 'https://via.placeholder.com/800x600',
