@@ -30,7 +30,7 @@ const HeadingComponent: ComponentConfig<{
     fontSize: { 
       type: "custom",
       label: "폰트 크기",
-      render: (props) => <SliderField {...props} min={12} max={84} step={1} />
+      render: (props) => <SliderField {...props} min={12} max={84} step={0.5} unit="px" />
     },
     color: { 
       type: "custom",
@@ -40,7 +40,7 @@ const HeadingComponent: ComponentConfig<{
     fontWeight: {
       type: "custom",
       label: "굵기",
-      render: (props) => <SliderField {...props} min={100} max={900} step={100} />
+      render: (props) => <SliderField {...props} min={100} max={900} step={100} unit="" />
     },
     textAlign: {
       type: "radio",
@@ -101,7 +101,7 @@ const TextComponent: ComponentConfig<{
     fontSize: { 
       type: "custom",
       label: "폰트 크기",
-      render: (props) => <SliderField {...props} min={8} max={72} step={1} />
+      render: (props) => <SliderField {...props} min={8} max={72} step={0.5} unit="px" />
     },
     color: { 
       type: "custom",
@@ -111,7 +111,7 @@ const TextComponent: ComponentConfig<{
     lineHeight: {
       type: "custom",
       label: "행간",
-      render: (props) => <SliderField {...props} min={1.0} max={3.0} step={0.1} />
+      render: (props) => <SliderField {...props} min={1.0} max={3.0} step={0.05} unit="" />
     },
     fontWeight: {
       type: "custom", 
@@ -205,12 +205,12 @@ const ButtonComponent: ComponentConfig<{
     marginTop: {
       type: "custom",
       label: "위 여백",
-      render: (props) => <SliderField {...props} min={0} max={100} step={5} />
+      render: (props) => <SliderField {...props} min={0} max={100} step={5} unit="px" />
     },
     marginBottom: {
       type: "custom",
       label: "아래 여백", 
-      render: (props) => <SliderField {...props} min={0} max={100} step={5} />
+      render: (props) => <SliderField {...props} min={0} max={100} step={5} unit="px" />
     }
   },
   defaultProps: {
@@ -322,7 +322,7 @@ const ImageComponent: ComponentConfig<{
     width: {
       type: "custom",
       label: "너비 (px)",
-      render: (props) => <SliderField {...props} min={100} max={1200} step={50} />
+      render: (props) => <SliderField {...props} min={100} max={1200} step={25} unit="px" />
     },
     alignment: {
       type: "radio",
@@ -344,7 +344,7 @@ const ImageComponent: ComponentConfig<{
     backgroundHeight: {
       type: "custom",
       label: "배경 높이 (px)",
-      render: (props) => <SliderField {...props} min={200} max={800} step={50} />
+      render: (props) => <SliderField {...props} min={200} max={800} step={25} unit="px" />
     }
   },
   defaultProps: {
@@ -423,7 +423,7 @@ const SpacerComponent: ComponentConfig<{
     height: { 
       type: "custom",
       label: "높이",
-      render: (props) => <SliderField {...props} min={10} max={500} step={10} />
+      render: (props) => <SliderField {...props} min={10} max={500} step={10} unit="px" />
     }
   },
   defaultProps: {

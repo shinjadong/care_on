@@ -46,16 +46,21 @@ export const ColorPickerField = ({ onChange, value }: FieldProps<string>) => {
 };
 
 // 슬라이더 필드 커스텀 컴포넌트  
-export const SliderField = ({ onChange, value, min = 0, max = 100, step = 1 }: FieldProps<number> & {
+export const SliderField = ({ onChange, value, min = 0, max = 100, step = 1, unit = '' }: FieldProps<number> & {
   min?: number;
   max?: number;
   step?: number;
+  unit?: string;
 }) => {
+  const currentValue = value || min;
+  
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <span className="text-sm text-gray-600">현재 값</span>
-        <span className="text-sm font-medium">{value || min}</span>
+        <span className="text-sm font-medium bg-blue-50 px-2 py-1 rounded">
+          {currentValue}{unit}
+        </span>
       </div>
       <input
         type="range"
@@ -67,8 +72,22 @@ export const SliderField = ({ onChange, value, min = 0, max = 100, step = 1 }: F
         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
       />
       <div className="flex justify-between text-xs text-gray-500">
-        <span>{min}</span>
-        <span>{max}</span>
+        <span>{min}{unit}</span>
+        <span>{max}{unit}</span>
+      </div>
+      
+      {/* 직접 입력 필드 */}
+      <div className="flex items-center gap-2">
+        <input
+          type="number"
+          min={min}
+          max={max}
+          step={step}
+          value={currentValue}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="flex-1 px-2 py-1 text-sm border rounded"
+        />
+        <span className="text-xs text-gray-500">{unit}</span>
       </div>
       
       <style jsx>{`
