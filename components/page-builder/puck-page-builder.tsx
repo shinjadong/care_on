@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { Puck, Data } from '@measured/puck';
-import { puckConfig } from './puck-config-simple';
+import { enhancedPuckConfig as puckConfig } from './puck-config-enhanced';
 import { Block } from '@/types/page-builder';
 import { Button } from '@/components/ui/button';
 import { Save, Eye, Edit, ArrowLeft } from 'lucide-react';
+
+// Puck CSS import
+import '@measured/puck/puck.css';
 
 interface PuckPageBuilderProps {
   initialBlocks?: Block[];
