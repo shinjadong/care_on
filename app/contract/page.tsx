@@ -134,27 +134,25 @@ export default function ContractPage() {
             <h1 className="text-3xl font-bold text-gray-900">케어온 계약 정보 입력</h1>
           </div>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            인터넷 + CCTV 서비스 계약을 위한 정보를 입력해주세요.<br />
-            <span className="text-[#148777] font-medium">첫 1년 무료, 3년 약정</span> 조건으로 서비스를 제공해드립니다.
+            케어온 서비스 신청을 위해 기본 정보와 필수 서류를 제출해주세요.<br />
+            <span className="text-[#148777] font-medium">담당자가 실사 방문 후 맞춤 견적</span>을 제공해드립니다.
           </p>
         </div>
 
-        {/* 서비스 정보 카드 */}
+        {/* 서비스 안내 카드 */}
         <Card className="mb-8 p-6 bg-gradient-to-r from-[#148777]/5 to-[#148777]/10 border-[#148777]/20">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="flex items-center gap-2">
-              <Wifi className="w-5 h-5 text-[#148777]" />
-              <span className="font-medium text-[#148777]">인터넷</span>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <Wifi className="w-8 h-8 text-[#148777]" />
+              <span className="text-2xl font-bold text-[#148777]">+</span>
+              <Camera className="w-8 h-8 text-[#148777]" />
             </div>
-            <div className="flex items-center gap-2">
-              <Camera className="w-5 h-5 text-[#148777]" />
-              <span className="font-medium text-[#148777]">CCTV</span>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">케어온 종합 서비스</h3>
+            <div className="text-sm text-gray-700 space-y-1">
+              <p>• 전문 상담사가 직접 방문하여 <strong>맞춤 견적</strong> 제공</p>
+              <p>• <strong>첫 1년 무료</strong> + 3년 약정 조건</p>
+              <p>• 인터넷, CCTV, POS, TV, 보험 등 종합 서비스</p>
             </div>
-          </div>
-          <div className="text-sm text-gray-700">
-            <p>• <strong>첫 1년</strong>: 인터넷 + CCTV 서비스 <span className="text-red-600 font-bold">완전 무료</span></p>
-            <p>• <strong>2-3년차</strong>: 정상 요금 적용</p>
-            <p>• <strong>결제방식</strong>: 월 자동 카드 출금</p>
           </div>
         </Card>
 

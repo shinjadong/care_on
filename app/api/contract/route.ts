@@ -13,9 +13,6 @@ export async function POST(request: NextRequest) {
       email,
       address,
       business_registration,
-      internet_plan,
-      cctv_count,
-      installation_address,
       bank_name,
       account_number,
       account_holder,
@@ -33,8 +30,6 @@ export async function POST(request: NextRequest) {
     if (!owner_name) missingFields.push('대표자명')
     if (!phone) missingFields.push('전화번호')
     if (!address) missingFields.push('주소')
-    if (!internet_plan) missingFields.push('인터넷 요금제')
-    if (!cctv_count) missingFields.push('CCTV 설치 대수')
     if (!bank_name) missingFields.push('은행명')
     if (!account_number) missingFields.push('계좌번호')
     if (!account_holder) missingFields.push('예금주명')
@@ -89,9 +84,8 @@ export async function POST(request: NextRequest) {
         business_registration
       },
       service_info: {
-        internet_plan,
-        cctv_count,
-        installation_address: installation_address || address
+        status: '실사 완료 후 견적 대기',
+        installation_address: address
       },
       payment_info: {
         bank_name,
@@ -123,7 +117,7 @@ export async function POST(request: NextRequest) {
         },
         body: JSON.stringify({
           phone: '01012345678', // 관리자 번호
-          message: `[케어온] 새로운 계약 정보 접수\n고객번호: ${customer.customer_number}\n계약번호: ${tempContractNumber}\n사업체: ${business_name}\n대표자: ${owner_name}\n연락처: ${normalizedPhone}\n서비스: ${internet_plan} + CCTV ${cctv_count}`
+          message: `[케어온] 새로운 계약 정보 접수\n고객번호: ${customer.customer_number}\n사업체: ${business_name}\n대표자: ${owner_name}\n연락처: ${normalizedPhone}\n주소: ${address}`
         })
       })
     } catch (smsError) {
