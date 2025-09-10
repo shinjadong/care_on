@@ -1,12 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Search, User, Phone, Building2, Wifi, Camera, CreditCard, FileCheck, Send } from "lucide-react"
 
 interface CustomerData {
+  id: string  // contract ID 추가
   customer_number: string
   name: string
   phone: string
@@ -61,6 +63,47 @@ export default function ManagerQuotePage() {
   const [isSending, setIsSending] = useState(false)
   const [isQuoteSent, setIsQuoteSent] = useState(false)
 
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const customerNumber = searchParams.get('customer_number')
+    if (customerNumber) {
+      // 고객번호로 직접 검색
+      searchByCustomerNumber(customerNumber)
+    }
+  }, [searchParams])
+
+  const searchByCustomerNumber = async (customerNumber: string) => {
+    setIsSearching(true)
+    
+    try {
+      const response = await fetch('/api/contract/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          customer_number: customerNumber
+        })
+      })
+      
+      if (response.ok) {
+        const result = await response.json()
+        if (result.customer) {
+          setCustomer(result.customer)
+          setQuoteData(prev => ({
+            ...prev,
+            installation_address: result.customer.address
+          }))
+        }
+      }
+    } catch (error) {
+      console.error('고객 검색 오류:', error)
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
   const handleSearch = async () => {
     if (!searchData.name.trim() || !searchData.phone.trim()) {
       alert("고객 이름과 전화번호를 모두 입력해주세요.")
@@ -69,34 +112,39 @@ export default function ManagerQuotePage() {
 
     setIsSearching(true)
     
-    // 시뮬레이션: 실제로는 서버 로그에서 검색하거나 임시 데이터
-    setTimeout(() => {
-      // 임시 고객 데이터 (실제로는 로그 파일이나 DB에서 가져옴)
-      const mockCustomer: CustomerData = {
-        customer_number: "CO" + Date.now().toString().slice(-6),
-        name: searchData.name,
-        phone: searchData.phone.replace(/[^0-9]/g, ''),
-        business_name: "테스트 사업장",
-        address: "서울시 강남구 테헤란로 123",
-        email: "customer@example.com",
-        business_registration: "1234567890",
-        bank_name: "국민은행",
-        account_number: "123****9012",
-        account_holder: searchData.name,
-        documents: {
-          bank_account_image: "업로드됨",
-          id_card_image: "업로드됨", 
-          business_registration_image: "업로드됨"
-        }
-      }
+    try {
+      // 기존 reviews 테이블에서 계약 신청 데이터 검색
+      const response = await fetch('/api/contract/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: searchData.name.trim(),
+          phone: searchData.phone.replace(/[^0-9]/g, '')
+        })
+      })
       
-      setCustomer(mockCustomer)
-      setQuoteData(prev => ({
-        ...prev,
-        installation_address: mockCustomer.address
-      }))
+      if (response.ok) {
+        const result = await response.json()
+        if (result.customer) {
+          setCustomer(result.customer)
+          setQuoteData(prev => ({
+            ...prev,
+            installation_address: result.customer.address
+          }))
+        } else {
+          alert('해당 고객 정보를 찾을 수 없습니다. 이름과 전화번호를 다시 확인해주세요.')
+        }
+      } else {
+        alert('검색 중 오류가 발생했습니다.')
+      }
+    } catch (error) {
+      console.error('고객 검색 오류:', error)
+      alert('네트워크 오류가 발생했습니다.')
+    } finally {
       setIsSearching(false)
-    }, 1000)
+    }
   }
 
   const handleQuoteChange = (field: string, value: string | number | boolean) => {
@@ -121,25 +169,35 @@ export default function ManagerQuotePage() {
     setIsSending(true)
     
     try {
-      const quoteInfo = {
-        customer: customer,
-        quote: quoteData,
-        total_monthly_fee: calculateTotal(),
-        created_by: "매니저", // 실제로는 로그인한 매니저 정보
-        timestamp: new Date().toISOString()
-      }
-      
-      console.log('[Manager Quote] Quote sent:', quoteInfo)
-      
-      // 카카오톡 자동 발송 시뮬레이션
-      setTimeout(() => {
+      // 견적 정보를 서버에 저장
+      const response = await fetch('/api/contract/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contract_id: customer.id,
+          customer_number: customer.customer_number,
+          quote: quoteData,
+          total_monthly_fee: calculateTotal(),
+          manager_name: "매니저" // 실제로는 로그인한 매니저 정보
+        })
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        console.log('[Manager Quote] Quote saved:', result)
+        
+        // 카카오톡 발송 (실제 구현 필요)
         setIsQuoteSent(true)
-        setIsSending(false)
-      }, 2000)
-      
+      } else {
+        const errorData = await response.json()
+        alert(`견적 저장에 실패했습니다: ${errorData.error}`)
+      }
     } catch (error) {
       console.error('견적서 전송 오류:', error)
       alert('견적서 전송에 실패했습니다.')
+    } finally {
       setIsSending(false)
     }
   }

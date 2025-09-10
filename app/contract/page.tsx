@@ -152,6 +152,7 @@ export default function ContractPage() {
               <p>• 전문 상담사가 직접 방문하여 <strong>맞춤 견적</strong> 제공</p>
               <p>• <strong>첫 1년 무료</strong> + 3년 약정 조건</p>
               <p>• 인터넷, CCTV, POS, TV, 보험 등 종합 서비스</p>
+              <p>• 실사 후 맞춤 요금제 및 대수 결정</p>
             </div>
           </div>
         </Card>
