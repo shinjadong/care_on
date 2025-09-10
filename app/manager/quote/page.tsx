@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,7 +26,7 @@ interface CustomerData {
   }
 }
 
-export default function ManagerQuotePage() {
+function ManagerQuoteContent() {
   const [searchData, setSearchData] = useState({
     name: "",
     phone: ""
@@ -499,5 +499,13 @@ export default function ManagerQuotePage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function ManagerQuotePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ManagerQuoteContent />
+    </Suspense>
   )
 }
