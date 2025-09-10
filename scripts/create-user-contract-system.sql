@@ -218,6 +218,126 @@ $$ LANGUAGE plpgsql;
 -- Update contracts table to use the function  
 ALTER TABLE contracts ALTER COLUMN contract_number SET DEFAULT generate_contract_number();
 
+-- Create RPC functions to bypass RLS for contract system
+
+-- Function to get customer by phone and name (bypasses RLS)
+CREATE OR REPLACE FUNCTION get_customer_by_phone_name(
+  input_phone VARCHAR,
+  input_name VARCHAR
+)
+RETURNS SETOF customers
+SECURITY DEFINER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT * FROM customers 
+  WHERE phone = input_phone AND name = input_name;
+END;
+$$;
+
+-- Function to create new customer (bypasses RLS)
+CREATE OR REPLACE FUNCTION create_new_customer(
+  input_phone VARCHAR,
+  input_name VARCHAR,
+  input_email VARCHAR DEFAULT NULL,
+  input_address TEXT DEFAULT NULL,
+  input_business_name VARCHAR DEFAULT NULL,
+  input_business_registration VARCHAR DEFAULT NULL
+)
+RETURNS customers
+SECURITY DEFINER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  new_customer customers;
+BEGIN
+  INSERT INTO customers (
+    phone, 
+    name, 
+    email, 
+    address, 
+    business_name, 
+    business_registration
+  ) VALUES (
+    input_phone,
+    input_name,
+    input_email,
+    input_address,
+    input_business_name,
+    input_business_registration
+  ) RETURNING * INTO new_customer;
+  
+  RETURN new_customer;
+END;
+$$;
+
+-- Function to create new contract (bypasses RLS)
+CREATE OR REPLACE FUNCTION create_new_contract(
+  contract_data JSONB
+)
+RETURNS contracts
+SECURITY DEFINER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  new_contract contracts;
+BEGIN
+  INSERT INTO contracts (
+    customer_id,
+    customer_number,
+    business_name,
+    owner_name,
+    phone,
+    email,
+    address,
+    business_registration,
+    internet_plan,
+    cctv_count,
+    installation_address,
+    bank_name,
+    account_number,
+    account_holder,
+    additional_requests,
+    terms_agreed,
+    info_agreed,
+    bank_account_image,
+    id_card_image,
+    business_registration_image,
+    status
+  ) VALUES (
+    (contract_data->>'customer_id')::UUID,
+    contract_data->>'customer_number',
+    contract_data->>'business_name',
+    contract_data->>'owner_name',
+    contract_data->>'phone',
+    contract_data->>'email',
+    contract_data->>'address',
+    contract_data->>'business_registration',
+    contract_data->>'internet_plan',
+    contract_data->>'cctv_count',
+    contract_data->>'installation_address',
+    contract_data->>'bank_name',
+    contract_data->>'account_number',
+    contract_data->>'account_holder',
+    contract_data->>'additional_requests',
+    (contract_data->>'terms_agreed')::BOOLEAN,
+    (contract_data->>'info_agreed')::BOOLEAN,
+    contract_data->>'bank_account_image',
+    contract_data->>'id_card_image',
+    contract_data->>'business_registration_image',
+    contract_data->>'status'
+  ) RETURNING * INTO new_contract;
+  
+  RETURN new_contract;
+END;
+$$;
+
+-- Grant execute permissions on RPC functions
+GRANT EXECUTE ON FUNCTION get_customer_by_phone_name(VARCHAR, VARCHAR) TO anon, authenticated, service_role;
+GRANT EXECUTE ON FUNCTION create_new_customer(VARCHAR, VARCHAR, VARCHAR, TEXT, VARCHAR, VARCHAR) TO anon, authenticated, service_role;
+GRANT EXECUTE ON FUNCTION create_new_contract(JSONB) TO anon, authenticated, service_role;
+
 -- Add sample data comments
 COMMENT ON FUNCTION generate_customer_number() IS '고객번호 자동 생성: CO000001, CO000002, ...';
 COMMENT ON FUNCTION generate_contract_number() IS '계약번호 자동 생성: CT240910001, CT240910002, ...';
