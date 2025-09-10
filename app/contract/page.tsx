@@ -78,11 +78,19 @@ export default function ContractPage() {
           error: errorData
         })
         
-        alert(`제출에 실패했습니다.\n오류: ${errorData.error || '알 수 없는 오류'}\n\n문의: 1866-1845`)
+        // 모바일 환경을 위한 더 간단한 에러 메시지
+        const errorMessage = errorData.error || '알 수 없는 오류'
+        const simpleMessage = errorMessage.includes('데이터베이스')
+          ? '서버 연결에 실패했습니다.\n잠시 후 다시 시도해주세요.'
+          : errorMessage
+        
+        alert(`제출에 실패했습니다.\n\n${simpleMessage}\n\n문의: 1866-1845`)
       }
     } catch (error) {
       console.error('[Contract Submit] Network error:', error)
-      alert(`네트워크 오류가 발생했습니다.\n\n오류 세부사항:\n${error instanceof Error ? error.message : '알 수 없는 오류'}\n\n문의: 1866-1845`)
+      
+      // 네트워크 에러를 위한 더 친화적인 메시지
+      alert(`네트워크 연결에 문제가 있습니다.\n\n다음을 확인해주세요:\n• 인터넷 연결 상태\n• Wi-Fi 또는 모바일 데이터 활성화\n\n문의: 1866-1845`)
     } finally {
       setIsSubmitting(false)
     }

@@ -111,6 +111,11 @@ export async function POST(request: NextRequest) {
         throw error
       }
       
+      if (!data) {
+        console.error('[Contract API] No data returned after insert')
+        throw new Error('데이터 저장 후 결과를 받지 못했습니다.')
+      }
+      
       console.log('[Contract API] Successfully saved to contracts table:', {
         id: data.id,
         customer_number: data.customer_number,
@@ -119,23 +124,27 @@ export async function POST(request: NextRequest) {
         status: data.status
       })
       
+      // 성공 응답
+      return NextResponse.json({
+        message: '계약 정보가 성공적으로 접수되었습니다.',
+        customer_number: data.customer_number || 'CO' + Date.now().toString().slice(-6),
+        contract_number: data.contract_number || 'CT' + Date.now().toString().slice(-6),
+        id: data.id
+      })
+      
     } catch (dbError) {
       console.error('[Contract API] Database error:', dbError)
+      
+      // 더 구체적인 에러 메시지 제공
+      const errorMessage = dbError instanceof Error 
+        ? dbError.message 
+        : '데이터베이스 연결 오류가 발생했습니다. 다시 시도해주세요.'
+        
       return NextResponse.json(
-        { error: '데이터베이스 연결 오류가 발생했습니다. 다시 시도해주세요.' },
+        { error: errorMessage },
         { status: 500 }
       )
     }
-    
-    const contractResult = data
-
-
-    return NextResponse.json({
-      message: '계약 정보가 성공적으로 접수되었습니다.',
-      customer_number: data.customer_number,
-      contract_number: 'CT' + data.customer_number.slice(2), // 고객번호 기반 계약번호
-      id: data.id
-    })
 
   } catch (error) {
     console.error('[Contract API] Unexpected error:', error)
