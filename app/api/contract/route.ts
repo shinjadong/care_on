@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     console.log('[Contract API] Request received:', { timestamp: new Date().toISOString() })
     
-    const supabase = createClient()
+    // Supabase 클라이언트 직접 생성 (서비스 키 하드코딩)
+    const supabase = createClient(
+      'https://pkehcfbjotctvneordob.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrZWhjZmJqb3RjdHZuZW9yZG9iIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzE5MjY4MSwiZXhwIjoyMDY4NzY4NjgxfQ.fn1IxRxjJZ6gihy_SCvyQrT6Vx3xb1yMaVzztOsLeyk'
+    )
+    
+    console.log('[Contract API] Direct Supabase client created')
     
     // Supabase 연결 테스트
     const { data: testData, error: testError } = await supabase

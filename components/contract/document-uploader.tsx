@@ -3,6 +3,7 @@
 import { useState, useRef } from "react"
 import { Upload, Camera, FileImage, X, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { createClient } from '@supabase/supabase-js'
 
 interface DocumentUploaderProps {
   label: string
@@ -47,23 +48,32 @@ export function DocumentUploader({
     setError("")
 
     try {
-      // Supabase Storage에 업로드
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('bucket', 'care-on')
-      formData.append('folder', 'contracts')
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      })
-
-      if (!response.ok) {
-        throw new Error('업로드에 실패했습니다.')
+      // Supabase Storage에 직접 업로드
+      const supabase = createClient(
+        'https://pkehcfbjotctvneordob.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrZWhjZmJqb3RjdHZuZW9yZG9iIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzE5MjY4MSwiZXhwIjoyMDY4NzY4NjgxfQ.fn1IxRxjJZ6gihy_SCvyQrT6Vx3xb1yMaVzztOsLeyk'
+      )
+      
+      const fileName = `contracts/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
+      
+      const { data, error: uploadError } = await supabase.storage
+        .from('care-on')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        })
+        
+      if (uploadError) {
+        console.error('Supabase storage upload error:', uploadError)
+        throw new Error('업로드에 실패했습니다: ' + uploadError.message)
       }
-
-      const result = await response.json()
-      onChange(result.url)
+      
+      // 공개 URL 가져오기
+      const { data: publicUrlData } = supabase.storage
+        .from('care-on')
+        .getPublicUrl(fileName)
+        
+      onChange(publicUrlData.publicUrl)
     } catch (err) {
       console.error('문서 업로드 오류:', err)
       setError(err instanceof Error ? err.message : '업로드 중 오류가 발생했습니다.')
