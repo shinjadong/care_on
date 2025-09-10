@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
-import { Search, User, Phone, Building2, Wifi, Camera, CreditCard, FileCheck, Send } from "lucide-react"
+import { Search, User, Phone, Building2, Wifi, Camera, CreditCard, FileCheck, Send, Eye as EyeIcon } from "lucide-react"
 
 interface CustomerData {
   id: string  // contract ID 추가
@@ -62,6 +62,7 @@ function ManagerQuoteContent() {
   const [isSearching, setIsSearching] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [isQuoteSent, setIsQuoteSent] = useState(false)
+  const [isPreviewing, setIsPreviewing] = useState(false)
 
   const searchParams = useSearchParams()
 
@@ -413,6 +414,52 @@ function ManagerQuoteContent() {
                       />
                     )}
                   </div>
+                  
+                  {/* TV */}
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={quoteData.tv_needed}
+                        onChange={(e) => handleQuoteChange('tv_needed', e.target.checked)}
+                        className="rounded"
+                      />
+                      <Building2 className="w-4 h-4 text-blue-600" />
+                      <span className="font-medium">TV 서비스</span>
+                    </div>
+                    {quoteData.tv_needed && (
+                      <Input
+                        type="number"
+                        value={quoteData.tv_monthly_fee}
+                        onChange={(e) => handleQuoteChange('tv_monthly_fee', Number(e.target.value))}
+                        placeholder="월 요금"
+                        className="w-32"
+                      />
+                    )}
+                  </div>
+                  
+                  {/* 보험 */}
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={quoteData.insurance_needed}
+                        onChange={(e) => handleQuoteChange('insurance_needed', e.target.checked)}
+                        className="rounded"
+                      />
+                      <Phone className="w-4 h-4 text-green-600" />
+                      <span className="font-medium">업소용 보험</span>
+                    </div>
+                    {quoteData.insurance_needed && (
+                      <Input
+                        type="number"
+                        value={quoteData.insurance_monthly_fee}
+                        onChange={(e) => handleQuoteChange('insurance_monthly_fee', Number(e.target.value))}
+                        placeholder="월 요금"
+                        className="w-32"
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -449,6 +496,14 @@ function ManagerQuoteContent() {
                     />
                   </div>
                 </div>
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">특별 조건</label>
+                  <Input
+                    value={quoteData.special_conditions}
+                    onChange={(e) => handleQuoteChange('special_conditions', e.target.value)}
+                    placeholder="예: 6개월 단위 선납 시 5% 추가 할인"
+                  />
+                </div>
               </div>
 
               {/* 총 요금 표시 */}
@@ -464,6 +519,106 @@ function ManagerQuoteContent() {
                 </div>
               </div>
 
+              {/* 견적서 미리보기 */}
+              <div className="mb-6">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsPreviewing(!isPreviewing)}
+                  className="w-full"
+                >
+                  <EyeIcon className="w-4 h-4 mr-2" />
+                  견적서 미리보기
+                </Button>
+              </div>
+              
+              {isPreviewing && (
+                <Card className="mb-6 p-6 bg-gray-50">
+                  <h4 className="text-lg font-bold text-gray-900 mb-4">견적서 미리보기</h4>
+                  
+                  <div className="space-y-4">
+                    {/* 고객 정보 */}
+                    <div className="border-b pb-4">
+                      <h5 className="font-semibold mb-2">고객 정보</h5>
+                      <div className="text-sm space-y-1">
+                        <p><strong>업체명:</strong> {customer.business_name}</p>
+                        <p><strong>대표자:</strong> {customer.name}</p>
+                        <p><strong>연락처:</strong> {customer.phone}</p>
+                      </div>
+                    </div>
+                    
+                    {/* 서비스 내역 */}
+                    <div className="border-b pb-4">
+                      <h5 className="font-semibold mb-2">서비스 내역</h5>
+                      <div className="text-sm space-y-2">
+                        {quoteData.internet_plan && (
+                          <div className="flex justify-between">
+                            <span>인터넷 {quoteData.internet_plan}</span>
+                            <span>{quoteData.internet_monthly_fee.toLocaleString()}원/월</span>
+                          </div>
+                        )}
+                        {quoteData.cctv_count && (
+                          <div className="flex justify-between">
+                            <span>CCTV {quoteData.cctv_count}</span>
+                            <span>{quoteData.cctv_monthly_fee.toLocaleString()}원/월</span>
+                          </div>
+                        )}
+                        {quoteData.pos_needed && (
+                          <div className="flex justify-between">
+                            <span>POS 시스템</span>
+                            <span>{quoteData.pos_monthly_fee.toLocaleString()}원/월</span>
+                          </div>
+                        )}
+                        {quoteData.tv_needed && (
+                          <div className="flex justify-between">
+                            <span>TV 서비스</span>
+                            <span>{quoteData.tv_monthly_fee.toLocaleString()}원/월</span>
+                          </div>
+                        )}
+                        {quoteData.insurance_needed && (
+                          <div className="flex justify-between">
+                            <span>업소용 보험</span>
+                            <span>{quoteData.insurance_monthly_fee.toLocaleString()}원/월</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* 계약 조건 */}
+                    <div className="border-b pb-4">
+                      <h5 className="font-semibold mb-2">계약 조건</h5>
+                      <div className="text-sm space-y-1">
+                        <p>• 무료 이용 기간: <strong>{quoteData.free_period}개월</strong></p>
+                        <p>• 총 계약 기간: <strong>{quoteData.contract_period}개월</strong></p>
+                        {quoteData.discount_rate > 0 && (
+                          <p>• 특별 할인: <strong>{quoteData.discount_rate}%</strong></p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* 요금 요약 */}
+                    <div className="bg-[#148777]/10 rounded-lg p-4">
+                      <div className="text-center">
+                        <p className="text-sm text-gray-600 mb-1">첫 {quoteData.free_period}개월 무료</p>
+                        <p className="text-2xl font-bold text-[#148777] mb-1">
+                          월 {calculateTotal().toLocaleString()}원
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {quoteData.free_period + 1}개월차부터 적용
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {quoteData.special_conditions && (
+                      <div>
+                        <h5 className="font-semibold mb-2">특별 조건</h5>
+                        <p className="text-sm">{quoteData.special_conditions}</p>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              )}
+              
               {/* 매니저 메모 */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">매니저 메모</label>
