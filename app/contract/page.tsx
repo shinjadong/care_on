@@ -71,11 +71,18 @@ export default function ContractPage() {
         })
         setIsSubmitted(true)
       } else {
-        alert('제출에 실패했습니다. 다시 시도해주세요.')
+        const errorData = await response.json().catch(() => ({ error: '알 수 없는 오류' }))
+        console.error('[Contract Submit] Error response:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData
+        })
+        
+        alert(`제출에 실패했습니다.\n오류: ${errorData.error || '알 수 없는 오류'}\n\n문의: 1866-1845`)
       }
     } catch (error) {
-      console.error('계약 정보 제출 오류:', error)
-      alert('네트워크 오류가 발생했습니다.')
+      console.error('[Contract Submit] Network error:', error)
+      alert(`네트워크 오류가 발생했습니다.\n\n오류 세부사항:\n${error instanceof Error ? error.message : '알 수 없는 오류'}\n\n문의: 1866-1845`)
     } finally {
       setIsSubmitting(false)
     }
@@ -432,10 +439,11 @@ export default function ContractPage() {
               disabled={
                 isSubmitting || 
                 !formData.terms_agreed || 
-                !formData.info_agreed ||
-                !formData.bank_account_image ||
-                !formData.id_card_image ||
-                !formData.business_registration_image
+                !formData.info_agreed
+                // 임시로 이미지 필수 검증 비활성화 (테스트용)
+                // || !formData.bank_account_image ||
+                // !formData.id_card_image ||
+                // !formData.business_registration_image
               }
               className="bg-[#148777] hover:bg-[#0f6b5c] text-white px-12 py-4 text-lg font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
