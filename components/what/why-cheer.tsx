@@ -106,7 +106,7 @@ export const WhyCheer = forwardRef<HTMLElement>((props, ref) => {
   return (
     <section 
         ref={sectionRef}
-        className="relative h-screen w-screen snap-start bg-gradient-to-b from-black to-gray-800 flex items-center justify-center px-4 overflow-hidden"
+        className="relative min-h-screen w-full bg-gradient-to-b from-black to-gray-800 flex items-center justify-center px-4"
     >
       <AnimatePresence mode="wait">
         {step === 1 && (

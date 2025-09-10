@@ -165,7 +165,7 @@ export function WhatOfferSection() {
   return (
     <section 
       ref={sectionRef}
-      className="relative h-screen w-screen snap-start overflow-hidden bg-gradient-to-b from-[#f7f3ed] to-gray-100 flex items-center justify-center p-4"
+      className="relative min-h-screen w-full bg-gradient-to-b from-[#f7f3ed] to-gray-100 flex items-center justify-center p-4"
     >
       <AnimatePresence mode="wait">
         {/* Step 0: 케어온 선물 메시지 */}

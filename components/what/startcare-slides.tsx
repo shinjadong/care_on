@@ -84,7 +84,7 @@ export function StartCareSlidesSection() {
   return (
     <section
       ref={sectionRef as any}
-      className="relative h-screen w-screen snap-start overflow-hidden bg-gradient-to-b from-[#f7f3ed] to-gray-100 flex items-center justify-center p-4"
+      className="relative min-h-screen w-full bg-gradient-to-b from-[#f7f3ed] to-gray-100 flex items-center justify-center p-4"
     >
       <motion.h2
         className="absolute z-20 text-[#222222] font-black text-3xl md:text-4xl text-center"

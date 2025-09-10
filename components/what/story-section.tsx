@@ -155,7 +155,7 @@ export function WhatStorySection() {
     };
 
     return (
-        <section ref={sectionRef} className="relative h-screen w-full snap-start overflow-hidden overscroll-contain bg-gradient-to-t from-[#f7f3ed] to-gray-100 flex flex-col items-center justify-center px-4 py-8">
+        <section ref={sectionRef} className="relative min-h-screen w-full bg-gradient-to-t from-[#f7f3ed] to-gray-100 flex flex-col items-center justify-center px-4 py-8">
             <div className="absolute top-8 sm:top-12 md:top-16 left-1/2 -translate-x-1/2 text-lg sm:text-xl md:text-2xl lg:text-3xl text-center z-30 px-4">
                 <span className="font-bold text-gray-900">사장님</span>
                 <span className="font-semibold text-gray-700">을 위한,</span>

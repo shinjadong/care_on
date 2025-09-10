@@ -120,7 +120,6 @@
   /* 터치/모멘텀 스크롤 */
   .ios-content {
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
     touch-action: manipulation;
   }
 

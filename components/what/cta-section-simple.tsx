@@ -100,7 +100,7 @@ export function WhatCTASection({ onInvestorClick }: WhatCTASectionProps) {
   return (
     <section 
       ref={sectionRef}
-      className="relative h-screen w-screen snap-start overflow-hidden bg-gradient-to-b from-[#f7f3ed] to-gray-50 flex items-center justify-center p-4"
+      className="relative min-h-screen w-full bg-gradient-to-b from-[#f7f3ed] to-gray-50 flex items-center justify-center p-4"
     >
       <div className="transition-opacity duration-500">
         {/* Step 0: 한정성 메시지 */}

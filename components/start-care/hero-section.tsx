@@ -85,7 +85,7 @@ export function HeroSection() {
       />
 
       {/* 실제 보이는 컨테이너 - 100vh 고정 */}
-      <div className="relative h-screen overflow-hidden">
+      <div className="relative min-h-screen">
         {/* 비디오와 콘텐츠 - 항상 fixed, transform으로 이동 */}
         <div 
           className="fixed inset-0 w-full h-screen"
