@@ -75,10 +75,25 @@ export async function POST(request: NextRequest) {
 
     const normalizedPhone = phone.replace(/[^0-9]/g, '')
 
-    // contracts 테이블에서 고객 정보 검색
+    // 새로운 DB 구조: customers + contracts 조인으로 검색
     const { data: contractData, error } = await supabase
       .from('contracts')
-      .select('*')
+      .select(`
+        *,
+        customer:customers!customer_id(
+          customer_code,
+          business_name,
+          owner_name,
+          phone,
+          care_status
+        ),
+        package:packages!package_id(
+          name,
+          monthly_fee,
+          contract_period,
+          free_period
+        )
+      `)
       .eq('owner_name', name)
       .eq('phone', normalizedPhone)
       .order('created_at', { ascending: false })

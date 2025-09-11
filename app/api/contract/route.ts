@@ -78,11 +78,88 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // contracts 테이블에 정보 저장
+    // 1. 먼저 고객(customer) 생성 또는 조회
+    let customerId = null
+    try {
+      // 기존 고객 확인 (전화번호와 사업자명으로)
+      const { data: existingCustomer, error: customerSearchError } = await supabase
+        .from('customers')
+        .select('customer_id')
+        .eq('phone', normalizedPhone)
+        .eq('business_name', business_name)
+        .maybeSingle()
+
+      if (existingCustomer) {
+        customerId = existingCustomer.customer_id
+        console.log('[Contract API] Using existing customer:', customerId)
+      } else {
+        // 고객번호 생성
+        const { data: existingCustomers } = await supabase
+          .from('customers')
+          .select('customer_code')
+          .like('customer_code', 'CO%')
+          .order('customer_code', { ascending: false })
+          .limit(1)
+
+        let nextNumber = 1
+        if (existingCustomers && existingCustomers.length > 0) {
+          const lastCode = existingCustomers[0].customer_code
+          const lastNumber = parseInt(lastCode.substring(2)) || 0
+          nextNumber = lastNumber + 1
+        }
+
+        const customerCode = 'CO' + nextNumber.toString().padStart(6, '0')
+
+        // 새 고객 생성
+        const { data: newCustomer, error: customerInsertError } = await supabase
+          .from('customers')
+          .insert([{
+            customer_code: customerCode,
+            business_name,
+            owner_name,
+            business_registration,
+            phone: normalizedPhone,
+            email,
+            address,
+            status: 'active'
+          }])
+          .select('customer_id')
+          .single()
+
+        if (customerInsertError) throw customerInsertError
+        customerId = newCustomer.customer_id
+        console.log('[Contract API] Created new customer:', customerId)
+      }
+    } catch (customerError) {
+      console.error('[Contract API] Customer creation/lookup error:', customerError)
+      return NextResponse.json(
+        { error: '고객 정보 처리 중 오류가 발생했습니다.' },
+        { status: 500 }
+      )
+    }
+
+    // 2. 계약번호 생성
+    const { data: existingContracts } = await supabase
+      .from('contracts')
+      .select('customer_number')
+      .like('customer_number', 'CO%')
+      .order('customer_number', { ascending: false })
+      .limit(1)
+
+    let customerNumber = 'CO000001'
+    if (existingContracts && existingContracts.length > 0) {
+      const lastNumber = parseInt(existingContracts[0].customer_number.substring(2)) || 0
+      const nextNumber = lastNumber + 1
+      customerNumber = 'CO' + nextNumber.toString().padStart(6, '0')
+    }
+
+    // 3. contracts 테이블에 정보 저장
     try {
       const { data, error } = await supabase
         .from('contracts')
         .insert([{
+          customer_id: customerId,
+          customer_number: customerNumber,
           business_name,
           owner_name,
           phone: normalizedPhone,
@@ -101,7 +178,9 @@ export async function POST(request: NextRequest) {
           business_registration_image,
           terms_agreed,
           info_agreed,
-          status: 'pending'
+          status: 'pending',
+          billing_day: 1,
+          remittance_day: 25
         }])
         .select()
         .single()

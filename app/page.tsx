@@ -12,7 +12,7 @@ export default function MainPage() {
   
   useEffect(() => {
     // 페이지가 마운트되는 즉시 /what로 리다이렉트
-    router.replace('/what')
+    router.replace('/landing')
   }, [router])
 
   // 리다이렉트 중 보여줄 로딩 화면

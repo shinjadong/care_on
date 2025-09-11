@@ -15,38 +15,24 @@ export async function GET(request: NextRequest) {
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrZWhjZmJqb3RjdHZuZW9yZG9iIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzE5MjY4MSwiZXhwIjoyMDY4NzY4NjgxfQ.fn1IxRxjJZ6gihy_SCvyQrT6Vx3xb1yMaVzztOsLeyk'
     )
 
-    // 기본 쿼리
+    // 기본 쿼리 (외래키 이름으로 조인)
     let query = supabase
       .from('contracts')
       .select(`
-        id,
-        customer_number,
-        contract_number,
-        business_name,
-        owner_name,
-        phone,
-        email,
-        address,
-        business_registration,
-        status,
-        internet_plan,
-        internet_monthly_fee,
-        cctv_count,
-        cctv_monthly_fee,
-        installation_address,
-        bank_name,
-        account_number,
-        account_holder,
-        contract_period,
-        free_period,
-        start_date,
-        end_date,
-        additional_requests,
-        admin_notes,
-        created_at,
-        updated_at,
-        processed_by,
-        processed_at
+        *,
+        customer:customers!contracts_customer_id_fkey(
+          customer_code,
+          business_name,
+          owner_name,
+          phone,
+          care_status
+        ),
+        package:packages!contracts_package_id_fkey(
+          name,
+          monthly_fee,
+          contract_period,
+          free_period
+        )
       `)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1)

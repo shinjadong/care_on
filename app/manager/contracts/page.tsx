@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import AdminLayout from "@/app/admin/layout"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,6 +11,8 @@ import Link from "next/link"
 
 interface Contract {
   id: string
+  customer_id: string
+  package_id?: string
   customer_number: string
   contract_number: string
   business_name: string
@@ -26,6 +29,28 @@ interface Contract {
   created_at: string
   processed_at?: string
   processed_by?: string
+  is_portfolio?: boolean
+  is_trial?: boolean
+  business_type?: string
+  open_date?: string
+  account_manager_employee_id?: number
+  customer?: {
+    customer_code: string
+    business_name: string
+    owner_name: string
+    phone: string
+    care_status: string
+  }
+  package?: {
+    name: string
+    monthly_fee: number
+    contract_period: number
+    free_period: number
+  }
+  assigned_manager?: {
+    name: string
+    department: string
+  }
 }
 
 const statusConfig = {
@@ -148,7 +173,8 @@ export default function ManagerContractsPage() {
   const stats = getStatistics()
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <AdminLayout>
+      <div className="py-8">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* 헤더 */}
         <div className="mb-8">
@@ -387,6 +413,7 @@ export default function ManagerContractsPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </AdminLayout>
   )
 }

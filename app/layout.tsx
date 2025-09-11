@@ -34,11 +34,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" />
       </head>
-      <body className="font-sans">
+      <body className="font-sans" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
