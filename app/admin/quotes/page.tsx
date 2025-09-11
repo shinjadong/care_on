@@ -277,8 +277,18 @@ export default function QuotesPage() {
   }
 
   const handleSelectAll = (checked: boolean) => {
+    const filteredQuotes = quotes.filter(quote => {
+      const matchesSearch = 
+        quote.customer?.business_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        quote.customer?.owner_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        quote.contract_number?.toLowerCase().includes(searchTerm.toLowerCase())
+      
+      const matchesStatus = statusFilter === 'all' || quote.status === statusFilter
+      return matchesSearch && matchesStatus
+    })
+
     if (checked) {
-      setSelectedQuotes(quotes.map(q => q.contract_id))
+      setSelectedQuotes(filteredQuotes.map(q => q.contract_id))
       setSelectAll(true)
     } else {
       setSelectedQuotes([])
@@ -299,11 +309,10 @@ export default function QuotesPage() {
 
   const saveFieldEdit = async (contract_id: string, field: string, value: string) => {
     try {
-      const response = await fetch('/api/contract/update', {
-        method: 'POST',
+      const response = await fetch(`/api/contracts/${contract_id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contract_id,
           [field]: field === 'total_monthly_fee' ? parseInt(value) || 0 : value
         })
       })
@@ -345,24 +354,33 @@ export default function QuotesPage() {
         return
       }
 
-      const promises = quoteIds.map(id => 
-        fetch('/api/contract/update', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contract_id: id,
-            status: 'cancelled'
-          })
-        })
-      )
+      console.log('삭제할 견적서 IDs:', quoteIds)
 
-      await Promise.all(promises)
-      alert(`${quoteIds.length}개 견적서가 취소되었습니다.`)
+      const promises = quoteIds.map(async (id) => {
+        const response = await fetch(`/api/contracts/${id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        
+        if (!response.ok) {
+          const errorData = await response.json()
+          console.error(`견적서 ${id} 삭제 실패:`, errorData)
+          throw new Error(`견적서 삭제 실패: ${errorData.error}`)
+        }
+        
+        return response.json()
+      })
+
+      const results = await Promise.all(promises)
+      console.log('삭제 결과:', results)
+      
+      alert(`${quoteIds.length}개 견적서가 성공적으로 취소되었습니다.`)
       setSelectedQuotes([])
-      fetchQuotes()
+      setSelectAll(false)
+      fetchQuotes() // 목록 새로고침
     } catch (error) {
       console.error('견적서 삭제 오류:', error)
-      alert('삭제에 실패했습니다.')
+      alert(`삭제 중 오류가 발생했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`)
     }
   }
 
@@ -405,10 +423,10 @@ export default function QuotesPage() {
       switch (action) {
         case 'approve':
           await Promise.all(selectedQuotes.map(id => 
-            fetch('/api/contract/update', {
-              method: 'POST',
+            fetch(`/api/contracts/${id}`, {
+              method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ contract_id: id, status: 'approved' })
+              body: JSON.stringify({ status: 'approved' })
             })
           ))
           alert(`${selectedQuotes.length}개 견적서가 승인되었습니다.`)
@@ -416,10 +434,10 @@ export default function QuotesPage() {
           
         case 'reject':
           await Promise.all(selectedQuotes.map(id => 
-            fetch('/api/contract/update', {
-              method: 'POST',
+            fetch(`/api/contracts/${id}`, {
+              method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ contract_id: id, status: 'cancelled' })
+              body: JSON.stringify({ status: 'cancelled' })
             })
           ))
           alert(`${selectedQuotes.length}개 견적서가 거절되었습니다.`)
@@ -1184,7 +1202,14 @@ export default function QuotesPage() {
                     <TableHead className="w-[50px]">
                       <input
                         type="checkbox"
-                        checked={selectAll && quotes.length > 0}
+                        checked={selectedQuotes.length > 0 && quotes.length > 0 && selectedQuotes.length === quotes.filter(quote => {
+                          const matchesSearch = 
+                            quote.customer?.business_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            quote.customer?.owner_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            quote.contract_number?.toLowerCase().includes(searchTerm.toLowerCase())
+                          const matchesStatus = statusFilter === 'all' || quote.status === statusFilter
+                          return matchesSearch && matchesStatus
+                        }).length}
                         onChange={(e) => handleSelectAll(e.target.checked)}
                         className="rounded"
                       />
