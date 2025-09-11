@@ -855,9 +855,26 @@ export default function QuotesPage() {
                             <Button 
                               variant="ghost" 
                               size="sm"
-                              onClick={() => {
-                                // 견적서 PDF 다운로드 또는 이메일 발송 기능
-                                alert(`${quote.customer.business_name}에 견적서를 발송합니다.`)
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch('/api/kakao/send-quote', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                      contract_id: quote.contract_id
+                                    })
+                                  })
+
+                                  if (response.ok) {
+                                    const data = await response.json()
+                                    alert(`${quote.customer.business_name}에 카카오톡 견적서를 발송했습니다!\n\n발송 링크: ${data.quote_url}`)
+                                  } else {
+                                    alert('발송에 실패했습니다.')
+                                  }
+                                } catch (error) {
+                                  console.error('카톡 발송 오류:', error)
+                                  alert('네트워크 오류가 발생했습니다.')
+                                }
                               }}
                             >
                               <Send className="h-4 w-4" />
