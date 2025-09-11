@@ -19,7 +19,11 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('products')
-      .select('*')
+      .select(`
+        *,
+        max_discount_rate,
+        discount_tiers
+      `)
       .order('category', { ascending: true })
       .order('name', { ascending: true })
 

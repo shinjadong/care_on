@@ -96,8 +96,43 @@ function MyQuotesContent() {
       
       if (response.ok) {
         const data = await response.json()
+        console.log('견적 페이지 API 응답:', data)
+        
         if (data.customer) {
-          setQuote(data.customer)
+          // API 응답 데이터 구조에 맞게 변환
+          const transformedQuote = {
+            contract_id: data.customer.id,
+            contract_number: data.customer.contract_number,
+            customer: {
+              customer_code: data.customer.customer_number,
+              business_name: data.customer.business_name,
+              owner_name: data.customer.name,
+              phone: data.customer.phone,
+              email: data.customer.email,
+              address: data.customer.address
+            },
+            total_monthly_fee: data.customer.total_monthly_fee,
+            status: data.customer.status,
+            created_at: data.customer.created_at,
+            processed_at: data.customer.created_at,
+            start_date: data.customer.start_date,
+            end_date: data.customer.end_date,
+            
+            // 패키지 정보 (있는 경우)
+            package: data.customer.package ? {
+              name: data.customer.package.name,
+              monthly_fee: data.customer.package.monthly_fee,
+              contract_period: data.customer.package.contract_period,
+              free_period: data.customer.package.free_period,
+              closure_refund_rate: data.customer.package.closure_refund_rate,
+              included_services: data.customer.package.included_services
+            } : null,
+            
+            // 계약 상품 정보 (커스텀 계약인 경우)
+            contract_items: data.customer.contract_items || []
+          }
+          
+          setQuote(transformedQuote)
         } else {
           setError('해당 견적서를 찾을 수 없습니다.')
         }
@@ -214,266 +249,151 @@ function MyQuotesContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* 헤더 */}
+    <div className="min-h-screen bg-white py-8">
+      <div className="max-w-lg mx-auto px-4">
+        {/* 심플 헤더 */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            CareOn 견적서
+          <h1 className="text-2xl font-bold text-gray-900">
+            {quote.customer.business_name}
           </h1>
-          <p className="text-gray-600">
-            고객님의 맞춤형 서비스 견적을 확인해보세요
-          </p>
+          <p className="text-gray-500 mt-1">견적서</p>
         </div>
 
-        {/* 고객 정보 */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Building className="h-5 w-5 mr-2" />
-              고객 정보
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <Building className="h-4 w-4 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">사업체명</p>
-                    <p className="font-medium">{quote.customer.business_name}</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <User className="h-4 w-4 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">대표자</p>
-                    <p className="font-medium">{quote.customer.owner_name}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <Phone className="h-4 w-4 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">연락처</p>
-                    <p className="font-medium">{quote.customer.phone}</p>
-                  </div>
-                </div>
-                {quote.customer.email && (
-                  <div className="flex items-center space-x-3">
-                    <Mail className="h-4 w-4 text-gray-400" />
-                    <div>
-                      <p className="text-sm text-gray-500">이메일</p>
-                      <p className="font-medium">{quote.customer.email}</p>
-                    </div>
-                  </div>
-                )}
+        {/* 서비스 구성 */}
+        <div className="bg-gray-50 rounded-2xl p-6 mb-6">
+          {quote.package ? (
+            /* 패키지 */
+            <div>
+              <h3 className="text-lg font-bold mb-4">{quote.package.name}</h3>
+              <div className="space-y-2 text-sm text-gray-600">
+                <p>계약기간: {quote.package.contract_period}개월</p>
+                <p>무료혜택: {quote.package.free_period}개월</p>
+                <p>환급보장: {quote.package.closure_refund_rate}%</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* 견적 정보 */}
-        <Card className="mb-6">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle className="flex items-center">
-                <Calculator className="h-5 w-5 mr-2" />
-                견적 정보
-              </CardTitle>
-              {getStatusBadge(quote.status)}
-            </div>
-            <CardDescription>
-              견적번호: {quote.contract_number} | 견적일: {new Date(quote.created_at).toLocaleDateString()}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {quote.package ? (
-              /* 패키지 기반 견적 */
+          ) : (
+            /* 커스텀 구성 */
+            <div>
+              <h3 className="text-lg font-bold mb-4">서비스 구성</h3>
               <div className="space-y-4">
-                <div className="bg-blue-50 p-6 rounded-lg">
-                  <h3 className="text-xl font-bold text-blue-900 mb-2">
-                    {quote.package.name}
-                  </h3>
-                  <p className="text-blue-700 mb-4">
-                    {quote.package.included_services}
-                  </p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <p className="text-blue-600 font-medium">계약기간</p>
-                      <p className="font-bold">{quote.package.contract_period}개월</p>
-                    </div>
-                    <div>
-                      <p className="text-green-600 font-medium">무료혜택</p>
-                      <p className="font-bold">{quote.package.free_period}개월 무료</p>
-                    </div>
-                    <div>
-                      <p className="text-purple-600 font-medium">환급보장</p>
-                      <p className="font-bold">{quote.package.closure_refund_rate}% 환급</p>
-                    </div>
-                    <div>
-                      <p className="text-red-600 font-medium">월 요금</p>
-                      <p className="font-bold text-lg">{quote.total_monthly_fee.toLocaleString()}원</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* 커스텀 견적 */
-              <div className="space-y-4">
-                <h3 className="text-lg font-bold text-gray-900">맞춤형 서비스 구성</h3>
-                {quote.contract_items && quote.contract_items.length > 0 && (
-                  <div className="space-y-3">
-                    {quote.contract_items.map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          {getCategoryIcon(item.product.category)}
-                          <div>
-                            <p className="font-medium">{item.product.name}</p>
-                            <p className="text-sm text-gray-500">
-                              {item.product.provider} | 수량: {item.quantity}개
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold">{item.fee.toLocaleString()}원</p>
-                          <p className="text-sm text-gray-500">월</p>
-                        </div>
+                {quote.contract_items?.map((item, index) => (
+                  <div key={index} className="bg-white p-4 rounded-lg border">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        {getCategoryIcon(item.product.category)}
+                        <span className="font-medium">{item.product.name}</span>
                       </div>
-                    ))}
+                      <div className="text-right">
+                        <div className="text-sm text-gray-500">수량: {item.quantity}개</div>
+                      </div>
+                    </div>
+                    
+                    {/* 할인 정보 표시 */}
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <div>
+                        <p className="text-gray-500">정가</p>
+                        <p className="font-medium text-gray-400 line-through">
+                          {(item.original_price || item.fee).toLocaleString()}원
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-red-500">할인율</p>
+                        <p className="font-bold text-red-500">
+                          {item.discount_rate || 0}% 할인
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-blue-500">할인가</p>
+                        <p className="font-bold text-blue-600">
+                          {item.fee.toLocaleString()}원
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* 할인 사유 표시 */}
+                    {item.discount_reason && (
+                      <div className="mt-2 p-2 bg-green-50 rounded text-xs text-green-700">
+                        💡 {item.discount_reason}
+                      </div>
+                    )}
+                    
+                    {/* 절약액 표시 */}
+                    {(item.original_price || item.fee) > item.fee && (
+                      <div className="mt-2 text-right">
+                        <span className="text-xs text-green-600">
+                          절약: {((item.original_price || item.fee) - item.fee).toLocaleString()}원/월
+                        </span>
+                      </div>
+                    )}
                   </div>
-                )}
+                ))}
               </div>
-            )}
+            </div>
+          )}
+        </div>
 
-            {/* 요금 정보 */}
-            <div className="mt-6 p-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg">
-              <div className="flex justify-between items-center mb-4">
-                <h4 className="text-lg font-bold">최종 견적</h4>
-                {quote.package?.free_period && (
-                  <Badge className="bg-green-100 text-green-800">
-                    🎁 {quote.package.free_period}개월 무료!
-                  </Badge>
-                )}
+        {/* 총 요금 및 할인 정보 */}
+        <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-2xl p-6 mb-8">
+          {/* 할인 정보 요약 (커스텀 견적인 경우) */}
+          {quote.contract_items && quote.contract_items.length > 0 && (
+            <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b">
+              <div className="text-center">
+                <p className="text-sm text-gray-600">정가 합계</p>
+                <p className="text-lg font-bold text-gray-400 line-through">
+                  {quote.contract_items.reduce((sum, item) => 
+                    sum + ((item.original_price || item.fee) * item.quantity), 0
+                  ).toLocaleString()}원
+                </p>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-white rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">무료 기간 중</p>
-                  <p className="text-2xl font-bold text-green-600">0원</p>
-                  <p className="text-xs text-gray-400">
-                    {quote.package?.free_period || 12}개월간
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-white rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">무료 기간 후</p>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {quote.total_monthly_fee.toLocaleString()}원
-                  </p>
-                  <p className="text-xs text-gray-400">월</p>
-                </div>
-                <div className="text-center p-4 bg-white rounded-lg">
-                  <p className="text-sm text-gray-500 mb-1">폐업시 환급</p>
-                  <p className="text-2xl font-bold text-purple-600">
-                    {quote.package?.closure_refund_rate || 100}%
-                  </p>
-                  <p className="text-xs text-gray-400">보장</p>
-                </div>
+              <div className="text-center">
+                <p className="text-sm text-green-600">총 절약액</p>
+                <p className="text-lg font-bold text-green-600">
+                  -{quote.contract_items.reduce((sum, item) => 
+                    sum + (((item.original_price || item.fee) - item.fee) * item.quantity), 0
+                  ).toLocaleString()}원
+                </p>
               </div>
-
-              {/* 총 절약 금액 */}
+            </div>
+          )}
+          
+          <div className="text-center">
+            <p className="text-gray-600 mb-2">할인 적용 후 월 이용료</p>
+            <p className="text-4xl font-bold text-blue-600">
+              {quote.total_monthly_fee.toLocaleString()}원
+            </p>
+            
+            {/* 추가 혜택 표시 */}
+            <div className="mt-4 space-y-1">
               {quote.package?.free_period && (
-                <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">무료 기간 총 절약액:</span>
-                    <span className="text-xl font-bold text-yellow-600">
-                      {(quote.total_monthly_fee * quote.package.free_period).toLocaleString()}원
-                    </span>
-                  </div>
-                </div>
+                <p className="text-green-600 font-medium">
+                  🎁 {quote.package.free_period}개월 무료
+                </p>
+              )}
+              
+              {quote.contract_items && quote.contract_items.some(item => item.discount_rate > 0) && (
+                <p className="text-red-500 font-medium">
+                  💰 최대 {Math.max(...(quote.contract_items.map(item => item.discount_rate || 0)))}% 특별 할인 적용
+                </p>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* 계약 진행 단계 */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>계약 진행 현황</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-4">
-              <div className={`flex items-center space-x-2 ${
-                quote.status === 'quoted' || quote.status === 'approved' || quote.status === 'active' 
-                  ? 'text-green-600' : 'text-gray-400'
-              }`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  quote.status === 'quoted' || quote.status === 'approved' || quote.status === 'active'
-                    ? 'bg-green-100' : 'bg-gray-100'
-                }`}>
-                  <CheckCircle className="h-4 w-4" />
-                </div>
-                <span>견적 완료</span>
-              </div>
-              
-              <div className="flex-1 h-0.5 bg-gray-200"></div>
-              
-              <div className={`flex items-center space-x-2 ${
-                quote.status === 'approved' || quote.status === 'active' 
-                  ? 'text-green-600' : 'text-gray-400'
-              }`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  quote.status === 'approved' || quote.status === 'active'
-                    ? 'bg-green-100' : 'bg-gray-100'
-                }`}>
-                  <FileText className="h-4 w-4" />
-                </div>
-                <span>계약 서명</span>
-              </div>
-              
-              <div className="flex-1 h-0.5 bg-gray-200"></div>
-              
-              <div className={`flex items-center space-x-2 ${
-                quote.status === 'active' ? 'text-green-600' : 'text-gray-400'
-              }`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  quote.status === 'active' ? 'bg-green-100' : 'bg-gray-100'
-                }`}>
-                  <Package className="h-4 w-4" />
-                </div>
-                <span>서비스 시작</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 액션 버튼들 */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button 
-            size="lg" 
-            variant="outline"
-            onClick={() => window.print()}
-          >
-            <Download className="h-4 w-4 mr-2" />
-            견적서 다운로드
-          </Button>
-          
+        {/* 액션 버튼 */}
+        <div className="space-y-4">
           {quote.status === 'quoted' && (
             <Button 
               size="lg"
               onClick={() => setIsSignModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="w-full py-4 text-lg rounded-2xl bg-blue-600 hover:bg-blue-700"
             >
-              <FileText className="h-4 w-4 mr-2" />
               계약 서명하기
             </Button>
           )}
 
           {quote.status === 'active' && (
-            <Button size="lg" asChild>
+            <Button size="lg" className="w-full py-4 text-lg rounded-2xl" asChild>
               <a href="/my/services">
-                <Package className="h-4 w-4 mr-2" />
                 내 서비스 확인
               </a>
             </Button>

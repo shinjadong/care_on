@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-// 고객 정보 포맷팅 함수
+// 고객 정보 포맷팅 함수 (패키지 및 상품 정보 포함)
 function formatCustomerInfo(contractData: any) {
   return {
     id: contractData.id, // contract ID 추가
@@ -20,7 +20,7 @@ function formatCustomerInfo(contractData: any) {
       id_card_image: contractData.id_card_image ? '업로드됨' : '미업로드',
       business_registration_image: contractData.business_registration_image ? '업로드됨' : '미업로드'
     },
-    contract_number: 'CT' + contractData.customer_number.slice(2),
+    contract_number: contractData.contract_number || ('CT' + contractData.customer_number.slice(2)),
     created_at: contractData.created_at,
     status: contractData.status,
     // 견적 정보도 포함
@@ -28,7 +28,87 @@ function formatCustomerInfo(contractData: any) {
     internet_monthly_fee: contractData.internet_monthly_fee,
     cctv_count: contractData.cctv_count,
     cctv_monthly_fee: contractData.cctv_monthly_fee,
-    total_monthly_fee: contractData.total_monthly_fee
+    total_monthly_fee: contractData.total_monthly_fee,
+    
+    // 패키지 정보 추가
+    package: contractData.package,
+    
+    // 계약 상품 정보 추가  
+    contract_items: contractData.contract_items || [],
+    
+    // 계약 조건 정보
+    contract_period: contractData.contract_period,
+    free_period: contractData.free_period,
+    start_date: contractData.start_date,
+    end_date: contractData.end_date
+  }
+}
+
+// GET: URL 파라미터로 고객 정보 조회
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const customer_number = searchParams.get('customer_number')
+    const contract_number = searchParams.get('contract_number')
+    
+    if (!customer_number && !contract_number) {
+      return NextResponse.json({ customer: null })
+    }
+
+    const supabase = createClient(
+      'https://pkehcfbjotctvneordob.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrZWhjZmJqb3RjdHZuZW9yZG9iIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzE5MjY4MSwiZXhwIjoyMDY4NzY4NjgxfQ.fn1IxRxjJZ6gihy_SCvyQrT6Vx3xb1yMaVzztOsLeyk'
+    )
+
+    let query = supabase
+      .from('contracts')
+      .select(`
+        *,
+        customer:customers!contracts_customer_id_fkey(
+          customer_code,
+          business_name,
+          owner_name,
+          phone,
+          care_status
+        ),
+        package:packages!contracts_package_id_fkey(
+          name,
+          monthly_fee,
+          contract_period,
+          free_period,
+          closure_refund_rate,
+          included_services
+        ),
+        contract_items:contract_items(
+          quantity,
+          fee,
+          product:products!contract_items_product_id_fkey(
+            name,
+            category,
+            provider,
+            description
+          )
+        )
+      `)
+
+    if (customer_number) {
+      query = query.eq('customer_number', customer_number)
+    } else {
+      query = query.eq('contract_number', contract_number)
+    }
+
+    const { data: contractData, error } = await query.single()
+
+    if (error || !contractData) {
+      return NextResponse.json({ customer: null })
+    }
+
+    const customerInfo = formatCustomerInfo(contractData)
+    return NextResponse.json({ customer: customerInfo })
+
+  } catch (error) {
+    console.error('[Contract Search GET] Error:', error)
+    return NextResponse.json({ customer: null })
   }
 }
 

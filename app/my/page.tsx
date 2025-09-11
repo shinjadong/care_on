@@ -20,15 +20,31 @@ export default function MyPage() {
     name: '',
     phone: ''
   })
+  const [step, setStep] = useState(1) // 1: 이름 입력, 2: 전화번호 입력
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.name.trim() || !formData.phone.trim()) {
-      setError('이름과 전화번호를 모두 입력해주세요.')
+    if (step === 1) {
+      // 1단계: 이름 입력 검증
+      if (!formData.name.trim()) {
+        setError('이름을 입력해주세요.')
+        return
+      }
+      setError('')
+      setStep(2) // 전화번호 입력 단계로
+    } else {
+      // 2단계: 전화번호 입력 후 견적서 조회
+      handleSubmit()
+    }
+  }
+
+  const handleSubmit = async () => {
+    if (!formData.phone.trim()) {
+      setError('전화번호를 입력해주세요.')
       return
     }
 
@@ -48,6 +64,7 @@ export default function MyPage() {
 
       if (response.ok) {
         const data = await response.json()
+        
         if (data.customer) {
           // 견적서가 있으면 견적 페이지로, 계약이 활성이면 서비스 페이지로
           if (data.customer.status === 'active') {
@@ -56,10 +73,10 @@ export default function MyPage() {
             router.push(`/my/quotes?c=${data.customer.customer_number}`)
           }
         } else {
-          setError('입력하신 정보와 일치하는 견적서를 찾을 수 없습니다.\n이름과 전화번호를 다시 확인해주세요.')
+          setError('정보를 다시 확인해주세요.')
         }
       } else {
-        setError('조회 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+        setError('조회 중 오류가 발생했습니다.')
       }
     } catch (error) {
       console.error('고객 조회 오류:', error)
@@ -67,6 +84,11 @@ export default function MyPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleBack = () => {
+    setStep(1)
+    setError('')
   }
 
   const handlePhoneChange = (value: string) => {
@@ -86,136 +108,82 @@ export default function MyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        {/* 로고/제목 */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Building className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            CareOn 고객센터
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        {/* 단계별 제목 */}
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold text-gray-900">
+            {step === 1 ? '성함을 입력해주세요' : '전화번호를 입력해주세요'}
           </h1>
-          <p className="text-gray-600">
-            견적서 확인 및 서비스 현황을 조회하세요
-          </p>
         </div>
 
-        {/* 인증 폼 */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center flex items-center justify-center">
-              <FileText className="h-5 w-5 mr-2" />
-              정보 입력
-            </CardTitle>
-            <CardDescription className="text-center">
-              견적서 확인을 위해 정보를 입력해주세요
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* 이름 입력 */}
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-medium flex items-center">
-                  <User className="h-4 w-4 mr-2" />
-                  이름 <span className="text-red-500 ml-1">*</span>
-                </Label>
-                <Input
-                  id="name"
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="홍길동"
-                  className="text-lg py-6"
-                  autoFocus
-                  required
-                />
+        {/* 단계별 폼 */}
+        <form onSubmit={handleNextStep} className="space-y-6">
+          {step === 1 ? (
+            /* 1단계: 이름 입력 */
+            <div>
+              <Input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="이름"
+                className="w-full text-center text-xl py-4 border-2 border-gray-300 rounded-2xl focus:border-blue-500 transition-colors"
+                autoFocus
+                required
+              />
+            </div>
+          ) : (
+            /* 2단계: 전화번호 입력 */
+            <div>
+              <div className="text-center mb-4 text-gray-600">
+                {formData.name}님
               </div>
+              <Input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => handlePhoneChange(e.target.value)}
+                placeholder="전화번호"
+                className="w-full text-center text-xl py-4 border-2 border-gray-300 rounded-2xl focus:border-blue-500 transition-colors"
+                maxLength={13}
+                autoFocus
+                required
+              />
+            </div>
+          )}
 
-              {/* 전화번호 입력 */}
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="text-sm font-medium flex items-center">
-                  <Phone className="h-4 w-4 mr-2" />
-                  전화번호 <span className="text-red-500 ml-1">*</span>
-                </Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => handlePhoneChange(e.target.value)}
-                  placeholder="010-1234-5678"
-                  className="text-lg py-6"
-                  maxLength={13}
-                  required
-                />
-                <p className="text-xs text-gray-500">
-                  견적서 신청 시 입력하신 전화번호를 입력하세요
-                </p>
-              </div>
-
-              {/* 오류 메시지 */}
-              {error && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <div className="flex items-start space-x-2">
-                    <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="text-sm font-medium text-red-800">조회 실패</h4>
-                      <p className="text-sm text-red-700 whitespace-pre-line">{error}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* 제출 버튼 */}
+          {/* 버튼들 */}
+          <div className="space-y-3">
+            {step === 2 && (
               <Button 
-                type="submit" 
-                className="w-full py-6 text-lg" 
-                size="lg"
-                disabled={loading}
+                type="button"
+                onClick={handleBack}
+                variant="outline"
+                className="w-full py-3 text-lg rounded-2xl"
               >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    조회 중...
-                  </>
-                ) : (
-                  <>
-                    <Search className="h-4 w-4 mr-2" />
-                    견적서 확인하기
-                  </>
-                )}
+                이전
               </Button>
-
-              {/* 안내 문구 */}
-              <div className="text-center text-sm text-gray-500 space-y-2">
-                <p>📱 카카오톡으로 받은 링크를 통해서도 접근 가능합니다</p>
-                <p>🔒 입력하신 정보는 안전하게 보호됩니다</p>
-                
-                <div className="mt-4 pt-4 border-t">
-                  <p className="font-medium text-gray-700 mb-2">📞 고객센터</p>
-                  <p>전화: 1588-1234</p>
-                  <p>운영시간: 평일 09:00-18:00</p>
-                </div>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-
-        {/* 하단 안내 */}
-        <div className="mt-6 text-center">
-          <div className="grid grid-cols-2 gap-4 text-xs text-gray-500">
-            <div className="p-3 bg-white rounded-lg shadow-sm">
-              <FileText className="h-6 w-6 mx-auto mb-2 text-blue-500" />
-              <p className="font-medium">견적서 확인</p>
-              <p>패키지 정보 및 요금</p>
-            </div>
-            <div className="p-3 bg-white rounded-lg shadow-sm">
-              <Building className="h-6 w-6 mx-auto mb-2 text-green-500" />
-              <p className="font-medium">서비스 현황</p>
-              <p>이용 중인 서비스</p>
-            </div>
+            )}
+            
+            <Button 
+              type="submit" 
+              className="w-full py-4 text-xl rounded-2xl bg-blue-500 hover:bg-blue-600 transition-colors" 
+              disabled={
+                loading || 
+                (step === 1 && !formData.name.trim()) || 
+                (step === 2 && !formData.phone.trim())
+              }
+            >
+              {loading ? '확인 중...' : step === 1 ? '다음' : '견적서 확인'}
+            </Button>
           </div>
-        </div>
+
+          {/* 간단한 오류 메시지 */}
+          {error && (
+            <div className="text-center text-red-500 text-sm mt-4">
+              {error}
+            </div>
+          )}
+        </form>
       </div>
     </div>
   )

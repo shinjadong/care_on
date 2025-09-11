@@ -22,7 +22,9 @@ import {
   Package,
   User,
   DollarSign,
-  Trash2
+  Trash2,
+  Copy,
+  CheckCircle
 } from 'lucide-react'
 
 interface Quote {
@@ -56,6 +58,17 @@ export default function QuotesPage() {
   const [isQuoteDetailOpen, setIsQuoteDetailOpen] = useState(false)
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null)
   const [isEditQuoteOpen, setIsEditQuoteOpen] = useState(false)
+  
+  // 선택 관리
+  const [selectedQuotes, setSelectedQuotes] = useState<string[]>([])
+  const [selectAll, setSelectAll] = useState(false)
+  
+  // 인라인 편집
+  const [editingField, setEditingField] = useState<{contract_id: string, field: string} | null>(null)
+  const [editingValue, setEditingValue] = useState('')
+  
+  // 벌크 액션
+  const [bulkAction, setBulkAction] = useState('')
 
   // 새 견적 생성 폼
   const [customerSearchTerm, setCustomerSearchTerm] = useState('')
@@ -70,7 +83,10 @@ export default function QuotesPage() {
   const [selectedCustomProducts, setSelectedCustomProducts] = useState<Array<{
     product: any
     quantity: number
-    custom_fee: number
+    original_price: number  // 정가
+    custom_fee: number      // 할인가
+    discount_rate: number   // 할인율
+    discount_reason: string // 할인 사유
   }>>([])
   const [customQuoteDetails, setCustomQuoteDetails] = useState({
     contract_period: 36,
@@ -78,6 +94,9 @@ export default function QuotesPage() {
     discount_amount: 0,
     notes: ''
   })
+  
+  // 매니저 할인 권한 (실제로는 로그인된 매니저 정보에서 가져와야 함)
+  const managerDiscountLimit = 20 // 최대 20% 할인 권한
 
   useEffect(() => {
     fetchQuotes()
@@ -142,7 +161,24 @@ export default function QuotesPage() {
     }
   }
 
-  // 커스텀 패키지 관리 함수들
+  // 할인 계산 함수들
+  const calculateDiscountedPrice = (originalPrice: number, discountRate: number) => {
+    return Math.round(originalPrice * (100 - discountRate) / 100)
+  }
+
+  const getDiscountTiers = (product: any) => {
+    return product.discount_tiers || [
+      {rate: 5, condition: '신규고객', description: '첫 계약 고객'},
+      {rate: 10, condition: '패키지할인', description: '다른 서비스와 함께'},
+      {rate: 15, condition: '특별할인', description: '매니저 재량'}
+    ]
+  }
+
+  const getMaxAllowedDiscount = (product: any) => {
+    return Math.min(product.max_discount_rate || 15, managerDiscountLimit)
+  }
+
+  // 커스텀 패키지 관리 함수들 (할인 시스템 포함)
   const addProductToCustom = (product: any) => {
     const existingIndex = selectedCustomProducts.findIndex(p => p.product.product_id === product.product_id)
     
@@ -152,11 +188,15 @@ export default function QuotesPage() {
       updated[existingIndex].quantity += 1
       setSelectedCustomProducts(updated)
     } else {
-      // 새 상품 추가
+      // 새 상품 추가 (할인 정보 포함)
+      const originalPrice = product.monthly_fee || 0
       setSelectedCustomProducts([...selectedCustomProducts, {
         product,
         quantity: 1,
-        custom_fee: product.monthly_fee || 0
+        original_price: originalPrice,
+        custom_fee: originalPrice, // 기본값은 정가
+        discount_rate: 0,
+        discount_reason: ''
       }])
     }
   }
@@ -179,11 +219,45 @@ export default function QuotesPage() {
   }
 
   const updateProductFee = (product_id: string, custom_fee: number) => {
-    setSelectedCustomProducts(selectedCustomProducts.map(p => 
-      p.product.product_id === product_id 
-        ? { ...p, custom_fee: Math.max(0, custom_fee) }
-        : p
-    ))
+    setSelectedCustomProducts(selectedCustomProducts.map(p => {
+      if (p.product.product_id === product_id) {
+        // 할인가 직접 입력 시 할인율 자동 계산
+        const newFee = Math.max(0, custom_fee)
+        const newDiscountRate = p.original_price > 0 ? 
+          Math.round((p.original_price - newFee) / p.original_price * 100) : 0
+        
+        return { 
+          ...p, 
+          custom_fee: newFee,
+          discount_rate: Math.max(0, newDiscountRate)
+        }
+      }
+      return p
+    }))
+  }
+
+  // 할인율 직접 적용 함수
+  const updateProductDiscount = (product_id: string, discount_rate: number, reason: string = '') => {
+    setSelectedCustomProducts(selectedCustomProducts.map(p => {
+      if (p.product.product_id === product_id) {
+        const maxDiscount = getMaxAllowedDiscount(p.product)
+        const appliedRate = Math.min(discount_rate, maxDiscount)
+        const discountedPrice = calculateDiscountedPrice(p.original_price, appliedRate)
+        
+        return { 
+          ...p, 
+          discount_rate: appliedRate,
+          custom_fee: discountedPrice,
+          discount_reason: reason
+        }
+      }
+      return p
+    }))
+  }
+
+  // 빠른 할인 적용 함수
+  const applyQuickDiscount = (product_id: string, discountTier: any) => {
+    updateProductDiscount(product_id, discountTier.rate, discountTier.condition)
   }
 
   const calculateCustomTotal = () => {
@@ -191,6 +265,211 @@ export default function QuotesPage() {
       sum + (item.custom_fee * item.quantity), 0
     )
     return Math.max(0, subtotal - customQuoteDetails.discount_amount)
+  }
+
+  // 견적 관리 함수들
+  const handleSelectQuote = (contract_id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedQuotes([...selectedQuotes, contract_id])
+    } else {
+      setSelectedQuotes(selectedQuotes.filter(id => id !== contract_id))
+    }
+  }
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedQuotes(quotes.map(q => q.contract_id))
+      setSelectAll(true)
+    } else {
+      setSelectedQuotes([])
+      setSelectAll(false)
+    }
+  }
+
+  // 인라인 편집 함수들
+  const startEditing = (contract_id: string, field: string, currentValue: string) => {
+    setEditingField({ contract_id, field })
+    setEditingValue(currentValue || '')
+  }
+
+  const cancelEditing = () => {
+    setEditingField(null)
+    setEditingValue('')
+  }
+
+  const saveFieldEdit = async (contract_id: string, field: string, value: string) => {
+    try {
+      const response = await fetch('/api/contract/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contract_id,
+          [field]: field === 'total_monthly_fee' ? parseInt(value) || 0 : value
+        })
+      })
+
+      if (response.ok) {
+        // 성공 시 견적 목록에서 해당 필드 업데이트
+        setQuotes(quotes.map(quote => 
+          quote.contract_id === contract_id 
+            ? { ...quote, [field]: field === 'total_monthly_fee' ? parseInt(value) || 0 : value }
+            : quote
+        ))
+        setEditingField(null)
+        setEditingValue('')
+      } else {
+        alert('수정에 실패했습니다.')
+      }
+    } catch (error) {
+      console.error('필드 수정 오류:', error)
+      alert('네트워크 오류가 발생했습니다.')
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent, contract_id: string, field: string) => {
+    if (e.key === 'Enter') {
+      saveFieldEdit(contract_id, field, editingValue)
+    } else if (e.key === 'Escape') {
+      cancelEditing()
+    }
+  }
+
+  const isEditing = (contract_id: string, field: string) => {
+    return editingField?.contract_id === contract_id && editingField?.field === field
+  }
+
+  // 견적서 삭제 (소프트 삭제)
+  const handleDeleteQuotes = async (quoteIds: string[]) => {
+    try {
+      if (!confirm(`선택한 ${quoteIds.length}개 견적서를 삭제하시겠습니까?`)) {
+        return
+      }
+
+      const promises = quoteIds.map(id => 
+        fetch('/api/contract/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contract_id: id,
+            status: 'cancelled'
+          })
+        })
+      )
+
+      await Promise.all(promises)
+      alert(`${quoteIds.length}개 견적서가 취소되었습니다.`)
+      setSelectedQuotes([])
+      fetchQuotes()
+    } catch (error) {
+      console.error('견적서 삭제 오류:', error)
+      alert('삭제에 실패했습니다.')
+    }
+  }
+
+  // 견적서 복사
+  const handleCopyQuote = async (originalQuote: Quote) => {
+    try {
+      // 같은 고객에 대한 새 견적 생성
+      const response = await fetch('/api/quotes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_id: originalQuote.customer.customer_code, // 임시
+          package_id: originalQuote.package ? 'package_copy' : null,
+          total_monthly_fee: originalQuote.total_monthly_fee,
+          manager_name: '관리자 (복사)',
+          quote_notes: `${originalQuote.contract_number}의 복사본`
+        })
+      })
+
+      if (response.ok) {
+        alert('견적서가 성공적으로 복사되었습니다.')
+        fetchQuotes()
+      } else {
+        alert('견적서 복사에 실패했습니다.')
+      }
+    } catch (error) {
+      console.error('견적서 복사 오류:', error)
+      alert('복사에 실패했습니다.')
+    }
+  }
+
+  // 벌크 액션 처리
+  const handleBulkAction = async (action: string) => {
+    if (selectedQuotes.length === 0) {
+      alert('견적서를 선택해주세요.')
+      return
+    }
+
+    try {
+      switch (action) {
+        case 'approve':
+          await Promise.all(selectedQuotes.map(id => 
+            fetch('/api/contract/update', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ contract_id: id, status: 'approved' })
+            })
+          ))
+          alert(`${selectedQuotes.length}개 견적서가 승인되었습니다.`)
+          break
+          
+        case 'reject':
+          await Promise.all(selectedQuotes.map(id => 
+            fetch('/api/contract/update', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ contract_id: id, status: 'cancelled' })
+            })
+          ))
+          alert(`${selectedQuotes.length}개 견적서가 거절되었습니다.`)
+          break
+          
+        case 'delete':
+          handleDeleteQuotes(selectedQuotes)
+          return
+          
+        case 'export':
+          handleExportQuotes(selectedQuotes)
+          break
+      }
+      
+      setSelectedQuotes([])
+      setBulkAction('')
+      fetchQuotes()
+    } catch (error) {
+      console.error('벌크 액션 오류:', error)
+      alert('일괄 작업에 실패했습니다.')
+    }
+  }
+
+  const handleExportQuotes = (quoteIds: string[]) => {
+    const exportData = quotes
+      .filter(q => quoteIds.includes(q.contract_id))
+      .map(q => ({
+        견적번호: q.contract_number,
+        고객명: q.customer.business_name,
+        대표자: q.customer.owner_name,
+        전화번호: q.customer.phone,
+        패키지: q.package?.name || '커스텀',
+        월요금: q.total_monthly_fee,
+        상태: q.status,
+        생성일: new Date(q.created_at).toLocaleDateString(),
+        담당자: q.processed_by
+      }))
+
+    const csvContent = [
+      Object.keys(exportData[0]).join(','),
+      ...exportData.map(row => Object.values(row).join(','))
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `견적서목록_${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
   const handleCreateQuote = async () => {
@@ -340,6 +619,29 @@ export default function QuotesPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">견적 관리</h1>
           <p className="text-gray-600">고객별 견적서를 생성하고 관리합니다</p>
+          {selectedQuotes.length > 0 && (
+            <div className="flex items-center space-x-2 mt-2">
+              <Badge variant="outline">{selectedQuotes.length}개 선택됨</Badge>
+              <Button size="sm" variant="outline" onClick={() => handleBulkAction('approve')}>
+                <CheckCircle className="h-4 w-4 mr-1" />
+                일괄 승인
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => handleBulkAction('reject')}>
+                일괄 거절
+              </Button>
+              <Select value={bulkAction} onValueChange={setBulkAction}>
+                <SelectTrigger className="w-32 h-8">
+                  <SelectValue placeholder="일괄 작업" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="approve">승인</SelectItem>
+                  <SelectItem value="reject">거절</SelectItem>
+                  <SelectItem value="delete">삭제</SelectItem>
+                  <SelectItem value="export">선택 견적서 내보내기</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
         <Dialog open={isNewQuoteOpen} onOpenChange={setIsNewQuoteOpen}>
           <DialogTrigger asChild>
@@ -501,51 +803,138 @@ export default function QuotesPage() {
                           ) : (
                             <div className="space-y-2 max-h-60 overflow-y-auto">
                               {selectedCustomProducts.map((item) => (
-                                <div key={item.product.product_id} className="p-3 border rounded-lg bg-gray-50">
-                                  <div className="flex items-center justify-between">
+                                <div key={item.product.product_id} className="p-4 border rounded-lg bg-white">
+                                  {/* 상품 정보 헤더 */}
+                                  <div className="flex items-center justify-between mb-3">
                                     <div className="flex-1">
                                       <div className="font-medium">{item.product.name}</div>
-                                      <div className="text-sm text-gray-500">{item.product.category}</div>
+                                      <div className="text-sm text-gray-500">{item.product.category} | {item.product.provider}</div>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                      <div className="flex items-center space-x-1">
-                                        <Label className="text-xs">수량:</Label>
-                                        <Input
-                                          type="number"
-                                          value={item.quantity}
-                                          onChange={(e) => updateProductQuantity(
-                                            item.product.product_id, 
-                                            parseInt(e.target.value) || 1
-                                          )}
-                                          className="w-16 h-8"
-                                          min="1"
-                                        />
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => removeProductFromCustom(item.product.product_id)}
+                                    >
+                                      <Trash2 className="h-4 w-4 text-red-500" />
+                                    </Button>
+                                  </div>
+
+                                  {/* 가격 정보 */}
+                                  <div className="grid grid-cols-2 gap-4 mb-3">
+                                    <div>
+                                      <Label className="text-xs text-gray-600">정가</Label>
+                                      <div className="text-lg font-bold text-gray-400 line-through">
+                                        {item.original_price.toLocaleString()}원
                                       </div>
-                                      <div className="flex items-center space-x-1">
-                                        <Label className="text-xs">요금:</Label>
-                                        <Input
-                                          type="number"
-                                          value={item.custom_fee}
-                                          onChange={(e) => updateProductFee(
-                                            item.product.product_id, 
-                                            parseInt(e.target.value) || 0
-                                          )}
-                                          className="w-20 h-8"
-                                          min="0"
-                                        />
-                                        <span className="text-xs text-gray-500">원</span>
+                                    </div>
+                                    <div>
+                                      <Label className="text-xs text-gray-600">할인가</Label>
+                                      <div className="text-lg font-bold text-blue-600">
+                                        {item.custom_fee.toLocaleString()}원
+                                        {item.discount_rate > 0 && (
+                                          <span className="text-sm text-red-500 ml-2">
+                                            {item.discount_rate}% 할인
+                                          </span>
+                                        )}
                                       </div>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => removeProductFromCustom(item.product.product_id)}
-                                      >
-                                        <Trash2 className="h-4 w-4 text-red-500" />
-                                      </Button>
                                     </div>
                                   </div>
-                                  <div className="text-right mt-2">
-                                    <span className="font-medium">
+
+                                  {/* 빠른 할인 버튼들 */}
+                                  <div className="mb-3">
+                                    <Label className="text-xs text-gray-600 mb-2 block">빠른 할인 적용</Label>
+                                    <div className="flex flex-wrap gap-2">
+                                      {getDiscountTiers(item.product).map((tier: any, tierIndex: number) => (
+                                        <Button
+                                          key={`${item.product.product_id}-tier-${tierIndex}`}
+                                          variant="outline"
+                                          size="sm"
+                                          className="text-xs h-8"
+                                          onClick={() => applyQuickDiscount(item.product.product_id, tier)}
+                                          disabled={tier.rate > getMaxAllowedDiscount(item.product)}
+                                        >
+                                          {tier.rate}% ({tier.condition})
+                                        </Button>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* 세부 조정 */}
+                                  <div className="grid grid-cols-3 gap-2">
+                                    <div>
+                                      <Label className="text-xs">수량</Label>
+                                      <Input
+                                        type="number"
+                                        value={item.quantity}
+                                        onChange={(e) => updateProductQuantity(
+                                          item.product.product_id, 
+                                          parseInt(e.target.value) || 1
+                                        )}
+                                        className="h-8"
+                                        min="1"
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label className="text-xs">할인율(%)</Label>
+                                      <Input
+                                        type="number"
+                                        value={item.discount_rate}
+                                        onChange={(e) => {
+                                          const rate = parseInt(e.target.value) || 0
+                                          updateProductDiscount(
+                                            item.product.product_id, 
+                                            rate,
+                                            item.discount_reason
+                                          )
+                                        }}
+                                        className="h-8"
+                                        min="0"
+                                        max={getMaxAllowedDiscount(item.product)}
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label className="text-xs">할인가</Label>
+                                      <Input
+                                        type="number"
+                                        value={item.custom_fee}
+                                        onChange={(e) => updateProductFee(
+                                          item.product.product_id, 
+                                          parseInt(e.target.value) || 0
+                                        )}
+                                        className="h-8"
+                                        min="0"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  {/* 할인 사유 */}
+                                  {item.discount_rate > 0 && (
+                                    <div className="mt-2">
+                                      <Input
+                                        placeholder="할인 사유 (선택)"
+                                        value={item.discount_reason}
+                                        onChange={(e) => {
+                                          setSelectedCustomProducts(selectedCustomProducts.map(p => 
+                                            p.product.product_id === item.product.product_id 
+                                              ? { ...p, discount_reason: e.target.value }
+                                              : p
+                                          ))
+                                        }}
+                                        className="h-8 text-xs"
+                                      />
+                                    </div>
+                                  )}
+
+                                  {/* 소계 및 절약액 */}
+                                  <div className="flex justify-between items-center mt-3 pt-3 border-t">
+                                    <div>
+                                      {item.discount_rate > 0 && (
+                                        <span className="text-xs text-green-600">
+                                          절약: {((item.original_price - item.custom_fee) * item.quantity).toLocaleString()}원/월
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="font-bold">
                                       소계: {(item.custom_fee * item.quantity).toLocaleString()}원/월
                                     </span>
                                   </div>
@@ -608,23 +997,52 @@ export default function QuotesPage() {
                                   placeholder="특별 조건이나 메모를 입력하세요"
                                 />
                               </div>
-                              <div className="bg-blue-50 p-3 rounded-lg">
-                                <div className="flex justify-between items-center">
-                                  <span className="font-medium">최종 월 요금:</span>
-                                  <span className="text-xl font-bold text-blue-600">
-                                    {calculateCustomTotal().toLocaleString()}원
-                                  </span>
+                              <div className="bg-gradient-to-r from-blue-50 to-green-50 p-4 rounded-lg">
+                                {/* 할인 요약 */}
+                                <div className="grid grid-cols-2 gap-4 mb-3">
+                                  <div>
+                                    <p className="text-sm text-gray-600">정가 합계</p>
+                                    <p className="text-lg font-bold text-gray-500 line-through">
+                                      {selectedCustomProducts.reduce((sum, item) => 
+                                        sum + (item.original_price * item.quantity), 0
+                                      ).toLocaleString()}원
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <p className="text-sm text-gray-600">총 절약액</p>
+                                    <p className="text-lg font-bold text-green-600">
+                                      -{selectedCustomProducts.reduce((sum, item) => 
+                                        sum + ((item.original_price - item.custom_fee) * item.quantity), 0
+                                      ).toLocaleString()}원
+                                    </p>
+                                  </div>
                                 </div>
-                                {customQuoteDetails.discount_amount > 0 && (
-                                  <div className="text-sm text-green-600 mt-1">
-                                    할인 적용: -{customQuoteDetails.discount_amount.toLocaleString()}원
+                                
+                                <div className="border-t pt-3">
+                                  <div className="flex justify-between items-center">
+                                    <span className="font-medium text-lg">할인 적용 후 월 요금:</span>
+                                    <span className="text-2xl font-bold text-blue-600">
+                                      {calculateCustomTotal().toLocaleString()}원
+                                    </span>
                                   </div>
-                                )}
-                                {customQuoteDetails.free_period > 0 && (
-                                  <div className="text-sm text-green-600">
-                                    {customQuoteDetails.free_period}개월 무료 제공
-                                  </div>
-                                )}
+                                  
+                                  {/* 평균 할인율 표시 */}
+                                  {selectedCustomProducts.length > 0 && (
+                                    <div className="text-sm text-green-600 mt-2">
+                                      평균 할인율: {Math.round(
+                                        selectedCustomProducts.reduce((sum, item) => 
+                                          sum + (item.discount_rate * item.quantity), 0
+                                        ) / selectedCustomProducts.reduce((sum, item) => sum + item.quantity, 0)
+                                      )}% 적용됨
+                                    </div>
+                                  )}
+                                  
+                                  {customQuoteDetails.free_period > 0 && (
+                                    <div className="text-sm text-purple-600">
+                                      🎁 {customQuoteDetails.free_period}개월 무료 제공
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           )}
@@ -644,7 +1062,15 @@ export default function QuotesPage() {
                 disabled={!selectedCustomer || (quoteType === 'package' && !selectedPackage) || (quoteType === 'custom' && selectedCustomProducts.length === 0)}
               >
                 <Calculator className="h-4 w-4 mr-2" />
-                {quoteType === 'package' ? '패키지 견적 생성' : `커스텀 견적 생성 (${calculateCustomTotal().toLocaleString()}원/월)`}
+                {quoteType === 'package' ? '패키지 견적 생성' : 
+                  selectedCustomProducts.length > 0 ? (
+                    `커스텀 견적 생성 (${calculateCustomTotal().toLocaleString()}원/월, ${
+                      selectedCustomProducts.reduce((sum, item) => 
+                        sum + ((item.original_price - item.custom_fee) * item.quantity), 0
+                      ).toLocaleString()
+                    }원 절약)`
+                  ) : '커스텀 견적 생성'
+                }
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -755,6 +1181,14 @@ export default function QuotesPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[50px]">
+                      <input
+                        type="checkbox"
+                        checked={selectAll && quotes.length > 0}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                        className="rounded"
+                      />
+                    </TableHead>
                     <TableHead>계약번호</TableHead>
                     <TableHead>고객정보</TableHead>
                     <TableHead>패키지</TableHead>
@@ -762,7 +1196,7 @@ export default function QuotesPage() {
                     <TableHead>상태</TableHead>
                     <TableHead>담당자</TableHead>
                     <TableHead>생성일</TableHead>
-                    <TableHead className="w-[100px]">작업</TableHead>
+                    <TableHead className="w-[120px]">작업</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -778,6 +1212,14 @@ export default function QuotesPage() {
                     })
                     .map((quote, index) => (
                       <TableRow key={quote.contract_id}>
+                        <TableCell>
+                          <input
+                            type="checkbox"
+                            checked={selectedQuotes.includes(quote.contract_id)}
+                            onChange={(e) => handleSelectQuote(quote.contract_id, e.target.checked)}
+                            className="rounded"
+                          />
+                        </TableCell>
                         <TableCell className="font-medium">
                           {quote.contract_number}
                         </TableCell>
@@ -805,12 +1247,31 @@ export default function QuotesPage() {
                           )}
                         </TableCell>
                         <TableCell>
-                          <div className="font-bold text-lg">
-                            {quote.total_monthly_fee.toLocaleString()}원
-                          </div>
-                          {quote.package?.free_period && (
-                            <div className="text-sm text-green-600">
-                              {quote.package.free_period}개월 무료
+                          {/* 월 요금 인라인 편집 */}
+                          {isEditing(quote.contract_id, 'total_monthly_fee') ? (
+                            <Input
+                              type="number"
+                              value={editingValue}
+                              onChange={(e) => setEditingValue(e.target.value)}
+                              onKeyDown={(e) => handleKeyPress(e, quote.contract_id, 'total_monthly_fee')}
+                              onBlur={() => saveFieldEdit(quote.contract_id, 'total_monthly_fee', editingValue)}
+                              className="w-24 h-8 text-right"
+                              autoFocus
+                            />
+                          ) : (
+                            <div 
+                              className="cursor-pointer hover:bg-gray-100 px-2 py-1 rounded"
+                              onClick={() => startEditing(quote.contract_id, 'total_monthly_fee', quote.total_monthly_fee.toString())}
+                              title="클릭하여 수정"
+                            >
+                              <div className="font-bold text-lg">
+                                {quote.total_monthly_fee.toLocaleString()}원
+                              </div>
+                              {quote.package?.free_period && (
+                                <div className="text-sm text-green-600">
+                                  {quote.package.free_period}개월 무료
+                                </div>
+                              )}
                             </div>
                           )}
                         </TableCell>
@@ -839,6 +1300,7 @@ export default function QuotesPage() {
                                 setSelectedQuote(quote)
                                 setIsQuoteDetailOpen(true)
                               }}
+                              title="상세 보기"
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -849,8 +1311,25 @@ export default function QuotesPage() {
                                 setSelectedQuote(quote)
                                 setIsEditQuoteOpen(true)
                               }}
+                              title="견적 수정"
                             >
                               <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => handleCopyQuote(quote)}
+                              title="견적 복사"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => handleDeleteQuotes([quote.contract_id])}
+                              title="견적 삭제"
+                            >
+                              <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>
                             <Button 
                               variant="ghost" 
@@ -876,6 +1355,7 @@ export default function QuotesPage() {
                                   alert('네트워크 오류가 발생했습니다.')
                                 }
                               }}
+                              title="카카오톡 발송"
                             >
                               <Send className="h-4 w-4" />
                             </Button>
