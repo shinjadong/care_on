@@ -1,0 +1,15 @@
+import ServiceEditPage from "@/components/services/service-edit-page";
+
+/**
+ * LG U+ CCTV 서비스 페이지 편집
+ */
+export default function LGUCCTVEditPage() {
+  return (
+    <ServiceEditPage
+      slug="services-cctv-lgu"
+      title="LG U+ CCTV"
+      description="LG U+ CCTV 보안 서비스"
+      backPath="/services/cctv/lgu"
+    />
+  );
+}

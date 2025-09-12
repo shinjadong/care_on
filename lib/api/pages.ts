@@ -2,20 +2,30 @@ import { createClient } from '@/lib/supabase/server'
 import { Page, Block } from '@/types/page-builder'
 
 export async function getPageBySlug(slug: string): Promise<Page | null> {
-  const supabase = await createClient()
-  
-  const { data, error } = await supabase
-    .from('pages')
-    .select('*')
-    .eq('slug', slug)
-    .single()
+  try {
+    const supabase = await createClient()
+    
+    const { data, error } = await supabase
+      .from('pages')
+      .select('*')
+      .eq('slug', slug)
+      .single()
 
-  if (error) {
-    console.error('Error fetching page:', error)
+    if (error) {
+      // 페이지가 없는 경우는 정상적인 상황
+      if (error.code === 'PGRST116') {
+        return null
+      }
+      // 다른 에러는 로그만 남기고 null 반환
+      console.log(`⚠️ 페이지 '${slug}' 조회 중 오류:`, error.message)
+      return null
+    }
+
+    return data
+  } catch (err) {
+    console.log(`⚠️ 페이지 '${slug}' 조회 중 예외:`, err)
     return null
   }
-
-  return data
 }
 
 export async function savePage(slug: string, title: string, blocks: Block[]): Promise<boolean> {

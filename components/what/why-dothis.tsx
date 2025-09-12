@@ -3,19 +3,18 @@
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { useStepScrollDebug } from "@/hooks/use-step-scroll-debug"
+import { useStepScroll } from "@/hooks/use-step-scroll"
 
 // 🤔 Why Do This 섹션 - 사용자의 내재된 의구심을 끌어내는 구간
 // failure-experience 이후 자연스럽게 문제 의식을 심화시키는 전환점
 
 export function WhyDoThis() {
-  const { sectionRef, step } = useStepScrollDebug({ 
+  const { sectionRef, step } = useStepScroll({ 
     // 교육자 모드: 0(인트로) → 1(메인 카피) → 2(사장님의 1년을) → 3(케어온이 보장해드리겠습니다.)
     maxSteps: 3, 
     animationMs: 600, 
     requireExtraScrollOnLastStep: true,
-    extraScrollCountOnLastStep: 1,
-    debugMode: true // 디버그 모드 활성화
+    extraScrollCountOnLastStep: 1
   })
   const isMobile = useIsMobile()
 

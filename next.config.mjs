@@ -27,12 +27,12 @@ const nextConfig = {
       },
     ],
   },
-  // 루트 경로에서 /start-care로 리다이렉트 (SEO 최적화)
+  // 루트 경로에서 /landing으로 리다이렉트 (SEO 최적화)
   async redirects() {
     return [
       {
         source: '/',
-        destination: '/start-care',
+        destination: '/landing',
         permanent: false, // 임시 리다이렉트 (302)
       },
     ]

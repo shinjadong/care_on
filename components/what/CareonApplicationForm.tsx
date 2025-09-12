@@ -1,10 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import BusinessTypeSelect from "./BusinessTypeSelect"
-import BusinessTypeGrid from "./BusinessTypeGrid"
-import BusinessTypeGridCompact from "./BusinessTypeGridCompact"
-import BusinessTypeToggle from "./BusinessTypeToggle"
+import BusinessTypeSelector from "./BusinessTypeSelector"
 import AddressSearch from "./AddressSearch"
 import { createClient } from "@/lib/supabase/client-with-fallback"
 import { ChevronDown, ChevronRight, Check, User, Phone, MapPin, Store, Clock, FileText } from "lucide-react"
@@ -523,7 +520,7 @@ export default function CareonApplicationForm({ useGrid = false, onSuccess }: Pr
 
               <div>
                 <label className="ajd-label">업종 선택 *</label>
-                <BusinessTypeToggle value={businessType} onChange={setBusinessType} />
+                <BusinessTypeSelector mode="toggle" value={businessType} onChange={setBusinessType} />
               </div>
 
               <div className="p-2 bg-gray-50 rounded-lg sm:p-3 sm:rounded-xl">
