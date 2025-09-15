@@ -39,7 +39,7 @@ const getShadowClass = (shadow: string) => {
     'lg': 'shadow-lg',
     'xl': 'shadow-xl'
   }
-  return shadowMap[shadow as keyof typeof shadowMap] || 'shadow-md'
+  return shadowMap[shadow as keyof typeof shadowMap] || ''
 }
 
 const getHoverEffectClass = (effect: string) => {
@@ -79,7 +79,7 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
   const [imageAlign, setImageAlign] = useState(block.content.imageAlign || 'center')
   const [opacity, setOpacity] = useState(block.content.opacity || 100)
   const [rotation, setRotation] = useState(block.content.rotation || 0)
-  const [shadow, setShadow] = useState(block.content.shadow || 'md')
+  const [shadow, setShadow] = useState(block.content.shadow || 'none')
   const [zIndex, setZIndex] = useState(block.content.zIndex || 1)
   const [hoverEffect, setHoverEffect] = useState(block.content.hoverEffect || 'scale')
 
@@ -112,7 +112,7 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
     setImageAlign(block.content.imageAlign || 'center')
     setOpacity(block.content.opacity || 100)
     setRotation(block.content.rotation || 0)
-    setShadow(block.content.shadow || 'md')
+    setShadow(block.content.shadow || 'none')
     setZIndex(block.content.zIndex || 1)
     setHoverEffect(block.content.hoverEffect || 'scale')
   }, [block.content.containerWidth, block.content.padding, block.content.borderRadius, block.content.aspectRatio, block.content.imageAlign, block.content.opacity, block.content.rotation, block.content.shadow, block.content.zIndex, block.content.hoverEffect, block.id])
@@ -699,14 +699,10 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
         </>
       )}
 
-      {/* 이미지 렌더링 - flexbox 정렬 시스템 */}
+      {/* 이미지 렌더링 - block-renderer에서 정렬 처리 */}
       <div
-        className="w-full flex"
+        className="w-full"
         style={{
-          width: `${containerWidth}%`,
-          margin: '0 auto',
-          padding: containerWidth < 100 ? `${padding}px` : '0',
-          justifyContent: (imageAlign || 'center') === 'center' ? 'center' : (imageAlign || 'center') === 'right' ? 'flex-end' : 'flex-start',
           opacity: opacity / 100,
           transform: `rotate(${rotation}deg)`,
           zIndex: zIndex
@@ -714,8 +710,8 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
       >
         {images.length > 0 ? (
           displayMode === 'single' ? (
-            // 단일 이미지 모드 - flexbox 정렬
-            <div className="flex w-full" style={{ justifyContent: (imageAlign || 'center') === 'center' ? 'center' : (imageAlign || 'center') === 'right' ? 'flex-end' : 'flex-start' }}>
+            // 단일 이미지 모드 - 강제 중앙 정렬
+            <div className="w-full flex justify-center">
               {images.map((image) => (
                 <div key={image.id}>
                   {image.link && !isEditing ? (
@@ -739,7 +735,7 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                           display: 'block',
                           transition: 'all 0.3s ease'
                         }}
-                        className={`glass-container ${getShadowClass(shadow)} ${getHoverEffectClass(hoverEffect)} transition-all duration-300 ease-out`}
+                        className={`${getShadowClass(shadow)} ${getHoverEffectClass(hoverEffect)} transition-all duration-300 ease-out`}
                       />
                     </a>
                   ) : (
@@ -782,8 +778,8 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
               ))}
             </div>
           ) : (
-            // 스토리 모드 - flexbox 정렬 적용
-            <div className="flex flex-col space-y-4" style={{ alignItems: (imageAlign || 'center') === 'center' ? 'center' : (imageAlign || 'center') === 'right' ? 'flex-end' : 'flex-start' }}>
+            // 스토리 모드 - 강제 중앙 정렬
+            <div className="flex flex-col space-y-4 items-center">
               {images.map((image, index) => (
                 <div key={image.id} className="mb-4" style={{ width: containerWidth === 100 ? '100%' : 'auto' }}>
                   {image.link && !isEditing ? (
@@ -808,7 +804,7 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                           marginBottom: index < images.length - 1 ? `${padding / 2}px` : '0',
                           transition: 'all 0.3s ease'
                         }}
-                        className={`glass-container ${getShadowClass(shadow)} ${getHoverEffectClass(hoverEffect)} transition-all duration-300 ease-out`}
+                        className={`${getShadowClass(shadow)} ${getHoverEffectClass(hoverEffect)} transition-all duration-300 ease-out`}
                       />
                     </a>
                   ) : (
@@ -828,7 +824,7 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                         cursor: isEditing ? 'pointer' : 'default',
                         transition: 'all 0.3s ease'
                       }}
-                      className={`glass-container ${isEditing ? 'hover:opacity-80 transition-all' : ''}`}
+                      className={`${isEditing ? 'hover:opacity-80 transition-all' : ''}`}
                     />
                   )}
                   {image.caption && (

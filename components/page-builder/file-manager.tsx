@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo, memo } from 'react';
 import { 
   Folder, Image, Video, File, Trash2, Copy, ExternalLink, Cloud, Search, X, 
   Upload, Download, Play, Pause, Volume2, CheckCircle, ArrowRight, Plus 
@@ -52,7 +52,7 @@ interface FileItem {
   size: number;
 }
 
-export function FileManager({ 
+export const FileManager = memo(function FileManager({ 
   isOpen, 
   onClose, 
   onSelectFile, 
@@ -116,8 +116,11 @@ export function FileManager({
     }
   }, [isOpen, loadFiles]);
 
-  const filteredFiles = files.filter(file =>
-    file.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredFiles = useMemo(() =>
+    files.filter(file =>
+      file.name.toLowerCase().includes(searchTerm.toLowerCase())
+    ),
+    [files, searchTerm]
   );
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -585,4 +588,9 @@ export function FileManager({
       )}
     </div>
   );
-}
+}, (prevProps, nextProps) => {
+  // props가 동일하면 리렌더링 방지
+  return prevProps.isOpen === nextProps.isOpen &&
+         prevProps.fileType === nextProps.fileType &&
+         prevProps.mode === nextProps.mode;
+});

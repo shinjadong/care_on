@@ -374,19 +374,27 @@ export function BlockRenderer({
       
       <MotionWrapper block={block} isEditing={isEditing}>
         <div
-          className={isEditing ? 'min-h-[20px]' : ''}
+          className={`${isEditing ? 'min-h-[20px]' : ''} w-full`}
           style={{
             ...getBlockStyles(),
             display: 'flex',
             justifyContent:
               block.content?.imageAlign === 'left' ? 'flex-start' :
               block.content?.imageAlign === 'right' ? 'flex-end' : 'center',
+            alignItems: 'center',
             width: '100%'
           }}
         >
-          <div style={{ width: block.settings?.width ?
-            (block.settings.width.includes('%') || block.settings.width.includes('px') ?
-              block.settings.width : `${block.settings.width}%`) : '100%' }}>
+          <div
+            style={{
+              width: block.settings?.width ?
+                (block.settings.width.includes('%') || block.settings.width.includes('px') ?
+                  block.settings.width : `${block.settings.width}%`) : '100%',
+              textAlign:
+                block.content?.imageAlign === 'left' ? 'left' :
+                block.content?.imageAlign === 'right' ? 'right' : 'center'
+            }}
+          >
             {renderBlock(block)}
           </div>
         </div>

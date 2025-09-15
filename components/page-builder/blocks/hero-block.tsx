@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { HeroBlock } from '@/types/page-builder';
 import { Button } from '@/components/ui/button';
 import { FileManager } from '../file-manager';
@@ -15,7 +15,7 @@ interface HeroBlockRendererProps {
   onUpdate?: (block: HeroBlock) => void;
 }
 
-export function HeroBlockRenderer({ block, isEditing, onUpdate }: HeroBlockRendererProps) {
+export const HeroBlockRenderer = memo(function HeroBlockRenderer({ block, isEditing, onUpdate }: HeroBlockRendererProps) {
   const [isEditingHero, setIsEditingHero] = useState(false);
   const [showFileManager, setShowFileManager] = useState(false);
   const [fileManagerTarget, setFileManagerTarget] = useState<'background' | 'image'>('background');
@@ -116,7 +116,7 @@ export function HeroBlockRenderer({ block, isEditing, onUpdate }: HeroBlockRende
     }));
   };
 
-  const getTitleStyle = (): React.CSSProperties => {
+  const titleStyle = useMemo((): React.CSSProperties => {
     const style = heroData.titleStyle;
     return {
       fontSize: `${style.fontSize}px`,
@@ -128,9 +128,9 @@ export function HeroBlockRenderer({ block, isEditing, onUpdate }: HeroBlockRende
       margin: 0,
       padding: 0,
     };
-  };
+  }, [heroData.titleStyle]);
 
-  const getSubtitleStyle = (): React.CSSProperties => {
+  const subtitleStyle = useMemo((): React.CSSProperties => {
     const style = heroData.subtitleStyle;
     return {
       fontSize: `${style.fontSize}px`,
@@ -142,7 +142,7 @@ export function HeroBlockRenderer({ block, isEditing, onUpdate }: HeroBlockRende
       margin: 0,
       padding: 0,
     };
-  };
+  }, [heroData.subtitleStyle]);
 
   if (isEditing && isEditingHero) {
     return (
@@ -425,8 +425,8 @@ export function HeroBlockRenderer({ block, isEditing, onUpdate }: HeroBlockRende
             )}
             <div className="relative z-10 flex items-center justify-center h-full p-6">
               <div className="text-center">
-                <h1 style={getTitleStyle()}>{heroData.title}</h1>
-                {heroData.subtitle && <p style={getSubtitleStyle()}>{heroData.subtitle}</p>}
+                <h1 style={titleStyle}>{heroData.title}</h1>
+                {heroData.subtitle && <p style={subtitleStyle}>{heroData.subtitle}</p>}
                 {heroData.buttons.length > 0 && (
                   <div className="flex gap-2 justify-center mt-4">
                     {heroData.buttons.map((btn, i) => (
@@ -562,11 +562,11 @@ export function HeroBlockRenderer({ block, isEditing, onUpdate }: HeroBlockRende
         )}
 
         <div className="relative z-10 text-center px-6">
-          <h1 style={getTitleStyle()}>
+          <h1 style={titleStyle}>
             {heroData.title}
           </h1>
           {heroData.subtitle && (
-            <p className="mt-4 mb-8" style={getSubtitleStyle()}>
+            <p className="mt-4 mb-8" style={subtitleStyle}>
               {heroData.subtitle}
             </p>
           )}
@@ -597,4 +597,8 @@ export function HeroBlockRenderer({ block, isEditing, onUpdate }: HeroBlockRende
       />
     </div>
   );
-}
+}, (prevProps, nextProps) => {
+  // 히어로 블록 내용이 동일하고 편집 모드가 같으면 리렌더링 방지
+  return JSON.stringify(prevProps.block.content) === JSON.stringify(nextProps.block.content) &&
+         prevProps.isEditing === nextProps.isEditing;
+});
