@@ -32,7 +32,7 @@ export default function WhatPage() {
   // hero/why-cheer 임시 제외 상태
 
   return (
-    <main className="w-full">
+    <main className="w-full overflow-auto">
       <Suspense fallback={<div className="h-screen w-screen bg-gradient-to-b from-[#f7f3ed] to-gray-100 animate-pulse" />}>
         <WhenVisible minHeight={600} rootMargin="50px 0px"><WhyDoThis /></WhenVisible>
       </Suspense>

@@ -1,10 +1,8 @@
 import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
-import { ConditionalFooter } from "@/components/conditional-footer"
 import { Header } from "@/components/header"
 import { FloatingBanner } from "@/components/floating-banner"
-import { FloatingCTAButton } from "@/components/floating-cta-button"
 import { ClientAuthProvider } from "@/components/providers/auth-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 
@@ -38,7 +36,20 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" />
       </head>
-      <body className="font-sans" suppressHydrationWarning>
+      <body className="font-sans min-h-screen relative overflow-x-hidden overflow-y-auto" suppressHydrationWarning>
+        {/* CareOn x Instagram inspired gradient background */}
+        <div
+          className="fixed inset-0 bg-gradient-to-br from-teal-500 via-cyan-400 to-teal-600 -z-10"
+          style={{
+            backgroundImage: `
+              radial-gradient(circle at 20% 80%, rgba(20, 135, 119, 0.4) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(56, 178, 172, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 40% 40%, rgba(34, 197, 94, 0.2) 0%, transparent 50%),
+              radial-gradient(circle at 60% 80%, rgba(6, 182, 212, 0.3) 0%, transparent 50%)
+            `
+          }}
+        />
+
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -47,10 +58,13 @@ export default function RootLayout({
           forcedTheme="light"
         >
           <ClientAuthProvider>
-            <Header />
-            {children}
-            <ConditionalFooter />
-            <FloatingBanner />
+            <div className="relative z-10">
+              <Header />
+              <main className="min-h-screen">
+                {children}
+              </main>
+              <FloatingBanner />
+            </div>
           </ClientAuthProvider>
         </ThemeProvider>
       </body>

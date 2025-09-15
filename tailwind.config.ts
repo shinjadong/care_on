@@ -31,6 +31,10 @@ const config = {
         h1: "2.5rem",
         h2: "2rem",
         h3: "1.75rem",
+        // CareOn specific font sizes - replacing hardcoded values
+        "hero": "clamp(3rem, 8vw, 6rem)", // Replaces Apple Music hero font size
+        "hero-mobile": "clamp(2.5rem, 6vw, 5rem)", // Mobile hero
+        "display": "clamp(2.5rem, 5vw, 4rem)", // Display text
       },
       spacing: {
         "1": "0.25rem",
@@ -42,6 +46,15 @@ const config = {
         "8": "2rem",
         "10": "2.5rem",
         "12": "3rem",
+        // CareOn specific spacing - replacing hardcoded values
+        "phone-w": "260px", // Mobile phone width
+        "phone-w-sm": "280px", // Small mobile phone width
+        "phone-h": "530px", // Mobile phone height
+        "phone-h-sm": "570px", // Small mobile phone height
+        "section": "80px", // Section padding
+        "section-sm": "60px", // Small section padding
+        "hero-padding": "60px", // Hero section padding
+        "hero-padding-mobile": "40px", // Mobile hero padding
       },
       borderRadius: {
         sm: "4px",
@@ -96,10 +109,29 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        /* 신규: 케어온 브랜드 색상 */
+        /* CareOn 브랜드 색상 시스템 */
         brand: {
           DEFAULT: "hsl(var(--brand))",
           foreground: "hsl(var(--brand-foreground))",
+        },
+        /* Chart colors for admin dashboard */
+        chart: {
+          1: "hsl(var(--chart-1))",
+          2: "hsl(var(--chart-2))",
+          3: "hsl(var(--chart-3))",
+          4: "hsl(var(--chart-4))",
+          5: "hsl(var(--chart-5))",
+        },
+        /* Sidebar colors for admin panel */
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
         },
       },
       keyframes: {
@@ -126,18 +158,35 @@ const config = {
           "100%": { opacity: "0.9" },
         },
         "slide-up-bounce": {
-          "0%": { 
-            transform: "translateY(100px)", 
-            opacity: "0" 
+          "0%": {
+            transform: "translateY(100px)",
+            opacity: "0"
           },
-          "60%": { 
-            transform: "translateY(-10px)", 
-            opacity: "1" 
+          "60%": {
+            transform: "translateY(-10px)",
+            opacity: "1"
           },
-          "100%": { 
-            transform: "translateY(0)", 
-            opacity: "1" 
+          "100%": {
+            transform: "translateY(0)",
+            opacity: "1"
           },
+        },
+        // CareOn specific animations
+        "slide-down": {
+          from: { transform: "translateY(-20px)", opacity: "0" },
+          to: { transform: "translateY(0)", opacity: "1" },
+        },
+        "fade-in": {
+          from: { opacity: "0", transform: "translateY(10px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "bounce-slow": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-5px)" },
+        },
+        "slide-up-from-bottom": {
+          from: { transform: "translateY(100%)" },
+          to: { transform: "translateY(0)" },
         },
       },
       animation: {
@@ -151,6 +200,11 @@ const config = {
         "marquee-reverse-fast": "marquee-reverse 25s linear infinite",
         "pulse-soft": "pulse-soft 7.5s ease-in-out infinite",
         "slide-up-bounce": "slide-up-bounce 0.6s ease-out forwards",
+        // CareOn specific animations
+        "slide-down": "slide-down 0.3s ease-out",
+        "fade-in": "fade-in 0.5s ease-out",
+        "bounce-slow": "bounce-slow 2s ease-in-out infinite",
+        "slide-up-from-bottom": "slide-up-from-bottom 0.4s ease-out",
       },
     },
   },

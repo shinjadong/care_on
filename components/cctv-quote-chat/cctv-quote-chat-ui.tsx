@@ -45,18 +45,12 @@ const MessageContent = ({ message }: { message: Message }) => {
         <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4 shadow-md max-w-[90%] break-words border border-green-200">
           <div className="prose prose-sm max-w-none">
             {(message.content as string).split("\n").map((line, index) => {
-              if (line.startsWith("🎉 **"))
+              if (line.startsWith("**") && line.endsWith("**"))
                 return (
                   <h3 key={index} className="text-lg font-bold text-green-700 mb-3">
                     {line.replace(/\*\*/g, "")}
                   </h3>
                 )
-              if (
-                line.startsWith("📋 **") ||
-                line.startsWith("💰 **") ||
-                line.startsWith("✨ **") ||
-                line.startsWith("⚡ **")
-              )
                 return (
                   <h4 key={index} className="text-md font-semibold text-gray-800 mt-4 mb-2">
                     {line.replace(/\*\*/g, "")}

@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client-with-fallback"
-import { User, Phone, Store, Check } from "lucide-react"
-import { motion } from "framer-motion"
 
 type FormData = {
   name: string
@@ -20,10 +18,8 @@ export default function QuickApplicationForm({ onSuccess }: Props) {
   const [error, setError] = useState<string>("")
   const [success, setSuccess] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const [step, setStep] = useState<1 | 2>(1) // 1: 혜택 안내, 2: 신청서 작성
-  
-  // 폼 데이터 state
-  const [name, setName] = useState("")
+
+  // 폼 데이터 state - 업체명과 전화번호만
   const [companyName, setCompanyName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState({ first: "010", middle: "", last: "" })
 
@@ -31,8 +27,8 @@ export default function QuickApplicationForm({ onSuccess }: Props) {
     setMounted(true)
   }, [])
 
-  // 폼 완성도 체크
-  const isFormComplete = name.trim() && phoneNumber.middle && (phoneNumber.middle.length + phoneNumber.last.length >= 7)
+  // 폼 완성도 체크 - 업체명과 전화번호만
+  const isFormComplete = companyName.trim() && phoneNumber.middle && (phoneNumber.middle.length + phoneNumber.last.length >= 7)
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -42,14 +38,14 @@ export default function QuickApplicationForm({ onSuccess }: Props) {
     const fullPhoneNumber = `${phoneNumber.first}-${phoneNumber.middle}-${phoneNumber.last}`
     
     const payload = {
-      name: name.trim(),
-      company_name: companyName.trim() || null,
+      name: companyName.trim(), // 업체명을 name 필드에 저장
+      company_name: companyName.trim(),
       phone_number: fullPhoneNumber,
     }
 
     // 기본 검증
-    if (!name.trim()) {
-      setError("이름을 입력해주세요.")
+    if (!companyName.trim()) {
+      setError("업체명을 입력해주세요.")
       return
     }
     if (!phoneNumber.middle || !phoneNumber.last) {
@@ -68,10 +64,8 @@ export default function QuickApplicationForm({ onSuccess }: Props) {
       
       setSuccess(true)
       // 모든 state 초기화
-      setName("")
       setCompanyName("")
       setPhoneNumber({ first: "010", middle: "", last: "" })
-      setStep(1) // 첫 번째 단계로 리셋
       
       if (onSuccess) {
         onSuccess()
@@ -91,152 +85,47 @@ export default function QuickApplicationForm({ onSuccess }: Props) {
     return (
       <div className="mx-auto w-full max-w-lg p-6 text-center sm:p-8">
         <div className="mb-3 text-4xl sm:text-6xl sm:mb-4">✅</div>
-        <h3 className="mb-2 text-lg font-bold sm:text-xl">대기 신청이 완료되었습니다!</h3>
+        <h3 className="mb-2 text-lg font-bold glass-text-primary sm:text-xl">신청이 완료되었습니다</h3>
+        <p className="glass-text-secondary">담당자가 빠른 시일 내에 연락드리겠습니다</p>
       </div>
     )
   }
 
-  // 1단계: 혜택 안내
-  if (step === 1) {
-    return (
-      <div className="ajd-form mx-auto w-full max-w-lg">
-        {/* 혜택 안내 */}
-        <motion.div 
-          className="mb-12 px-6 sm:px-8 pt-6 sm:pt-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <motion.h4 
-            className="font-bold text-2xl mb-6 text-[#0f6c5d] sm:text-3xl"
-            initial={{ x: -30, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            체험단은 이런 혜택을 받아요
-          </motion.h4>
-          <motion.ul 
-            className="space-y-2 text-lg sm:text-xl"
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: {},
-              visible: {
-                transition: {
-                  staggerChildren: 0.2,
-                  delayChildren: 0.4
-                }
-              }
-            }}
-          >
-            <motion.li
-              className="text-gray-800 font-semibold"
-              variants={{
-                hidden: { x: -50, opacity: 0 },
-                visible: { x: 0, opacity: 1 }
-              }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-              • 12개월간 통신비 전액 지원
-            </motion.li>
-            <motion.li
-              className="text-gray-800 font-semibold"
-              variants={{
-                hidden: { x: -50, opacity: 0 },
-                visible: { x: 0, opacity: 1 }
-              }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-              • 폐업시 100% 환급 보장
-            </motion.li>
-            <motion.li
-              className="text-gray-800 font-semibold"
-              variants={{
-                hidden: { x: -50, opacity: 0 },
-                visible: { x: 0, opacity: 1 }
-              }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-              • 설치비 무료
-            </motion.li>
-          </motion.ul>
-        </motion.div>
-
-        {/* 확인 버튼 */}
-        <motion.button
-          onClick={() => setStep(2)}
-          className="w-full py-3 px-4 text-base font-bold rounded-xl transition-colors sm:text-lg bg-gradient-to-r from-[#148777] to-[#0f6b5c] text-white hover:shadow-lg hover:shadow-[#148777]/15"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 1.2 }}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          확인했어요!
-        </motion.button>
-      </div>
-    )
-  }
-
-  // 2단계: 신청서 작성
+  // 바로 신청서 작성 폼으로
   return (
     <form onSubmit={onSubmit} className="ajd-form mx-auto w-full max-w-lg">
       {/* 헤더 */}
       <div className="mb-6 text-center">
-        <h2 className="text-xl font-bold text-gray-800 mb-2 sm:text-2xl">무료 체험단 대기 신청</h2>
-        <p className="text-sm text-gray-600 sm:text-base">간단한 정보만 입력하시면 연락드리겠습니다</p>
+        <h2 className="text-xl font-bold glass-text-primary mb-2 sm:text-2xl">체험단 신청</h2>
+        <p className="text-sm glass-text-secondary sm:text-base">간단한 정보만 입력하시면 연락드리겠습니다</p>
       </div>
 
       {/* 기본 정보 섹션 */}
-      <div className="ajd-card">
-        <div className="ajd-head-btn">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className={`ajd-bullet ${isFormComplete ? "done" : "idle"}`}>
-              {isFormComplete ? <Check className="w-3 h-3 sm:w-4 sm:h-4" /> : <User className="w-3 h-3 sm:w-4 sm:h-4" />}
-            </div>
-            <div className="text-left">
-              <h3 className="text-sm font-semibold sm:text-base">기본 정보</h3>
-              {isFormComplete && (
-                <p className="text-[10px] text-gray-500 mt-0.5 sm:text-xs">입력 완료</p>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        <div className="ajd-body space-y-4">
-          <div className="pt-3 sm:pt-4">
-            <label className="ajd-label">성함 *</label>
-            <input 
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required 
-              placeholder="이름을 입력하세요"
-              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 focus:border-[#148777] focus:outline-none"
-            />
-          </div>
-
+      <div className="glass-card p-6 mb-6">
+        <div className="space-y-4">
           <div>
-            <label className="ajd-label">업체명</label>
-            <input 
+            <label className="block text-sm font-medium glass-text-primary mb-2">업체명 *</label>
+            <input
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
-              placeholder="예: OO치킨, OO카페 (선택사항)"
-              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 focus:border-[#148777] focus:outline-none"
+              required
+              placeholder="예: OO치킨, OO카페"
+              className="glass-input w-full"
             />
           </div>
 
           <div>
-            <label className="ajd-label">연락처 *</label>
-            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
-              <select 
+            <label className="block text-sm font-medium glass-text-primary mb-2">연락처 *</label>
+            <div className="grid grid-cols-5 gap-2">
+              <select
                 value={phoneNumber.first}
                 onChange={(e) => setPhoneNumber({ ...phoneNumber, first: e.target.value })}
-                className="col-span-2 text-xs rounded-lg border border-gray-200 px-2 py-2 focus:border-[#148777] focus:outline-none sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-sm"
+                className="col-span-2 glass-input text-center"
               >
                 <option value="010">010</option>
                 <option value="011">011</option>
               </select>
-              <input 
+              <input
                 type="tel"
                 maxLength={8}
                 placeholder="00000000"
@@ -249,7 +138,7 @@ export default function QuickApplicationForm({ onSuccess }: Props) {
                     setPhoneNumber({ ...phoneNumber, middle: value.slice(0, 4), last: value.slice(4, 8) })
                   }
                 }}
-                className="col-span-3 text-xs rounded-lg border border-gray-200 px-2 py-2 focus:border-[#148777] focus:outline-none sm:rounded-xl sm:px-3 sm:py-2.5 sm:text-sm text-center"
+                className="col-span-3 glass-input text-center"
               />
             </div>
           </div>
@@ -257,8 +146,8 @@ export default function QuickApplicationForm({ onSuccess }: Props) {
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs text-red-600 sm:rounded-xl sm:p-3 sm:text-sm">
-          {error}
+        <div className="glass-container p-3 mb-4 border border-red-400/30 bg-red-500/20">
+          <p className="text-sm text-red-100">{error}</p>
         </div>
       )}
 
@@ -266,16 +155,16 @@ export default function QuickApplicationForm({ onSuccess }: Props) {
       <button
         type="submit"
         disabled={loading || !isFormComplete}
-        className={`w-full py-3 px-4 text-sm font-semibold rounded-xl transition-colors sm:text-base ${
-          isFormComplete 
-            ? "bg-gradient-to-r from-[#148777] to-[#0f6b5c] text-white hover:shadow-lg hover:shadow-[#148777]/15" 
-            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+        className={`w-full py-3 px-6 text-base font-semibold rounded-xl transition-all duration-300 ${
+          isFormComplete
+            ? "glass-container-strong glass-bg-primary glass-text-primary hover:scale-[1.02] active:scale-[0.98]"
+            : "glass-container glass-text-muted cursor-not-allowed opacity-50"
         }`}
       >
-        {loading ? "신청 중..." : "무료체험단 대기 신청하기"}
+{loading ? "신청 중..." : "체험단 신청하기"}
       </button>
 
-      <p className="mt-3 text-center text-xs text-gray-500 sm:text-sm">
+      <p className="mt-4 text-center text-sm glass-text-secondary">
         심사 후 담당자가 빠른 시일 내에 연락드리겠습니다
       </p>
     </form>

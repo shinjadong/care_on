@@ -45,7 +45,7 @@ export function Footer() {
 
   return (
     <>
-      <footer className="bg-gradient-to-b from-gray-800 to-gray-900 text-gray-400 py-16 relative overflow-hidden">
+      <footer className="glass-container glass-text-secondary py-16 relative overflow-hidden">
         {/* 배경 패턴 */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full -translate-x-1/2 -translate-y-1/2" />
@@ -62,7 +62,7 @@ export function Footer() {
               케어온이 함께합니다. 지금 바로 문의하세요!
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
               <a
                 href="tel:1866-1845"
                 className="inline-flex items-center justify-center bg-white text-[#148777] hover:bg-gray-100 font-bold px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 gap-3"

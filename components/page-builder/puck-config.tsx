@@ -25,12 +25,12 @@ const HeadingComponent: ComponentConfig<{
       type: "select", 
       label: "📊 제목 레벨",
       options: [
-        { label: "🔥 H1 - 가장 큰 제목", value: 1 },
-        { label: "⭐ H2 - 큰 제목", value: 2 },
-        { label: "✨ H3 - 중간 제목", value: 3 },
-        { label: "💫 H4 - 작은 제목", value: 4 },
-        { label: "🌟 H5 - 더 작은 제목", value: 5 },
-        { label: "⚡ H6 - 가장 작은 제목", value: 6 },
+        { label: "H1 - 가장 큰 제목", value: 1 },
+        { label: "H2 - 큰 제목", value: 2 },
+        { label: "H3 - 중간 제목", value: 3 },
+        { label: "H4 - 작은 제목", value: 4 },
+        { label: "H5 - 더 작은 제목", value: 5 },
+        { label: "H6 - 가장 작은 제목", value: 6 },
       ]
     },
     fontSize: { 

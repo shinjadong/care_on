@@ -286,7 +286,7 @@ export const useCCTVQuoteChat = () => {
         .map(([location, qty]) => `${location}: ${qty}대`)
         .join("\n")
 
-      const quoteMessage = `🎉 **맞춤 견적서가 완성되었습니다!**\n\n📋 **설치 상세 정보**\n${locationDetails}\n\n💰 **예상 견적**\n• CCTV 대수: ${totalCameras}대\n• 대당 렌탈비: ${pricePerCamera.toLocaleString()}원/월\n• **월 렌탈비: ${calculatedPrice.toLocaleString()}원**\n\n✨ **포함 서비스**\n• 전문 설치 및 설정\n• 24시간 모니터링\n• 정기 점검 및 AS\n• 무료 교체 서비스\n\n⚡ **특별 혜택**\n• 첫 달 50% 할인\n• 설치비 무료 (30만원 상당)`
+      const quoteMessage = `**맞춤 견적서가 완성되었습니다!**\n\n**설치 상세 정보**\n${locationDetails}\n\n**예상 견적**\n• CCTV 대수: ${totalCameras}대\n• 대당 렌탈비: ${pricePerCamera.toLocaleString()}원/월\n• **월 렌탈비: ${calculatedPrice.toLocaleString()}원**\n\n**포함 서비스**\n• 전문 설치 및 설정\n• 24시간 모니터링\n• 정기 점검 및 AS\n• 무료 교체 서비스\n\n**특별 혜택**\n• 첫 달 50% 할인\n• 설치비 무료 (30만원 상당)`
       addMessage("quote", quoteMessage)
 
       setFormData((prev) => ({ ...prev, calculatedPrice }))

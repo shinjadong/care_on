@@ -22,6 +22,7 @@ export interface Review {
   youtube_urls?: string[]
   business_experience?: '신규창업' | '1년 이상' | '3년 이상'
   package_name?: string
+  likes_count?: number
 }
 
 interface ReviewCardProps {
@@ -225,9 +226,35 @@ const getRandomPackage = () => {
 }
 
 export function ReviewCard({ review }: ReviewCardProps) {
-  const hasMedia = (review.images && review.images.length > 0 && review.images.some(img => img)) || 
+  const [isLiked, setIsLiked] = useState(false)
+  const [likesCount, setLikesCount] = useState(review.likes_count || 0)
+  const [isLiking, setIsLiking] = useState(false)
+
+  const hasMedia = (review.images && review.images.length > 0 && review.images.some(img => img)) ||
                    (review.videos && review.videos.length > 0 && review.videos.some(vid => vid))
   const hasYoutube = review.youtube_urls && review.youtube_urls.length > 0 && review.youtube_urls.some(url => url)
+
+  // 좋아요 토글 함수
+  const handleLike = async () => {
+    if (isLiking) return
+
+    setIsLiking(true)
+    try {
+      const response = await fetch('/api/reviews/likes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reviewId: review.id })
+      })
+
+      const data = await response.json()
+      setIsLiked(data.liked)
+      setLikesCount(prev => data.liked ? prev + 1 : prev - 1)
+    } catch (error) {
+      console.error('Like error:', error)
+    } finally {
+      setIsLiking(false)
+    }
+  }
   
   // 패키지명 (리뷰 데이터에 없으면 랜덤 선택)
   const packageName = review.package_name || getRandomPackage()
@@ -236,14 +263,9 @@ export function ReviewCard({ review }: ReviewCardProps) {
   const experienceOptions = ['신규창업', '1년 이상', '3년 이상']
   const experienceLevel = review.business_experience || experienceOptions[Math.floor(Math.random() * experienceOptions.length)]
 
-  // 사용자 이름 마스킹 함수
-  const maskName = (name: string) => {
-    if (name.length > 2) {
-      return `${name[0]}${'*'.repeat(name.length - 2)}${name[name.length - 1]}`
-    } else if (name.length === 2) {
-      return `${name[0]}*`
-    }
-    return name
+  // 사용자 이름 표시 (마스킹 제거)
+  const displayName = (name: string) => {
+    return name || '익명'
   }
 
   // 시간 표시 함수
@@ -265,78 +287,50 @@ export function ReviewCard({ review }: ReviewCardProps) {
   }
 
   return (
-    <div className="bg-white border-b border-gray-100 overflow-hidden">
-      <div className="p-4 space-y-3">
-        {/* 헤더: 프로필 정보 */}
-        <div className="flex items-center justify-between">
+    <div className="social-card bg-transparent border-none overflow-hidden">
+      <div className="space-y-0">
+        {/* 인스타그램 스타일 헤더 */}
+        <div className="p-4 pb-3 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            {/* 프로필 이미지 */}
-            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium text-gray-600">
-                {review.author_name ? maskName(review.author_name)[0] : '익'}
-              </span>
+            {/* 인스타그램 스타일 프로필 */}
+            <div className="story-ring">
+              <div className="story-inner">
+                <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+              </div>
             </div>
-            
-            {/* 이름과 시간 */}
+
+            {/* 이름과 시간 + 인증 마크 */}
             <div>
-              <div className="text-sm font-bold text-gray-900">
-                {review.author_name ? maskName(review.author_name) : '익명'}
+              <div className="flex items-center space-x-2">
+                <span className="text-sm font-bold glass-text-primary">
+                  {review.author_name ? displayName(review.author_name) : '익명'}
+                </span>
+                {/* CareOn 인증 체크마크 */}
+                <svg className="w-4 h-4 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
               </div>
-              <div className="text-xs text-gray-400">
-                {review.created_at ? formatTime(review.created_at) : '최근'}
+              <div className="text-xs glass-text-secondary">
+                {review.created_at ? formatTime(review.created_at) : '최근'} • {review.business}
               </div>
             </div>
           </div>
-          
-          {/* 우상단 버튼들 */}
-          <div className="flex items-center space-x-2">
-            <span className="px-3 py-1 text-xs font-medium text-cyan-600 bg-cyan-50 border border-cyan-200 rounded-full">
-              + 승인됨
-            </span>
-            <button className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-              </svg>
-            </button>
-          </div>
+
+          {/* 인스타그램 스타일 메뉴 */}
+          <button className="social-profile w-8 h-8">
+            <svg className="w-5 h-5 glass-text-secondary" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+            </svg>
+          </button>
         </div>
 
-        {/* 태그들과 별점 */}
-        <div className="flex items-center justify-between">
-          <div className="flex flex-wrap gap-2">
-            {review.highlight && (
-              <span className="inline-flex px-3 py-1 text-xs font-medium text-white bg-orange-400 rounded-full">
-                {review.highlight}
-              </span>
-            )}
-            <span className="inline-flex px-3 py-1 text-xs font-medium text-white bg-blue-500 rounded-full">
-              {experienceLevel}
-            </span>
-          </div>
-          
-          {/* 별점 */}
-          {review.rating && review.rating > 0 && (
-            <div className="flex items-center space-x-1">
-              <svg className="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              <span className="text-sm font-bold text-gray-900">{Number(review.rating).toFixed(1)}</span>
-            </div>
-          )}
-        </div>
-
-        {/* 업체 정보 */}
-        <div className="text-sm text-gray-500">
-          [{packageName}] {review.business}
-        </div>
-
-        {/* 메인 콘텐츠 */}
-        <div className="text-sm text-gray-900 leading-relaxed">
-          {review.content}
-        </div>
-
+        {/* 이미지/미디어 - 인스타그램처럼 맨 위에 */}
         {hasMedia && (
-          <div className="-mx-4">
+          <div className="w-full">
             <MediaCarousel images={review.images} videos={review.videos} title={review.title} />
           </div>
         )}
@@ -351,27 +345,106 @@ export function ReviewCard({ review }: ReviewCardProps) {
           </div>
         )}
 
-        {/* 좋아요와 댓글 */}
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-          <div className="flex items-center space-x-4">
-            {/* 좋아요 */}
-            <button className="flex items-center space-x-1 text-gray-500 hover:text-gray-700">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        {/* 인스타그램 스타일 태그 및 평점 */}
+        <div className="flex flex-wrap gap-2 pt-2">
+          {review.highlight && (
+            <span className="px-3 py-1 text-xs font-medium glass-container-soft glass-text-secondary rounded-full">
+              #{review.highlight}
+            </span>
+          )}
+          <span className="px-3 py-1 text-xs font-medium glass-container-soft glass-text-secondary rounded-full">
+            #{experienceLevel}
+          </span>
+          <span className="px-3 py-1 text-xs font-medium glass-container-soft glass-text-secondary rounded-full">
+            #{review.category}
+          </span>
+          {review.rating && review.rating > 0 && (
+            <span className="px-3 py-1 text-xs font-medium glass-bg-secondary glass-text-primary rounded-full">
+              ★ {Number(review.rating).toFixed(1)}
+            </span>
+          )}
+        </div>
+
+        {/* 인스타그램 스타일 인터랙션 영역 */}
+        <div className="px-4 py-3">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-4">
+              {/* 실제 좋아요 기능 */}
+              <button
+                onClick={handleLike}
+                disabled={isLiking}
+                className="flex items-center space-x-1 hover:scale-110 transition-transform"
+              >
+                <svg
+                  className={`w-7 h-7 ${isLiked ? 'text-red-500 fill-current' : 'text-gray-600'}`}
+                  fill={isLiked ? "currentColor" : "none"}
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </button>
+
+              <button className="hover:scale-110 transition-transform">
+                <svg className="w-7 h-7 glass-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </button>
+
+              <button className="hover:scale-110 transition-transform">
+                <svg className="w-7 h-7 glass-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+                </svg>
+              </button>
+            </div>
+
+            <button className="hover:scale-110 transition-transform">
+              <svg className="w-7 h-7 glass-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
-              <span className="text-sm font-medium">0</span>
             </button>
-            
-            {/* 댓글 */}
-            <button className="flex items-center space-x-1 text-gray-500 hover:text-gray-700">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              <span className="text-sm font-medium">0</span>
-              <svg className="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
+          </div>
+
+          {/* 좋아요 수 표시 */}
+          {likesCount > 0 && (
+            <div className="mb-2">
+              <span className="text-sm font-bold glass-text-primary">
+                좋아요 {likesCount.toLocaleString()}개
+              </span>
+            </div>
+          )}
+
+          {/* 메인 콘텐츠 */}
+          <div className="glass-text-primary leading-relaxed mb-2">
+            <span className="font-bold glass-text-primary mr-2">
+              {review.author_name ? displayName(review.author_name) : '익명'}
+            </span>
+            <span className="text-sm">
+              {review.content}
+            </span>
+          </div>
+
+          {/* 인스타그램 스타일 해시태그 */}
+          <div className="flex flex-wrap gap-1">
+            {review.highlight && (
+              <span className="text-sm text-teal-600 font-medium">
+                #{review.highlight}
+              </span>
+            )}
+            <span className="text-sm text-teal-600 font-medium">
+              #{experienceLevel}
+            </span>
+            <span className="text-sm text-teal-600 font-medium">
+              #{review.category}
+            </span>
+            <span className="text-sm text-teal-600 font-medium">
+              #{packageName}
+            </span>
+          </div>
+
+          {/* 시간 정보 */}
+          <div className="text-xs glass-text-muted mt-2">
+            {review.created_at ? formatTime(review.created_at) : '최근'}
           </div>
         </div>
       </div>

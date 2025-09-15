@@ -20,25 +20,25 @@ interface ReviewFormProps {
 
 // 케어온에서 제공하는 서비스 카테고리
 const serviceCategories = [
-  { value: "CCTV", label: "CCTV", icon: "📹", description: "방범/보안 시설" },
-  { value: "인터넷", label: "인터넷", icon: "🌐", description: "인터넷 회선 설치" },
-  { value: "TV", label: "TV", icon: "📺", description: "TV 및 방송 서비스" },
-  { value: "보험", label: "보험", icon: "🛡️", description: "사업자 보험" },
-  { value: "POS", label: "POS", icon: "💳", description: "POS 시스템" },
-  { value: "기타", label: "기타", icon: "⭐", description: "기타 서비스" },
+  { value: "CCTV", label: "CCTV", description: "방범/보안 시설" },
+  { value: "인터넷", label: "인터넷", description: "인터넷 회선 설치" },
+  { value: "TV", label: "TV", description: "TV 및 방송 서비스" },
+  { value: "보험", label: "보험", description: "사업자 보험" },
+  { value: "POS", label: "POS", description: "POS 시스템" },
+  { value: "기타", label: "기타", description: "기타 서비스" },
 ]
 
 // 업종 분류
 const businessTypes = [
-  { value: "카페/음식점", label: "카페/음식점", icon: "☕" },
-  { value: "IT/스타트업", label: "IT/스타트업", icon: "💻" },
-  { value: "온라인 쇼핑몰", label: "온라인 쇼핑몰", icon: "🛒" },
-  { value: "헬스/뷰티", label: "헬스/뷰티", icon: "💅" },
-  { value: "교육/학원", label: "교육/학원", icon: "🎓" },
-  { value: "제조/배달", label: "제조/배달", icon: "🚚" },
-  { value: "숙박/펜션", label: "숙박/펜션", icon: "🏨" },
-  { value: "프랜차이즈", label: "프랜차이즈", icon: "🏪" },
-  { value: "기타", label: "기타", icon: "📦" },
+  { value: "카페/음식점", label: "카페/음식점" },
+  { value: "IT/스타트업", label: "IT/스타트업" },
+  { value: "온라인 쇼핑몰", label: "온라인 쇼핑몰" },
+  { value: "헬스/뷰티", label: "헬스/뷰티" },
+  { value: "교육/학원", label: "교육/학원" },
+  { value: "제조/배달", label: "제조/배달" },
+  { value: "숙박/펜션", label: "숙박/펜션" },
+  { value: "프랜차이즈", label: "프랜차이즈" },
+  { value: "기타", label: "기타" },
 ]
 
 // 사업 경험 레벨
@@ -169,152 +169,167 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
 
   return (
     <motion.div
-      className="max-w-2xl mx-auto"
+      className="w-full"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* 미니멀 헤더 */}
-      <div className="text-center mb-12">
-        <h2 className="text-2xl font-light text-gray-900 mb-2">
-          후기 작성
-        </h2>
-        <p className="text-gray-500 text-sm font-light">
-          케어온과 함께한 경험을 공유해주세요
-        </p>
-      </div>
-
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-        <div className="p-8">
+      <div className="space-y-6">
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* 기본 정보 */}
-            <div className="space-y-4">
+            {/* 인스타그램 스타일 프로필 섹션 */}
+            <div className="glass-container-soft p-6">
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="story-ring">
+                  <div className="story-inner">
+                    <div className="w-12 h-12 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-full flex items-center justify-center">
+                      <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-bold glass-text-primary">새 스토리 작성</h3>
+                  <p className="text-sm glass-text-secondary">경험을 공유해주세요</p>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">이름</label>
                   <Input
                     value={formData.author_name}
                     onChange={(e) => handleInputChange("author_name", e.target.value)}
-                    placeholder="홍길동"
-                    className="border-gray-200 focus:border-[#148777] focus:ring-[#148777] focus:ring-1 rounded-lg"
+                    placeholder="이름"
+                    className="glass-input"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">이메일</label>
                   <Input
                     type="email"
                     value={formData.author_email}
                     onChange={(e) => handleInputChange("author_email", e.target.value)}
-                    placeholder="example@email.com"
-                    className="border-gray-200 focus:border-[#148777] focus:ring-[#148777] focus:ring-1 rounded-lg"
+                    placeholder="이메일"
+                    className="glass-input"
                     required
                   />
                 </div>
               </div>
             </div>
 
-            {/* 서비스 선택 */}
-            <div className="space-y-4">
+            {/* 인스타그램 스타일 태그 선택 */}
+            <div className="glass-container-soft p-6 space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">이용하신 서비스</label>
-                <select
-                  value={formData.category}
-                  onChange={(e) => handleInputChange("category", e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:border-[#148777] focus:ring-[#148777] focus:ring-1"
-                  required
-                >
-                  <option value="">서비스를 선택하세요</option>
+                <h4 className="font-bold glass-text-primary mb-4"># 서비스 태그</h4>
+                <div className="flex flex-wrap gap-3">
                   {serviceCategories.map((service) => (
-                    <option key={service.value} value={service.value}>
-                      {service.icon} {service.label}
-                    </option>
+                    <button
+                      key={service.value}
+                      type="button"
+                      onClick={() => handleInputChange("category", service.value)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                        formData.category === service.value
+                          ? 'glass-bg-primary glass-text-primary'
+                          : 'glass-container glass-text-secondary hover:glass-container-strong'
+                      }`}
+                    >
+                      #{service.label}
+                    </button>
                   ))}
-                </select>
+                </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">사업 업종</label>
-                <select
-                  value={formData.business}
-                  onChange={(e) => handleInputChange("business", e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:border-[#148777] focus:ring-[#148777] focus:ring-1"
-                  required
-                >
-                  <option value="">업종을 선택하세요</option>
+                <h4 className="font-bold glass-text-primary mb-4"># 업종 태그</h4>
+                <div className="flex flex-wrap gap-3">
                   {businessTypes.map((type) => (
-                    <option key={type.value} value={type.value}>
-                      {type.icon} {type.label}
-                    </option>
+                    <button
+                      key={type.value}
+                      type="button"
+                      onClick={() => handleInputChange("business", type.value)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                        formData.business === type.value
+                          ? 'glass-bg-secondary glass-text-primary'
+                          : 'glass-container glass-text-secondary hover:glass-container-strong'
+                      }`}
+                    >
+                      #{type.label}
+                    </button>
                   ))}
-                </select>
+                </div>
               </div>
-              
-              {/* 사업 경험 레벨 선택 */}
+
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">사업 경험</label>
-                <select
-                  value={formData.business_experience}
-                  onChange={(e) => handleInputChange("business_experience", e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:border-[#148777] focus:ring-[#148777] focus:ring-1"
-                  required
-                >
-                  <option value="">사업 경험을 선택하세요</option>
+                <h4 className="font-bold glass-text-primary mb-4"># 경험 레벨</h4>
+                <div className="flex flex-wrap gap-3">
                   {businessExperienceLevels.map((level) => (
-                    <option key={level.value} value={level.value}>
-                      {level.label} - {level.description}
-                    </option>
+                    <button
+                      key={level.value}
+                      type="button"
+                      onClick={() => handleInputChange("business_experience", level.value)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                        formData.business_experience === level.value
+                          ? 'glass-bg-story glass-text-primary'
+                          : 'glass-container glass-text-secondary hover:glass-container-strong'
+                      }`}
+                    >
+                      #{level.label}
+                    </button>
                   ))}
-                </select>
+                </div>
               </div>
             </div>
 
-            {/* 후기 내용 */}
-            <div className="space-y-4">
+            {/* 인스타그램 스타일 콘텐츠 작성 */}
+            <div className="glass-container-soft p-6 space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">제목</label>
+                <h4 className="font-bold glass-text-primary mb-4">스토리 제목</h4>
                 <Input
                   value={formData.title}
                   onChange={(e) => handleInputChange("title", e.target.value)}
-                  placeholder="케어온 덕분에 카페 창업이 성공적이었어요!"
-                  className="border-gray-200 focus:border-[#148777] focus:ring-[#148777] focus:ring-1 rounded-lg"
+                  placeholder="어떤 이야기를 들려주시겠어요?"
+                  className="glass-input text-lg"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">후기 내용</label>
+                <h4 className="font-bold glass-text-primary mb-4">이야기</h4>
                 <Textarea
                   value={formData.content}
                   onChange={(e) => handleInputChange("content", e.target.value)}
-                  placeholder="케어온과 함께한 경험을 자세히 작성해주세요..."
-                  className="min-h-[150px] border-gray-200 focus:border-[#148777] focus:ring-[#148777] focus:ring-1 rounded-lg resize-none"
+                  placeholder="경험을 자세히 들려주세요..."
+                  className="glass-input min-h-[150px] resize-none text-base leading-relaxed"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">강조 문구 (선택)</label>
-                <select
-                  value={formData.highlight}
-                  onChange={(e) => handleInputChange("highlight", e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:border-[#148777] focus:ring-[#148777] focus:ring-1"
-                >
-                  <option value="">강조할 문구를 선택하세요</option>
+                <h4 className="font-bold glass-text-primary mb-4"># 하이라이트</h4>
+                <div className="flex flex-wrap gap-3">
                   {highlightKeywords.map((keyword) => (
-                    <option key={keyword} value={keyword}>
-                      {keyword}
-                    </option>
+                    <button
+                      key={keyword}
+                      type="button"
+                      onClick={() => handleInputChange("highlight", keyword)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                        formData.highlight === keyword
+                          ? 'glass-bg-accent glass-text-primary'
+                          : 'glass-container glass-text-secondary hover:glass-container-strong'
+                      }`}
+                    >
+                      #{keyword}
+                    </button>
                   ))}
-                </select>
+                </div>
               </div>
             </div>
 
-            {/* 평점 */}
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-gray-900">만족도</label>
-              <div className="flex items-center gap-2">
+            {/* 인스타그램 스타일 평점 */}
+            <div className="glass-container-soft p-6">
+              <h4 className="font-bold glass-text-primary mb-4">만족도</h4>
+              <div className="flex items-center justify-center gap-4">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
@@ -322,27 +337,29 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
                     onClick={() => handleRatingClick(star)}
                     onMouseEnter={() => handleRatingHover(star)}
                     onMouseLeave={handleRatingLeave}
-                    className="p-1 transition-all duration-200 hover:scale-110"
+                    className="p-2 transition-all duration-200 hover:scale-125"
                   >
                     {star <= (hoveredRating || formData.rating) ? (
-                      <StarIcon className="w-8 h-8 text-[#148777]" />
+                      <StarIcon className="w-10 h-10 text-teal-500" />
                     ) : (
-                      <StarOutlineIcon className="w-8 h-8 text-gray-300" />
+                      <StarOutlineIcon className="w-10 h-10 text-gray-300" />
                     )}
                   </button>
                 ))}
-                {(hoveredRating || formData.rating) > 0 && (
-                  <span className="ml-3 text-sm text-gray-600">
+              </div>
+              {(hoveredRating || formData.rating) > 0 && (
+                <div className="text-center mt-4">
+                  <span className="glass-bg-accent px-4 py-2 rounded-full text-sm font-medium glass-text-primary">
                     {getRatingLabel(hoveredRating || formData.rating)}
                   </span>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
-            {/* 미디어 업로드 */}
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-gray-900">사진 및 동영상 (선택)</label>
-              <div className="border border-gray-200 rounded-lg p-4">
+            {/* 인스타그램 스타일 미디어 업로드 */}
+            <div className="glass-container-soft p-6">
+              <h4 className="font-bold glass-text-primary mb-4">사진 및 동영상</h4>
+              <div className="glass-container p-4 rounded-2xl">
                 <MediaUpload
                   onMediaChange={handleMediaChange}
                   initialImages={formData.images}
@@ -354,45 +371,47 @@ export function ReviewForm({ onSuccess, onCancel }: ReviewFormProps) {
 
             {/* 제출 메시지 */}
             {submitMessage && (
-              <div
-                className={`p-4 rounded-lg text-sm ${
+              <div className="glass-container p-4">
+                <p className={`text-sm ${
                   submitMessage.includes("성공")
-                    ? "bg-gray-50 text-gray-700"
-                    : "bg-red-50 text-red-700"
-                }`}
-              >
-                {submitMessage}
+                    ? "glass-text-primary"
+                    : "text-red-600"
+                }`}>
+                  {submitMessage}
+                </p>
               </div>
             )}
 
-            {/* 제출 버튼 */}
+            {/* 인스타그램 스타일 제출 버튼 */}
             <div className="flex gap-3 pt-6">
               <Button
                 type="submit"
                 disabled={isSubmitting || !isFormValid()}
-                className="flex-1 bg-[#148777] hover:bg-[#0f6b5c] text-white border-0 rounded-lg h-12 font-medium transition-colors duration-200"
+                className={`flex-1 rounded-full h-12 font-bold transition-all duration-200 ${
+                  isFormValid()
+                    ? 'social-button glass-bg-primary glass-text-primary hover:scale-105 active:scale-95'
+                    : 'glass-container glass-text-muted opacity-50 cursor-not-allowed'
+                }`}
               >
-                {isSubmitting ? "제출 중..." : "후기 제출하기"}
+                {isSubmitting ? "업로드 중..." : "스토리 공유하기"}
               </Button>
               {onCancel && (
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={onCancel} 
-                  className="px-6 border-gray-200 text-gray-600 hover:bg-gray-50 rounded-lg h-12"
+                <Button
+                  type="button"
+                  onClick={onCancel}
+                  className="px-6 social-button glass-text-secondary rounded-full h-12"
                 >
                   취소
                 </Button>
               )}
             </div>
 
-            {/* 간단한 안내 */}
-            <p className="text-xs text-gray-500 text-center pt-4">
-              제출된 후기는 검토 후 게시됩니다
+            {/* 안내 메시지 */}
+            <p className="text-xs glass-text-muted text-center pt-4">
+              스토리는 검토 후 게시됩니다
             </p>
           </form>
         </div>
-      </div>
     </motion.div>
   )
 }

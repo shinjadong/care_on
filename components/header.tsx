@@ -195,9 +195,9 @@ export function Header() {
 
   return (
     <header
-      className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-out ${
-        isScrolled ? "ios-blur" : "bg-transparent"
-      } ${isVisible ? "top-0" : "-top-full"}`}
+      className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-out glass-container ${
+        isVisible ? "top-0" : "-top-full"
+      }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
@@ -223,32 +223,9 @@ export function Header() {
                   |
                 </span>
 
-                {/* 모바일: 간단한 브랜드명만 */}
-                <div
-                  className={`lg:hidden text-sm font-semibold transition-colors duration-300 ${
-                    isScrolled ? "text-gray-900" : "text-white"
-                  }`}
-                >
-                  케어온
-                </div>
+                {/* 모바일: 로고만 표시 */}
 
-                {/* PC: 상세 정보 */}
-                <div
-                  className={`hidden lg:block text-xs transition-colors duration-300 ${
-                    isScrolled ? "text-gray-600" : "text-gray-200"
-                  }`}
-                >
-                  <div className="flex items-center space-x-2">
-                    <span className="flex items-center space-x-1">
-                      <span className="font-semibold">케어온, 사장님의 모든 것</span>
-                      <span className="text-xs opacity-75">(2,847명)</span>
-                    </span>
-                    <span>|</span>
-                    <span className="font-semibold">실패가 두렵지 않은 세상</span>
-                    <span>|</span>
-                    <LiveStatus isScrolled={isScrolled} />
-                  </div>
-                </div>
+                {/* PC: 로고만 표시 */}
               </div>
             </Link>
           </div>
@@ -300,22 +277,7 @@ export function Header() {
                   <SheetDescription>사이트 네비게이션 메뉴입니다</SheetDescription>
                 </SheetHeader>
                 <div className="flex flex-col h-full">
-                  {/* 모바일 메뉴 헤더 */}
-                  <div className="flex flex-col space-y-3 py-6 border-b">
-                    <h2 className="text-xl font-bold text-gray-900">케어온</h2>
-                    <div className="space-y-2">
-                      <p className="text-sm font-semibold text-gray-700">사장님의 모든 것</p>
-                      <div className="flex items-center space-x-3 text-xs text-gray-500">
-                        <span className="flex items-center space-x-1">
-                          <span></span>
-                        </span>
-                        <span>•</span>
-                        <span className="font-semibold text-teal-600">스타트케어 패키지</span>
-                        <span>•</span>
-                        <LiveStatus isScrolled={false} />
-                      </div>
-                    </div>
-                  </div>
+                  {/* 모바일 메뉴 - 로고만 표시 */}
 
                   {/* 모바일 네비게이션 메뉴 */}
                   <nav className="flex flex-col space-y-4 mt-6 flex-1">

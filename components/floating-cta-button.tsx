@@ -43,7 +43,7 @@ export function FloatingCTAButton() {
           {/* 닫기 버튼 */}
           <button
             onClick={() => setIsVisible(false)}
-            className="absolute -top-2 -right-2 w-4 h-4 bg-gray-600/80 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-gray-700/90 transition-colors z-10"
+            className="absolute -top-2 -right-2 w-4 h-4 glass-container glass-text-primary rounded-full flex items-center justify-center hover:glass-container-strong transition-colors z-10"
             aria-label="닫기"
           >
             <X className="w-2.5 h-2.5" />
@@ -52,11 +52,11 @@ export function FloatingCTAButton() {
           {/* 신청 버튼 */}
           <button
             onClick={() => setShowApplicationModal(true)}
-            className="group p-0 bg-gray-800/80 hover:bg-gray-900/90 backdrop-blur-sm text-white text-sm font-medium rounded-xl transition-all duration-200 shadow-md min-w-0 overflow-hidden"
+            className="group p-0 glass-container-strong glass-text-primary text-sm font-medium rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md min-w-0 overflow-hidden"
           >
             <div className="flex flex-col overflow-hidden">
               {/* 브라우저 탭 영역 - 현재 신청중 표시 */}
-              <div className="flex items-center justify-center gap-1 text-[10px] text-gray-300 px-3 py-1.5">
+              <div className="flex items-center justify-center gap-1 text-[10px] glass-text-secondary px-3 py-1.5">
                 <Users className="w-2 h-2" />
                 <span>
                   <span className="font-medium">{currentUsers}명</span> 신청중
@@ -64,12 +64,12 @@ export function FloatingCTAButton() {
               </div>
               
               {/* 브라우저 콘텐츠 영역 - 메인 텍스트 */}
-              <div className="bg-white/90 px-3 py-3 flex shadow-sm items-center gap-1">
-                <div className="text-center leading-tight text-gray-800">
+              <div className="glass-container px-3 py-3 flex shadow-sm items-center gap-1">
+                <div className="text-center leading-tight glass-text-primary">
                   <div className="text-xs font-semibold">셀프 다이렉트</div>
                   <div className="text-xs font-semibold">신청하러 가기</div>
                 </div>
-                <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform flex-shrink-0 text-gray-600" />
+                <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform flex-shrink-0 glass-text-secondary" />
               </div>
             </div>
           </button>
@@ -78,13 +78,13 @@ export function FloatingCTAButton() {
 
       {/* 신청 모달 */}
       {showApplicationModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50">
-          <div className="relative max-h-[90vh] overflow-y-auto bg-white rounded-2xl w-full max-w-lg">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="relative max-h-[90vh] overflow-y-auto glass-container p-6 rounded-2xl w-full max-w-lg">
             <button
               onClick={() => setShowApplicationModal(false)}
-              className="absolute right-4 top-4 z-10 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="absolute right-4 top-4 z-10 p-2 rounded-full glass-container hover:glass-container-strong transition-colors"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 glass-text-secondary" />
             </button>
             <div className="p-4 sm:p-6">
               <CareonApplicationForm 

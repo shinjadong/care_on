@@ -120,18 +120,35 @@ export default function ReviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <ReviewHeader totalCount={totalCount} falseReviewCount={falseReviewCount} onScrollClick={handleScrollDown} />
-
-      <div ref={reviewsSectionRef} className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-              고객 후기
+    <div className="min-h-screen relative">
+      {/* 통합된 헤더 - 카운트 기능 + 스토리 디자인 */}
+      <section className="w-full py-12 md:py-16">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="glass-card p-8 text-center">
+            <h1 className="text-2xl md:text-3xl font-bold glass-text-primary mb-4">
+              케어온 멤버십, <span className="text-teal-600">리얼 후기</span>
             </h1>
-            <p className="text-gray-600 mt-1">케어온과 함께한 리얼 후기</p>
+
+            {/* 카운트 버튼 */}
+            <button
+              onClick={handleScrollDown}
+              className="inline-flex items-center glass-bg-primary px-6 py-3 rounded-full font-bold hover:scale-105 active:scale-95 transition-all duration-200 mb-6"
+            >
+              <span className="text-xl md:text-2xl font-extrabold glass-text-primary">
+                {Math.floor(totalCount * 3).toLocaleString()}명
+              </span>
+              <span className="ml-2 text-sm glass-text-primary">사장님들의 선택</span>
+            </button>
+
+            <div className="mt-6">
+              <h2 className="text-3xl font-bold glass-text-primary mb-2">스토리</h2>
+              <p className="glass-text-secondary">진짜 사장님들의 이야기</p>
+            </div>
           </div>
         </div>
+      </section>
+
+      <div ref={reviewsSectionRef} className="container mx-auto px-4 py-8 max-w-4xl">
 
         <ReviewFilters 
           selectedCategory={selectedCategory} 
@@ -162,10 +179,12 @@ export default function ReviewPage() {
 
         {!isLoading && !error && (
           <>
-            <MotionDiv className="grid grid-cols-1 gap-4 mb-12">
+            <MotionDiv className="space-y-6 mb-12">
               {reviews.map((review, index) => (
                 <WhenVisible key={review.id} minHeight={200}>
-                  <ReviewCard review={review} />
+                  <div className="thread-card">
+                    <ReviewCard review={review} />
+                  </div>
                 </WhenVisible>
               ))}
             </MotionDiv>
@@ -193,16 +212,23 @@ export default function ReviewPage() {
         )}
       </div>
 
-      {/* 플로팅 글쓰기 버튼 */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <Button
-          asChild
-          className="w-14 h-14 rounded-full bg-gray-800 hover:bg-gray-900 text-white shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center"
-        >
-          <a href="/review/write">
-            <PencilIcon className="w-6 h-6" />
-          </a>
-        </Button>
+      {/* 인스타그램 스타일 스토리 작성 버튼 */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <div className="story-ring">
+          <div className="story-inner">
+            <Button
+              asChild
+              className="w-16 h-16 rounded-full social-button bg-white text-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center"
+            >
+              <a href="/review/write">
+                <PlusIcon className="w-8 h-8" />
+              </a>
+            </Button>
+          </div>
+        </div>
+        <div className="text-center mt-2">
+          <span className="text-xs glass-text-secondary font-medium">스토리 작성</span>
+        </div>
       </div>
     </div>
   )

@@ -27,38 +27,43 @@ const navigation = [
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* 사이드바 */}
-      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
+    <div className="min-h-screen relative">
+      {/* 인스타그램 스타일 사이드바 */}
+      <div className="fixed inset-y-0 left-0 z-50 w-64 glass-sidebar">
         <div className="flex h-full flex-col">
           {/* 로고/제목 */}
-          <div className="flex h-16 items-center justify-center border-b border-gray-200">
-            <h1 className="text-xl font-bold text-gray-900">CareOn 관리자</h1>
+          <div className="flex h-16 items-center justify-center glass-border-light border-b">
+            <h1 className="text-xl font-bold glass-text-primary">CareOn</h1>
           </div>
 
           {/* 네비게이션 메뉴 */}
-          <nav className="flex-1 space-y-1 px-4 py-6">
+          <nav className="glass-sidebar-nav">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                className="glass-sidebar-item"
               >
-                <item.icon className="mr-3 h-5 w-5 text-gray-500 group-hover:text-gray-700" />
-                {item.name}
+                <item.icon className="w-5 h-5" />
+                <span className="font-medium">{item.name}</span>
               </Link>
             ))}
           </nav>
 
           {/* 하단 사용자 정보 */}
-          <div className="border-t border-gray-200 p-4">
+          <div className="glass-border-light border-t p-6 mt-auto">
             <div className="flex items-center space-x-3">
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">관리자</p>
-                <p className="text-xs text-gray-500">admin@careon.co.kr</p>
+              <div className="social-profile">
+                <svg className="w-6 h-6 glass-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
               </div>
-              <button className="text-gray-400 hover:text-gray-600">
-                <LogOut className="h-4 w-4" />
+              <div className="flex-1">
+                <p className="text-sm font-medium glass-text-primary">관리자</p>
+                <p className="text-xs glass-text-secondary">admin@careon.co.kr</p>
+              </div>
+              <button className="social-profile w-8 h-8 hover:glass-bg-primary">
+                <LogOut className="h-4 w-4 glass-text-secondary" />
               </button>
             </div>
           </div>
@@ -67,22 +72,22 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* 메인 콘텐츠 */}
       <div className="pl-64">
-        {/* 상단 헤더 */}
-        <header className="bg-white shadow-sm border-b border-gray-200">
+        {/* 상단 헤더 - glassmorphic */}
+        <header className="glass-container m-4 mb-6">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold glass-text-primary">
                   CareOn 관리 시스템
                 </h2>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm glass-text-secondary">
                   최적화된 데이터베이스 구조로 효율적인 관리를 지원합니다
                 </p>
               </div>
-              <div className="text-sm text-gray-500">
-                {new Date().toLocaleDateString('ko-KR', { 
-                  year: 'numeric', 
-                  month: 'long', 
+              <div className="text-sm glass-text-secondary">
+                {new Date().toLocaleDateString('ko-KR', {
+                  year: 'numeric',
+                  month: 'long',
                   day: 'numeric',
                   weekday: 'long'
                 })}
@@ -92,7 +97,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         {/* 페이지 콘텐츠 */}
-        <main className="min-h-[calc(100vh-5rem)]">
+        <main className="min-h-[calc(100vh-8rem)] px-4 pb-8">
           {children}
         </main>
       </div>

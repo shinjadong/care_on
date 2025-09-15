@@ -5,21 +5,23 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 glass-container",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        default: "glass-container hover:glass-container-strong glass-text-primary hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]",
+        primary: "glass-container-strong glass-bg-primary glass-text-primary hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]",
+        secondary: "glass-container glass-bg-secondary glass-text-primary hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]",
+        accent: "glass-container glass-bg-accent glass-text-primary hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]",
+        destructive: "glass-container bg-red-500/20 glass-border-medium border-red-400/30 text-red-100 hover:bg-red-500/30 hover:scale-[1.02] active:scale-[0.98]",
+        outline: "glass-container glass-border-strong bg-transparent glass-text-primary hover:glass-container-strong hover:scale-[1.02] active:scale-[0.98]",
+        ghost: "bg-transparent border-none glass-text-secondary hover:glass-container hover:glass-text-primary hover:scale-[1.02] active:scale-[0.98]",
+        link: "bg-transparent border-none text-white/80 underline-offset-4 hover:underline hover:text-white",
       },
       size: {
         default: "h-auto text-base font-normal py-3 px-6",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
+        sm: "h-9 px-3 text-sm",
+        lg: "h-12 px-8 text-lg",
         icon: "h-10 w-10",
       },
     },
