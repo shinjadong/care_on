@@ -88,18 +88,11 @@ export function BlockRenderer({
 
   const getBlockStyles = (): React.CSSProperties => {
     const settings = block.settings || {};
-    
+
     return {
-      width: settings.width && settings.width !== '100' ? 
-        (settings.width.includes('%') || settings.width.includes('px') ? settings.width : `${settings.width}%`) : 
-        '100%',
-      height: settings.height && settings.height !== 'auto' ? 
-        (settings.height.includes('px') ? settings.height : `${settings.height}px`) : 
-        'auto',
       padding: `${customPadding.top}px ${customPadding.right}px ${customPadding.bottom}px ${customPadding.left}px`,
       backgroundColor: settings.backgroundColor,
       color: settings.textColor,
-      textAlign: settings.alignment as any,
     };
   };
 
@@ -272,10 +265,9 @@ export function BlockRenderer({
   );
 
   return (
-    <div 
+    <div
       className={`block-wrapper relative group w-full ${isEditing ? 'border-2 border-dashed border-gray-300 hover:border-gray-400' : ''}`}
       style={{
-        ...getBlockStyles(),
         width: '100%',
         margin: 0,
         padding: isEditing ? '8px' : '0'
@@ -301,7 +293,7 @@ export function BlockRenderer({
                     ...block,
                     settings: {
                       ...block.settings,
-                      animation: newSettings,
+                      animation: newSettings as any,
                     },
                   });
                 }}
@@ -381,8 +373,22 @@ export function BlockRenderer({
       )}
       
       <MotionWrapper block={block} isEditing={isEditing}>
-        <div className={isEditing ? 'min-h-[20px]' : ''}>
-          {renderBlock(block)}
+        <div
+          className={isEditing ? 'min-h-[20px]' : ''}
+          style={{
+            ...getBlockStyles(),
+            display: 'flex',
+            justifyContent:
+              block.content?.imageAlign === 'left' ? 'flex-start' :
+              block.content?.imageAlign === 'right' ? 'flex-end' : 'center',
+            width: '100%'
+          }}
+        >
+          <div style={{ width: block.settings?.width ?
+            (block.settings.width.includes('%') || block.settings.width.includes('px') ?
+              block.settings.width : `${block.settings.width}%`) : '100%' }}>
+            {renderBlock(block)}
+          </div>
         </div>
       </MotionWrapper>
     </div>
