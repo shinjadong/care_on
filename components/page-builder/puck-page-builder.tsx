@@ -334,14 +334,9 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
           </div>
           
           <div className="flex items-center space-x-2">
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleSave}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              저장
-            </Button>
+            <div className="text-sm glass-text-secondary">
+              우측 상단 "Publish" 버튼으로 저장하세요
+            </div>
           </div>
         </div>
       </div>
@@ -358,7 +353,7 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
           </div>
         </div>
         
-        <div className="relative z-10">
+        <div className="relative z-10 puck-editor">
           <Puck
             config={puckConfig}
             data={data}

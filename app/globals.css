@@ -571,6 +571,43 @@
 }
 
 /* ========================================= */
+/* PUCK EDITOR CUSTOMIZATION */
+/* ========================================= */
+
+/* Puck "Publish" 버튼을 한국어로 변경 */
+.puck-editor [data-rbd-droppable-id="root"] ~ div button:last-child {
+  position: relative;
+}
+
+.puck-editor [data-rbd-droppable-id="root"] ~ div button:last-child::before {
+  content: "💾 저장하기";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #148777;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.puck-editor [data-rbd-droppable-id="root"] ~ div button:last-child span {
+  opacity: 0;
+}
+
+/* Puck 에디터 glassmorphic 스타일링 */
+.puck-editor {
+  --puck-color-azure-05: rgba(255, 255, 255, 0.6);
+  --puck-color-azure-03: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+}
+
+/* ========================================= */
 /* CAREON ANIMATIONS */
 /* ========================================= */
 
