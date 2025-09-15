@@ -52,33 +52,6 @@ export function Footer() {
           <div className="absolute bottom-0 right-0 w-60 h-60 bg-white rounded-full translate-x-1/3 translate-y-1/3" />
         </div>
         
-        <div className="container mx-auto px-4 relative z-10">
-          {/* CTA 섹션 */}
-          <div className="bg-gradient-to-r from-[#148777] to-[#0f6b5c] rounded-2xl p-8 md:p-12 mb-12 text-center text-white">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              창업, 혼자 고민하지 마세요
-            </h2>
-            <p className="text-lg md:text-xl mb-8 opacity-95">
-              케어온이 함께합니다. 지금 바로 문의하세요!
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
-              <a
-                href="tel:1866-1845"
-                className="inline-flex items-center justify-center bg-white text-[#148777] hover:bg-gray-100 font-bold px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 gap-3"
-              >
-                <Phone className="w-5 h-5" />
-                1866-1845 전화하기
-              </a>
-              
-              <Button
-                onClick={() => setShowSMSForm(!showSMSForm)}
-                className="bg-[#0f6b5c] text-white hover:bg-[#0a5448] font-bold px-8 py-6 text-lg rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3"
-              >
-                <MessageCircle className="w-5 h-5" />
-                문자로 문의하기
-              </Button>
-            </div>
 
             {/* 운영시간 안내 */}
             <div className="mt-8 p-4 bg-white/10 rounded-xl backdrop-blur-sm inline-block">

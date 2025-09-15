@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { FloatingBanner } from "@/components/floating-banner"
 import { ClientAuthProvider } from "@/components/providers/auth-provider"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -58,11 +59,12 @@ export default function RootLayout({
           forcedTheme="light"
         >
           <ClientAuthProvider>
-            <div className="relative z-10">
+            <div className="relative z-10 min-h-screen flex flex-col">
               <Header />
-              <main className="min-h-screen">
+              <main className="flex-1">
                 {children}
               </main>
+              <Footer />
               <FloatingBanner />
             </div>
           </ClientAuthProvider>
