@@ -86,9 +86,15 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
             images: block.content.images || [],
             displayMode: block.content.displayMode || 'single',
             containerWidth: block.content.containerWidth || 100,
-            padding: block.content.padding || 16,
-            borderRadius: block.content.borderRadius || 12,
-            aspectRatio: block.content.aspectRatio || 'auto'
+            padding: block.content.padding || 0,
+            borderRadius: block.content.borderRadius || 0,
+            aspectRatio: block.content.aspectRatio || 'auto',
+            imageAlign: block.content.imageAlign || 'center', // 기존 블록도 중앙 정렬
+            opacity: block.content.opacity || 100,
+            rotation: block.content.rotation || 0,
+            shadow: block.content.shadow || 'none',
+            zIndex: block.content.zIndex || 1,
+            hoverEffect: block.content.hoverEffect || 'none'
           };
           break;
 
@@ -251,9 +257,15 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
               images: props.images || [],
               displayMode: props.displayMode || 'single',
               containerWidth: props.containerWidth || 100,
-              padding: props.padding || 16,
-              borderRadius: props.borderRadius || 12,
-              aspectRatio: props.aspectRatio || 'auto'
+              padding: props.padding || 0,
+              borderRadius: props.borderRadius || 0,
+              aspectRatio: props.aspectRatio || 'auto',
+              imageAlign: props.imageAlign || 'center',
+              opacity: props.opacity || 100,
+              rotation: props.rotation || 0,
+              shadow: props.shadow || 'none',
+              zIndex: props.zIndex || 1,
+              hoverEffect: props.hoverEffect || 'none'
             };
             break;
           

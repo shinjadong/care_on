@@ -99,6 +99,12 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
       hoverEffect: block.content.hoverEffect
     })
 
+    console.log('🔍 ImageAlign 상태 추적:', {
+      fromContent: block.content.imageAlign,
+      currentState: imageAlign,
+      willSetTo: block.content.imageAlign || 'center'
+    })
+
     setContainerWidth(block.content.containerWidth || 100)
     setPadding(block.content.padding || 16)
     setBorderRadius(block.content.borderRadius || 12)
@@ -693,14 +699,14 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
         </>
       )}
 
-      {/* 이미지 렌더링 - 페이지 꽉 차게 */}
+      {/* 이미지 렌더링 - flexbox 정렬 시스템 */}
       <div
-        className="w-full"
+        className="w-full flex"
         style={{
           width: `${containerWidth}%`,
-          margin: imageAlign === 'center' ? '0 auto' : imageAlign === 'right' ? '0 0 0 auto' : '0 auto 0 0',
-          padding: containerWidth < 100 ? `${padding}px` : '0', // 100% 넓이일 때는 패딩 없음
-          textAlign: imageAlign,
+          margin: '0 auto',
+          padding: containerWidth < 100 ? `${padding}px` : '0',
+          justifyContent: (imageAlign || 'center') === 'center' ? 'center' : (imageAlign || 'center') === 'right' ? 'flex-end' : 'flex-start',
           opacity: opacity / 100,
           transform: `rotate(${rotation}deg)`,
           zIndex: zIndex
@@ -708,8 +714,8 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
       >
         {images.length > 0 ? (
           displayMode === 'single' ? (
-            // 단일 이미지 모드 - 캔바 스타일 적용
-            <div style={{ textAlign: imageAlign }}>
+            // 단일 이미지 모드 - flexbox 정렬
+            <div className="flex w-full" style={{ justifyContent: (imageAlign || 'center') === 'center' ? 'center' : (imageAlign || 'center') === 'right' ? 'flex-end' : 'flex-start' }}>
               {images.map((image) => (
                 <div key={image.id}>
                   {image.link && !isEditing ? (
@@ -724,12 +730,13 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                         src={image.src}
                         alt={image.alt || ''}
                         style={{
-                          width: '100%',
+                          width: containerWidth === 100 ? '100%' : 'auto',
+                        maxWidth: '100%',
                           height: 'auto',
                           borderRadius: containerWidth < 100 ? `${borderRadius}px` : '0',
                           aspectRatio: aspectRatio !== 'auto' ? aspectRatio : undefined,
                           objectFit: aspectRatio !== 'auto' ? 'cover' : 'contain',
-                          display: imageAlign === 'center' ? 'block' : 'inline-block',
+                          display: 'block',
                           transition: 'all 0.3s ease'
                         }}
                         className={`glass-container ${getShadowClass(shadow)} ${getHoverEffectClass(hoverEffect)} transition-all duration-300 ease-out`}
@@ -741,12 +748,13 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                       alt={image.alt || ''}
                       onClick={() => isEditing && setIsEditingImages(true)}
                       style={{
-                        width: '100%',
+                        width: containerWidth === 100 ? '100%' : 'auto',
+                        maxWidth: '100%',
                         height: 'auto',
                         borderRadius: containerWidth < 100 ? `${borderRadius}px` : '0',
                         aspectRatio: aspectRatio !== 'auto' ? aspectRatio : undefined,
                         objectFit: aspectRatio !== 'auto' ? 'cover' : 'contain',
-                        display: imageAlign === 'center' ? 'block' : 'inline-block',
+                        display: 'block',
                         cursor: isEditing ? 'pointer' : 'default',
                         transition: 'all 0.3s ease'
                       }}
@@ -774,10 +782,10 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
               ))}
             </div>
           ) : (
-            // 스토리 모드 - 동적 스타일 적용
-            <div className="space-y-4">
+            // 스토리 모드 - flexbox 정렬 적용
+            <div className="flex flex-col space-y-4" style={{ alignItems: (imageAlign || 'center') === 'center' ? 'center' : (imageAlign || 'center') === 'right' ? 'flex-end' : 'flex-start' }}>
               {images.map((image, index) => (
-                <div key={image.id} className="mb-4">
+                <div key={image.id} className="mb-4" style={{ width: containerWidth === 100 ? '100%' : 'auto' }}>
                   {image.link && !isEditing ? (
                     <a
                       href={image.link}
@@ -790,12 +798,13 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                         src={image.src}
                         alt={image.alt || ''}
                         style={{
-                          width: '100%',
+                          width: containerWidth === 100 ? '100%' : 'auto',
+                        maxWidth: '100%',
                           height: 'auto',
                           borderRadius: containerWidth < 100 ? `${borderRadius}px` : '0',
                           aspectRatio: aspectRatio !== 'auto' ? aspectRatio : undefined,
                           objectFit: aspectRatio !== 'auto' ? 'cover' : 'contain',
-                          display: imageAlign === 'center' ? 'block' : 'inline-block',
+                          display: 'block',
                           marginBottom: index < images.length - 1 ? `${padding / 2}px` : '0',
                           transition: 'all 0.3s ease'
                         }}
@@ -808,12 +817,13 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                       alt={image.alt || ''}
                       onClick={() => isEditing && setIsEditingImages(true)}
                       style={{
-                        width: '100%',
+                        width: containerWidth === 100 ? '100%' : 'auto',
+                        maxWidth: '100%',
                         height: 'auto',
                         borderRadius: containerWidth < 100 ? `${borderRadius}px` : '0',
                         aspectRatio: aspectRatio !== 'auto' ? aspectRatio : undefined,
                         objectFit: aspectRatio !== 'auto' ? 'cover' : 'contain',
-                        display: imageAlign === 'center' ? 'block' : 'inline-block',
+                        display: 'block',
                         marginBottom: index < images.length - 1 ? `${padding / 2}px` : '0',
                         cursor: isEditing ? 'pointer' : 'default',
                         transition: 'all 0.3s ease'
