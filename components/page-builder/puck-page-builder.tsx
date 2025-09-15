@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Puck, Data } from '@measured/puck';
-import { enhancedPuckConfig as puckConfig } from './puck-config-enhanced';
+import { puckConfig } from './puck-config';
 import { Block } from '@/types/page-builder';
 import { Button } from '@/components/ui/button';
 import { Save, Eye, Edit, ArrowLeft } from 'lucide-react';
@@ -80,13 +80,15 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
           break;
 
         case 'image':
-          const firstImage = block.content.images?.[0];
           puckProps = {
             id: block.id,
             name: block.content.name || "",
-            src: firstImage?.src || 'https://via.placeholder.com/800x600',
-            alt: firstImage?.alt || '이미지',
-            width: firstImage?.width || 800
+            images: block.content.images || [],
+            displayMode: block.content.displayMode || 'single',
+            containerWidth: block.content.containerWidth || 100,
+            padding: block.content.padding || 16,
+            borderRadius: block.content.borderRadius || 12,
+            aspectRatio: block.content.aspectRatio || 'auto'
           };
           break;
 
@@ -246,13 +248,12 @@ export function PuckPageBuilder({ initialBlocks = [], onSave, onBack }: PuckPage
           case '이미지':
             content = {
               name: props.name || "",
-              images: [{
-                id: `img-${Date.now()}`,
-                src: props.src || 'https://via.placeholder.com/800x600',
-                alt: props.alt || '이미지',
-                width: props.width || 800
-              }],
-              displayMode: 'single'
+              images: props.images || [],
+              displayMode: props.displayMode || 'single',
+              containerWidth: props.containerWidth || 100,
+              padding: props.padding || 16,
+              borderRadius: props.borderRadius || 12,
+              aspectRatio: props.aspectRatio || 'auto'
             };
             break;
           

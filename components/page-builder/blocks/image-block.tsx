@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Block } from '@/types/page-builder'
 import { Upload, Settings, X, Plus, Trash2, MoveUp, MoveDown, Image as ImageIcon, Grid, FolderOpen } from 'lucide-react'
 import { FileUploader } from '@/components/ui/file-uploader'
@@ -48,17 +48,43 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
     block.content.images ? 'story' : 'single'
   )
 
+  // Puck에서 전달받은 스타일 프로퍼티들
+  const [containerWidth, setContainerWidth] = useState(block.content.containerWidth || 100)
+  const [padding, setPadding] = useState(block.content.padding || 16)
+  const [borderRadius, setBorderRadius] = useState(block.content.borderRadius || 12)
+  const [aspectRatio, setAspectRatio] = useState(block.content.aspectRatio || 'auto')
+
+  // Puck 설정값 변경 감지
+  useEffect(() => {
+    console.log('🎛️ Puck 스타일 설정 업데이트:', {
+      blockId: block.id,
+      containerWidth: block.content.containerWidth,
+      padding: block.content.padding,
+      borderRadius: block.content.borderRadius,
+      aspectRatio: block.content.aspectRatio
+    })
+
+    setContainerWidth(block.content.containerWidth || 100)
+    setPadding(block.content.padding || 16)
+    setBorderRadius(block.content.borderRadius || 12)
+    setAspectRatio(block.content.aspectRatio || 'auto')
+  }, [block.content.containerWidth, block.content.padding, block.content.borderRadius, block.content.aspectRatio, block.id])
+
   const handleSave = useCallback(() => {
     onUpdate?.({
       ...block,
       content: {
         ...block.content,
         images,
-        displayMode
+        displayMode,
+        containerWidth,
+        padding,
+        borderRadius,
+        aspectRatio
       }
     })
     setIsEditingImages(false)
-  }, [block, images, displayMode, onUpdate])
+  }, [block, images, displayMode, containerWidth, padding, borderRadius, aspectRatio, onUpdate])
 
   const handleCancel = useCallback(() => {
     setImages(block.content.images || [])
@@ -70,19 +96,35 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
   const handleFileSelect = (url: string, type: 'image' | 'video') => {
     if (type === 'image') {
       const filename = url.split('/').pop() || ''
-      const newImage: StoryImage = {
-        id: `img-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        src: url,
-        alt: filename,
-        caption: '',
-        width: 743,
-        height: undefined
-      }
-      
-      if (displayMode === 'single') {
-        setImages([newImage]);
+
+      // 특정 이미지 교체인지 확인
+      const editingImageId = (window as any).currentEditingImageId
+
+      if (editingImageId) {
+        // 기존 이미지 교체
+        setImages(prev => prev.map(img =>
+          img.id === editingImageId
+            ? { ...img, src: url, alt: filename }
+            : img
+        ))
+        // 교체 완료 후 ID 초기화
+        delete (window as any).currentEditingImageId
       } else {
-        setImages(prev => [...prev, newImage]);
+        // 새 이미지 추가
+        const newImage: StoryImage = {
+          id: `img-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          src: url,
+          alt: filename,
+          caption: '',
+          width: 743,
+          height: undefined
+        }
+
+        if (displayMode === 'single') {
+          setImages([newImage]);
+        } else {
+          setImages(prev => [...prev, newImage]);
+        }
       }
     }
     setShowFileManager(false);
@@ -241,6 +283,75 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
           </div>
         )}
 
+        {/* 레이아웃 설정 */}
+        <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+          <h4 className="font-medium mb-3 text-blue-800">레이아웃 설정</h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                컨테이너 넓이: {containerWidth}%
+              </label>
+              <input
+                type="range"
+                min="20"
+                max="100"
+                step="5"
+                value={containerWidth}
+                onChange={(e) => {
+                  const newWidth = parseInt(e.target.value)
+                  const newPadding = Math.max(8, Math.floor((100 - newWidth) / 4))
+
+                  // 로컬 state 즉시 업데이트
+                  setContainerWidth(newWidth)
+                  setPadding(newPadding)
+
+                  // Puck에도 즉시 반영
+                  onUpdate?.({
+                    ...block,
+                    content: {
+                      ...block.content,
+                      containerWidth: newWidth,
+                      padding: newPadding
+                    }
+                  })
+                }}
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                패딩: {padding}px
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                step="2"
+                value={padding}
+                onChange={(e) => {
+                  const newPadding = parseInt(e.target.value)
+
+                  // 로컬 state 즉시 업데이트
+                  setPadding(newPadding)
+
+                  // Puck에도 즉시 반영
+                  onUpdate?.({
+                    ...block,
+                    content: {
+                      ...block.content,
+                      padding: newPadding
+                    }
+                  })
+                }}
+                className="w-full"
+              />
+            </div>
+          </div>
+          <p className="text-xs text-blue-600 mt-2">
+            💡 넓이를 줄이면 자동으로 패딩이 증가됩니다
+          </p>
+        </div>
+
         {/* 이미지 추가 옵션 */}
         <div className="mb-6 p-4 bg-gray-50 rounded-lg">
           <h4 className="font-medium mb-3">이미지 추가</h4>
@@ -256,7 +367,7 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                 <p className="text-sm text-gray-600">파일 업로드</p>
               </div>
             </FileUploader>
-            
+
             {/* 스토리지에서 선택 */}
             <button
               onClick={() => setShowFileManager(true)}
@@ -265,7 +376,7 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
               <FolderOpen className="w-6 h-6 mx-auto text-blue-500 mb-2" />
               <p className="text-sm text-blue-700 font-medium">스토리지에서 선택</p>
             </button>
-            
+
             {/* URL로 추가 */}
             <button
               onClick={handleAddImageByUrl}
@@ -291,6 +402,40 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                   }}
                 />
                 <div className="flex-1 space-y-2">
+                  {/* 빠른 교체 버튼들 */}
+                  <div className="flex gap-2 mb-2">
+                    <FileUploader
+                      accept="image/*"
+                      multiple={false}
+                      onUpload={(results) => {
+                        if (results.length > 0) {
+                          handleUpdateImage(image.id, { src: results[0].url })
+                        }
+                      }}
+                    >
+                      <button className="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors">
+                        📁 파일 선택
+                      </button>
+                    </FileUploader>
+                    <button
+                      onClick={() => {
+                        setShowFileManager(true)
+                        // 파일 매니저에서 선택 시 현재 이미지 교체하도록 설정
+                        window.currentEditingImageId = image.id
+                      }}
+                      className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
+                    >
+                      🗂️ 스토리지
+                    </button>
+                  </div>
+
+                  <input
+                    type="text"
+                    placeholder="이미지 URL을 직접 입력하세요"
+                    value={image.src || ''}
+                    onChange={(e) => handleUpdateImage(image.id, { src: e.target.value })}
+                    className="w-full px-3 py-2 text-sm border-2 border-blue-300 rounded-lg font-medium bg-blue-50"
+                  />
                   <input
                     type="text"
                     placeholder="이미지 설명 (ALT 텍스트)"
@@ -426,57 +571,71 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
         </>
       )}
 
-      {/* 이미지 렌더링 */}
-      <div className="w-full" style={{ margin: 0, padding: 0 }}>
+      {/* 이미지 렌더링 - Puck 설정값 적용 */}
+      <div
+        className="w-full"
+        style={{
+          width: `${containerWidth}%`,
+          margin: '0 auto',
+          padding: `${padding}px`
+        }}
+      >
         {images.length > 0 ? (
           displayMode === 'single' ? (
-            // 단일 이미지 모드 - 완전한 제로 간격
-            <div className="text-center" style={{ margin: 0, padding: 0 }}>
+            // 단일 이미지 모드 - 동적 스타일 적용
+            <div className="text-center">
               {images.map((image) => (
-                <div key={image.id} style={{ margin: 0, padding: 0 }}>
-                  {image.link ? (
+                <div key={image.id}>
+                  {image.link && !isEditing ? (
                     <a
                       href={image.link}
                       target={image.linkTarget || '_blank'}
                       rel="noopener noreferrer"
                       className="inline-block cursor-pointer hover:opacity-90 transition-opacity"
-                      style={{ margin: 0, padding: 0, display: 'block' }}
+                      style={{ display: 'block' }}
                     >
                       <img
                         src={image.src}
                         alt={image.alt || ''}
                         style={{
-                          width: isEditing && image.width ? `${image.width}px` : 'auto',
-                          height: image.height ? `${image.height}px` : 'auto',
-                          maxWidth: isEditing ? 'none' : '100%',
-                          margin: '0 auto',
-                          padding: 0,
-                          display: 'block',
-                          verticalAlign: 'top'
+                          width: '100%',
+                          height: 'auto',
+                          borderRadius: `${borderRadius}px`,
+                          aspectRatio: aspectRatio !== 'auto' ? aspectRatio : undefined,
+                          objectFit: aspectRatio !== 'auto' ? 'cover' : 'contain',
+                          display: 'block'
                         }}
-                        className={isEditing ? "w-full" : "w-full max-w-screen-lg mx-auto"}
+                        className="glass-container"
                       />
                     </a>
                   ) : (
                     <img
                       src={image.src}
                       alt={image.alt || ''}
+                      onClick={() => isEditing && setIsEditingImages(true)}
                       style={{
-                        width: isEditing && image.width ? `${image.width}px` : 'auto',
-                        height: image.height ? `${image.height}px` : 'auto',
-                        maxWidth: isEditing ? 'none' : '100%',
-                        margin: '0 auto',
-                        padding: 0,
+                        width: '100%',
+                        height: 'auto',
+                        borderRadius: `${borderRadius}px`,
+                        aspectRatio: aspectRatio !== 'auto' ? aspectRatio : undefined,
+                        objectFit: aspectRatio !== 'auto' ? 'cover' : 'contain',
                         display: 'block',
-                        verticalAlign: 'top'
+                        cursor: isEditing ? 'pointer' : 'default'
                       }}
-                      className={isEditing ? "w-full" : "w-full max-w-screen-lg mx-auto"}
+                      className={`glass-container ${isEditing ? 'hover:opacity-80 transition-opacity' : ''}`}
                     />
                   )}
                   {image.caption && (
                     <p className="text-sm text-gray-600 mt-3 italic px-4">
                       {image.caption}
                     </p>
+                  )}
+                  {isEditing && (
+                    <div className="mt-2 px-4">
+                      <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full text-center">
+                        💡 이미지를 클릭하여 편집하세요
+                      </p>
+                    </div>
                   )}
                   {image.link && (
                     <p className="text-xs text-blue-600 mt-1 opacity-75">
@@ -487,47 +646,49 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
               ))}
             </div>
           ) : (
-            // 스토리 모드 - 완전한 제로 간격
-            <div style={{ margin: 0, padding: 0 }}>
-              {images.map((image) => (
-                <div key={image.id} style={{ margin: 0, padding: 0 }}>
-                  {image.link ? (
+            // 스토리 모드 - 동적 스타일 적용
+            <div className="space-y-4">
+              {images.map((image, index) => (
+                <div key={image.id} className="mb-4">
+                  {image.link && !isEditing ? (
                     <a
                       href={image.link}
                       target={image.linkTarget || '_blank'}
                       rel="noopener noreferrer"
-                      className="inline-block cursor-pointer hover:opacity-90 transition-opacity"
-                      style={{ margin: 0, padding: 0, display: 'block' }}
+                      className="inline-block cursor-pointer hover:opacity-90 transition-opacity w-full"
+                      style={{ display: 'block' }}
                     >
                       <img
                         src={image.src}
                         alt={image.alt || ''}
                         style={{
+                          width: '100%',
+                          height: 'auto',
+                          borderRadius: `${borderRadius}px`,
+                          aspectRatio: aspectRatio !== 'auto' ? aspectRatio : undefined,
+                          objectFit: aspectRatio !== 'auto' ? 'cover' : 'contain',
                           display: 'block',
-                          verticalAlign: 'top',
-                          margin: '0 auto',
-                          padding: 0,
-                          width: isEditing && image.width ? `${image.width}px` : 'auto',
-                          height: image.height ? `${image.height}px` : 'auto',
-                          maxWidth: isEditing ? 'none' : '100%'
+                          marginBottom: index < images.length - 1 ? `${padding / 2}px` : '0'
                         }}
-                        className={isEditing ? "story-image w-full" : "story-image w-full max-w-screen-lg mx-auto"}
+                        className="glass-container"
                       />
                     </a>
                   ) : (
                     <img
                       src={image.src}
                       alt={image.alt || ''}
+                      onClick={() => isEditing && setIsEditingImages(true)}
                       style={{
+                        width: '100%',
+                        height: 'auto',
+                        borderRadius: `${borderRadius}px`,
+                        aspectRatio: aspectRatio !== 'auto' ? aspectRatio : undefined,
+                        objectFit: aspectRatio !== 'auto' ? 'cover' : 'contain',
                         display: 'block',
-                        verticalAlign: 'top',
-                        margin: '0 auto',
-                        padding: 0,
-                        width: isEditing && image.width ? `${image.width}px` : 'auto',
-                        height: image.height ? `${image.height}px` : 'auto',
-                        maxWidth: isEditing ? 'none' : '100%'
+                        marginBottom: index < images.length - 1 ? `${padding / 2}px` : '0',
+                        cursor: isEditing ? 'pointer' : 'default'
                       }}
-                      className={isEditing ? "story-image w-full" : "story-image w-full max-w-screen-lg mx-auto"}
+                      className={`glass-container ${isEditing ? 'hover:opacity-80 transition-opacity' : ''}`}
                     />
                   )}
                   {image.caption && (
@@ -535,7 +696,14 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                       {image.caption}
                     </p>
                   )}
-                  {image.link && (
+                  {isEditing && (
+                    <div className="mt-2 px-4">
+                      <p className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full text-center">
+                        💡 이미지를 클릭하여 편집하세요
+                      </p>
+                    </div>
+                  )}
+                  {image.link && !isEditing && (
                     <p className="text-xs text-blue-600 mt-1 opacity-75">
                       🔗 클릭하여 이동
                     </p>
@@ -546,26 +714,25 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
           )
         ) : (
           isEditing && (
-            <div className="text-center py-12 text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
+            <div
+              className="text-center py-12 text-gray-500 border-2 border-dashed border-blue-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200"
+              onClick={() => setIsEditingImages(true)}
+            >
               <div className="mb-4">
-                <Upload className="w-12 h-12 mx-auto text-gray-400" />
+                <ImageIcon className="w-16 h-16 mx-auto text-blue-400" />
               </div>
-              <p className="text-lg font-medium">이미지 블록</p>
-              <p className="text-sm mt-1">이미지를 추가하여 콘텐츠를 만들어보세요</p>
-              <div className="flex gap-2 justify-center mt-4">
-                <button
-                  onClick={() => setShowFileManager(true)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                >
-                  <FolderOpen className="w-4 h-4 mr-2 inline" />
-                  스토리지에서 선택
-                </button>
-                <button
-                  onClick={() => setIsEditingImages(true)}
-                  className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
-                >
-                  직접 업로드
-                </button>
+              <p className="text-lg font-medium text-blue-600">이미지 추가</p>
+              <p className="text-sm mt-1 text-blue-500">클릭해서 이미지를 선택하세요</p>
+              <div className="flex gap-2 justify-center mt-6">
+                <div className="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                  📁 파일 업로드
+                </div>
+                <div className="px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                  🗂️ 스토리지 선택
+                </div>
+                <div className="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                  🔗 URL 입력
+                </div>
               </div>
             </div>
           )

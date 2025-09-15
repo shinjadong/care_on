@@ -3,9 +3,9 @@ import { BlockRenderer } from "@/components/page-builder/block-renderer";
 import { getPageBySlug } from "@/lib/api/pages";
 import Link from "next/link";
 
-// 🚀 실시간 업데이트를 위한 캐시 설정
-export const revalidate = 0; // 항상 최신 데이터 사용
-export const dynamic = 'force-dynamic'; // 동적 렌더링 강제
+// 🚀 성능 최적화를 위한 캐시 설정
+export const revalidate = 300; // 5분마다 갱신
+export const dynamic = 'force-static'; // 정적 생성 강제
 
 /**
  * 케어온 랜딩 페이지 - 페이지 빌더 기반

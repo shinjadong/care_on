@@ -220,6 +220,10 @@ const ImageComponent: ComponentConfig<{
     linkTarget?: '_blank' | '_self';
   }>;
   displayMode?: 'single' | 'story';
+  containerWidth?: number;
+  padding?: number;
+  borderRadius?: number;
+  aspectRatio?: string;
 }> = {
   fields: {
     displayMode: {
@@ -230,10 +234,43 @@ const ImageComponent: ComponentConfig<{
         { label: "스토리 (다중)", value: "story" }
       ]
     },
+    containerWidth: {
+      type: "number",
+      label: "컨테이너 넓이 (%)",
+      min: 10,
+      max: 100,
+      step: 5
+    },
+    padding: {
+      type: "number",
+      label: "패딩 (px)",
+      min: 0,
+      max: 100,
+      step: 4
+    },
+    borderRadius: {
+      type: "number",
+      label: "모서리 둥글기 (px)",
+      min: 0,
+      max: 50,
+      step: 2
+    },
+    aspectRatio: {
+      type: "select",
+      label: "이미지 비율",
+      options: [
+        { label: "자동", value: "auto" },
+        { label: "정사각형 (1:1)", value: "1/1" },
+        { label: "가로형 (16:9)", value: "16/9" },
+        { label: "세로형 (4:5)", value: "4/5" },
+        { label: "인스타그램 (1:1)", value: "1/1" }
+      ]
+    },
     images: {
       type: "array",
       label: "이미지 목록",
       arrayFields: {
+        id: { type: "text", label: "ID" },
         src: { type: "text", label: "이미지 URL" },
         alt: { type: "text", label: "설명 (ALT)" },
         caption: { type: "text", label: "캡션" },
@@ -243,16 +280,37 @@ const ImageComponent: ComponentConfig<{
   },
   defaultProps: {
     displayMode: "single",
-    images: []
+    images: [],
+    containerWidth: 100,
+    padding: 16,
+    borderRadius: 12,
+    aspectRatio: "auto"
   },
-  render: ({ images, displayMode }) => {
+  render: ({ images, displayMode, containerWidth, padding, borderRadius, aspectRatio }) => {
+    // 넓이에 따른 자동 패딩 계산
+    const autoPadding = containerWidth
+      ? Math.max(8, Math.floor((100 - containerWidth) / 4))
+      : padding
+
+    const effectivePadding = padding !== undefined ? padding : autoPadding
+
     const block = {
       id: 'puck-image',
       type: 'image',
-      content: { images, displayMode }
+      content: {
+        images,
+        displayMode,
+        containerWidth,
+        padding: effectivePadding,
+        borderRadius,
+        aspectRatio
+      },
+      settings: {
+        margin: { top: 0, bottom: 0 }
+      }
     } as any;
-    
-    return <ImageBlockRenderer block={block} isEditing={false} />;
+
+    return <ImageBlockRenderer block={block} isEditing={true} />;
   }
 };
 
