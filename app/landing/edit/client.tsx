@@ -13,7 +13,7 @@ interface LandingEditClientProps {
 
 export function LandingEditClient({ initialBlocks }: LandingEditClientProps) {
   const [blocks, setBlocks] = useState<Block[]>(initialBlocks);
-  const [editorMode, setEditorMode] = useState<'classic' | 'puck' | 'select'>('puck'); // 기본값을 puck으로
+  const [editorMode, setEditorMode] = useState<'classic' | 'puck' | 'select'>('select'); // 기본값을 선택 화면으로
 
   // 블록 저장 핸들러
   const handleSaveBlocks = async (updatedBlocks: Block[]) => {

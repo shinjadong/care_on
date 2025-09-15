@@ -66,15 +66,18 @@ function SortableBlock({ block, isEditing, onUpdate, onDelete, onMoveUp, onMoveD
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
       <div
-        className={`relative group ${isEditing ? 'border-2 border-dashed rounded-lg hover:border-gray-400' : ''} ${
-          isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-        }`}
+        className={`relative group ${isEditing ? 'border-2 border-dashed rounded-lg hover:border-blue-400 hover:bg-blue-25' : ''} ${
+          isSelected ? 'border-blue-500 bg-blue-50 shadow-md' : 'border-gray-300'
+        } transition-all duration-200`}
         onClick={() => onSelect?.(block.id)}
       >
         {isEditing && (
-          <div className="absolute top-1/2 left-2 -translate-y-1/2 z-10 bg-gray-800 text-white p-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-            <div {...listeners} className="cursor-move p-1" title="드래그하여 순서 변경">
-              ⋮⋮
+          <div className="absolute top-4 left-4 z-10 bg-blue-600 text-white p-2 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-blue-700">
+            <div {...listeners} className="cursor-move flex items-center space-x-1" title="드래그하여 순서 변경">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M7 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+              </svg>
+              <span className="text-xs font-medium">끌기</span>
             </div>
           </div>
         )}
@@ -116,13 +119,13 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
     pasteBlock,
     duplicateBlock,
     deleteBlock: deleteSelectedBlock,
+    moveBlock,
     shortcuts
   } = useKeyboardShortcuts({
     blocks,
     setBlocks,
     selectedBlockId,
-    setSelectedBlockId,
-    onAddBlock: addBlock
+    setSelectedBlockId
   });
 
   useEffect(() => {
@@ -179,9 +182,9 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
       id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type,
       content: getDefaultContent(type),
-      settings: { 
+      settings: {
         padding: { top: 0, right: 0, bottom: 0, left: 0 },
-        animation: { type: 'none', duration: 0.6, delay: 0 }
+        animation: 'none'
       },
     } as Block;
 
@@ -274,10 +277,14 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
   };
 
   const blockTypes: { type: BlockType; label: string; icon: string }[] = [
-    { type: 'image', label: '이미지', icon: '🖼️' },
     { type: 'hero', label: '히어로', icon: '🌟' },
-    { type: 'heading', label: '제목', icon: '📝' },
-    { type: 'text', label: '텍스트', icon: '📄' },
+    { type: 'columns', label: '컬럼 레이아웃', icon: '⚏' },
+    { type: 'gallery', label: '이미지 갤러리', icon: '🖼️' },
+    { type: 'card', label: '카드 컴포넌트', icon: '🎴' },
+    { type: 'form', label: '연락처 폼', icon: '📝' },
+    { type: 'heading', label: '제목', icon: '📄' },
+    { type: 'text', label: '텍스트', icon: '✏️' },
+    { type: 'image', label: '단일 이미지', icon: '🖼️' },
     { type: 'video', label: '동영상', icon: '🎥' },
     { type: 'button', label: '버튼', icon: '🔘' },
     { type: 'spacer', label: '공백', icon: '📏' },
@@ -529,27 +536,41 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
               onDragEnd={handleDragEnd}
             >
               <SortableContext items={blocks.map(block => block.id)} strategy={verticalListSortingStrategy}>
-                <div className="space-y-0"> {/* 간격 제거 */}
+                <div className="space-y-2"> {/* 드래그를 위한 약간의 간격 */}
                   {blocks.map((block, index) => (
-                    <SortableBlock
-                      key={block.id}
-                      block={block}
-                      isEditing={isEditing}
-                      onUpdate={updateBlock}
-                      onDelete={deleteBlock}
-                      onMoveUp={moveBlockUp}
-                      onMoveDown={moveBlockDown}
-                      canMoveUp={index > 0}
-                      canMoveDown={index < blocks.length - 1}
-                      isSelected={block.id === selectedBlockId}
-                      onSelect={setSelectedBlockId}
-                    />
+                    <div key={block.id} className="relative">
+                      {/* 드롭 존 표시 */}
+                      {activeId && activeId !== block.id && (
+                        <div className="absolute -top-1 left-0 right-0 h-2 bg-blue-200 opacity-0 hover:opacity-100 transition-opacity rounded-full" />
+                      )}
+
+                      <SortableBlock
+                        block={block}
+                        isEditing={isEditing}
+                        onUpdate={updateBlock}
+                        onDelete={deleteBlock}
+                        onMoveUp={moveBlockUp}
+                        onMoveDown={moveBlockDown}
+                        canMoveUp={index > 0}
+                        canMoveDown={index < blocks.length - 1}
+                        isSelected={block.id === selectedBlockId}
+                        onSelect={setSelectedBlockId}
+                      />
+
+                      {/* 마지막 블록 뒤에도 드롭 존 */}
+                      {activeId && index === blocks.length - 1 && (
+                        <div className="absolute -bottom-1 left-0 right-0 h-2 bg-blue-200 opacity-0 hover:opacity-100 transition-opacity rounded-full" />
+                      )}
+                    </div>
                   ))}
                 </div>
               </SortableContext>
               <DragOverlay>
                 {activeBlock && (
-                  <div className="opacity-80">
+                  <div className="opacity-90 transform rotate-3 scale-105 shadow-2xl border-2 border-blue-400 rounded-lg bg-white">
+                    <div className="p-2 bg-blue-600 text-white text-xs font-bold rounded-t-lg">
+                      드래그 중: {activeBlock.type.toUpperCase()} 블록
+                    </div>
                     <BlockRenderer
                       block={activeBlock}
                       isEditing={false}

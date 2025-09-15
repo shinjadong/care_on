@@ -10,6 +10,10 @@ import { ButtonBlockRenderer } from './blocks/button-block';
 import { SpacerBlockRenderer } from './blocks/spacer-block';
 import { HeroBlockRenderer } from './blocks/hero-block';
 import { HtmlBlockRenderer } from './blocks/html-block';
+import { ColumnsBlockRenderer } from './blocks/columns-block';
+import { GalleryBlockRenderer } from './blocks/gallery-block';
+import { CardBlockRenderer } from './blocks/card-block';
+import { FormBlockRenderer } from './blocks/form-block';
 import { ChevronUp, ChevronDown, Trash2, Settings, Maximize2, Zap } from 'lucide-react';
 import { MotionWrapper, animationPresets } from './motion-wrapper';
 
@@ -67,6 +71,14 @@ export function BlockRenderer({
         return <HeroBlockRenderer block={block} isEditing={isEditing} onUpdate={onUpdate} />;
       case 'html':
         return <HtmlBlockRenderer block={block} isEditing={isEditing} onUpdate={onUpdate} />;
+      case 'columns':
+        return <ColumnsBlockRenderer block={block} isEditing={isEditing} onUpdate={onUpdate} />;
+      case 'gallery':
+        return <GalleryBlockRenderer block={block} isEditing={isEditing} onUpdate={onUpdate} />;
+      case 'card':
+        return <CardBlockRenderer block={block} isEditing={isEditing} onUpdate={onUpdate} />;
+      case 'form':
+        return <FormBlockRenderer block={block} isEditing={isEditing} onUpdate={onUpdate} />;
       default:
         return <div>Unknown block type</div>;
     }

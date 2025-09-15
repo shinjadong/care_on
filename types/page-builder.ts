@@ -1,4 +1,4 @@
-export type BlockType = 'hero' | 'heading' | 'text' | 'image' | 'video' | 'button' | 'html' | 'spacer'
+export type BlockType = 'hero' | 'heading' | 'text' | 'image' | 'video' | 'button' | 'html' | 'spacer' | 'columns' | 'gallery' | 'card' | 'form'
 
 export interface Block {
   id: string

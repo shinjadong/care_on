@@ -1,3 +1,6 @@
+// 동적 렌더링 강제
+export const dynamic = 'force-dynamic';
+
 import ServiceEditPage from "@/components/services/service-edit-page";
 
 /**

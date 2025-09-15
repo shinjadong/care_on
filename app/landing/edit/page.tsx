@@ -3,6 +3,9 @@ import { getPageBySlug } from "@/lib/api/pages";
 import { Block } from "@/types/page-builder";
 import { LandingEditClient } from "./client";
 
+// 동적 렌더링 강제 (Supabase cookies 사용)
+export const dynamic = 'force-dynamic';
+
 // 서버사이드 렌더링으로 성능 최적화
 export default async function LandingEditPage() {
   let initialBlocks: Block[] = [];

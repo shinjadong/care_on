@@ -7,6 +7,10 @@ import { ButtonBlockRenderer } from './blocks/button-block';
 import { SpacerBlockRenderer } from './blocks/spacer-block';
 import { HeroBlockRenderer } from './blocks/hero-block';
 import { HtmlBlockRenderer } from './blocks/html-block';
+import { ColumnsBlockRenderer } from './blocks/columns-block';
+import { GalleryBlockRenderer } from './blocks/gallery-block';
+import { CardBlockRenderer } from './blocks/card-block';
+import { FormBlockRenderer } from './blocks/form-block';
 
 // Puck 컴포넌트 어댑터: 기존 블록을 Puck 컴포넌트로 변환
 const HeadingComponent: ComponentConfig<{
@@ -380,7 +384,7 @@ const ImageComponent: ComponentConfig<{
       }
     } as any;
 
-    return <ImageBlockRenderer block={block} isEditing={true} />;
+    return <ImageBlockRenderer block={block} isEditing={false} />;
   }
 };
 
@@ -566,6 +570,124 @@ const SpacerComponent: ComponentConfig<{
 };
 
 // HTML 컴포넌트 추가
+// 컬럼 레이아웃 컴포넌트
+const ColumnsComponent: ComponentConfig<{
+  columnCount: number;
+  gap: number;
+  alignment: string;
+}> = {
+  fields: {
+    columnCount: {
+      type: "select",
+      label: "⚏ 컬럼 수",
+      options: [
+        { label: "2컬럼", value: 2 },
+        { label: "3컬럼", value: 3 },
+        { label: "4컬럼", value: 4 }
+      ]
+    },
+    gap: {
+      type: "number",
+      label: "📐 간격 (px)",
+      min: 0,
+      max: 48
+    },
+    alignment: {
+      type: "select",
+      label: "🎯 정렬",
+      options: [
+        { label: "늘어뜨리기", value: "stretch" },
+        { label: "상단 정렬", value: "start" },
+        { label: "중앙 정렬", value: "center" },
+        { label: "하단 정렬", value: "end" }
+      ]
+    }
+  },
+  defaultProps: {
+    columnCount: 2,
+    gap: 16,
+    alignment: "stretch"
+  },
+  render: ({ columnCount, gap, alignment }) => {
+    const block = {
+      id: 'puck-columns',
+      type: 'columns',
+      content: {
+        columnCount,
+        gap,
+        alignment,
+        columns: Array.from({ length: columnCount }, (_, i) => ({
+          id: `col-${i + 1}`,
+          content: `${i + 1}번째 컬럼 내용을 여기에 입력하세요`
+        }))
+      }
+    } as any;
+
+    return <ColumnsBlockRenderer block={block} isEditing={false} />;
+  }
+};
+
+// 이미지 갤러리 컴포넌트
+const GalleryComponent: ComponentConfig<{
+  layout: string;
+  columns: number;
+  spacing: number;
+}> = {
+  fields: {
+    layout: {
+      type: "select",
+      label: "🖼️ 레이아웃",
+      options: [
+        { label: "그리드", value: "grid" },
+        { label: "벽돌식", value: "masonry" },
+        { label: "슬라이더", value: "slider" }
+      ]
+    },
+    columns: {
+      type: "number",
+      label: "📊 컬럼 수",
+      min: 1,
+      max: 6
+    },
+    spacing: {
+      type: "number",
+      label: "📐 간격 (px)",
+      min: 0,
+      max: 32
+    }
+  },
+  defaultProps: {
+    layout: "grid",
+    columns: 3,
+    spacing: 8
+  },
+  render: ({ layout, columns, spacing }) => {
+    const block = {
+      id: 'puck-gallery',
+      type: 'gallery',
+      content: {
+        layout,
+        columns,
+        spacing,
+        images: [
+          {
+            id: 'sample-1',
+            src: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=400&h=300&fit=crop',
+            alt: '샘플 이미지 1'
+          },
+          {
+            id: 'sample-2',
+            src: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop',
+            alt: '샘플 이미지 2'
+          }
+        ]
+      }
+    } as any;
+
+    return <GalleryBlockRenderer block={block} isEditing={false} />;
+  }
+};
+
 const HtmlComponent: ComponentConfig<{
   html: string;
 }> = {
@@ -594,6 +716,8 @@ const HtmlComponent: ComponentConfig<{
 export const puckConfig: Config = {
   components: {
     "히어로 섹션": HeroComponent,
+    "컬럼 레이아웃": ColumnsComponent,
+    "이미지 갤러리": GalleryComponent,
     "제목": HeadingComponent,
     "텍스트": TextComponent,
     "이미지": ImageComponent,
@@ -604,11 +728,11 @@ export const puckConfig: Config = {
   categories: {
     layout: {
       title: "📐 레이아웃",
-      components: ["히어로 섹션", "공백"]
+      components: ["히어로 섹션", "컬럼 레이아웃", "공백"]
     },
     content: {
-      title: "📝 콘텐츠", 
-      components: ["제목", "텍스트", "이미지"]
+      title: "📝 콘텐츠",
+      components: ["제목", "텍스트", "이미지", "이미지 갤러리"]
     },
     interactive: {
       title: "🎯 인터랙티브",

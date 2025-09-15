@@ -8,15 +8,13 @@ interface KeyboardShortcutsProps {
   setBlocks: (blocks: Block[]) => void;
   selectedBlockId: string | null;
   setSelectedBlockId: (id: string | null) => void;
-  onAddBlock?: (type: string) => void;
 }
 
 export function useKeyboardShortcuts({
   blocks,
   setBlocks,
   selectedBlockId,
-  setSelectedBlockId,
-  onAddBlock
+  setSelectedBlockId
 }: KeyboardShortcutsProps) {
   // 히스토리 스택 for Undo/Redo
   const [history, setHistory] = useState<Block[][]>([blocks]);
@@ -134,6 +132,30 @@ export function useKeyboardShortcuts({
     }
   }, [selectedBlockId, blocks, setSelectedBlockId]);
 
+  // 블록 순서 이동 (Ctrl + Arrow Keys)
+  const moveBlock = useCallback((direction: 'up' | 'down') => {
+    if (!selectedBlockId) return;
+
+    const currentIndex = blocks.findIndex(b => b.id === selectedBlockId);
+    if (currentIndex === -1) return;
+
+    let newIndex;
+    if (direction === 'up' && currentIndex > 0) {
+      newIndex = currentIndex - 1;
+    } else if (direction === 'down' && currentIndex < blocks.length - 1) {
+      newIndex = currentIndex + 1;
+    }
+
+    if (newIndex !== undefined) {
+      const newBlocks = [...blocks];
+      const [movedBlock] = newBlocks.splice(currentIndex, 1);
+      newBlocks.splice(newIndex, 0, movedBlock);
+
+      setBlocks(newBlocks);
+      saveToHistory(newBlocks);
+    }
+  }, [selectedBlockId, blocks, setBlocks, saveToHistory]);
+
   // 키보드 이벤트 핸들러
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -181,11 +203,19 @@ export function useKeyboardShortcuts({
             break;
           case 'ArrowUp':
             e.preventDefault();
-            navigateBlocks('up');
+            if (e.ctrlKey || e.metaKey) {
+              moveBlock('up');
+            } else {
+              navigateBlocks('up');
+            }
             break;
           case 'ArrowDown':
             e.preventDefault();
-            navigateBlocks('down');
+            if (e.ctrlKey || e.metaKey) {
+              moveBlock('down');
+            } else {
+              navigateBlocks('down');
+            }
             break;
         }
       }
@@ -219,6 +249,7 @@ export function useKeyboardShortcuts({
     pasteBlock,
     duplicateBlock,
     deleteBlock,
+    moveBlock,
 
     // 단축키 정보
     shortcuts: {
@@ -228,7 +259,8 @@ export function useKeyboardShortcuts({
       'Ctrl+V': 'Paste Block',
       'Ctrl+D': 'Duplicate Block',
       'Delete': 'Delete Block',
-      'Arrow Up/Down': 'Navigate Blocks'
+      'Arrow Up/Down': 'Navigate Blocks',
+      'Ctrl+Arrow Up/Down': 'Move Block Position'
     }
   };
 }
