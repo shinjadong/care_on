@@ -51,6 +51,18 @@ export function HtmlBlockRenderer({ block, isEditing, onUpdate }: HtmlBlockRende
       if (data.success) {
         setHtml(data.html);
         setAiPrompt('');
+
+        // 성공 알림
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 glass-container p-4 rounded-lg z-50';
+        notification.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span class="glass-text-primary font-medium">Claude AI가 HTML을 개선했습니다!</span>
+          </div>
+        `;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
       } else {
         alert('AI 도움 요청에 실패했습니다: ' + data.error);
       }
