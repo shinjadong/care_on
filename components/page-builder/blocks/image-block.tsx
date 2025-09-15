@@ -30,6 +30,29 @@ interface ImageBlockRendererProps {
   onUpdate?: (block: Block) => void
 }
 
+// 캔바 스타일 헬퍼 함수들
+const getShadowClass = (shadow: string) => {
+  const shadowMap = {
+    'none': '',
+    'sm': 'shadow-sm',
+    'md': 'shadow-md',
+    'lg': 'shadow-lg',
+    'xl': 'shadow-xl'
+  }
+  return shadowMap[shadow as keyof typeof shadowMap] || 'shadow-md'
+}
+
+const getHoverEffectClass = (effect: string) => {
+  const effectMap = {
+    'none': '',
+    'scale': 'hover:scale-105',
+    'rotate': 'hover:rotate-3',
+    'brightness': 'hover:brightness-110',
+    'blur': 'hover:blur-[1px]'
+  }
+  return effectMap[effect as keyof typeof effectMap] || 'hover:scale-105'
+}
+
 export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRendererProps) {
   const [isEditingImages, setIsEditingImages] = useState(false)
   const [images, setImages] = useState<StoryImage[]>(
@@ -48,27 +71,45 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
     block.content.images ? 'story' : 'single'
   )
 
-  // Puck에서 전달받은 스타일 프로퍼티들
+  // Puck에서 전달받은 스타일 프로퍼티들 (캔바 스타일)
   const [containerWidth, setContainerWidth] = useState(block.content.containerWidth || 100)
   const [padding, setPadding] = useState(block.content.padding || 16)
   const [borderRadius, setBorderRadius] = useState(block.content.borderRadius || 12)
   const [aspectRatio, setAspectRatio] = useState(block.content.aspectRatio || 'auto')
+  const [imageAlign, setImageAlign] = useState(block.content.imageAlign || 'center')
+  const [opacity, setOpacity] = useState(block.content.opacity || 100)
+  const [rotation, setRotation] = useState(block.content.rotation || 0)
+  const [shadow, setShadow] = useState(block.content.shadow || 'md')
+  const [zIndex, setZIndex] = useState(block.content.zIndex || 1)
+  const [hoverEffect, setHoverEffect] = useState(block.content.hoverEffect || 'scale')
 
-  // Puck 설정값 변경 감지
+  // Puck 설정값 변경 감지 (캔바 스타일)
   useEffect(() => {
-    console.log('🎛️ Puck 스타일 설정 업데이트:', {
+    console.log('🎛️ Puck 캔바 스타일 설정 업데이트:', {
       blockId: block.id,
       containerWidth: block.content.containerWidth,
       padding: block.content.padding,
       borderRadius: block.content.borderRadius,
-      aspectRatio: block.content.aspectRatio
+      aspectRatio: block.content.aspectRatio,
+      imageAlign: block.content.imageAlign,
+      opacity: block.content.opacity,
+      rotation: block.content.rotation,
+      shadow: block.content.shadow,
+      zIndex: block.content.zIndex,
+      hoverEffect: block.content.hoverEffect
     })
 
     setContainerWidth(block.content.containerWidth || 100)
     setPadding(block.content.padding || 16)
     setBorderRadius(block.content.borderRadius || 12)
     setAspectRatio(block.content.aspectRatio || 'auto')
-  }, [block.content.containerWidth, block.content.padding, block.content.borderRadius, block.content.aspectRatio, block.id])
+    setImageAlign(block.content.imageAlign || 'center')
+    setOpacity(block.content.opacity || 100)
+    setRotation(block.content.rotation || 0)
+    setShadow(block.content.shadow || 'md')
+    setZIndex(block.content.zIndex || 1)
+    setHoverEffect(block.content.hoverEffect || 'scale')
+  }, [block.content.containerWidth, block.content.padding, block.content.borderRadius, block.content.aspectRatio, block.content.imageAlign, block.content.opacity, block.content.rotation, block.content.shadow, block.content.zIndex, block.content.hoverEffect, block.id])
 
   const handleSave = useCallback(() => {
     onUpdate?.({
@@ -80,11 +121,17 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
         containerWidth,
         padding,
         borderRadius,
-        aspectRatio
+        aspectRatio,
+        imageAlign,
+        opacity,
+        rotation,
+        shadow,
+        zIndex,
+        hoverEffect
       }
     })
     setIsEditingImages(false)
-  }, [block, images, displayMode, containerWidth, padding, borderRadius, aspectRatio, onUpdate])
+  }, [block, images, displayMode, containerWidth, padding, borderRadius, aspectRatio, imageAlign, opacity, rotation, shadow, zIndex, hoverEffect, onUpdate])
 
   const handleCancel = useCallback(() => {
     setImages(block.content.images || [])
@@ -352,6 +399,81 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
           </p>
         </div>
 
+        {/* 캔바 스타일 컨트롤 - 정렬, 투명도, 회전 */}
+        <div className="mb-6 p-4 bg-purple-50 rounded-lg">
+          <h4 className="font-medium mb-3 text-purple-800">캔바 스타일 컨트롤</h4>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">정렬</label>
+              <div className="flex gap-1">
+                {['left', 'center', 'right'].map((align) => (
+                  <button
+                    key={align}
+                    onClick={() => {
+                      setImageAlign(align as 'left' | 'center' | 'right')
+                      onUpdate?.({
+                        ...block,
+                        content: { ...block.content, imageAlign: align }
+                      })
+                    }}
+                    className={`px-3 py-1 text-xs rounded transition-colors ${
+                      imageAlign === align
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {align === 'left' && '⬅️'}
+                    {align === 'center' && '🎯'}
+                    {align === 'right' && '➡️'}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                투명도: {opacity}%
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="5"
+                value={opacity}
+                onChange={(e) => {
+                  const newOpacity = parseInt(e.target.value)
+                  setOpacity(newOpacity)
+                  onUpdate?.({
+                    ...block,
+                    content: { ...block.content, opacity: newOpacity }
+                  })
+                }}
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                회전: {rotation}°
+              </label>
+              <input
+                type="range"
+                min="-180"
+                max="180"
+                step="1"
+                value={rotation}
+                onChange={(e) => {
+                  const newRotation = parseInt(e.target.value)
+                  setRotation(newRotation)
+                  onUpdate?.({
+                    ...block,
+                    content: { ...block.content, rotation: newRotation }
+                  })
+                }}
+                className="w-full"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* 이미지 추가 옵션 */}
         <div className="mb-6 p-4 bg-gray-50 rounded-lg">
           <h4 className="font-medium mb-3">이미지 추가</h4>
@@ -571,19 +693,23 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
         </>
       )}
 
-      {/* 이미지 렌더링 - Puck 설정값 적용 */}
+      {/* 이미지 렌더링 - 페이지 꽉 차게 */}
       <div
         className="w-full"
         style={{
           width: `${containerWidth}%`,
-          margin: '0 auto',
-          padding: `${padding}px`
+          margin: imageAlign === 'center' ? '0 auto' : imageAlign === 'right' ? '0 0 0 auto' : '0 auto 0 0',
+          padding: containerWidth < 100 ? `${padding}px` : '0', // 100% 넓이일 때는 패딩 없음
+          textAlign: imageAlign,
+          opacity: opacity / 100,
+          transform: `rotate(${rotation}deg)`,
+          zIndex: zIndex
         }}
       >
         {images.length > 0 ? (
           displayMode === 'single' ? (
-            // 단일 이미지 모드 - 동적 스타일 적용
-            <div className="text-center">
+            // 단일 이미지 모드 - 캔바 스타일 적용
+            <div style={{ textAlign: imageAlign }}>
               {images.map((image) => (
                 <div key={image.id}>
                   {image.link && !isEditing ? (
@@ -600,12 +726,13 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                         style={{
                           width: '100%',
                           height: 'auto',
-                          borderRadius: `${borderRadius}px`,
+                          borderRadius: containerWidth < 100 ? `${borderRadius}px` : '0',
                           aspectRatio: aspectRatio !== 'auto' ? aspectRatio : undefined,
                           objectFit: aspectRatio !== 'auto' ? 'cover' : 'contain',
-                          display: 'block'
+                          display: imageAlign === 'center' ? 'block' : 'inline-block',
+                          transition: 'all 0.3s ease'
                         }}
-                        className="glass-container"
+                        className={`glass-container ${getShadowClass(shadow)} ${getHoverEffectClass(hoverEffect)} transition-all duration-300 ease-out`}
                       />
                     </a>
                   ) : (
@@ -616,13 +743,14 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                       style={{
                         width: '100%',
                         height: 'auto',
-                        borderRadius: `${borderRadius}px`,
+                        borderRadius: containerWidth < 100 ? `${borderRadius}px` : '0',
                         aspectRatio: aspectRatio !== 'auto' ? aspectRatio : undefined,
                         objectFit: aspectRatio !== 'auto' ? 'cover' : 'contain',
-                        display: 'block',
-                        cursor: isEditing ? 'pointer' : 'default'
+                        display: imageAlign === 'center' ? 'block' : 'inline-block',
+                        cursor: isEditing ? 'pointer' : 'default',
+                        transition: 'all 0.3s ease'
                       }}
-                      className={`glass-container ${isEditing ? 'hover:opacity-80 transition-opacity' : ''}`}
+                      className={`glass-container ${getShadowClass(shadow)} ${getHoverEffectClass(hoverEffect)} ${isEditing ? 'hover:opacity-80' : ''} transition-all duration-300 ease-out`}
                     />
                   )}
                   {image.caption && (
@@ -664,13 +792,14 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                         style={{
                           width: '100%',
                           height: 'auto',
-                          borderRadius: `${borderRadius}px`,
+                          borderRadius: containerWidth < 100 ? `${borderRadius}px` : '0',
                           aspectRatio: aspectRatio !== 'auto' ? aspectRatio : undefined,
                           objectFit: aspectRatio !== 'auto' ? 'cover' : 'contain',
-                          display: 'block',
-                          marginBottom: index < images.length - 1 ? `${padding / 2}px` : '0'
+                          display: imageAlign === 'center' ? 'block' : 'inline-block',
+                          marginBottom: index < images.length - 1 ? `${padding / 2}px` : '0',
+                          transition: 'all 0.3s ease'
                         }}
-                        className="glass-container"
+                        className={`glass-container ${getShadowClass(shadow)} ${getHoverEffectClass(hoverEffect)} transition-all duration-300 ease-out`}
                       />
                     </a>
                   ) : (
@@ -681,14 +810,15 @@ export function ImageBlockRenderer({ block, isEditing, onUpdate }: ImageBlockRen
                       style={{
                         width: '100%',
                         height: 'auto',
-                        borderRadius: `${borderRadius}px`,
+                        borderRadius: containerWidth < 100 ? `${borderRadius}px` : '0',
                         aspectRatio: aspectRatio !== 'auto' ? aspectRatio : undefined,
                         objectFit: aspectRatio !== 'auto' ? 'cover' : 'contain',
-                        display: 'block',
+                        display: imageAlign === 'center' ? 'block' : 'inline-block',
                         marginBottom: index < images.length - 1 ? `${padding / 2}px` : '0',
-                        cursor: isEditing ? 'pointer' : 'default'
+                        cursor: isEditing ? 'pointer' : 'default',
+                        transition: 'all 0.3s ease'
                       }}
-                      className={`glass-container ${isEditing ? 'hover:opacity-80 transition-opacity' : ''}`}
+                      className={`glass-container ${isEditing ? 'hover:opacity-80 transition-all' : ''}`}
                     />
                   )}
                   {image.caption && (

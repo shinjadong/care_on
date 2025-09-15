@@ -224,6 +224,12 @@ const ImageComponent: ComponentConfig<{
   padding?: number;
   borderRadius?: number;
   aspectRatio?: string;
+  imageAlign?: 'left' | 'center' | 'right';
+  opacity?: number;
+  rotation?: number;
+  shadow?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  zIndex?: number;
+  hoverEffect?: 'none' | 'scale' | 'rotate' | 'brightness' | 'blur';
 }> = {
   fields: {
     displayMode: {
@@ -266,6 +272,58 @@ const ImageComponent: ComponentConfig<{
         { label: "인스타그램 (1:1)", value: "1/1" }
       ]
     },
+    imageAlign: {
+      type: "radio",
+      label: "이미지 정렬",
+      options: [
+        { label: "⬅️ 왼쪽", value: "left" },
+        { label: "🎯 가운데", value: "center" },
+        { label: "➡️ 오른쪽", value: "right" }
+      ]
+    },
+    opacity: {
+      type: "number",
+      label: "투명도 (%)",
+      min: 0,
+      max: 100,
+      step: 5
+    },
+    rotation: {
+      type: "number",
+      label: "회전 (도)",
+      min: -180,
+      max: 180,
+      step: 1
+    },
+    shadow: {
+      type: "select",
+      label: "그림자",
+      options: [
+        { label: "없음", value: "none" },
+        { label: "작게", value: "sm" },
+        { label: "보통", value: "md" },
+        { label: "크게", value: "lg" },
+        { label: "매우 크게", value: "xl" }
+      ]
+    },
+    zIndex: {
+      type: "number",
+      label: "레이어 순서",
+      min: 0,
+      max: 100,
+      step: 1
+    },
+    hoverEffect: {
+      type: "select",
+      label: "호버 효과",
+      options: [
+        { label: "없음", value: "none" },
+        { label: "확대", value: "scale" },
+        { label: "회전", value: "rotate" },
+        { label: "밝아짐", value: "brightness" },
+        { label: "흐려짐", value: "blur" }
+      ]
+    },
     images: {
       type: "array",
       label: "이미지 목록",
@@ -282,15 +340,21 @@ const ImageComponent: ComponentConfig<{
     displayMode: "single",
     images: [],
     containerWidth: 100,
-    padding: 16,
-    borderRadius: 12,
-    aspectRatio: "auto"
+    padding: 0, // 기본 패딩 없음 - 페이지 꽉 차게
+    borderRadius: 0, // 기본 라운드 없음
+    aspectRatio: "auto",
+    imageAlign: "center",
+    opacity: 100,
+    rotation: 0,
+    shadow: "none", // 기본 그림자 없음
+    zIndex: 1,
+    hoverEffect: "none" // 기본 호버 효과 없음
   },
-  render: ({ images, displayMode, containerWidth, padding, borderRadius, aspectRatio }) => {
-    // 넓이에 따른 자동 패딩 계산
-    const autoPadding = containerWidth
-      ? Math.max(8, Math.floor((100 - containerWidth) / 4))
-      : padding
+  render: ({ images, displayMode, containerWidth, padding, borderRadius, aspectRatio, imageAlign, opacity, rotation, shadow, zIndex, hoverEffect }) => {
+    // 넓이에 따른 자동 패딩 계산 (100%일 때는 패딩 0)
+    const autoPadding = containerWidth === 100
+      ? 0
+      : Math.max(8, Math.floor((100 - containerWidth) / 4))
 
     const effectivePadding = padding !== undefined ? padding : autoPadding
 
@@ -303,7 +367,13 @@ const ImageComponent: ComponentConfig<{
         containerWidth,
         padding: effectivePadding,
         borderRadius,
-        aspectRatio
+        aspectRatio,
+        imageAlign,
+        opacity,
+        rotation,
+        shadow,
+        zIndex,
+        hoverEffect
       },
       settings: {
         margin: { top: 0, bottom: 0 }

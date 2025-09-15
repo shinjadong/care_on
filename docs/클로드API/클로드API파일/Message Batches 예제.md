@@ -1,0 +1,393 @@
+# Message Batches 예제
+
+> Message Batches API 사용 예제
+
+Message Batches API는 Messages API와 동일한 기능 세트를 지원합니다. 이 페이지는 Message Batches API 사용 방법에 중점을 두고 있지만, Messages API 기능 세트의 예제는 [Messages API 예제](/ko/api/messages-examples)를 참조하세요.
+
+## Message Batch 생성하기
+
+<CodeGroup>
+  ```Python Python
+  import anthropic
+  from anthropic.types.message_create_params import MessageCreateParamsNonStreaming
+  from anthropic.types.messages.batch_create_params import Request
+
+client = anthropic.Anthropic()
+
+message_batch = client.messages.batches.create(
+requests=[
+Request(
+custom_id="my-first-request",
+params=MessageCreateParamsNonStreaming(
+model="claude-opus-4-20250514",
+max_tokens=1024,
+messages=[{
+"role": "user",
+"content": "Hello, world",
+}]
+)
+),
+Request(
+custom_id="my-second-request",
+params=MessageCreateParamsNonStreaming(
+model="claude-opus-4-20250514",
+max_tokens=1024,
+messages=[{
+"role": "user",
+"content": "Hi again, friend",
+}]
+)
+)
+]
+)
+print(message_batch)
+
+```
+
+```TypeScript TypeScript
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropic = new Anthropic();
+
+const message_batch = await anthropic.messages.batches.create({
+  requests: [{
+    custom_id: "my-first-request",
+    params: {
+      model: "claude-opus-4-20250514",
+      max_tokens: 1024,
+      messages: [
+        {"role": "user", "content": "Hello, Claude"}
+      ]
+    }
+  }, {
+    custom_id: "my-second-request",
+    params: {
+      model: "claude-opus-4-20250514",
+      max_tokens: 1024,
+      messages: [
+        {"role": "user", "content": "Hi again, my friend"}
+      ]
+    }
+  }]
+});
+console.log(message_batch);
+```
+
+```bash
+#!/bin/sh
+curl https://api.anthropic.com/v1/messages/batches \
+    --header "x-api-key: $ANTHROPIC_API_KEY" \
+    --header "anthropic-version: 2023-06-01" \
+    --header "content-type: application/json" \
+    --data '{
+        "requests": [
+          {
+              "custom_id": "my-first-request",
+              "params": {
+                  "model": "claude-opus-4-20250514",
+                  "max_tokens": 1024,
+                  "messages": [
+                      {"role": "user", "content": "Hello, Claude"}
+                  ]
+              }
+          },
+          {
+              "custom_id": "my-second-request",
+              "params": {
+                  "model": "claude-opus-4-20250514",
+                  "max_tokens": 1024,
+                  "messages": [
+                      {"role": "user", "content": "Hi again, my friend"}
+                  ]
+              }
+          }
+      ]
+    }'
+```
+
+</CodeGroup>
+
+```JSON
+{
+  "id": "msgbatch_013Zva2CMHLNnXjNJJKqJ2EF",
+  "type": "message_batch",
+  "processing_status": "in_progress",
+  "request_counts": {
+    "processing": 2,
+    "succeeded": 0,
+    "errored": 0,
+    "canceled": 0,
+    "expired": 0
+  },
+  "ended_at": null,
+  "created_at": "2024-09-24T18:37:24.100435Z",
+  "expires_at": "2024-09-25T18:37:24.100435Z",
+  "cancel_initiated_at": null,
+  "results_url": null
+}
+```
+
+## Message Batch 완료 폴링하기
+
+Message Batch를 폴링하려면 [생성](#creating-a-message-batch) 요청 시 응답으로 제공되거나 [나열](#listing-all-message-batches-in-a-workspace)을 통해 얻을 수 있는 `id`가 필요합니다. 예제 `id`: `msgbatch_013Zva2CMHLNnXjNJJKqJ2EF`.
+
+<CodeGroup>
+  ```Python Python
+  import anthropic
+
+client = anthropic.Anthropic()
+
+message_batch = None
+while True:
+message_batch = client.messages.batches.retrieve(
+MESSAGE_BATCH_ID
+)
+if message_batch.processing_status == "ended":
+break
+
+  print(f"Batch {MESSAGE_BATCH_ID} is still processing...")
+  time.sleep(60)
+print(message_batch)
+
+```
+
+```TypeScript TypeScript
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropic = new Anthropic();
+
+let messageBatch;
+while (true) {
+  messageBatch = await anthropic.messages.batches.retrieve(
+    MESSAGE_BATCH_ID
+  );
+  if (messageBatch.processing_status === 'ended') {
+    break;
+  }
+
+  console.log(`Batch ${messageBatch} is still processing... waiting`);
+  await new Promise(resolve => setTimeout(resolve, 60_000));
+}
+console.log(messageBatch);
+```
+```bash
+#!/bin/sh
+
+until [[ $(curl -s "https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID" \
+          --header "x-api-key: $ANTHROPIC_API_KEY" \
+          --header "anthropic-version: 2023-06-01" \
+          | grep -o '"processing_status":[[:space:]]*"[^"]*"' \
+          | cut -d'"' -f4) == "ended" ]]; do
+    echo "Batch $MESSAGE_BATCH_ID is still processing..."
+    sleep 60
+done
+
+echo "Batch $MESSAGE_BATCH_ID has finished processing"
+```
+</CodeGroup>
+
+## 워크스페이스의 모든 Message Batch 나열하기
+
+<CodeGroup>
+  ```Python Python
+  import anthropic
+
+client = anthropic.Anthropic()
+
+# Automatically fetches more pages as needed.
+
+for message_batch in client.messages.batches.list(
+limit=20
+):
+print(message_batch)
+
+```
+
+```TypeScript TypeScript
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropic = new Anthropic();
+
+// Automatically fetches more pages as needed.
+for await (const messageBatch of anthropic.messages.batches.list({
+  limit: 20
+})) {
+  console.log(messageBatch);
+}
+```
+```bash
+#!/bin/sh
+
+if ! command -v jq &> /dev/null; then
+    echo "Error: This script requires jq. Please install it first."
+    exit 1
+fi
+
+BASE_URL="https://api.anthropic.com/v1/messages/batches"
+
+has_more=true
+after_id=""
+
+while [ "$has_more" = true ]; do
+    # Construct URL with after_id if it exists
+    if [ -n "$after_id" ]; then
+        url="${BASE_URL}?limit=20&after_id=${after_id}"
+    else
+        url="$BASE_URL?limit=20"
+    fi
+
+    response=$(curl -s "$url" \
+              --header "x-api-key: $ANTHROPIC_API_KEY" \
+              --header "anthropic-version: 2023-06-01")
+
+    # Extract values using jq
+    has_more=$(echo "$response" | jq -r '.has_more')
+    after_id=$(echo "$response" | jq -r '.last_id')
+
+    # Process and print each entry in the data array
+    echo "$response" | jq -c '.data[]' | while read -r entry; do
+        echo "$entry" | jq '.'
+    done
+done
+```
+</CodeGroup>
+
+```Markup
+{
+  "id": "msgbatch_013Zva2CMHLNnXjNJJKqJ2EF",
+  "type": "message_batch",
+  ...
+}
+{
+  "id": "msgbatch_01HkcTjaV5uDC8jWR4ZsDV8d",
+  "type": "message_batch",
+  ...
+}
+```
+## Message Batch 결과 검색하기
+
+Message Batch 상태가 `ended`가 되면 배치의 `results_url`을 확인하고 `.jsonl` 파일 형태로 결과를 검색할 수 있습니다.
+
+<CodeGroup>
+  ```Python Python
+  import anthropic
+
+client = anthropic.Anthropic()
+
+# Stream results file in memory-efficient chunks, processing one at a time
+
+for result in client.messages.batches.results(
+MESSAGE_BATCH_ID,
+):
+print(result)
+
+```
+
+```TypeScript TypeScript
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropic = new Anthropic();
+
+// Stream results file in memory-efficient chunks, processing one at a time
+for await (const result of await anthropic.messages.batches.results(
+    MESSAGE_BATCH_ID
+)) {
+    console.log(result);
+}
+```
+```bash
+#!/bin/sh
+curl "https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID" \
+      --header "anthropic-version: 2023-06-01" \
+      --header "x-api-key: $ANTHROPIC_API_KEY" \
+| grep -o '"results_url":[[:space:]]*"[^"]*"' \
+| cut -d'"' -f4 \
+| xargs curl \
+      --header "anthropic-version: 2023-06-01" \
+      --header "x-api-key: $ANTHROPIC_API_KEY"
+
+# Optionally, use jq for pretty-printed JSON:
+#| while IFS= read -r line; do
+#    echo "$line" | jq '.'
+#  done
+```
+</CodeGroup>
+
+```Markup
+{
+  "id": "my-second-request",
+  "result": {
+    "type": "succeeded",
+    "message": {
+      "id": "msg_018gCsTGsXkYJVqYPxTgDHBU",
+      "type": "message",
+      ...
+    }
+  }
+}
+{
+  "custom_id": "my-first-request",
+  "result": {
+    "type": "succeeded",
+    "message": {
+      "id": "msg_01XFDUDYJgAACzvnptvVoYEL",
+      "type": "message",
+      ...
+    }
+  }
+}
+```
+## Message Batch 취소하기
+
+취소 직후 배치의 `processing_status`는 `canceling`이 됩니다. 동일한 [배치 완료 폴링](#polling-for-message-batch-completion) 기법을 사용하여 취소가 완료되는 시점을 폴링할 수 있습니다. 취소된 배치도 `ended` 상태가 되며 결과를 포함할 수 있습니다.
+
+<CodeGroup>
+  ```Python Python
+  import anthropic
+
+client = anthropic.Anthropic()
+
+message_batch = client.messages.batches.cancel(
+MESSAGE_BATCH_ID,
+)
+print(message_batch)
+
+```
+
+```TypeScript TypeScript
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropic = new Anthropic();
+
+const messageBatch = await anthropic.messages.batches.cancel(
+    MESSAGE_BATCH_ID
+);
+console.log(messageBatch);
+```
+```bash
+#!/bin/sh
+curl --request POST https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID/cancel \
+    --header "x-api-key: $ANTHROPIC_API_KEY" \
+    --header "anthropic-version: 2023-06-01"
+```
+</CodeGroup>
+
+```JSON
+{
+  "id": "msgbatch_013Zva2CMHLNnXjNJJKqJ2EF",
+  "type": "message_batch",
+  "processing_status": "canceling",
+  "request_counts": {
+    "processing": 2,
+    "succeeded": 0,
+    "errored": 0,
+    "canceled": 0,
+    "expired": 0
+  },
+  "ended_at": null,
+  "created_at": "2024-09-24T18:37:24.100435Z",
+  "expires_at": "2024-09-25T18:37:24.100435Z",
+  "cancel_initiated_at": "2024-09-24T18:39:03.114875Z",
+  "results_url": null
+}
+```
