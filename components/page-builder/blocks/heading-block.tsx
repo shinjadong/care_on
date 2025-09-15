@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { InlineTextEditor } from '../inline-text-editor';
 import { Block } from '@/types/page-builder';
 import { Type, Settings, X, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
 

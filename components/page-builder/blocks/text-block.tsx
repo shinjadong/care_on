@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { InlineTextEditor } from '../inline-text-editor';
 import { Block } from '@/types/page-builder';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -504,24 +505,14 @@ export function TextBlockRenderer({ block, isEditing, onUpdate }: TextBlockRende
 
       {showTypography && <TypographyQuickPanel />}
 
-      {/* Text Display */}
-      <div
-        className="cursor-pointer hover:bg-gray-100 p-2 rounded min-h-[20px]"
-        onClick={() => setIsEditingText(true)}
+      {/* Inline Text Editor */}
+      <InlineTextEditor
+        block={block}
+        onUpdate={onUpdate}
+        placeholder="텍스트를 입력하세요..."
+        className="min-h-[20px]"
         style={getTextStyle()}
-      >
-        {textData.format === 'markdown' ? (
-          <div className="prose prose-lg max-w-none">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {textData.text || '텍스트를 입력하세요...'}
-            </ReactMarkdown>
-          </div>
-        ) : (
-          <div className="whitespace-pre-wrap">
-            {textData.text || '텍스트를 입력하세요...'}
-          </div>
-        )}
-      </div>
+      />
     </div>
   );
 }

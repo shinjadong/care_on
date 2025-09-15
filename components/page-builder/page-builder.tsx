@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useKeyboardShortcuts } from './keyboard-shortcuts';
 import {
   DndContext,
   DragEndEvent,
@@ -42,9 +43,11 @@ interface SortableBlockProps {
   onMoveDown: (id: string) => void;
   canMoveUp: boolean;
   canMoveDown: boolean;
+  isSelected?: boolean;
+  onSelect?: (id: string) => void;
 }
 
-function SortableBlock({ block, isEditing, onUpdate, onDelete, onMoveUp, onMoveDown, canMoveUp, canMoveDown }: SortableBlockProps) {
+function SortableBlock({ block, isEditing, onUpdate, onDelete, onMoveUp, onMoveDown, canMoveUp, canMoveDown, isSelected, onSelect }: SortableBlockProps) {
   const {
     attributes,
     listeners,
@@ -62,7 +65,12 @@ function SortableBlock({ block, isEditing, onUpdate, onDelete, onMoveUp, onMoveD
 
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
-      <div className={`relative group ${isEditing ? 'border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400' : ''}`}>
+      <div
+        className={`relative group ${isEditing ? 'border-2 border-dashed rounded-lg hover:border-gray-400' : ''} ${
+          isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+        }`}
+        onClick={() => onSelect?.(block.id)}
+      >
         {isEditing && (
           <div className="absolute top-1/2 left-2 -translate-y-1/2 z-10 bg-gray-800 text-white p-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity">
             <div {...listeners} className="cursor-move p-1" title="드래그하여 순서 변경">
@@ -89,12 +97,33 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
   const [blocks, setBlocks] = useState<Block[]>(initialBlocks);
   const [isEditing, setIsEditing] = useState(true);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [showFileManager, setShowFileManager] = useState(false);
   const [showBulkUploader, setShowBulkUploader] = useState(false);
   const [showTemplateGallery, setShowTemplateGallery] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarPosition, setSidebarPosition] = useState({ top: 100 });
+
+  // 키보드 단축키 시스템
+  const {
+    canUndo,
+    canRedo,
+    hasCopiedBlock,
+    undo,
+    redo,
+    copyBlock,
+    pasteBlock,
+    duplicateBlock,
+    deleteBlock: deleteSelectedBlock,
+    shortcuts
+  } = useKeyboardShortcuts({
+    blocks,
+    setBlocks,
+    selectedBlockId,
+    setSelectedBlockId,
+    onAddBlock: addBlock
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -272,6 +301,38 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
               {isEditing ? <Edit className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
               {isEditing ? '편집 모드' : '미리보기'}
             </Button>
+
+            {/* Undo/Redo 버튼 */}
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={undo}
+                disabled={!canUndo}
+                title="실행 취소 (Ctrl+Z)"
+              >
+                ↶
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={redo}
+                disabled={!canRedo}
+                title="다시 실행 (Ctrl+Y)"
+              >
+                ↷
+              </Button>
+              {hasCopiedBlock && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={pasteBlock}
+                  title="붙여넣기 (Ctrl+V)"
+                >
+                  📋
+                </Button>
+              )}
+            </div>
           </div>
           
           {/* 사이드바 토글 (모바일용) */}
@@ -480,6 +541,8 @@ export function PageBuilder({ initialBlocks = [], onSave }: PageBuilderProps) {
                       onMoveDown={moveBlockDown}
                       canMoveUp={index > 0}
                       canMoveDown={index < blocks.length - 1}
+                      isSelected={block.id === selectedBlockId}
+                      onSelect={setSelectedBlockId}
                     />
                   ))}
                 </div>
