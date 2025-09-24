@@ -2,745 +2,123 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ========================================= */
-/* CAREON UNIFIED CSS - SINGLE SOURCE OF TRUTH */
-/* ========================================= */
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
 }
 
-@layer base {
-  /* 기본 스타일 설정 */
-  html, body {
-    width: 100%;
-    max-width: 100vw;
-  }
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
 
-  /* 모든 요소의 박스 사이징 설정 */
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-
-  :root {
-    /* Base Colors - CareOn Brand Enhanced */
-    --background: 0 0% 100%; /* #FFFFFF */
-    --foreground: 0 0% 13%; /* #212121 */
-
-    --card: 0 0% 96.1%; /* #F5F5F5 */
-    --card-foreground: 0 0% 13%; /* #212121 */
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 13%;
-
-    /* Primary - CareOn Brand Green */
-    --primary: 171 74% 30%; /* #148777 - CareOn Brand */
-    --primary-foreground: 0 0% 100%;
-
-    /* Secondary - Complementary */
-    --secondary: 40 100% 50%; /* #FFAB00 */
-    --secondary-foreground: 0 0% 13%;
-
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.9%; /* #757575 */
-
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-
-    /* Status Colors */
-    --destructive: 4 90% 58%; /* #F44336 */
-    --destructive-foreground: 0 0% 100%;
-    --success: 122 39% 49%; /* #4CAF50 */
-    --warning: 45 100% 51%; /* #FFC107 */
-
-    /* Form & UI Elements */
-    --border: 0 0% 87.8%; /* #E0E0E0 */
-    --input: 0 0% 87.8%;
-    --ring: 171 74% 30%; /* Match primary */
-
-    /* Charts - Enhanced for admin dashboard */
-    --chart-1: 171 74% 40%; /* Brand variation 1 */
-    --chart-2: 173 58% 39%; /* Brand variation 2 */
-    --chart-3: 197 37% 24%; /* Brand variation 3 */
-    --chart-4: 43 74% 66%; /* Complementary 1 */
-    --chart-5: 27 87% 67%; /* Complementary 2 */
-
-    /* Sidebar - Admin UI */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 171 74% 30%; /* Match brand */
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 171 74% 30%; /* Match brand */
-
-    /* Design System */
-    --radius: 8px;
-
-    /* CareOn Brand Specific */
-    --brand: 171 74% 30%; /* #148777 */
-    --brand-foreground: 0 0% 100%;
-  }
-
-  .dark {
-    --background: 0 0% 7.1%; /* #121212 */
-    --foreground: 0 0% 100%; /* #FFFFFF */
-
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 100%;
-
-    --popover: 0 0% 7.1%;
-    --popover-foreground: 0 0% 100%;
-
-    /* Primary - Lighter in dark mode */
-    --primary: 171 60% 40%; /* Lighter brand green */
-    --primary-foreground: 0 0% 13%;
-
-    --secondary: 40 100% 70%; /* Lighter yellow */
-    --secondary-foreground: 0 0% 13%;
-
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 62.7%; /* Lighter grey */
-
-    --accent: 0 0% 10%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 4 80% 65%; /* Lighter red */
-    --destructive-foreground: 0 0% 13%;
-    --success: 122 40% 65%; /* Lighter green */
-    --warning: 45 100% 65%; /* Lighter yellow */
-
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 171 60% 40%; /* Match primary */
-
-    --chart-1: 171 60% 50%; /* Brand variation 1 - dark */
-    --chart-2: 160 60% 45%; /* Brand variation 2 - dark */
-    --chart-3: 30 80% 55%; /* Complementary - dark */
-    --chart-4: 280 65% 60%; /* Accent - dark */
-    --chart-5: 340 75% 55%; /* Warning - dark */
-
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 171 60% 50%; /* Match brand - dark */
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 171 60% 50%; /* Match brand - dark */
-
-    --radius: 8px;
-
-    /* CareOn Brand - dark mode */
-    --brand: 171 60% 40%;
-    --brand-foreground: 0 0% 100%;
-  }
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Spoqa Han Sans Neo", "sans-serif";
-  }
-
-  /* 페이지 빌더용 기본 간격 제거 - 고객 랜딩 페이지에서 완전한 제로 간격 */
-  .block-wrapper h1, .block-wrapper h2, .block-wrapper h3,
-  .block-wrapper h4, .block-wrapper h5, .block-wrapper h6 {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  .block-wrapper p, .block-wrapper div {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  .block-wrapper ul, .block-wrapper ol {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  .block-wrapper .prose * {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-}
-
-/* ========================================= */
-/* CAREON DESIGN SYSTEM - UNIFIED UTILITIES */
-/* ========================================= */
-
-@layer utilities {
-  /* iOS Safe Area */
-  .safe-top { padding-top: max(12px, env(safe-area-inset-top)); }
-  .safe-bottom { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
-
-  /* Apple-style blur effects */
-  .ios-blur {
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    background: rgba(255,255,255,.85);
-    border-bottom: 1px solid rgba(0,0,0,.05);
-  }
-  .dark .ios-blur {
-    background: rgba(22,22,22,.7);
-    border-bottom: 1px solid rgba(255,255,255,.1);
-  }
-
-  /* Touch optimization */
-  .ios-content {
-    -webkit-overflow-scrolling: touch;
-    touch-action: manipulation;
-  }
-
-  /* Brand color utilities */
-  .text-brand { color: hsl(var(--brand)); }
-  .bg-brand { background-color: hsl(var(--brand)); }
-  .ring-brand { --tw-ring-color: hsl(var(--brand)); }
-  .border-brand { border-color: hsl(var(--brand)); }
-  .brand-foreground { color: hsl(var(--brand-foreground)); }
-
-  /* Apple-style card animations */
-  .apple-card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .apple-card:hover {
-    transform: scale(1.015);
-    box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.12);
-  }
-}
-
-/* Remove touch highlights */
-* { -webkit-tap-highlight-color: transparent; }
-
-/* ========================================= */
-/* CAREON COMPONENT SYSTEM */
-/* ========================================= */
-
-@layer components {
-  /* Card system */
-  .careon-card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden;
-    @apply dark:bg-card dark:border-border;
-    @apply sm:rounded-2xl;
-  }
-
-  .careon-card-header {
-    @apply w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors;
-    @apply dark:hover:bg-muted/50;
-    @apply sm:px-6 sm:py-4;
-  }
-
-  .careon-card-body {
-    @apply px-4 pb-4 space-y-3 border-t border-gray-100;
-    @apply dark:border-border;
-    @apply sm:px-6 sm:pb-6 sm:space-y-4;
-  }
-
-  /* Typography system */
-  .careon-title {
-    @apply text-lg font-bold mb-1;
-    @apply sm:text-xl md:text-2xl sm:mb-2;
-  }
-
-  .careon-subtitle {
-    @apply text-xs text-muted-foreground;
-    @apply sm:text-sm;
-  }
-
-  /* Form system */
-  .careon-label {
-    @apply block text-xs font-medium mb-1.5;
-    @apply sm:text-sm sm:mb-2;
-  }
-
-  .careon-input {
-    @apply w-full rounded-lg border border-input bg-background px-3 py-2 text-sm;
-    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:border-input;
-    @apply disabled:cursor-not-allowed disabled:opacity-50;
-    @apply sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-base;
-  }
-
-  /* Button enhancements */
-  .careon-btn-primary {
-    @apply bg-brand text-brand-foreground hover:bg-brand/90;
-    @apply focus:ring-2 focus:ring-brand focus:ring-offset-2;
-  }
-
-  /* Status indicators */
-  .status-success { @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400; }
-  .status-warning { @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400; }
-  .status-error { @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400; }
-  .status-info { @apply bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400; }
-}
-
-/* ========================================= */
-/* GLASSMORPHIC UI SYSTEM */
-/* ========================================= */
-
-@layer components {
-  /* Instagram/Threads inspired glassmorphic containers */
-  .glass-container {
-    @apply bg-white/60 backdrop-blur-md border border-white/25 shadow-lg;
-    border-radius: 16px;
-  }
-
-  .glass-container-strong {
-    @apply bg-white/75 backdrop-blur-lg border border-white/35 shadow-xl;
-    border-radius: 20px;
-  }
-
-  .glass-container-soft {
-    @apply bg-white/40 backdrop-blur-sm border border-white/20 shadow-md;
-    border-radius: 12px;
-  }
-
-  /* Glassmorphic Navigation */
-  .glass-nav {
-    @apply w-80 p-6 rounded-2xl glass-container;
-  }
-
-  .glass-nav-item {
-    @apply flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 ease-out cursor-pointer;
-    @apply hover:bg-white/15 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98];
-  }
-
-  .glass-nav-item.active {
-    @apply bg-white/20 shadow-md;
-  }
-
-  .glass-nav-icon {
-    @apply w-5 h-5 text-gray-700 transition-transform duration-200 hover:scale-110;
-  }
-
-  .glass-nav-label {
-    @apply text-gray-800 font-medium text-sm;
-  }
-
-  /* Glassmorphic Toast/Notification */
-  .glass-toast {
-    @apply p-4 rounded-2xl glass-container shadow-xl;
-    @apply transition-all duration-500 ease-out transform-gpu;
-  }
-
-  .glass-toast.visible {
-    @apply opacity-100 translate-y-0 scale-100;
-  }
-
-  .glass-toast.hidden {
-    @apply opacity-0 translate-y-8 scale-95;
-  }
-
-  .glass-toast-icon {
-    @apply w-8 h-8 rounded-full bg-white/20 flex items-center justify-center;
-    @apply transition-all duration-300 ease-out;
-  }
-
-  .glass-toast-icon.animate {
-    @apply scale-100 rotate-0;
-  }
-
-  .glass-toast-icon.hide {
-    @apply scale-0 rotate-180;
-  }
-
-  .glass-toast-text {
-    @apply text-white font-medium text-sm transition-all duration-300 delay-75;
-  }
-
-  .glass-toast-progress {
-    @apply absolute bottom-0 left-0 right-0 h-0.5 bg-white/10 rounded-b-2xl overflow-hidden;
-  }
-
-  .glass-toast-progress-bar {
-    @apply h-full bg-white/30 transition-all ease-linear;
-    transition-duration: 2.5s;
-  }
-
-  /* Glassmorphic Button */
-  .glass-btn {
-    @apply px-4 py-2 rounded-xl glass-container;
-    @apply hover:bg-white/15 hover:scale-105 transition-all duration-300 ease-out;
-  }
-
-  .glass-btn-text {
-    @apply text-white/80 text-xs font-medium;
-  }
-
-  /* Glassmorphic Card Variants */
-  .glass-card {
-    @apply rounded-2xl glass-container;
-  }
-
-  .glass-card-content {
-    @apply p-6;
-  }
-
-  .glass-card-header {
-    @apply p-4 border-b border-white/10;
-  }
-
-  .glass-card-body {
-    @apply p-6;
-  }
-
-  .glass-card-footer {
-    @apply p-4 border-t border-white/10;
-  }
-
-  /* Glassmorphic Input */
-  .glass-input {
-    @apply bg-white/60 backdrop-blur-md border border-white/30;
-    @apply px-4 py-3 rounded-lg text-gray-800 placeholder-gray-500;
-    @apply focus:bg-white/70 focus:border-white/40 focus:outline-none;
-    @apply transition-all duration-300;
-  }
-
-  /* Glassmorphic Modal/Dialog */
-  .glass-modal {
-    @apply fixed inset-0 z-50 backdrop-blur-sm bg-black/20;
-  }
-
-  .glass-modal-content {
-    @apply glass-container rounded-3xl max-w-md mx-auto mt-20 p-6;
-  }
-
-  /* Instagram/Threads inspired sidebar */
-  .glass-sidebar {
-    @apply h-full border-r border-white/15;
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(25px);
-    border-radius: 0;
-  }
-
-  .glass-sidebar-nav {
-    @apply space-y-3 p-6;
-  }
-
-  .glass-sidebar-item {
-    @apply flex items-center gap-4 px-4 py-3 rounded-2xl;
-    @apply text-gray-700 hover:text-gray-900 hover:glass-container-soft;
-    @apply transition-all duration-300 ease-out;
-    @apply hover:scale-[1.02] active:scale-[0.98];
-  }
-
-  .glass-sidebar-item.active {
-    @apply glass-bg-primary text-gray-900 shadow-lg;
-  }
-}
-
-@layer utilities {
-  /* CareOn x Instagram inspired background utilities */
-  .glass-bg-primary {
-    background: linear-gradient(135deg, rgba(20, 135, 119, 0.15) 0%, rgba(56, 178, 172, 0.1) 100%);
-  }
-
-  .glass-bg-secondary {
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%);
-  }
-
-  .glass-bg-accent {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
-  }
-
-  .glass-bg-story {
-    background: linear-gradient(135deg, rgba(77, 209, 199, 0.1) 0%, rgba(20, 135, 119, 0.1) 100%);
-  }
-
-  /* Glassmorphic Text Colors */
-  .glass-text-primary {
-    @apply text-gray-800;
-  }
-
-  .glass-text-secondary {
-    @apply text-gray-600;
-  }
-
-  .glass-text-muted {
-    @apply text-gray-500;
-  }
-
-  /* Primary background용 텍스트 (어두운 배경에 흰색 텍스트) */
-  .glass-bg-primary .glass-text-primary {
-    @apply text-white;
-  }
-
-  .glass-bg-primary .glass-text-secondary {
-    @apply text-white/80;
-  }
-
-  /* Glassmorphic Borders */
-  .glass-border-light {
-    @apply border border-white/10;
-  }
-
-  .glass-border-medium {
-    @apply border border-white/20;
-  }
-
-  .glass-border-strong {
-    @apply border border-white/30;
-  }
-}
-
-/* ========================================= */
-/* INSTAGRAM/THREADS INSPIRED SOCIAL ELEMENTS */
-/* ========================================= */
-
-@layer components {
-  /* CareOn x Instagram inspired card styles */
-  .social-card {
-    @apply glass-container hover:glass-container-strong hover:glass-bg-story;
-    @apply transform hover:scale-[1.02] transition-all duration-300 ease-out;
-    @apply hover:shadow-xl cursor-pointer;
-    border-radius: 20px;
-  }
-
-  .social-button {
-    @apply glass-container-soft px-6 py-3 rounded-full;
-    @apply hover:glass-container-strong hover:scale-105 active:scale-95;
-    @apply transition-all duration-200 ease-out;
-    @apply text-gray-800 font-medium;
-  }
-
-  .social-profile {
-    @apply w-12 h-12 rounded-full glass-container-soft;
-    @apply flex items-center justify-center;
-    @apply hover:glass-container hover:glass-bg-primary transition-all duration-200;
-  }
-
-  /* CareOn x Instagram story ring */
-  .story-ring {
-    background: linear-gradient(45deg, #148777 0%, #38b2ac 25%, #4fd1c7 50%, #81e6d9 75%, #148777 100%);
-    padding: 3px;
-    border-radius: 50%;
-  }
-
-  .story-inner {
-    @apply bg-white rounded-full;
-    padding: 2px;
-  }
-
-  /* Thread-like feed elements */
-  .thread-card {
-    @apply glass-container-soft p-6 mb-4;
-    border-radius: 24px;
-    @apply hover:glass-container transition-all duration-300;
-  }
-
-}
-
-/* CareOn branded floating button */
-.careon-floating-btn {
-  position: relative;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(20px);
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-
-.careon-floating-btn::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #148777, #38b2ac, #4fd1c7, #81e6d9, #148777);
-  border-radius: inherit;
-  z-index: -1;
-  animation: borderGlow 3s ease-in-out infinite;
-}
-
-@keyframes borderGlow {
-  0% {
-    background: linear-gradient(45deg, #148777, #38b2ac, #4fd1c7, #81e6d9, #148777);
-  }
-  50% {
-    background: linear-gradient(45deg, #81e6d9, #4fd1c7, #38b2ac, #148777, #81e6d9);
-  }
-  100% {
-    background: linear-gradient(45deg, #148777, #38b2ac, #4fd1c7, #81e6d9, #148777);
-  }
-}
-
-/* ========================================= */
-/* PUCK EDITOR CUSTOMIZATION */
-/* ========================================= */
-
-/* Puck "Publish" 버튼을 한국어로 변경 */
-.puck-editor [data-rbd-droppable-id="root"] ~ div button:last-child {
-  position: relative;
-}
-
-.puck-editor [data-rbd-droppable-id="root"] ~ div button:last-child::before {
-  content: "💾 저장하기";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #148777;
-  color: white;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.puck-editor [data-rbd-droppable-id="root"] ~ div button:last-child span {
-  opacity: 0;
-}
-
-/* Puck 에디터 glassmorphic 스타일링 */
-.puck-editor {
-  --puck-color-azure-05: rgba(255, 255, 255, 0.6);
-  --puck-color-azure-03: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(20px);
-}
-
-/* ========================================= */
-/* CAREON ANIMATIONS */
-/* ========================================= */
-
-@keyframes slide-down {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes bounce-slow {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-@keyframes slide-up-from-bottom {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-/* Glassmorphic specific animations */
-@keyframes glass-slide-in-up {
-  0% {
-    opacity: 0;
-    transform: translateY(2rem) scale(0.9);
-  }
-  50% {
-    opacity: 0.8;
-    transform: translateY(-0.2rem) scale(1.02);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes glass-slide-out-down {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(1rem) scale(0.95);
-  }
-}
-
-@keyframes glass-progress-bar {
-  0% {
-    width: 100%;
-  }
-  100% {
-    width: 0%;
-  }
-}
-
-@keyframes glass-fade-in {
-  from {
-    opacity: 0;
-    backdrop-filter: blur(0px);
-  }
-  to {
-    opacity: 1;
-    backdrop-filter: blur(12px);
-  }
-}
-
-@layer utilities {
-  .animate-slide-down { animation: slide-down 0.3s ease-out; }
-  .animate-fade-in { animation: fade-in 0.5s ease-out; }
-  .animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
-  .animate-slide-up-from-bottom { animation: slide-up-from-bottom 0.4s ease-out; }
-
-  /* Glassmorphic animations */
-  .animate-glass-slide-in { animation: glass-slide-in-up 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
-  .animate-glass-slide-out { animation: glass-slide-out-down 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
-  .animate-glass-progress { animation: glass-progress-bar 2.5s linear; }
-  .animate-glass-fade-in { animation: glass-fade-in 0.3s ease-out; }
-}
-
-/* ========================================= */
-/* RESPONSIVE DESIGN UTILITIES */
-/* ========================================= */
-
-@media (max-width: 640px) {
-  .careon-mobile-stack {
-    @apply flex-col space-y-3 space-x-0;
-  }
-
-  .careon-mobile-full {
-    @apply w-full;
-  }
-}
-
-/* ========================================= */
-/* ADMIN DASHBOARD SPECIFIC */
-/* ========================================= */
-
-@layer components {
-  .admin-sidebar {
-    @apply bg-sidebar-background text-sidebar-foreground border-r border-sidebar-border;
-  }
-
-  .admin-nav-item {
-    @apply flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium;
-    @apply hover:bg-sidebar-accent hover:text-sidebar-accent-foreground;
-    @apply transition-colors;
-  }
-
-  .admin-nav-item.active {
-    @apply bg-sidebar-primary text-sidebar-primary-foreground;
   }
 }
