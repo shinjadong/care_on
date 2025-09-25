@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   // 보안상 실제 값은 숨기고 설정 여부만 확인
   const env = {
