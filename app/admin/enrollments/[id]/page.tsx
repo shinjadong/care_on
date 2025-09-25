@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
+import CardCompanyStatus from "@/components/admin/card-company-status"
 import {
   Tabs,
   TabsContent,
@@ -29,7 +30,8 @@ import {
   ExternalLink,
   AlertCircle,
   CheckCircle,
-  Clock
+  Clock,
+  ListChecks
 } from "lucide-react"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
@@ -103,6 +105,27 @@ interface EnrollmentDetail {
   submitted_at: string | null
   reviewed_at: string | null
   reviewer_notes: string | null
+
+  // Card companies
+  kb_card: boolean | null
+  bc_card: boolean | null
+  samsung_card: boolean | null
+  woori_card: boolean | null
+  hana_card: boolean | null
+
+  // Card company status
+  kb_card_status?: string | null
+  bc_card_status?: string | null
+  samsung_card_status?: string | null
+  woori_card_status?: string | null
+  hana_card_status?: string | null
+
+  // Card merchant numbers
+  kb_merchant_number?: string | null
+  bc_merchant_number?: string | null
+  samsung_merchant_number?: string | null
+  woori_merchant_number?: string | null
+  hana_merchant_number?: string | null
 }
 
 export default function EnrollmentDetailPage() {
@@ -266,6 +289,15 @@ export default function EnrollmentDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           {getStatusBadge(enrollment.status)}
+          {enrollment.status === 'approved' && (
+            <Button
+              variant="outline"
+              onClick={() => router.push(`/admin/enrollments/${enrollment.id}/onboarding`)}
+            >
+              <ListChecks className="w-4 h-4 mr-2" />
+              온보딩 체크리스트
+            </Button>
+          )}
           <Button variant="outline">
             <Download className="w-4 h-4 mr-2" />
             PDF 다운로드
@@ -517,6 +549,29 @@ export default function EnrollmentDetailPage() {
               </div>
             </div>
           </Card>
+
+          {/* Card Company Status */}
+          <CardCompanyStatus
+            enrollmentId={enrollment.id}
+            cardCompanies={{
+              kb_card: enrollment.kb_card,
+              bc_card: enrollment.bc_card,
+              samsung_card: enrollment.samsung_card,
+              woori_card: enrollment.woori_card,
+              hana_card: enrollment.hana_card,
+              kb_card_status: enrollment.kb_card_status,
+              bc_card_status: enrollment.bc_card_status,
+              samsung_card_status: enrollment.samsung_card_status,
+              woori_card_status: enrollment.woori_card_status,
+              hana_card_status: enrollment.hana_card_status,
+              kb_merchant_number: enrollment.kb_merchant_number,
+              bc_merchant_number: enrollment.bc_merchant_number,
+              samsung_merchant_number: enrollment.samsung_merchant_number,
+              woori_merchant_number: enrollment.woori_merchant_number,
+              hana_merchant_number: enrollment.hana_merchant_number
+            }}
+            onUpdate={() => fetchEnrollment(params.id as string)}
+          />
         </TabsContent>
 
         <TabsContent value="documents" className="space-y-4">

@@ -104,9 +104,10 @@ export async function PATCH(request: Request) {
       throw error
     }
 
-    // If approved, create customer record
+    // If approved, create customer record and initial contract
     if (status === 'approved') {
-      const { error: customerError } = await supabase
+      // 1. Create customer record
+      const { data: customerData, error: customerError } = await supabase
         .from('customers')
         .insert({
           name: data.business_name,
@@ -118,9 +119,58 @@ export async function PATCH(request: Request) {
           enrollment_id: id,
           created_at: new Date().toISOString()
         })
+        .select()
+        .single()
 
       if (customerError) {
         console.error('Error creating customer:', customerError)
+      }
+
+      // 2. Create initial contract from enrollment data
+      const contractData = {
+        business_name: data.business_name,
+        owner_name: data.representative_name,
+        phone: data.phone_number,
+        email: data.email,
+        address: data.business_address,
+        business_registration: data.business_number,
+
+        // Settlement info from enrollment
+        bank_name: data.settlement_bank || '',
+        account_number: data.settlement_account || '',
+        account_holder: data.settlement_holder || data.representative_name,
+
+        // Document images from enrollment
+        bank_account_image: data.bankbook_url,
+        id_card_image: data.id_card_front_url,
+        business_registration_image: data.business_registration_url,
+
+        // Service needs from enrollment
+        pos_needed: data.has_pos || false,
+        cctv_count: data.has_cctv ? '미정' : '0',
+
+        // Agreement status
+        terms_agreed: true, // Already agreed during enrollment
+        info_agreed: true,
+
+        // Initial status
+        status: 'pending',
+
+        // Additional info
+        additional_requests: data.additional_requests || '',
+        manager_notes: `자동 생성됨 - Enrollment ID: ${id}\n검토 노트: ${reviewer_notes || '없음'}`,
+
+        created_at: new Date().toISOString()
+      }
+
+      const { error: contractError } = await supabase
+        .from('contracts')
+        .insert(contractData)
+
+      if (contractError) {
+        console.error('Error creating contract:', contractError)
+      } else {
+        console.log('Contract created successfully for enrollment:', id)
       }
     }
 
