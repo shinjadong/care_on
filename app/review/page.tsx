@@ -124,25 +124,25 @@ export default function ReviewPage() {
       {/* 통합된 헤더 - 카운트 기능 + 스토리 디자인 */}
       <section className="w-full py-12 md:py-16">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="glass-card p-8 text-center">
-            <h1 className="text-2xl md:text-3xl font-bold glass-text-primary mb-4">
+          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
               케어온 멤버십, <span className="text-teal-600">리얼 후기</span>
             </h1>
 
             {/* 카운트 버튼 */}
             <button
               onClick={handleScrollDown}
-              className="inline-flex items-center glass-bg-primary px-6 py-3 rounded-full font-bold hover:scale-105 active:scale-95 transition-all duration-200 mb-6"
+              className="inline-flex items-center bg-teal-600 text-white px-6 py-3 rounded-full font-bold hover:scale-105 active:scale-95 transition-all duration-200 mb-6"
             >
-              <span className="text-xl md:text-2xl font-extrabold glass-text-primary">
+              <span className="text-xl md:text-2xl font-extrabold">
                 {Math.floor(totalCount * 3).toLocaleString()}명
               </span>
-              <span className="ml-2 text-sm glass-text-primary">사장님들의 선택</span>
+              <span className="ml-2 text-sm">사장님들의 선택</span>
             </button>
 
             <div className="mt-6">
-              <h2 className="text-3xl font-bold glass-text-primary mb-2">스토리</h2>
-              <p className="glass-text-secondary">진짜 사장님들의 이야기</p>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">스토리</h2>
+              <p className="text-gray-600">진짜 사장님들의 이야기</p>
             </div>
           </div>
         </div>
@@ -227,7 +227,7 @@ export default function ReviewPage() {
           </div>
         </div>
         <div className="text-center mt-2">
-          <span className="text-xs glass-text-secondary font-medium">스토리 작성</span>
+          <span className="text-xs text-gray-600 font-medium">스토리 작성</span>
         </div>
       </div>
     </div>

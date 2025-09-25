@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 
 export function Footer() {
   return (
-    <footer className="glass-container glass-text-secondary py-16 relative overflow-hidden">
+    <footer className="bg-gray-100 text-gray-600 py-16 relative overflow-hidden border-t border-gray-200">
       {/* 배경 패턴 */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full -translate-x-1/2 -translate-y-1/2" />
@@ -19,10 +19,10 @@ export function Footer() {
           <div className="mb-8 md:mb-0">
             <div className="flex items-center gap-3 mb-4">
               <Building2 className="w-8 h-8 text-teal-600" />
-              <p className="text-2xl font-bold glass-text-primary">케어온</p>
+              <p className="text-2xl font-bold text-gray-900">케어온</p>
             </div>
 
-            <address className="not-italic text-sm space-y-1.5 glass-text-secondary">
+            <address className="not-italic text-sm space-y-1.5 text-gray-600">
               <p>대표자 : 신예준</p>
               <p>경상남도 창원시 사화로80번길20, 201호 (팔용동)</p>
               <p>이메일 : siwwyy1012@gmail.com | 전화 : 1866-1845</p>
@@ -30,23 +30,23 @@ export function Footer() {
               <p>통신판매업 신고번호 : 2024-창원의창-0453호</p>
             </address>
 
-            <p className="text-xs mt-6 glass-text-muted">
+            <p className="text-xs mt-6 text-gray-500">
               COPYRIGHT© 2024 케어온. ALL RIGHT RESERVED.
             </p>
           </div>
 
           <div className="flex flex-col space-y-3">
-            <h3 className="glass-text-primary font-semibold mb-2">바로가기</h3>
-            <Link href="/privacy" className="glass-text-secondary hover:text-teal-600 transition-colors duration-200">
+            <h3 className="text-gray-900 font-semibold mb-2">바로가기</h3>
+            <Link href="/privacy" className="text-gray-600 hover:text-teal-600 transition-colors duration-200">
               개인정보 처리방침
             </Link>
-            <Link href="/terms" className="glass-text-secondary hover:text-teal-600 transition-colors duration-200">
+            <Link href="/terms" className="text-gray-600 hover:text-teal-600 transition-colors duration-200">
               이용약관
             </Link>
-            <Link href="/review" className="glass-text-secondary hover:text-teal-600 transition-colors duration-200">
+            <Link href="/review" className="text-gray-600 hover:text-teal-600 transition-colors duration-200">
               고객 후기
             </Link>
-            <Link href="/faq" className="glass-text-secondary hover:text-teal-600 transition-colors duration-200">
+            <Link href="/faq" className="text-gray-600 hover:text-teal-600 transition-colors duration-200">
               자주 묻는 질문
             </Link>
           </div>

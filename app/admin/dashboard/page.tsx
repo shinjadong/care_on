@@ -57,20 +57,22 @@ export default function AdminDashboard() {
     try {
       // 실제 API에서 통계 데이터 가져오기
       const response = await fetch('/api/dashboard/stats')
-      if (response.ok) {
-        const data = await response.json()
+      const data = await response.json()
+
+      if (response.ok && data.stats) {
         setStats(data.stats)
       } else {
         // API 실패 시 기본값 사용
-        setStats({
+        console.error('Dashboard API error:', data.error)
+        setStats(data.stats || {
           customers: {
-            total: 1,
-            active: 1,
-            new_this_month: 1
+            total: 0,
+            active: 0,
+            new_this_month: 0
           },
           contracts: {
-            total: 1,
-            pending: 1,
+            total: 0,
+            pending: 0,
             active: 0,
             completed: 0
           },
@@ -90,6 +92,32 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Failed to fetch dashboard stats:', error)
+      // 네트워크 에러 시에도 기본값으로 대시보드 표시
+      setStats({
+        customers: {
+          total: 0,
+          active: 0,
+          new_this_month: 0
+        },
+        contracts: {
+          total: 0,
+          pending: 0,
+          active: 0,
+          completed: 0
+        },
+        cs_tickets: {
+          total: 0,
+          open: 0,
+          urgent: 0,
+          resolved_today: 0
+        },
+        billing: {
+          total_monthly: 0,
+          pending_invoices: 0,
+          overdue_count: 0,
+          upcoming_remittances: 0
+        }
+      })
     } finally {
       setLoading(false)
     }

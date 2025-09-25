@@ -195,7 +195,7 @@ export function Header() {
 
   return (
     <header
-      className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-out glass-container ${
+      className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-out bg-white/95 backdrop-blur-md border-b border-gray-200 ${
         isVisible ? "top-0" : "-top-full"
       }`}
     >

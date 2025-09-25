@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   const limit = parseInt(searchParams.get('limit') || '50')
   const offset = parseInt(searchParams.get('offset') || '0')
 
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     let query = supabase
@@ -77,7 +77,7 @@ export async function PATCH(request: Request) {
     )
   }
 
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     const updateData: any = {
