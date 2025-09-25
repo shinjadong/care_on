@@ -365,7 +365,7 @@ export default function StepDocumentUpload({ formData, updateFormData, onNext, o
       <div className="space-y-3">
         {documents.map((doc, index) => (
           <div key={`${category}-${index}`} className={`border rounded-xl p-4 transition-all ${
-            doc.uploaded ? 'bg-green-50 border-green-200' : 'bg-white border-gray-200'
+            doc.uploaded ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300 shadow-sm' : 'bg-white border-gray-200'
           }`}>
             <div className="flex items-center justify-between mb-2">
               <div className="flex-1">
@@ -373,7 +373,9 @@ export default function StepDocumentUpload({ formData, updateFormData, onNext, o
                   {doc.name}
                   {doc.required && <span className="text-red-500 ml-1">*</span>}
                   {doc.uploaded && (
-                    <Check className="w-4 h-4 text-green-600 ml-2" />
+                    <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                      완료
+                    </span>
                   )}
                 </h3>
                 {doc.description && (
@@ -415,13 +417,63 @@ export default function StepDocumentUpload({ formData, updateFormData, onNext, o
                   )}
                 </label>
               ) : (
-                <div className="flex-1 flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-4 py-2.5">
-                  <div className="flex items-center flex-1">
-                    <Check className="w-4 h-4 text-green-600 mr-2" />
-                    <span className="text-sm text-gray-700 truncate">
-                      {doc.file?.name || "업로드 완료"}
-                    </span>
+                <div className="flex-1 flex items-center gap-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                  {/* Thumbnail preview */}
+                  {doc.url && (
+                    <div
+                      className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => {
+                        setPreviewUrl(doc.url)
+                        setPreviewTitle(doc.name)
+                        setIsPreviewOpen(true)
+                      }}
+                    >
+                      {doc.url.toLowerCase().endsWith('.pdf') ? (
+                        <div className="w-20 h-20 bg-gradient-to-br from-red-50 to-red-100 rounded-lg flex flex-col items-center justify-center border border-red-200">
+                          <svg className="w-8 h-8 text-red-600 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-5L9 2H4z" clipRule="evenodd" />
+                          </svg>
+                          <span className="text-xs text-red-600 font-medium">PDF</span>
+                        </div>
+                      ) : (
+                        <div className="relative group">
+                          <img
+                            src={doc.url}
+                            alt={doc.name}
+                            className="w-20 h-20 object-cover rounded-lg border-2 border-white shadow-md"
+                            onError={(e) => {
+                              // Fallback to generic image icon on error
+                              const target = e.currentTarget;
+                              target.style.display = 'none';
+                              const parent = target.parentElement;
+                              if (parent) {
+                                const fallback = document.createElement('div');
+                                fallback.className = 'w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center border-2 border-white shadow-md';
+                                fallback.innerHTML = '<svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
+                                parent.appendChild(fallback);
+                              }
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all flex items-center justify-center">
+                            <Eye className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center mb-1">
+                      <Check className="w-4 h-4 text-green-600 mr-1.5" />
+                      <span className="text-xs font-medium text-green-700">
+                        업로드 완료
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 truncate">
+                      {doc.file?.name || '이미지를 탭하여 확대'}
+                    </p>
                   </div>
+
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => {
