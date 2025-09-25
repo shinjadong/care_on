@@ -208,7 +208,8 @@ export default function EnrollmentPage() {
       }
       setInitialLoad(false)
     }
-  }, [initialLoad, loadDraft, clearDraft])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialLoad])
 
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
