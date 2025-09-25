@@ -93,7 +93,9 @@ export default function StepSettlementInfo({ formData, updateFormData, onNext, o
   }
 
   const handleAccountNumberChange = (value: string) => {
-    updateFormData('accountNumber', formatAccountNumber(value))
+    // 숫자만 남기기
+    const cleaned = value.replace(/[^0-9]/g, '')
+    updateFormData('accountNumber', cleaned)
   }
 
   return (
@@ -158,16 +160,17 @@ export default function StepSettlementInfo({ formData, updateFormData, onNext, o
               계좌번호
             </label>
             <CareonInput
-              placeholder="000-0000-0000"
+              placeholder="00000000000"
               value={formData.accountNumber || ""}
               onChange={(value) => handleAccountNumberChange(value)}
+              inputMode="numeric"
               error={errors.accountNumber}
             />
             {errors.accountNumber && (
               <p className="mt-1 text-xs text-red-500">{errors.accountNumber}</p>
             )}
             <p className="text-xs text-gray-500 mt-1">
-              하이픈(-)을 포함하여 입력해주세요
+              숫자만 입력해주세요 (하이픈 제외)
             </p>
           </div>
 

@@ -1,7 +1,7 @@
 "use client"
 
 // Customer enrollment form
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import StepAgreements from "@/components/enrollment/step-0-agreements"
 import StepOwnerInfo from "@/components/enrollment/step-1-owner-info"
 import StepCardAgreements from "@/components/enrollment/step-1.5-card-agreements-v2"
@@ -53,6 +53,7 @@ export type FormData = {
   storeAddress: string
   storePostcode: string
   storeArea: string
+  needLocalData?: boolean  // 매장 면적을 모르는 경우
 
   // Step 4 - 신청 유형
   applicationType: string
@@ -239,12 +240,16 @@ export default function EnrollmentPage() {
   const handleNext = () => {
     if (currentStepIndex < stepComponents.length - 1) {
       setCurrentStepIndex((prev) => prev + 1)
+      // 페이지 최상단으로 스크롤
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
   const handleBack = () => {
     if (currentStepIndex > 0) {
       setCurrentStepIndex((prev) => prev - 1)
+      // 페이지 최상단으로 스크롤
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 

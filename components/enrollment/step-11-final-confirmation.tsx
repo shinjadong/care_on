@@ -67,6 +67,8 @@ export default function StepFinalConfirmation({ formData, onNext, onBack }: Step
           business_number: formData.businessNumber,
           business_address: formData.storeAddress,
           business_detail_address: formData.storeArea,
+          store_area: formData.storeArea,
+          need_local_data: formData.needLocalData || false,
 
           // Category
           business_category: formData.businessCategory,

@@ -13,37 +13,6 @@ export function Footer() {
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-        {/* CTA 섹션 */}
-        <div className="glass-bg-primary rounded-2xl p-8 md:p-12 mb-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold glass-text-primary mb-4">
-            창업, 혼자 고민하지 마세요
-          </h2>
-          <p className="text-lg md:text-xl mb-8 glass-text-secondary">
-            케어온이 함께합니다. 지금 바로 문의하세요!
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
-            <a
-              href="tel:1866-1845"
-              className="social-button glass-container-strong px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-all duration-300"
-            >
-              <Phone className="w-5 h-5 mr-3" />
-              1866-1845 전화하기
-            </a>
-
-            <Button className="social-button glass-bg-secondary px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-all duration-300">
-              <MessageCircle className="w-5 h-5 mr-3" />
-              문자로 문의하기
-            </Button>
-          </div>
-
-          {/* 운영시간 안내 */}
-          <div className="mt-8 p-4 glass-container-soft rounded-xl inline-block">
-            <p className="text-sm glass-text-primary">
-              <span className="font-semibold">상담 가능 시간:</span> 평일 09:00 - 18:00 | 주말/공휴일 휴무
-            </p>
-          </div>
-        </div>
 
         {/* 기업 정보 */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">

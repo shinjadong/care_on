@@ -19,6 +19,7 @@ export default function StepStoreInfo({ formData, updateFormData, onNext, onBack
   const [sameAsBusinessName, setSameAsBusinessName] = useState(false)
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false)
   const [detailAddress, setDetailAddress] = useState("")
+  const [dontKnowArea, setDontKnowArea] = useState(formData.needLocalData || false)
 
   const handleSameAsBusinessName = (checked: boolean) => {
     setSameAsBusinessName(checked)
@@ -50,7 +51,7 @@ export default function StepStoreInfo({ formData, updateFormData, onNext, onBack
   const isValid =
     formData.storeName.trim() !== "" &&
     formData.storeAddress.trim() !== "" &&
-    formData.storeArea.trim() !== ""
+    (formData.storeArea.trim() !== "" || dontKnowArea)
 
   return (
     <>
@@ -108,8 +109,10 @@ export default function StepStoreInfo({ formData, updateFormData, onNext, onBack
             </div>
 
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                매장 면적(m²)
+              </label>
               <CareonInput
-                label="매장 면적(m²)"
                 placeholder="예) 45, 소수점일 경우 반올림하여 입력"
                 value={formData.storeArea}
                 onChange={(value) => {
@@ -117,7 +120,30 @@ export default function StepStoreInfo({ formData, updateFormData, onNext, onBack
                   updateFormData("storeArea", cleaned)
                 }}
                 inputMode="numeric"
+                disabled={dontKnowArea}
               />
+
+              {/* 잘 모르겠어요 체크박스 */}
+              <div className="flex items-center mt-3">
+                <input
+                  type="checkbox"
+                  id="dontKnowArea"
+                  checked={dontKnowArea}
+                  onChange={(e) => {
+                    const checked = e.target.checked
+                    setDontKnowArea(checked)
+                    updateFormData("needLocalData", checked)
+                    if (checked) {
+                      updateFormData("storeArea", "")
+                    }
+                  }}
+                  className="h-4 w-4 text-[#009DA2] border-gray-300 rounded focus:ring-[#009DA2]"
+                />
+                <label htmlFor="dontKnowArea" className="ml-2 text-sm text-gray-600 cursor-pointer">
+                  잘 모르겠어요
+                </label>
+              </div>
+
               <p className="text-xs text-gray-500 mt-2">
                 매장 면적은 영업신고증이나 임대차계약서 혹은 건축물대장에서 확인할 수 있어요.
               </p>
