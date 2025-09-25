@@ -24,7 +24,7 @@ export default function StepFirstCompletion({ onNext }: StepFirstCompletionProps
 
   return (
     <CareonContainer>
-      <div className="flex-1 flex flex-col justify-center items-center px-6">
+      <div className="p-6">
         <div className="text-center max-w-sm">
           {/* 축하 애니메이션 */}
           <div className={`text-6xl mb-6 ${showConfetti ? "animate-bounce" : ""}`}>

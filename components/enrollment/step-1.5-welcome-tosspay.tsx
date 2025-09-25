@@ -26,7 +26,7 @@ export default function StepWelcomeTosspay({ updateFormData, onNext, onBack }: S
       <div className="flex items-center justify-start p-4 pb-0">
         <BackButton onClick={onBack} />
       </div>
-      <div className="flex-1 flex flex-col justify-start pt-8 px-6">
+      <div className="p-6">
         <div className="text-4xl mb-6">🎉</div>
         <h1 className="text-2xl font-semibold text-black leading-relaxed mb-6">
           토스페이 가맹점 신청을<br />

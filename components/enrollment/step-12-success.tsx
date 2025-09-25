@@ -54,7 +54,7 @@ export default function StepSuccess({ formData, onNext }: StepSuccessProps) {
 
   return (
     <CareonContainer>
-      <div className="flex-1 flex flex-col justify-center items-center px-6 py-10">
+      <div className="p-6">
         {/* Success Icon */}
         <div className={`mb-6 transform transition-all duration-700 ${showContent ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}>
           <div className="relative">

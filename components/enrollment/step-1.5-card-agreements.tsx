@@ -54,7 +54,7 @@ export default function StepCardAgreements({ updateFormData, onNext, onBack }: S
         <h1 className="text-lg font-semibold ml-4">가입 신청서</h1>
       </div>
 
-      <div className="flex-1 flex flex-col px-6 pt-6">
+      <div className="p-6">
         <div className="mb-6">
           <h2 className="text-sm text-gray-600 mb-4">카드사 신청서</h2>
         </div>

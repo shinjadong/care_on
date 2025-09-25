@@ -41,7 +41,7 @@ export default function StepAgreements({ formData, updateFormData, onNext }: Ste
 
   return (
     <CareonContainer>
-      <div className="flex-1 flex flex-col justify-start pt-12 px-6">
+      <div className="p-6">
         <h1 className="text-2xl font-semibold text-black leading-relaxed mb-2">
           케어온 가입을 위한<br />
           약관 동의가 필요해요

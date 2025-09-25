@@ -46,7 +46,7 @@ export default function StepConfirmation({ formData, onNext, onBack }: StepConfi
       <div className="flex items-center justify-start p-4 pb-0">
         <BackButton onClick={onBack} />
       </div>
-      <div className="flex-1 flex flex-col justify-start pt-16 px-6">
+      <div className="p-6">
         <h1 className="text-2xl font-semibold text-black leading-relaxed mb-10">
           입력하신 정보를<br />
           확인해 주세요

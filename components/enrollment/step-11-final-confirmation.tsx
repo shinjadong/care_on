@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { CareonContainer } from "@/components/ui/careon-container"
 import { CareonButton } from "@/components/ui/careon-button"
 import { BackButton } from "@/components/ui/back-button"
@@ -11,11 +11,7 @@ import {
   AlertCircle,
   Building2,
   TrendingUp,
-  CreditCard,
   FileCheck,
-  User,
-  Phone,
-  Hash,
   Banknote
 } from "lucide-react"
 
@@ -29,7 +25,7 @@ interface StepFinalConfirmationProps {
 export default function StepFinalConfirmation({ formData, onNext, onBack }: StepFinalConfirmationProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const [applicationId, setApplicationId] = useState<string | null>(null)
+  const [, setApplicationId] = useState<string | null>(null)
 
   // Clear auto-saved draft when successful submission
   const { clearDraft } = useAutoSave(formData, false) // false to prevent saving on this step
@@ -150,7 +146,7 @@ export default function StepFinalConfirmation({ formData, onNext, onBack }: Step
         <BackButton onClick={onBack} />
       </div>
 
-      <div className="flex-1 flex flex-col justify-start pt-8 px-6 overflow-y-auto">
+      <div className="p-6">
         <h1 className="text-2xl font-semibold text-black leading-relaxed mb-6">
           마지막으로<br />
           입력 정보를 확인해주세요

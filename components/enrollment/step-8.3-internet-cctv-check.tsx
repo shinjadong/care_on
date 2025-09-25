@@ -32,7 +32,7 @@ export default function StepInternetCCTVCheck({ formData, updateFormData, onNext
       <div className="flex items-center justify-start p-4 pb-0">
         <BackButton onClick={onBack} />
       </div>
-      <div className="flex-1 flex flex-col justify-start pt-12 px-6">
+      <div className="p-6">
         <h1 className="text-2xl font-semibold text-black leading-relaxed mb-8">
           매장 시설 현황을<br />
           확인하겠습니다

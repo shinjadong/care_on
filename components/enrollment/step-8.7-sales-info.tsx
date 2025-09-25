@@ -92,7 +92,7 @@ export default function StepSalesInfo({ formData, updateFormData, onNext, onBack
         <BackButton onClick={onBack} />
       </div>
 
-      <div className="flex-1 flex flex-col justify-start pt-8 px-6 overflow-y-auto">
+      <div className="p-6">
         <h1 className="text-2xl font-semibold text-black leading-relaxed mb-2">
           매출 정보를<br />
           입력해주세요

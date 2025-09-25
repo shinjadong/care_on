@@ -46,7 +46,7 @@ export default function StepDeliveryApp({ formData, updateFormData, onNext, onBa
       <div className="flex items-center justify-start p-4 pb-0">
         <BackButton onClick={onBack} />
       </div>
-      <div className="flex-1 flex flex-col justify-start pt-12 px-6">
+      <div className="p-6">
         <h1 className="text-2xl font-semibold text-black leading-relaxed mb-8">
           배달앱 가입 대행이<br />
           필요하신가요?
