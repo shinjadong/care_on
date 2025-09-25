@@ -453,9 +453,7 @@ export default function EnrollmentDetailPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-600">사업자 유형</p>
-                <p className="font-medium">
-                  <Badge variant="outline">{enrollment.business_type || '-'}</Badge>
-                </p>
+                <Badge variant="outline">{enrollment.business_type || '-'}</Badge>
               </div>
               <div>
                 <p className="text-sm text-gray-600">사업자번호</p>
