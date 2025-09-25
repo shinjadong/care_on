@@ -31,7 +31,8 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  ListChecks
+  ListChecks,
+  Edit
 } from "lucide-react"
 import { format } from "date-fns"
 import { ko } from "date-fns/locale"
@@ -289,6 +290,13 @@ export default function EnrollmentDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           {getStatusBadge(enrollment.status)}
+          <Button
+            variant="outline"
+            onClick={() => router.push(`/admin/enrollments/${enrollment.id}/edit`)}
+          >
+            <Edit className="w-4 h-4 mr-2" />
+            전체 편집
+          </Button>
           {enrollment.status === 'approved' && (
             <Button
               variant="outline"
