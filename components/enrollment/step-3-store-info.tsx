@@ -79,7 +79,7 @@ export default function StepStoreInfo({ formData, updateFormData, onNext, onBack
                 </label>
               </div>
               <CareonInput
-                placeholder="예) 히어로 카페"
+                placeholder="예) 케어온 카페"
                 value={formData.storeName}
                 onChange={(value) => updateFormData("storeName", value)}
                 readOnly={sameAsBusinessName}

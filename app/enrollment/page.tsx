@@ -1,7 +1,7 @@
 "use client"
 
 // Customer enrollment form
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import StepAgreements from "@/components/enrollment/step-0-agreements"
 import StepOwnerInfo from "@/components/enrollment/step-1-owner-info"
 import StepCardAgreements from "@/components/enrollment/step-1.5-card-agreements-v2"
@@ -13,12 +13,15 @@ import StepBusinessType from "@/components/enrollment/step-5-business-type"
 import StepOwnershipType from "@/components/enrollment/step-6-ownership-type"
 import StepLicenseType from "@/components/enrollment/step-7-license-type"
 import StepBusinessCategory from "@/components/enrollment/step-8-business-category"
+import StepSalesInfo from "@/components/enrollment/step-8.7-sales-info"
 import StepInternetCCTVCheck from "@/components/enrollment/step-8.3-internet-cctv-check"
 import StepFreeService from "@/components/enrollment/step-8.5-free-service"
+import StepSettlementInfo from "@/components/enrollment/step-9.3-settlement-info"
 import StepFirstCompletion from "@/components/enrollment/step-9.5-first-completion"
-import StepConfirmation from "@/components/enrollment/step-9-confirmation"
 import StepDocumentUpload from "@/components/enrollment/step-10-document-upload"
 import StepFinalConfirmation from "@/components/enrollment/step-11-final-confirmation"
+import StepSuccess from "@/components/enrollment/step-12-success"
+import { useAutoSave } from "@/hooks/useAutoSave"
 
 export type FormData = {
   // Agreement fields
@@ -34,6 +37,8 @@ export type FormData = {
   birthDate: string
   birthGender: string
   gender?: 'male' | 'female'  // formatted gender
+  carrier?: string  // 통신사
+  mvnoCarrier?: string  // 알뜰폰 통신사
 
   // Step 2 - 연락처 & 사업자 정보
   phoneNumber: string
@@ -77,16 +82,15 @@ export type FormData = {
   wantFreeService: string | boolean
 
   // Sales information
-  monthlySales?: string
-  cardSalesRatio?: number
-  mainProduct?: string
-  unitPrice?: string
+  monthlySales: string
+  cardSalesRatio: number
+  mainProduct: string
+  unitPrice: string
 
   // Settlement information
-  bankName?: string
-  accountHolder?: string
-  accountNumber?: string
-  settlementDate?: string
+  bankName: string
+  accountHolder: string
+  accountNumber: string
 
   // Additional services
   additionalServices?: string[]
@@ -117,6 +121,7 @@ export type FormData = {
 
 export default function EnrollmentPage() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const [initialLoad, setInitialLoad] = useState(true)
   const [formData, setFormData] = useState<FormData>({
     // Agreements
     agreeTerms: false,
@@ -153,6 +158,15 @@ export default function EnrollmentPage() {
     hasInternet: false,
     hasCCTV: false,
     wantFreeService: false,
+    // Sales information
+    monthlySales: "",
+    cardSalesRatio: 50,
+    mainProduct: "",
+    unitPrice: "",
+    // Settlement information
+    bankName: "",
+    accountHolder: "",
+    accountNumber: "",
     // Step 10 - 기본 서류
     businessRegistrationUrl: null,
     idCardFrontUrl: null,
@@ -173,6 +187,28 @@ export default function EnrollmentPage() {
     sealUsageUrl: null,
   })
 
+  // Auto-save functionality
+  const { lastSaved, isSaving, loadDraft, clearDraft } = useAutoSave(formData, true)
+
+  // Load saved draft on mount
+  useEffect(() => {
+    if (initialLoad) {
+      const savedDraft = loadDraft()
+      if (savedDraft) {
+        // Check if user wants to restore
+        const shouldRestore = window.confirm(
+          "이전에 작성하던 내용이 있습니다. 불러오시겠습니까?"
+        )
+        if (shouldRestore) {
+          setFormData(savedDraft)
+        } else {
+          clearDraft()
+        }
+      }
+      setInitialLoad(false)
+    }
+  }, [initialLoad, loadDraft, clearDraft])
+
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
@@ -190,12 +226,14 @@ export default function EnrollmentPage() {
     { component: StepOwnershipType, name: "대표자 구성" },
     { component: StepLicenseType, name: "인허가 업종" },
     { component: StepBusinessCategory, name: "직종" },
+    { component: StepSalesInfo, name: "매출 정보" },
     { component: StepInternetCCTVCheck, name: "시설 현황" },
     { component: StepFreeService, name: "무료 서비스" },
     { component: StepFirstCompletion, name: "1차 완료" },
+    { component: StepSettlementInfo, name: "정산 정보" },
     { component: StepDocumentUpload, name: "서류 업로드" },
     { component: StepFinalConfirmation, name: "최종 확인" },
-    { component: StepConfirmation, name: "완료" },
+    { component: StepSuccess, name: "완료" },
   ]
 
   const handleNext = () => {
@@ -211,6 +249,8 @@ export default function EnrollmentPage() {
   }
 
   const handleReset = () => {
+    // Clear auto-saved draft when resetting
+    clearDraft()
     setCurrentStepIndex(0)
     setFormData({
       // Agreements
@@ -238,6 +278,15 @@ export default function EnrollmentPage() {
       hasInternet: false,
       hasCCTV: false,
       wantFreeService: false,
+      // Sales information
+      monthlySales: "",
+      cardSalesRatio: 50,
+      mainProduct: "",
+      unitPrice: "",
+      // Settlement information
+      bankName: "",
+      accountHolder: "",
+      accountNumber: "",
       // 기본 서류
       businessRegistrationUrl: null,
       idCardFrontUrl: null,
@@ -262,11 +311,31 @@ export default function EnrollmentPage() {
   const CurrentStep = stepComponents[currentStepIndex].component
 
   return (
-    <CurrentStep
-      formData={formData}
-      updateFormData={updateFormData}
-      onNext={currentStepIndex === stepComponents.length - 1 ? handleReset : handleNext}
-      onBack={handleBack}
-    />
+    <>
+      <CurrentStep
+        formData={formData}
+        updateFormData={updateFormData}
+        onNext={currentStepIndex === stepComponents.length - 1 ? handleReset : handleNext}
+        onBack={handleBack}
+      />
+      {/* Auto-save indicator */}
+      {lastSaved && (
+        <div className="fixed bottom-4 right-4 z-50 bg-gray-800/90 text-white px-3 py-1.5 rounded-lg text-xs backdrop-blur-sm">
+          {isSaving ? (
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+              저장 중...
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              저장됨
+            </div>
+          )}
+        </div>
+      )}
+    </>
   )
 }

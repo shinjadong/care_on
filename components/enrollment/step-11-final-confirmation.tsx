@@ -1,11 +1,23 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { CareonContainer } from "@/components/ui/careon-container"
 import { CareonButton } from "@/components/ui/careon-button"
 import { BackButton } from "@/components/ui/back-button"
 import type { FormData } from "@/app/enrollment/page"
-import { CheckCircle, AlertCircle } from "lucide-react"
+import { useAutoSave } from "@/hooks/useAutoSave"
+import {
+  CheckCircle,
+  AlertCircle,
+  Building2,
+  TrendingUp,
+  CreditCard,
+  FileCheck,
+  User,
+  Phone,
+  Hash,
+  Banknote
+} from "lucide-react"
 
 interface StepFinalConfirmationProps {
   formData: FormData
@@ -18,6 +30,9 @@ export default function StepFinalConfirmation({ formData, onNext, onBack }: Step
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [applicationId, setApplicationId] = useState<string | null>(null)
+
+  // Clear auto-saved draft when successful submission
+  const { clearDraft } = useAutoSave(formData, false) // false to prevent saving on this step
 
   const handleSubmit = async () => {
     setIsSubmitting(true)
@@ -58,17 +73,16 @@ export default function StepFinalConfirmation({ formData, onNext, onBack }: Step
           business_subcategory: formData.businessSubcategory || null,
           business_keywords: formData.businessKeywords || [],
 
-          // Sales info (임시 데이터 - 실제로는 다른 스텝에서 수집해야 함)
-          monthly_sales: formData.monthlySales || "1000만원 이하",
-          card_sales_ratio: formData.cardSalesRatio || 70,
-          main_product: formData.mainProduct || formData.businessCategory,
-          unit_price: formData.unitPrice || "10000원",
+          // Sales info
+          monthly_sales: formData.monthlySales,
+          card_sales_ratio: formData.cardSalesRatio,
+          main_product: formData.mainProduct,
+          unit_price: formData.unitPrice,
 
-          // Settlement (임시 데이터 - 실제로는 다른 스텝에서 수집해야 함)
-          bank_name: formData.bankName || "국민은행",
-          account_holder: formData.accountHolder || formData.ownerName,
-          account_number: formData.accountNumber || "000-0000-0000",
-          settlement_date: formData.settlementDate || "D+2",
+          // Settlement
+          bank_name: formData.bankName,
+          account_holder: formData.accountHolder,
+          account_number: formData.accountNumber,
 
           // Services
           additional_services: formData.additionalServices || [],
@@ -117,7 +131,8 @@ export default function StepFinalConfirmation({ formData, onNext, onBack }: Step
         throw new Error(error.error || '신청서 제출에 실패했습니다.')
       }
 
-      // Success! Move to completion
+      // Success! Clear draft and move to success screen
+      clearDraft()
       onNext()
     } catch (error) {
       console.error('Submit error:', error)
@@ -142,65 +157,117 @@ export default function StepFinalConfirmation({ formData, onNext, onBack }: Step
         {/* Summary Sections */}
         <div className="space-y-4 mb-8">
           {/* Business Info */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-medium text-sm text-gray-600 mb-2">사업자 정보</h3>
-            <div className="space-y-1">
-              <p className="text-sm">
-                <span className="text-gray-500">상호명:</span> {formData.businessName}
-              </p>
-              <p className="text-sm">
-                <span className="text-gray-500">사업자번호:</span> {formData.businessNumber}
-              </p>
-              <p className="text-sm">
-                <span className="text-gray-500">대표자:</span> {formData.ownerName}
-              </p>
-              <p className="text-sm">
-                <span className="text-gray-500">연락처:</span> {formData.phoneNumber}
-              </p>
+          <div className="bg-gradient-to-r from-blue-50 to-white rounded-xl p-5 border border-blue-100">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Building2 className="w-5 h-5 text-blue-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-base text-gray-900 mb-3">사업자 정보</h3>
+                <div className="grid grid-cols-1 gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500 min-w-20">상호명</span>
+                    <span className="text-sm font-medium text-gray-900">{formData.businessName}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500 min-w-20">사업자번호</span>
+                    <span className="text-sm font-medium text-gray-900">{formData.businessNumber}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500 min-w-20">대표자</span>
+                    <span className="text-sm font-medium text-gray-900">{formData.ownerName}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500 min-w-20">연락처</span>
+                    <span className="text-sm font-medium text-gray-900">{formData.phoneNumber}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Sales Info */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-medium text-sm text-gray-600 mb-2">매출 정보</h3>
-            <div className="space-y-1">
-              <p className="text-sm">
-                <span className="text-gray-500">월매출:</span> {formData.monthlySales || "1000만원 이하"}
-              </p>
-              <p className="text-sm">
-                <span className="text-gray-500">카드매출 비율:</span> {formData.cardSalesRatio || 70}%
-              </p>
-              <p className="text-sm">
-                <span className="text-gray-500">주력상품:</span> {formData.mainProduct || formData.businessCategory}
-              </p>
+          <div className="bg-gradient-to-r from-green-50 to-white rounded-xl p-5 border border-green-100">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <TrendingUp className="w-5 h-5 text-green-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-base text-gray-900 mb-3">매출 정보</h3>
+                <div className="grid grid-cols-1 gap-2">
+                  {formData.monthlySales === "신규사업자" ? (
+                    <div className="bg-blue-50 rounded-lg px-3 py-2">
+                      <p className="text-sm font-medium text-blue-700">
+                        🆕 신규 사업자 (매출 실적 없음)
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-500 min-w-20">월매출</span>
+                        <span className="text-sm font-medium text-gray-900">{formData.monthlySales}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-500 min-w-20">카드비율</span>
+                        <span className="text-sm font-medium text-gray-900">{formData.cardSalesRatio}%</span>
+                      </div>
+                    </>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500 min-w-20">주력상품</span>
+                    <span className="text-sm font-medium text-gray-900">{formData.mainProduct}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500 min-w-20">평균단가</span>
+                    <span className="text-sm font-medium text-gray-900">{formData.unitPrice}원</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Settlement Info */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-medium text-sm text-gray-600 mb-2">정산 정보</h3>
-            <div className="space-y-1">
-              <p className="text-sm">
-                <span className="text-gray-500">은행명:</span> {formData.bankName || "국민은행"}
-              </p>
-              <p className="text-sm">
-                <span className="text-gray-500">예금주:</span> {formData.accountHolder || formData.ownerName}
-              </p>
-              <p className="text-sm">
-                <span className="text-gray-500">계좌번호:</span> {formData.accountNumber || "000-0000-0000"}
-              </p>
-              <p className="text-sm">
-                <span className="text-gray-500">정산일:</span> {formData.settlementDate || "D+2"}
-              </p>
+          <div className="bg-gradient-to-r from-purple-50 to-white rounded-xl p-5 border border-purple-100">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Banknote className="w-5 h-5 text-purple-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-base text-gray-900 mb-3">정산 정보</h3>
+                <div className="grid grid-cols-1 gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500 min-w-20">은행명</span>
+                    <span className="text-sm font-medium text-gray-900">{formData.bankName}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500 min-w-20">예금주</span>
+                    <span className="text-sm font-medium text-gray-900">{formData.accountHolder}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500 min-w-20">계좌번호</span>
+                    <span className="text-sm font-medium text-gray-900">{formData.accountNumber}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Documents Status */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-medium text-sm text-gray-600 mb-2">제출 서류</h3>
-            <div className="flex items-center">
-              <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-              <span className="text-sm text-green-600">모든 필수 서류가 업로드되었습니다</span>
+          <div className="bg-gradient-to-r from-emerald-50 to-white rounded-xl p-5 border border-emerald-100">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-emerald-100 rounded-lg">
+                <FileCheck className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-base text-gray-900 mb-3">제출 서류</h3>
+                <div className="bg-emerald-50 rounded-lg px-4 py-3 flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-emerald-800">모든 필수 서류가 준비되었습니다</p>
+                    <p className="text-xs text-emerald-600 mt-0.5">사업자등록증, 신분증, 통장사본 등</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -214,14 +281,31 @@ export default function StepFinalConfirmation({ formData, onNext, onBack }: Step
         )}
 
         {/* Terms Agreement */}
-        <div className="mb-8 p-4 bg-blue-50 rounded-lg">
-          <h3 className="font-medium text-sm mb-2">최종 확인</h3>
-          <ul className="text-xs text-gray-600 space-y-1">
-            <li>• 입력하신 정보는 가맹 심사에 사용됩니다</li>
-            <li>• 제출 후에는 수정이 불가능합니다</li>
-            <li>• 심사 결과는 영업일 기준 3-5일 내 안내됩니다</li>
-            <li>• 추가 서류가 필요한 경우 별도 연락드립니다</li>
-          </ul>
+        <div className="mb-8 bg-gradient-to-br from-indigo-50 via-white to-blue-50 rounded-xl p-6 border border-indigo-100">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="p-2 bg-indigo-100 rounded-lg">
+              <AlertCircle className="w-5 h-5 text-indigo-600" />
+            </div>
+            <h3 className="font-semibold text-base text-gray-900">최종 확인 사항</h3>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-start gap-2">
+              <span className="text-indigo-500 mt-0.5">✓</span>
+              <p className="text-sm text-gray-700">입력하신 정보는 <span className="font-medium">가맹 심사</span>에 사용됩니다</p>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-indigo-500 mt-0.5">✓</span>
+              <p className="text-sm text-gray-700">제출 후에는 <span className="font-medium">수정이 불가능</span>합니다</p>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-indigo-500 mt-0.5">✓</span>
+              <p className="text-sm text-gray-700">심사 결과는 <span className="font-medium">영업일 기준 3-5일</span> 내 안내됩니다</p>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-indigo-500 mt-0.5">✓</span>
+              <p className="text-sm text-gray-700">추가 서류가 필요한 경우 <span className="font-medium">별도 연락</span>드립니다</p>
+            </div>
+          </div>
         </div>
       </div>
 

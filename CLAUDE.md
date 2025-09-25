@@ -5,9 +5,10 @@ This file provides guidance to Claude when working with code in this repository.
 ## 📋 프로젝트 개요
 
 **케어온(Care On)** - 창업자를 위한 종합 비즈니스 플랫폼
-- 창업 컨설팅, CCTV 보안, 계약 관리, 고객 리뷰 시스템을 통합한 올인원 플랫폼
+- 창업 컨설팅, CCTV 보안, 계약 관리, 고객 리뷰, POS/결제 시스템을 통합한 올인원 플랫폼
 - 사업자의 95% 생존율을 달성한 검증된 창업 안전망 시스템
 - 한국형 창업 생태계에 최적화된 서비스
+- 카드 가맹점 신청 및 토스페이 통합 결제 솔루션 제공
 
 ## Development Commands
 
@@ -30,13 +31,20 @@ npm run lint         # Run Next.js linter
 - **Language**: TypeScript 5 (strict mode enabled, ES6 target)
 - **Frontend**: React 19 with Framer Motion animations
 - **Styling**: Tailwind CSS with custom glassmorphic design system
-- **UI Components**: ShadcnUI (Radix UI based) in `components/ui/`
+- **UI Components**:
+  - ShadcnUI (Radix UI based) in `components/ui/`
+  - CareOn custom UI components (`careon-*` prefix)
 - **Database**: Supabase (PostgreSQL with RLS)
 - **Blob Storage**: Vercel Blob Storage
 - **AI Integration**: Anthropic Claude API for HTML assistance and AI-powered features
 - **SMS Service**: Ppurio API for Korean SMS notifications
-- **Payment**: Integration with Korean payment systems
+- **Payment**:
+  - TossPay integration for payment processing
+  - Support for major Korean card companies (KB, BC, Samsung, Woori, Hana)
 - **Address**: Daum Postcode API for Korean address search
+- **Authentication**:
+  - Kakao OAuth for social login
+  - Google OAuth via Supabase Auth
 
 ### Database Architecture
 The application uses Supabase with service role keys for server-side operations. Two client creation patterns:
@@ -53,9 +61,12 @@ The application uses Supabase with service role keys for server-side operations.
 All API routes are in `app/api/` with key endpoints:
 - `/api/ai/html-assist` - Claude AI HTML editor assistance
 - `/api/admin/*` - Admin dashboard endpoints
+- `/api/agreements/*` - Card company agreements and terms
 - `/api/contracts/*` - Contract management
+- `/api/enrollment/*` - Merchant enrollment and card application
 - `/api/reviews/*` - Review system
 - `/api/sms/*` - SMS notifications via Ppurio
+- `/api/upload/vercel-blob` - File upload to Vercel Blob Storage
 
 ## Project Structure
 
@@ -63,20 +74,36 @@ All API routes are in `app/api/` with key endpoints:
 app/
 ├── admin/          # Admin dashboard (protected routes)
 ├── api/            # API endpoints
+├── enrollment/     # Merchant enrollment flow
 ├── landing/        # Main landing page (default redirect from /)
 ├── services/       # Service pages
 └── layout.tsx      # Root layout with Header/Footer
 
 components/
 ├── ui/             # ShadcnUI components
+├── ui-backup/      # Backup of original UI components
 ├── auth/           # Authentication components
+├── enrollment/     # Multi-step enrollment form components
 ├── page-builder/   # Puck page builder integration
 └── [feature]/      # Feature-specific components
 
 lib/
 ├── supabase/       # Supabase clients
 ├── ppurio/         # SMS service
+├── database.types.ts # Supabase database TypeScript types
 └── utils/          # Utility functions
+
+content/
+├── [카드사명]-동의서.md # Card company agreement documents
+
+docs/
+├── 00_dev_docs/    # Development documentation
+├── images/         # Documentation images
+└── 고객 가입 시스템(리뉴얼)/ # Enrollment system docs
+
+scripts/
+├── apply-migration.js # Database migration script
+└── check-enrollment-data.js # Enrollment data validation
 ```
 
 ## Environment Variables
@@ -104,7 +131,13 @@ The project uses a custom glassmorphic design system (see `app/globals.css`):
 - Primary: `#148777` (CareOn teal)
 - Background gradient: Teal to cyan with radial overlays
 
-Demo page available at `/glass-demo` for testing glassmorphic components.
+### Custom Components
+CareOn UI components follow a consistent naming pattern (`careon-*`):
+- `careon-button` - Styled button with hover effects
+- `careon-input` - Custom input field with validation
+- `careon-container` - Responsive container wrapper
+- `careon-bottom-sheet` - Mobile-friendly bottom sheet
+- `careon-carrier-select` - Korean carrier selection dropdown
 
 ## Key Features
 
@@ -112,6 +145,16 @@ Demo page available at `/glass-demo` for testing glassmorphic components.
 - Migrations in `supabase/migrations/`
 - Edge functions in `supabase/functions/`
 - RLS policies configured for security
+- Database types generated in `lib/database.types.ts`
+
+### Merchant Enrollment System
+Multi-step enrollment flow for new merchants:
+- Agreement acceptance (TossPay and card companies)
+- Business information collection
+- Document upload with Vercel Blob Storage
+- Real-time validation and progress tracking
+- Support for individual and corporate businesses
+- Integration with Korean business categories
 
 ### Page Builder
 The app includes Puck page builder integration at `/admin/pages` for visual page editing with components defined in `components/page-builder/`.
@@ -127,6 +170,12 @@ Contract system for service agreements:
 - Customer portal at `/my/contract`
 - Manager view at `/manager/contract`
 - Admin management at `/admin/customers`
+
+### Payment Integration
+- TossPay for payment processing
+- Support for major Korean card companies
+- Card merchant application workflow
+- Settlement account management
 
 ## Development Notes
 
@@ -144,3 +193,31 @@ Contract system for service agreements:
 - Framer Motion optimized package imports
 - Image formats: AVIF and WebP with 60s cache TTL
 - Transpiled packages for better compatibility
+
+## Recent Updates (2025-01)
+
+### Enrollment System
+
+- Complete merchant enrollment flow with 11+ step wizard
+- Integration with TossPay and major Korean card companies
+- Document upload system using Vercel Blob Storage
+- Database schema for enrollment applications
+
+### UI Components Refactoring
+
+- Migrated original UI components to `ui-backup/`
+- Created new CareOn-branded components with consistent design
+- Implemented mobile-responsive enrollment forms
+- Added Korean business category selection system
+
+### Database Enhancements
+
+- Added `enrollment_applications` table
+- SMS webhook integration for Ppurio service
+- TypeScript type definitions in `lib/database.types.ts`
+
+### Documentation
+
+- NextJS 15 development guides added
+- Card company agreement documents
+- Enrollment system technical documentation

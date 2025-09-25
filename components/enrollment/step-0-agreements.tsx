@@ -17,16 +17,8 @@ export default function StepAgreements({ formData, updateFormData, onNext }: Ste
   const [showTerms, setShowTerms] = useState(false)
   const [showPrivacy, setShowPrivacy] = useState(false)
 
-  // Debug: Log current state
-  console.log('Current formData agreement states:', {
-    agreeTerms: formData.agreeTerms,
-    agreePrivacy: formData.agreePrivacy,
-    agreeMarketing: formData.agreeMarketing
-  })
-
   const handleAgreeAll = () => {
     const newValue = !(formData.agreeTerms && formData.agreePrivacy && formData.agreeMarketing)
-    console.log('handleAgreeAll clicked, setting all to:', newValue)
     updateFormData('agreeTerms', newValue)
     updateFormData('agreePrivacy', newValue)
     updateFormData('agreeMarketing', newValue)
@@ -34,7 +26,6 @@ export default function StepAgreements({ formData, updateFormData, onNext }: Ste
 
   const handleToggleAgreement = (field: keyof FormData, currentValue: any) => {
     const newValue = !currentValue
-    console.log(`Toggling ${field} from ${currentValue} to ${newValue}`)
     updateFormData(field, newValue)
   }
 

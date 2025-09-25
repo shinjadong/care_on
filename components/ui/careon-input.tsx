@@ -13,6 +13,7 @@ interface CareonInputProps {
   className?: string
   inputMode?: "text" | "numeric" | "tel" | "email" | "url" | "search"
   readOnly?: boolean
+  error?: string
 }
 
 export const CareonInput = forwardRef<HTMLInputElement, CareonInputProps>(

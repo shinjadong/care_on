@@ -5,6 +5,8 @@ import { CareonContainer } from "@/components/ui/careon-container"
 import { CareonButton } from "@/components/ui/careon-button"
 import { BackButton } from "@/components/ui/back-button"
 import type { FormData } from "@/app/enrollment/page"
+import { addDays, setHours, setMinutes, setSeconds, differenceInSeconds, format } from "date-fns"
+import { ko } from "date-fns/locale"
 
 interface StepFreeServiceProps {
   formData: FormData
@@ -16,27 +18,37 @@ interface StepFreeServiceProps {
 export default function StepFreeService({ formData, updateFormData, onNext, onBack }: StepFreeServiceProps) {
   const [wantFreeService, setWantFreeService] = useState<boolean>(true)
   const [timeLeft, setTimeLeft] = useState("")
+  const [endDateStr, setEndDateStr] = useState("")
 
   useEffect(() => {
-    // 2일 후 날짜 계산 (D+2 이벤트)
-    const endDate = new Date()
-    endDate.setDate(endDate.getDate() + 2)
+    // 2일 후 12시로 정확히 설정 (D+2 이벤트)
+    const now = new Date()
+    let endDate = addDays(now, 2) // 2일 후
+    endDate = setHours(endDate, 12) // 12시로 설정
+    endDate = setMinutes(endDate, 0)
+    endDate = setSeconds(endDate, 0)
+
+    // 날짜 표시 설정 (예: "1월 27일 월요일 12시")
+    setEndDateStr(format(endDate, "M월 d일 EEEE HH시", { locale: ko }))
 
     const updateTimer = () => {
-      const now = new Date()
-      const diff = endDate.getTime() - now.getTime()
+      const currentTime = new Date()
+      const secondsLeft = differenceInSeconds(endDate, currentTime)
 
-      if (diff > 0) {
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+      if (secondsLeft > 0) {
+        const days = Math.floor(secondsLeft / (60 * 60 * 24))
+        const hours = Math.floor((secondsLeft % (60 * 60 * 24)) / (60 * 60))
+        const minutes = Math.floor((secondsLeft % (60 * 60)) / 60)
+        const seconds = secondsLeft % 60
 
         if (days > 0) {
-          setTimeLeft(`${days}일 ${hours}시간 ${minutes}분`)
+          setTimeLeft(`${days}일 ${hours}시간 ${minutes}분 ${seconds}초`)
         } else if (hours > 0) {
-          setTimeLeft(`${hours}시간 ${minutes}분`)
+          setTimeLeft(`${hours}시간 ${minutes}분 ${seconds}초`)
+        } else if (minutes > 0) {
+          setTimeLeft(`${minutes}분 ${seconds}초`)
         } else {
-          setTimeLeft(`${minutes}분`)
+          setTimeLeft(`${seconds}초`)
         }
       } else {
         setTimeLeft("마감됨")
@@ -44,7 +56,7 @@ export default function StepFreeService({ formData, updateFormData, onNext, onBa
     }
 
     updateTimer()
-    const interval = setInterval(updateTimer, 60000) // 1분마다 업데이트
+    const interval = setInterval(updateTimer, 1000) // 1초마다 업데이트
 
     return () => clearInterval(interval)
   }, [])
@@ -120,6 +132,7 @@ export default function StepFreeService({ formData, updateFormData, onNext, onBa
             <p className="font-medium text-gray-700">신청 가능 기간</p>
           </div>
           <p className="text-lg font-semibold text-gray-900">{timeLeft} 남음</p>
+          <p className="text-sm text-gray-600 mt-1">마감: {endDateStr}</p>
         </div>
 
         <div className="space-y-3">

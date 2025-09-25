@@ -17,6 +17,8 @@ interface StepOwnerInfoProps {
 export default function StepOwnerInfo({ formData, updateFormData, onNext, onBack }: StepOwnerInfoProps) {
   const genderRef = useRef<HTMLInputElement>(null)
   const [selectedCarrier, setSelectedCarrier] = useState("")
+  const [selectedMvno, setSelectedMvno] = useState("")
+  const [showMvnoOptions, setShowMvnoOptions] = useState(false)
 
   const handleBirthDateChange = (value: string) => {
     updateFormData("birthDate", value)
@@ -34,6 +36,29 @@ export default function StepOwnerInfo({ formData, updateFormData, onNext, onBack
     { value: "mvno", label: "알뜰폰" },
   ]
 
+  const mvnoCarriers = [
+    { value: "mvno_skt", label: "알뜰 SKT" },
+    { value: "mvno_kt", label: "알뜰 KT" },
+    { value: "mvno_lg", label: "알뜰 LG U+" },
+  ]
+
+  const handleCarrierSelect = (carrier: string) => {
+    setSelectedCarrier(carrier)
+    if (carrier === "mvno") {
+      setShowMvnoOptions(true)
+    } else {
+      setShowMvnoOptions(false)
+      setSelectedMvno("")
+      updateFormData("mvnoCarrier", "")
+    }
+    updateFormData("carrier", carrier)
+  }
+
+  const handleMvnoSelect = (mvno: string) => {
+    setSelectedMvno(mvno)
+    updateFormData("mvnoCarrier", mvno)
+  }
+
   // Progressive display conditions
   const showBirthDate = formData.ownerName.trim() !== ""
   const showPhoneAndCarrier =
@@ -45,6 +70,7 @@ export default function StepOwnerInfo({ formData, updateFormData, onNext, onBack
     formData.birthDate.length === 6 &&
     formData.birthGender.length === 1 &&
     selectedCarrier !== "" &&
+    (selectedCarrier !== "mvno" || selectedMvno !== "") &&
     formData.phoneNumber.length >= 10
 
   return (
@@ -100,7 +126,7 @@ export default function StepOwnerInfo({ formData, updateFormData, onNext, onBack
                   {carriers.map((carrier) => (
                     <button
                       key={carrier.value}
-                      onClick={() => setSelectedCarrier(carrier.value)}
+                      onClick={() => handleCarrierSelect(carrier.value)}
                       className={`p-3 rounded-lg border-2 text-center transition-colors ${
                         selectedCarrier === carrier.value
                           ? "border-[#009DA2] bg-[#009DA2]/5 font-medium"
@@ -111,6 +137,28 @@ export default function StepOwnerInfo({ formData, updateFormData, onNext, onBack
                     </button>
                   ))}
                 </div>
+
+                {/* MVNO options */}
+                {showMvnoOptions && (
+                  <div className="mt-3 p-3 bg-gray-50 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
+                    <p className="text-sm text-gray-600 mb-2">알뜰폰 통신사를 선택해주세요</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {mvnoCarriers.map((mvno) => (
+                        <button
+                          key={mvno.value}
+                          onClick={() => handleMvnoSelect(mvno.value)}
+                          className={`p-2 rounded-lg border text-sm transition-colors ${
+                            selectedMvno === mvno.value
+                              ? "border-[#009DA2] bg-[#009DA2]/5 font-medium"
+                              : "border-gray-200 hover:border-gray-300"
+                          }`}
+                        >
+                          {mvno.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
