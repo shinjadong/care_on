@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer"
 import { FloatingBanner } from "@/components/floating-banner"
 import { ClientAuthProvider } from "@/components/providers/auth-provider"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
   title: "케어온 - 사장님의 모든 것",
@@ -67,6 +68,7 @@ export default function RootLayout({
               <Footer />
               <FloatingBanner />
             </div>
+            <Toaster position="top-center" richColors />
           </ClientAuthProvider>
         </ThemeProvider>
       </body>

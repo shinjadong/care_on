@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
+import { useEnrollmentDetail } from "@/hooks/useEnrollmentData"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -34,212 +35,201 @@ interface OnboardingTask {
   category: 'contract' | 'payment' | 'equipment' | 'training' | 'service'
 }
 
-interface EnrollmentData {
-  id: string
-  business_name: string
-  representative_name: string
-  phone_number: string
-  status: string
-  has_pos: boolean
-  has_kiosk: boolean
-  has_cctv: boolean
-  kb_card: boolean
-  bc_card: boolean
-  samsung_card: boolean
-  woori_card: boolean
-  hana_card: boolean
-  onboarding_status?: {
-    tasks?: Record<string, boolean>
-    notes?: string
-    completed_at?: string
-  }
-}
-
 export default function OnboardingPage() {
   const params = useParams()
   const router = useRouter()
-  const [enrollment, setEnrollment] = useState<EnrollmentData | null>(null)
-  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [notes, setNotes] = useState("")
   const [tasks, setTasks] = useState<OnboardingTask[]>([])
 
+  const {
+    enrollment,
+    loading,
+    error,
+    updateEnrollment
+  } = useEnrollmentDetail({
+    id: params.id as string,
+    redirectOnError: false
+  })
+
+  // Initialize tasks and notes when enrollment loads
   useEffect(() => {
-    if (params.id) {
-      fetchEnrollmentData(params.id as string)
-    }
-  }, [params.id])
+    if (!enrollment) return
 
-  const fetchEnrollmentData = async (id: string) => {
-    const supabase = createClient()
-
-    try {
-      const { data, error } = await supabase
-        .from('enrollment_applications')
-        .select('*')
-        .eq('id', id)
-        .single()
-
-      if (error) throw error
-
-      setEnrollment(data)
-
-      // Initialize tasks based on enrollment data
-      const initialTasks: OnboardingTask[] = [
-        {
-          id: 'contract_created',
-          label: '계약서 생성',
-          description: '초기 계약서가 자동 생성되었는지 확인',
-          icon: FileText,
-          completed: data.onboarding_status?.tasks?.contract_created || false,
-          required: true,
-          category: 'contract'
-        },
-        {
-          id: 'contract_sent',
-          label: '계약서 발송',
-          description: '고객에게 계약서 발송 완료',
-          icon: Send,
-          completed: data.onboarding_status?.tasks?.contract_sent || false,
-          required: true,
-          category: 'contract'
-        },
-        {
-          id: 'contract_signed',
-          label: '계약서 서명',
-          description: '고객이 계약서에 서명 완료',
-          icon: FileText,
-          completed: data.onboarding_status?.tasks?.contract_signed || false,
-          required: true,
-          category: 'contract'
-        },
-        {
-          id: 'payment_setup',
-          label: '정산 계좌 확인',
-          description: '정산 계좌 유효성 검증 완료',
-          icon: CreditCard,
-          completed: data.onboarding_status?.tasks?.payment_setup || false,
-          required: true,
-          category: 'payment'
-        }
-      ]
-
-      // Add card company tasks if applicable
-      if (data.kb_card) {
-        initialTasks.push({
-          id: 'kb_card_status',
-          label: 'KB카드 가맹 승인',
-          description: 'KB국민카드 가맹점 승인 완료',
-          icon: CreditCard,
-          completed: data.onboarding_status?.tasks?.kb_card_status || false,
-          required: false,
-          category: 'payment'
-        })
-      }
-
-      if (data.bc_card) {
-        initialTasks.push({
-          id: 'bc_card_status',
-          label: 'BC카드 가맹 승인',
-          description: 'BC카드 가맹점 승인 완료',
-          icon: CreditCard,
-          completed: data.onboarding_status?.tasks?.bc_card_status || false,
-          required: false,
-          category: 'payment'
-        })
-      }
-
-      if (data.samsung_card) {
-        initialTasks.push({
-          id: 'samsung_card_status',
-          label: '삼성카드 가맹 승인',
-          description: '삼성카드 가맹점 승인 완료',
-          icon: CreditCard,
-          completed: data.onboarding_status?.tasks?.samsung_card_status || false,
-          required: false,
-          category: 'payment'
-        })
-      }
-
-      // Add equipment tasks
-      if (data.has_pos) {
-        initialTasks.push({
-          id: 'pos_setup',
-          label: 'POS 설치',
-          description: 'POS 시스템 설치 및 설정 완료',
-          icon: Package,
-          completed: data.onboarding_status?.tasks?.pos_setup || false,
-          required: true,
-          category: 'equipment'
-        })
-      }
-
-      if (data.has_kiosk) {
-        initialTasks.push({
-          id: 'kiosk_setup',
-          label: '키오스크 설치',
-          description: '키오스크 설치 및 설정 완료',
-          icon: Smartphone,
-          completed: data.onboarding_status?.tasks?.kiosk_setup || false,
-          required: true,
-          category: 'equipment'
-        })
-      }
-
-      if (data.has_cctv) {
-        initialTasks.push({
-          id: 'cctv_setup',
-          label: 'CCTV 설치',
-          description: 'CCTV 시스템 설치 완료',
-          icon: Settings,
-          completed: data.onboarding_status?.tasks?.cctv_setup || false,
-          required: true,
-          category: 'equipment'
-        })
-      }
-
-      // Add training tasks
-      initialTasks.push(
-        {
-          id: 'training_scheduled',
-          label: '교육 일정 확정',
-          description: '운영 교육 일정 확정',
-          icon: GraduationCap,
-          completed: data.onboarding_status?.tasks?.training_scheduled || false,
-          required: true,
-          category: 'training'
-        },
-        {
-          id: 'training_completed',
-          label: '교육 완료',
-          description: '필수 운영 교육 이수 완료',
-          icon: GraduationCap,
-          completed: data.onboarding_status?.tasks?.training_completed || false,
-          required: true,
-          category: 'training'
-        }
-      )
-
-      // Add service activation
-      initialTasks.push({
-        id: 'service_activated',
-        label: '서비스 활성화',
-        description: '모든 서비스 활성화 완료',
-        icon: CheckCircle2,
-        completed: data.onboarding_status?.tasks?.service_activated || false,
+    // Initialize tasks based on enrollment data
+    const initialTasks: OnboardingTask[] = [
+      {
+        id: 'contract_created',
+        label: '계약서 생성',
+        description: '초기 계약서가 자동 생성되었는지 확인',
+        icon: FileText,
+        completed: enrollment.onboarding_status?.tasks?.contract_created || false,
         required: true,
-        category: 'service'
-      })
+        category: 'contract'
+      },
+      {
+        id: 'contract_sent',
+        label: '계약서 발송',
+        description: '고객에게 계약서 발송 완료',
+        icon: Send,
+        completed: enrollment.onboarding_status?.tasks?.contract_sent || false,
+        required: true,
+        category: 'contract'
+      },
+      {
+        id: 'contract_signed',
+        label: '계약서 서명',
+        description: '고객이 계약서에 서명 완료',
+        icon: FileText,
+        completed: enrollment.onboarding_status?.tasks?.contract_signed || false,
+        required: true,
+        category: 'contract'
+      },
+      {
+        id: 'payment_setup',
+        label: '정산 계좌 확인',
+        description: '정산 계좌 유효성 검증 완료',
+        icon: CreditCard,
+        completed: enrollment.onboarding_status?.tasks?.payment_setup || false,
+        required: true,
+        category: 'payment'
+      }
+    ]
 
-      setTasks(initialTasks)
-      setNotes(data.onboarding_status?.notes || "")
-    } catch (error) {
-      console.error('Error fetching enrollment:', error)
-      alert("데이터를 불러오는데 실패했습니다.")
-    } finally {
-      setLoading(false)
+    // Add card company tasks if applicable
+    if (enrollment.kb_card) {
+      initialTasks.push({
+        id: 'kb_card_status',
+        label: 'KB카드 가맹 승인',
+        description: 'KB국민카드 가맹점 승인 완료',
+        icon: CreditCard,
+        completed: enrollment.onboarding_status?.tasks?.kb_card_status || false,
+        required: false,
+        category: 'payment'
+      })
     }
-  }
+
+    if (enrollment.bc_card) {
+      initialTasks.push({
+        id: 'bc_card_status',
+        label: 'BC카드 가맹 승인',
+        description: 'BC카드 가맹점 승인 완료',
+        icon: CreditCard,
+        completed: enrollment.onboarding_status?.tasks?.bc_card_status || false,
+        required: false,
+        category: 'payment'
+      })
+    }
+
+    if (enrollment.samsung_card) {
+      initialTasks.push({
+        id: 'samsung_card_status',
+        label: '삼성카드 가맹 승인',
+        description: '삼성카드 가맹점 승인 완료',
+        icon: CreditCard,
+        completed: enrollment.onboarding_status?.tasks?.samsung_card_status || false,
+        required: false,
+        category: 'payment'
+      })
+    }
+
+    if (enrollment.woori_card) {
+      initialTasks.push({
+        id: 'woori_card_status',
+        label: '우리카드 가맹 승인',
+        description: '우리카드 가맹점 승인 완료',
+        icon: CreditCard,
+        completed: enrollment.onboarding_status?.tasks?.woori_card_status || false,
+        required: false,
+        category: 'payment'
+      })
+    }
+
+    if (enrollment.hana_card) {
+      initialTasks.push({
+        id: 'hana_card_status',
+        label: '하나카드 가맹 승인',
+        description: '하나카드 가맹점 승인 완료',
+        icon: CreditCard,
+        completed: enrollment.onboarding_status?.tasks?.hana_card_status || false,
+        required: false,
+        category: 'payment'
+      })
+    }
+
+    // Add equipment tasks
+    if (enrollment.has_pos) {
+      initialTasks.push({
+        id: 'pos_setup',
+        label: 'POS 설치',
+        description: 'POS 시스템 설치 및 설정 완료',
+        icon: Package,
+        completed: enrollment.onboarding_status?.tasks?.pos_setup || false,
+        required: true,
+        category: 'equipment'
+      })
+    }
+
+    if (enrollment.has_kiosk) {
+      initialTasks.push({
+        id: 'kiosk_setup',
+        label: '키오스크 설치',
+        description: '키오스크 설치 및 설정 완료',
+        icon: Smartphone,
+        completed: enrollment.onboarding_status?.tasks?.kiosk_setup || false,
+        required: true,
+        category: 'equipment'
+      })
+    }
+
+    if (enrollment.has_cctv) {
+      initialTasks.push({
+        id: 'cctv_setup',
+        label: 'CCTV 설치',
+        description: 'CCTV 시스템 설치 완료',
+        icon: Settings,
+        completed: enrollment.onboarding_status?.tasks?.cctv_setup || false,
+        required: true,
+        category: 'equipment'
+      })
+    }
+
+    // Add training tasks
+    initialTasks.push(
+      {
+        id: 'training_scheduled',
+        label: '교육 일정 확정',
+        description: '운영 교육 일정 확정',
+        icon: GraduationCap,
+        completed: enrollment.onboarding_status?.tasks?.training_scheduled || false,
+        required: true,
+        category: 'training'
+      },
+      {
+        id: 'training_completed',
+        label: '교육 완료',
+        description: '필수 운영 교육 이수 완료',
+        icon: GraduationCap,
+        completed: enrollment.onboarding_status?.tasks?.training_completed || false,
+        required: true,
+        category: 'training'
+      }
+    )
+
+    // Add service activation
+    initialTasks.push({
+      id: 'service_activated',
+      label: '서비스 활성화',
+      description: '모든 서비스 활성화 완료',
+      icon: CheckCircle2,
+      completed: enrollment.onboarding_status?.tasks?.service_activated || false,
+      required: true,
+      category: 'service'
+    })
+
+    setTasks(initialTasks)
+    setNotes(enrollment.onboarding_status?.notes || "")
+  }, [enrollment])
 
   const toggleTask = (taskId: string) => {
     setTasks(prev => prev.map(task =>
@@ -251,7 +241,6 @@ export default function OnboardingPage() {
     if (!enrollment) return
 
     setSaving(true)
-    const supabase = createClient()
 
     const taskStatus = tasks.reduce((acc, task) => {
       acc[task.id] = task.completed
@@ -262,33 +251,24 @@ export default function OnboardingPage() {
       .filter(t => t.required)
       .every(t => t.completed)
 
-    try {
-      const { error } = await supabase
-        .from('enrollment_applications')
-        .update({
-          onboarding_status: {
-            tasks: taskStatus,
-            notes: notes,
-            completed_at: allRequiredComplete ? new Date().toISOString() : null
-          },
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', enrollment.id)
+    const success = await updateEnrollment({
+      onboarding_status: {
+        tasks: taskStatus,
+        notes: notes,
+        completed_at: allRequiredComplete ? new Date().toISOString() : null
+      }
+    })
 
-      if (error) throw error
-
+    if (success) {
       alert("온보딩 상태가 업데이트되었습니다.")
-
-      // If all required tasks are complete, optionally update status
       if (allRequiredComplete) {
         alert("모든 필수 작업이 완료되었습니다! 🎉")
       }
-    } catch (error) {
-      console.error('Error saving onboarding status:', error)
+    } else {
       alert("저장에 실패했습니다.")
-    } finally {
-      setSaving(false)
     }
+
+    setSaving(false)
   }
 
   if (loading) {
@@ -299,10 +279,16 @@ export default function OnboardingPage() {
     )
   }
 
-  if (!enrollment) {
+  if (error || !enrollment) {
     return (
       <div className="text-center py-8">
-        <p>신청 정보를 찾을 수 없습니다.</p>
+        <p>{error || "신청 정보를 찾을 수 없습니다."}</p>
+        <Button
+          className="mt-4"
+          onClick={() => router.push('/admin/enrollments')}
+        >
+          목록으로 돌아가기
+        </Button>
       </div>
     )
   }

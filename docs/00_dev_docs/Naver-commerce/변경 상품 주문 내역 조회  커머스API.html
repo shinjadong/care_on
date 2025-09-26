@@ -1,0 +1,436 @@
+<span id="markdown-mermaid" aria-hidden="true"
+                    data-dark-mode-theme="dark"
+                    data-light-mode-theme="default"
+                    data-max-text-size="50000"></span>
+                <hr>
+<p>title: &quot;변경 상품 주문 내역 조회 | 커머스API&quot;
+source: &quot;<a href="https://apicenter.commerce.naver.com/docs/commerce-api/current/seller-get-last-changed-status-pay-order-seller">https://apicenter.commerce.naver.com/docs/commerce-api/current/seller-get-last-changed-status-pay-order-seller</a>&quot;
+author:
+published:
+created: 2025-09-26
+description: &quot;조회 요청 범위의 기준은 변경 일시(date-time)입니다.&quot;
+tags:</p>
+<ul>
+<li>&quot;clippings&quot;</li>
+</ul>
+<hr>
+<hr>
+<p>title: &quot;변경 상품 주문 내역 조회 | 커머스API&quot;
+source: &quot;<a href="https://apicenter.commerce.naver.com/docs/commerce-api/current/seller-get-last-changed-status-pay-order-seller">https://apicenter.commerce.naver.com/docs/commerce-api/current/seller-get-last-changed-status-pay-order-seller</a>&quot;
+author:
+published:
+created: 2025-09-26
+description: &quot;조회 요청 범위의 기준은 변경 일시(date-time)입니다.&quot;
+tags:</p>
+<ul>
+<li>&quot;clippings&quot;</li>
+</ul>
+<hr>
+<p>GET</p>
+<h2 id="v1pay-ordersellerproduct-orderslast-changed-statuses">/v1/pay-order/seller/product-orders/last-changed-statuses</h2>
+<p>조회 요청 범위의 기준은 변경 일시(date-time)입니다.</p>
+<p>조회 기준 종료 일시(lastChangedTo) 값을 생략하면 조회 기준 시작 일시(lastChangedFrom)로부터 이후 24시간의 내역을 조회합니다. 조회 결과는 변경 일시 기준 오름차순으로 정렬되며, 일시가 같으면 상품 주문 번호 기준 오름차순으로 정렬됩니다.</p>
+<p>조회 결과는 요청 범위 내에서 최대 300개(또는 limitCount)의 변경된 상품 주문 내역을 제공합니다. 예를 들어 조회 요청 범위 내에 345개의 변경된 상품 주문 내역이 있어도 첫 요청의 응답에는 300개만 제공합니다. 이어서 나머지 45개의 정렬된 데이터를 조회하려면 앞 요청의 응답에 포함된 more 객체의 moreFrom과 moreSequence 값을 다음 요청의 lastChangedFrom과 moreSequence에 각각 입력합니다. 만약 조회 요청 범위 내에 변경된 상품 주문 내역이 300개(또는 limitCount) 이하라면 more 객체는 제공되지 않습니다. 응답의 more 객체의 설명과 예를 참고 바랍니다.</p>
+<h2 id="request">Request<a href="https://apicenter.commerce.naver.com/docs/commerce-api/current/#request" title="Direct link to Request">​</a></h2>
+<h3 id="query-parameters">Query Parameters</h3>
+<p><strong>lastChangedFrom</strong> string<date-time>required</p>
+<p>조회 기준 시작 일시(inclusive)</p>
+<p><strong>Example:</strong> 2022-04-11T15:21:44.000+09:00</p>
+<p><strong>lastChangedTo</strong> string<date-time></p>
+<p>조회 기준 종료 일시(inclusive). 생략 시 lastChangedFrom으로부터 24시간 후로 자동 지정됩니다.</p>
+<p><strong>lastChangedType</strong> lastChangedType.pay-order-seller (string)</p>
+<p>최종 변경 구분</p>
+<p><strong>moreSequence</strong> string</p>
+<p>moreSequence 사용법은 API 설명을 참고합니다. 임의의 값 입력 시 예기치 않은 결과가 제공될 수 있습니다.</p>
+<p><strong>limitCount</strong> integer</p>
+<p>조회 응답 개수 제한. 생략하거나 300을 초과하는 값을 입력하면 최대 300개의 내역을 제공합니다.</p>
+<h2 id="responses">Responses<a href="https://apicenter.commerce.naver.com/docs/commerce-api/current/#responses" title="Direct link to Responses">​</a></h2>
+<ul>
+<li>200</li>
+<li>400</li>
+<li>500</li>
+</ul>
+<p>(성공) 변경 상품 주문 내역</p>
+<ul>
+<li>
+<p>application/json</p>
+</li>
+<li>
+<p>Schema</p>
+</li>
+<li>
+<p>not_more</p>
+</li>
+<li>
+<p>has_more</p>
+</li>
+</ul>
+<p><strong>Schema</strong></p>
+<p><strong>timestamp</strong>string<date-time></p>
+<p><strong>Example:</strong> <code>2023-01-16T17:14:51.794+09:00</code></p>
+<p><strong>traceId</strong>stringrequired</p>
+<p><strong>data</strong> object</p>
+<p><strong>count</strong>integerrequired</p>
+<p><strong>more</strong> more.pay-order-seller (object)</p>
+<p>일시 범위로 목록을 요청하는 API는 최대 응답 개수를 제한합니다. 만약 응답할 항목의 개수가 최대 응답 개수보다 많으면 최대 응답 개수만큼의 일부만 응답으로 제공됩니다. 요청한 범위 내의 항목을 모두 제공하지 못한 경우 more 객체가 응답에 포함됩니다. more 객체의 moreFrom과 moreSequence 값을 사용해 나머지 항목을 요청할 수 있습니다.</p>
+<p>응답 목록은 시간순으로 정렬되어 있습니다. moreFrom 값은 최대 응답 개수 제한 때문에 제공하지 못한 항목 중 첫 항목의 일시를 의미합니다. 이 값을 새로운 조회 요청의 조회 기준 시작 일시로 지정하면 다음 목록을 이어서 조회할 수 있습니다.</p>
+<p>이때 같은 일시에 해당하는 항목이 두 개 이상 존재할 수 있기 때문에 같은 일시의 값을 구체적으로 구분하기 위해서 moreSequence 값을 제공합니다. 새로운 요청에서 moreSequence 값을 사용하면 특정 필드 값이 moreSequence 이상인 항목만 제공되어 중복 응답을 피할 수 있습니다.</p>
+<p><strong>moreFrom</strong>string<date-time></p>
+<p>45바이트 내외</p>
+<p><strong>Example:</strong> <code>2023-01-16T17:14:51.794+09:00</code></p>
+<p><strong>moreSequence</strong>string</p>
+<p>20바이트 내외</p>
+<p><strong>lastChangeStatuses</strong> object[]required</p>
+<p>이 구조체는 주문건의 변경 상품 주문 정보를 표현하는 구조체입니다. 전체 주문건에서 지정된 조회 조건에 해당하는 주문건을 식별할 수 있는 일부 정보를 표현합니다.</p>
+<ul>
+<li>
+<p>이 구조체는 API 호출에 대한 응답으로만 사용합니다.</p>
+</li>
+<li>
+<p>구조체의 객체 1개는 상품주문번호 1개를 표현합니다.</p>
+</li>
+<li>
+<p>Array [</p>
+</li>
+</ul>
+<p><strong>orderId</strong>string</p>
+<p>주문 ID. 20바이트 내외</p>
+<p><strong>productOrderId</strong>string</p>
+<p>상품 주문 ID. 20바이트 내외</p>
+<p><strong>lastChangedType</strong>lastChangedType.pay-order-seller (string)</p>
+<p>최종 변경 구분. 250바이트 내외</p>
+<table>
+<thead>
+<tr>
+<th>코드</th>
+<th>설명</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PAY_WAITING</td>
+<td>결제 대기</td>
+<td></td>
+</tr>
+<tr>
+<td>PAYED</td>
+<td>결제 완료</td>
+<td></td>
+</tr>
+<tr>
+<td>EXCHANGE_OPTION</td>
+<td>옵션 변경</td>
+<td>선물하기</td>
+</tr>
+<tr>
+<td>DELIVERY_ADDRESS_CHANGED</td>
+<td>배송지 변경</td>
+<td></td>
+</tr>
+<tr>
+<td>GIFT_RECEIVED</td>
+<td>선물 수락</td>
+<td>선물하기</td>
+</tr>
+<tr>
+<td>CLAIM_REJECTED</td>
+<td>클레임 철회</td>
+<td></td>
+</tr>
+<tr>
+<td>DISPATCHED</td>
+<td>발송 처리</td>
+<td></td>
+</tr>
+<tr>
+<td>CLAIM_REQUESTED</td>
+<td>클레임 요청</td>
+<td></td>
+</tr>
+<tr>
+<td>COLLECT_DONE</td>
+<td>수거 완료</td>
+<td></td>
+</tr>
+<tr>
+<td>CLAIM_COMPLETED</td>
+<td>클레임 완료</td>
+<td></td>
+</tr>
+<tr>
+<td>PURCHASE_DECIDED</td>
+<td>구매 확정</td>
+<td></td>
+</tr>
+<tr>
+<td>HOPE_DELIVERY_INFO_CHANGED</td>
+<td>배송 희망일 변경</td>
+<td></td>
+</tr>
+<tr>
+<td>CLAIM_REDELIVERING</td>
+<td>교환 재배송처리</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>paymentDate</strong>string<date-time></p>
+<p>결제 일시. 45바이트 내외</p>
+<p><strong>Example:</strong> <code>2023-01-16T17:14:51.794+09:00</code></p>
+<p><strong>lastChangedDate</strong>string<date-time></p>
+<p>최종 변경 일시. 45바이트 내외</p>
+<p><strong>Example:</strong> <code>2023-01-16T17:14:51.794+09:00</code></p>
+<p><strong>productOrderStatus</strong>productOrderStatus.pay-order-seller (string)</p>
+<p>상품 주문 상태. 250바이트 내외</p>
+<table>
+<thead>
+<tr>
+<th>코드</th>
+<th>설명</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PAYMENT_WAITING</td>
+<td>결제 대기</td>
+<td></td>
+</tr>
+<tr>
+<td>PAYED</td>
+<td>결제 완료</td>
+<td></td>
+</tr>
+<tr>
+<td>DELIVERING</td>
+<td>배송 중</td>
+<td></td>
+</tr>
+<tr>
+<td>DELIVERED</td>
+<td>배송 완료</td>
+<td></td>
+</tr>
+<tr>
+<td>PURCHASE_DECIDED</td>
+<td>구매 확정</td>
+<td></td>
+</tr>
+<tr>
+<td>EXCHANGED</td>
+<td>교환</td>
+<td></td>
+</tr>
+<tr>
+<td>CANCELED</td>
+<td>취소</td>
+<td></td>
+</tr>
+<tr>
+<td>RETURNED</td>
+<td>반품</td>
+<td></td>
+</tr>
+<tr>
+<td>CANCELED_BY_NOPAYMENT</td>
+<td>미결제 취소</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>claimType</strong>claimType.pay-order-seller (string)</p>
+<p>클레임 구분. 250바이트 내외</p>
+<table>
+<thead>
+<tr>
+<th>코드</th>
+<th>설명</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CANCEL</td>
+<td>취소</td>
+<td></td>
+</tr>
+<tr>
+<td>RETURN</td>
+<td>반품</td>
+<td></td>
+</tr>
+<tr>
+<td>EXCHANGE</td>
+<td>교환</td>
+<td></td>
+</tr>
+<tr>
+<td>PURCHASE_DECISION_HOLDBACK</td>
+<td>구매 확정 보류</td>
+<td></td>
+</tr>
+<tr>
+<td>ADMIN_CANCEL</td>
+<td>직권 취소</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>claimStatus</strong>claimStatus.pay-order-seller (string)</p>
+<p>클레임 상태. 250바이트 내외</p>
+<table>
+<thead>
+<tr>
+<th>코드</th>
+<th>설명</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CANCEL_REQUEST</td>
+<td>취소 요청</td>
+<td></td>
+</tr>
+<tr>
+<td>CANCELING</td>
+<td>취소 처리 중</td>
+<td></td>
+</tr>
+<tr>
+<td>CANCEL_DONE</td>
+<td>취소 처리 완료</td>
+<td></td>
+</tr>
+<tr>
+<td>CANCEL_REJECT</td>
+<td>취소 철회</td>
+<td></td>
+</tr>
+<tr>
+<td>RETURN_REQUEST</td>
+<td>반품 요청</td>
+<td></td>
+</tr>
+<tr>
+<td>EXCHANGE_REQUEST</td>
+<td>교환 요청</td>
+<td></td>
+</tr>
+<tr>
+<td>COLLECTING</td>
+<td>수거 처리 중</td>
+<td></td>
+</tr>
+<tr>
+<td>COLLECT_DONE</td>
+<td>수거 완료</td>
+<td></td>
+</tr>
+<tr>
+<td>EXCHANGE_REDELIVERING</td>
+<td>교환 재배송 중</td>
+<td></td>
+</tr>
+<tr>
+<td>RETURN_DONE</td>
+<td>반품 완료</td>
+<td></td>
+</tr>
+<tr>
+<td>EXCHANGE_DONE</td>
+<td>교환 완료</td>
+<td></td>
+</tr>
+<tr>
+<td>RETURN_REJECT</td>
+<td>반품 철회</td>
+<td></td>
+</tr>
+<tr>
+<td>EXCHANGE_REJECT</td>
+<td>교환 철회</td>
+<td></td>
+</tr>
+<tr>
+<td>PURCHASE_DECISION_HOLDBACK</td>
+<td>구매 확정 보류</td>
+<td></td>
+</tr>
+<tr>
+<td>PURCHASE_DECISION_REQUEST</td>
+<td>구매 확정 요청</td>
+<td></td>
+</tr>
+<tr>
+<td>PURCHASE_DECISION_HOLDBACK_RELEASE</td>
+<td>구매 확정 보류 해제</td>
+<td></td>
+</tr>
+<tr>
+<td>ADMIN_CANCELING</td>
+<td>직권 취소 중</td>
+<td></td>
+</tr>
+<tr>
+<td>ADMIN_CANCEL_DONE</td>
+<td>직권 취소 완료</td>
+<td></td>
+</tr>
+<tr>
+<td>ADMIN_CANCEL_REJECT</td>
+<td>직권 취소 철회</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>receiverAddressChanged</strong>boolean</p>
+<p>배송지 정보 변경 여부. 45바이트 내외</p>
+<p><strong>Default value:</strong> <code>false</code></p>
+<p><strong>giftReceivingStatus</strong>giftReceivingStatus.pay-order-seller (string)</p>
+<p>선물 수락 상태 구분. 250바이트 내외</p>
+<table>
+<thead>
+<tr>
+<th>코드</th>
+<th>설명</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WAIT_FOR_RECEIVING</td>
+<td>수락 대기(배송지 입력 대기)</td>
+<td></td>
+</tr>
+<tr>
+<td>RECEIVED</td>
+<td>수락 완료</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>]</li>
+</ul>
+<p>curl -L '<a href="https://api.commerce.naver.com/external/v1/pay-order/seller/product-orders/last-changed-statuses">https://api.commerce.naver.com/external/v1/pay-order/seller/product-orders/last-changed-statuses</a>' <br>
+-H 'Accept: application/json' <br>
+-H 'Authorization: Bearer <token>'</p>
+<p>const axios = require('axios');</p>
+<p>let config = {
+method: 'get',
+maxBodyLength: Infinity,
+url: '<a href="https://api.commerce.naver.com/external/v1/pay-order/seller/product-orders/last-changed-statuses">https://api.commerce.naver.com/external/v1/pay-order/seller/product-orders/last-changed-statuses</a>',
+headers: {
+'Accept': 'application/json',
+'Authorization': 'Bearer <token>'
+}
+};</p>
+<p>axios.request(config)
+.then((response) =&gt; {
+console.log(JSON.stringify(response.data));
+})
+.catch((error) =&gt; {
+console.log(error);
+});</p>

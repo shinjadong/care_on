@@ -1,7 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { useEnrollmentList } from "@/hooks/useEnrollmentData"
+import { useDebounce } from "@/lib/hooks/useDebounce"
+import { EnrollmentQuickView } from "@/components/admin/enrollments/EnrollmentQuickView"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -59,59 +62,29 @@ interface EnrollmentApplication {
 }
 
 export default function EnrollmentManagementPage() {
-  const [applications, setApplications] = useState<EnrollmentApplication[]>([])
-  const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [searchTerm, setSearchTerm] = useState("")
-  const [stats, setStats] = useState({
-    total: 0,
-    pending: 0,
-    reviewing: 0,
-    approved: 0,
-    rejected: 0
+  const [currentPage, setCurrentPage] = useState(1)
+  const [quickViewId, setQuickViewId] = useState<string | null>(null)
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false)
+  const debouncedSearchTerm = useDebounce(searchTerm, 500)
+
+  const {
+    applications,
+    loading,
+    error,
+    stats,
+    totalCount,
+    totalPages,
+    pageSize,
+    refetch
+  } = useEnrollmentList({
+    statusFilter,
+    searchTerm: debouncedSearchTerm,
+    page: currentPage,
+    pageSize: 50,
+    minimalFields: true
   })
-
-  useEffect(() => {
-    fetchApplications()
-  }, [statusFilter])
-
-  const fetchApplications = async () => {
-    setLoading(true)
-    const supabase = createClient()
-
-    try {
-      let query = supabase
-        .from('enrollment_applications')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      // Apply status filter
-      if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter)
-      }
-
-      const { data, error } = await query
-
-      if (error) throw error
-
-      setApplications(data || [])
-
-      // Calculate stats
-      if (statusFilter === 'all' && data) {
-        setStats({
-          total: data.length,
-          pending: data.filter(a => a.status === 'submitted').length,
-          reviewing: data.filter(a => a.status === 'reviewing').length,
-          approved: data.filter(a => a.status === 'approved').length,
-          rejected: data.filter(a => a.status === 'rejected').length
-        })
-      }
-    } catch (error) {
-      console.error('Error fetching applications:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const updateStatus = async (id: string, newStatus: string, notes?: string) => {
     const supabase = createClient()
@@ -129,7 +102,7 @@ export default function EnrollmentManagementPage() {
       if (error) throw error
 
       // Refresh the list
-      fetchApplications()
+      refetch()
       alert(`신청이 ${newStatus === 'approved' ? '승인' : '반려'}되었습니다.`)
     } catch (error) {
       console.error('Error updating status:', error)
@@ -172,17 +145,7 @@ export default function EnrollmentManagementPage() {
     }
   }
 
-  const filteredApplications = applications.filter(app => {
-    if (!searchTerm) return true
-
-    const searchLower = searchTerm.toLowerCase()
-    return (
-      app.business_name?.toLowerCase().includes(searchLower) ||
-      app.representative_name?.toLowerCase().includes(searchLower) ||
-      app.phone_number?.includes(searchTerm) ||
-      app.business_number?.includes(searchTerm)
-    )
-  })
+  // Filtering is now handled by the hook
 
   return (
     <div className="p-6 space-y-6">
@@ -194,8 +157,8 @@ export default function EnrollmentManagementPage() {
             Enrollment를 통해 접수된 가입 신청을 관리합니다
           </p>
         </div>
-        <Button onClick={fetchApplications} variant="outline">
-          <RefreshCw className="w-4 h-4 mr-2" />
+        <Button onClick={refetch} variant="outline" disabled={loading}>
+          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           새로고침
         </Button>
       </div>
@@ -261,7 +224,10 @@ export default function EnrollmentManagementPage() {
             <Input
               placeholder="사업자명, 대표자명, 전화번호, 사업자번호로 검색"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value)
+                setCurrentPage(1) // Reset to first page on search
+              }}
               className="pl-10"
             />
           </div>
@@ -310,15 +276,21 @@ export default function EnrollmentManagementPage() {
                   로딩 중...
                 </TableCell>
               </TableRow>
-            ) : filteredApplications.length === 0 ? (
+            ) : applications.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                   신청 내역이 없습니다
                 </TableCell>
               </TableRow>
             ) : (
-              filteredApplications.map((app) => (
-                <TableRow key={app.id}>
+              applications.map((app) => (
+                <TableRow
+                  key={app.id}
+                  className="cursor-pointer hover:bg-gray-50"
+                  onClick={() => {
+                    setQuickViewId(app.id)
+                    setIsQuickViewOpen(true)
+                  }}>
                   <TableCell className="text-sm">
                     {app.submitted_at
                       ? format(new Date(app.submitted_at), 'MM/dd HH:mm', { locale: ko })
@@ -340,7 +312,7 @@ export default function EnrollmentManagementPage() {
                   <TableCell>{checkDocumentStatus(app)}</TableCell>
                   <TableCell>{getStatusBadge(app.status)}</TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
+                    <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                       <Link href={`/admin/enrollments/${app.id}`}>
                         <Button size="sm" variant="outline">
                           <Eye className="w-4 h-4" />
@@ -374,6 +346,46 @@ export default function EnrollmentManagementPage() {
           </TableBody>
         </Table>
       </Card>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-600">
+            전체 {totalCount}개 중 {((currentPage - 1) * pageSize) + 1}-{Math.min(currentPage * pageSize, totalCount)}개 표시
+          </p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+            >
+              이전
+            </Button>
+            <span className="flex items-center px-3 text-sm">
+              {currentPage} / {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+            >
+              다음
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Quick View Sheet */}
+      <EnrollmentQuickView
+        enrollmentId={quickViewId}
+        isOpen={isQuickViewOpen}
+        onClose={() => {
+          setIsQuickViewOpen(false)
+          setQuickViewId(null)
+        }}
+      />
     </div>
   )
 }

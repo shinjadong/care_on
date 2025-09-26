@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 📋 프로젝트 개요
 
@@ -22,6 +22,10 @@ npm start            # Start production server after building
 
 # Code quality
 npm run lint         # Run Next.js linter
+
+# Database operations (requires Supabase CLI)
+npx supabase migration new <name>  # Create new migration
+npx supabase db reset              # Reset database with migrations
 ```
 
 ## Architecture Overview
@@ -48,14 +52,16 @@ npm run lint         # Run Next.js linter
 
 ### Database Architecture
 The application uses Supabase with service role keys for server-side operations. Two client creation patterns:
-- **Browser Client**: `lib/supabase/client.ts` - Uses public anon key
-- **Server Client**: `lib/supabase/server.ts` - Can use service role key for admin operations
+- **Browser Client**: `lib/supabase/client.ts` - Uses public anon key for client-side operations
+- **Server Client**: `lib/supabase/server.ts` - Can use service role key for admin operations (server-side only)
+- **RLS Policies**: Currently disabled for development (`20250125000001_disable_rls_temp.sql`)
 
 ### Authentication Flow
 - Google OAuth integration with Supabase Auth
 - Protected routes handled via `components/auth/protected-route.tsx`
 - Auth state managed through `hooks/useAuth.tsx`
 - Callback handler at `/auth/callback`
+- Admin authentication separate from user auth
 
 ### API Structure
 All API routes are in `app/api/` with key endpoints:
@@ -108,14 +114,26 @@ scripts/
 
 ## Environment Variables
 
-Required environment variables (see `.env.example`):
-- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Public anon key
-- `SUPABASE_SERVICE_ROLE_KEY` - Service role key for server operations
-- `ANTHROPIC_API_KEY` - Claude API key for AI features
-- `NEXT_PUBLIC_GOOGLE_CLIENT_ID` - Google OAuth client ID
-- `GOOGLE_CLIENT_SECRET` - Google OAuth secret
-- `BLOB_READ_WRITE_TOKEN` - Vercel Blob storage token
+Required environment variables (create `.env.local`):
+```bash
+# Supabase (required)
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# AI Integration
+ANTHROPIC_API_KEY=your_claude_api_key
+
+# OAuth
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_secret
+
+# Storage
+BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
+
+# SMS Service (Korean)
+PPURIO_API_KEY=your_ppurio_key
+```
 
 ## Design System
 
@@ -139,13 +157,13 @@ CareOn UI components follow a consistent naming pattern (`careon-*`):
 - `careon-bottom-sheet` - Mobile-friendly bottom sheet
 - `careon-carrier-select` - Korean carrier selection dropdown
 
-## Key Features
+## Key Features & Workflows
 
 ### Supabase Integration
-- Migrations in `supabase/migrations/`
+- Migrations in `supabase/migrations/` (chronological order)
 - Edge functions in `supabase/functions/`
-- RLS policies configured for security
-- Database types generated in `lib/database.types.ts`
+- Database types in `lib/database.types.ts` (auto-generated from schema)
+- Tables: `customers`, `contracts`, `enrollment_applications`, `cs_tickets`, `billing`, `managers`
 
 ### Merchant Enrollment System
 Multi-step enrollment flow for new merchants:
@@ -180,19 +198,22 @@ Contract system for service agreements:
 ## Development Notes
 
 ### Build Configuration
-- TypeScript errors ignored in production builds (`ignoreBuildErrors: true`)
-- ESLint errors ignored during builds (`ignoreDuringBuilds: true`)
-- Image optimization configured for Supabase and Vercel storage
+- **TypeScript**: Strict mode enabled but errors ignored in production builds (`ignoreBuildErrors: true`)
+- **ESLint**: Errors ignored during builds (`ignoreDuringBuilds: true`)
+- **Target**: ES6 with bundler module resolution
+- **Image domains**: Vercel Blob Storage, Supabase Storage, YouTube thumbnails
 
-### Routing
-- Root path `/` redirects to `/landing` (configured in `next.config.mjs`)
-- Protected admin routes use middleware and client-side protection
-- Public routes include landing, services, FAQ, privacy, and terms
+### Routing Patterns
+- Root `/` redirects to `/landing` (302 temporary redirect)
+- Admin routes (`/admin/*`) require authentication
+- API routes follow RESTful conventions with `route.ts` files
+- Dynamic routes use `[param]` folder naming
 
-### Performance Optimizations
-- Framer Motion optimized package imports
-- Image formats: AVIF and WebP with 60s cache TTL
-- Transpiled packages for better compatibility
+### Performance Considerations
+- Framer Motion with `optimizePackageImports` for tree-shaking
+- Image optimization: AVIF/WebP formats with 60s minimum cache
+- Component lazy loading for large UI sections
+- Parallel data fetching in server components
 
 ## Recent Updates (2025-01)
 
@@ -221,6 +242,41 @@ Contract system for service agreements:
 - NextJS 15 development guides added
 - Card company agreement documents
 - Enrollment system technical documentation
+
+## Common Development Tasks
+
+### Working with Enrollment System
+
+When modifying enrollment flow:
+
+1. Check `components/enrollment/` for multi-step form components
+2. Update validation in `components/enrollment/EnrollmentSchema.tsx`
+3. API endpoint at `/api/enrollment/submit`
+4. Database table: `enrollment_applications`
+
+### Admin Dashboard Development
+
+Admin routes require auth check via `/api/admin/check-auth`:
+
+1. Dashboard data from `/api/dashboard/stats`
+2. Customer management via `/api/admin/customers`
+3. Enrollment approvals at `/api/admin/enrollments/[id]/approve`
+4. All admin components use standard ShadcnUI (not glass UI)
+
+### Adding New API Endpoints
+
+Follow the existing patterns:
+
+1. Create `route.ts` file in appropriate `/api/` folder
+2. Use `NextRequest` and `NextResponse` from `next/server`
+3. Import Supabase client from `lib/supabase/server.ts` for server operations
+4. Handle errors with appropriate status codes
+
+### Korean-Specific Features
+
+1. **Address Search**: Use `react-daum-postcode` component
+2. **SMS**: Send via `/api/sms/send` using Ppurio service
+3. **Business Categories**: See `components/enrollment/steps/BusinessInfo.tsx` for category list
 
 ### Admin Dashboard Improvements (2025-09-26)
 
@@ -251,3 +307,21 @@ Contract system for service agreements:
   - Connected admin dashboard to real APIs instead of mock data
   - Displays live statistics: 2 customers, 2 contracts, enrollment status
   - Improved error handling with fallback UI states
+
+## Testing Patterns
+
+### Manual Testing Flow
+
+1. Start development server: `npm run dev`
+2. Access main landing: `http://localhost:3000/landing`
+3. Test enrollment flow: `http://localhost:3000/enrollment`
+4. Admin dashboard: `http://localhost:3000/admin` (requires auth)
+5. Check API responses in browser DevTools Network tab
+
+### Common Issues & Solutions
+
+- **Supabase connection errors**: Verify `NEXT_PUBLIC_SUPABASE_URL` and keys in `.env.local`
+- **Build errors**: TypeScript errors ignored in production, but check with `npm run lint`
+- **Admin auth issues**: Check `/api/admin/check-auth` implementation
+- **Korean text encoding**: Ensure UTF-8 encoding in all API responses
+- **File upload errors**: Verify `BLOB_READ_WRITE_TOKEN` is set for Vercel Blob Storage

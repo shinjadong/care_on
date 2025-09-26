@@ -18,33 +18,50 @@ const businessTypeMap: { [key: number]: string } = {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, phoneNumber, businessType, to } = body
+    const { name, phoneNumber, businessType, to, text, type, subject } = body
 
     // to 또는 phoneNumber 사용
     const recipient = to || phoneNumber
 
     // 입력값 검증
-    if (!name || !recipient) {
+    if (!recipient) {
       return NextResponse.json(
-        { error: '필수 정보가 누락되었습니다.' },
+        { error: '수신번호가 누락되었습니다.' },
         { status: 400 }
       )
     }
 
-    // 업종 텍스트 변환 (문자열이면 그대로 사용)
-    const businessTypeText = typeof businessType === 'string' 
-      ? businessType 
-      : (businessType ? businessTypeMap[businessType] || '기타' : '')
+    // 메시지 내용 결정 (text가 있으면 직접 사용, 없으면 템플릿 사용)
+    let message = text
+    if (!message && name) {
+      // 업종 텍스트 변환 (문자열이면 그대로 사용)
+      const businessTypeText = typeof businessType === 'string'
+        ? businessType
+        : (businessType ? businessTypeMap[businessType] || '기타' : '')
 
-    // 메시지 생성
-    const message = getApplicationCompleteMessage(name, businessTypeText)
+      // 템플릿 메시지 생성
+      message = getApplicationCompleteMessage(name, businessTypeText)
+    }
 
-    console.log('SMS 전송 시도:', { recipient, name, businessTypeText })
+    if (!message) {
+      return NextResponse.json(
+        { error: '메시지 내용이 누락되었습니다.' },
+        { status: 400 }
+      )
+    }
+
+    console.log('SMS 전송 시도:', {
+      recipient,
+      messageLength: message.length,
+      type: type || 'auto'
+    })
 
     // SMS 전송
     const result = await sendSMS({
       to: recipient,
       text: message,
+      type: type,
+      subject: subject,
     })
 
     if (result.success) {

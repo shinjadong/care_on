@@ -4,7 +4,7 @@
 const PPURIO_CONFIG = {
   baseUrl: 'https://message.ppurio.com',
   username: process.env.PPURIO_USERNAME || 'nvr_7464463887',
-  apiKey: process.env.PPURIO_API_KEY || '',
+  apiKey: process.env.PPURIO_API_KEY || 'd55f01a941947acd711702ede3f90b74fdda318a78ed26dbde193cceeb0af4ac',
   senderPhone: process.env.SENDER_PHONE || '01032453385',
 }
 
@@ -73,9 +73,9 @@ async function getAccessToken(): Promise<string | null> {
 // 메시지 전송 함수
 export async function sendSMS({ to, text, subject, type }: SendMessageParams) {
   try {
-    // 개발 환경에서는 콘솔 로그만 출력
-    if (process.env.NODE_ENV === 'development') {
-      console.log('📱 [개발모드] SMS 전송 시뮬레이션');
+    // 테스트 모드에서는 콘솔 로그만 출력
+    if (process.env.PPURIO_TEST_MODE === 'true') {
+      console.log('📱 [테스트모드] SMS 전송 시뮬레이션');
       console.log('수신번호:', to);
       console.log('메시지 내용:', text);
       console.log('---');

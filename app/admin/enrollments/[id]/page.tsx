@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
+import { useEnrollmentDetail } from "@/hooks/useEnrollmentData"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -132,37 +133,26 @@ interface EnrollmentDetail {
 export default function EnrollmentDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const [enrollment, setEnrollment] = useState<EnrollmentDetail | null>(null)
-  const [loading, setLoading] = useState(true)
   const [reviewNotes, setReviewNotes] = useState("")
   const [updating, setUpdating] = useState(false)
 
+  const {
+    enrollment,
+    loading,
+    error,
+    refetch,
+    updateEnrollment: updateEnrollmentData
+  } = useEnrollmentDetail({
+    id: params.id as string,
+    redirectOnError: true
+  })
+
+  // Set review notes when enrollment loads
   useEffect(() => {
-    fetchEnrollmentDetail()
-  }, [params.id])
-
-  const fetchEnrollmentDetail = async () => {
-    const supabase = createClient()
-
-    try {
-      const { data, error } = await supabase
-        .from('enrollment_applications')
-        .select('*')
-        .eq('id', params.id)
-        .single()
-
-      if (error) throw error
-
-      setEnrollment(data)
-      setReviewNotes(data.reviewer_notes || "")
-    } catch (error) {
-      console.error('Error fetching enrollment:', error)
-      alert('신청 정보를 불러올 수 없습니다.')
-      router.push('/admin/enrollments')
-    } finally {
-      setLoading(false)
+    if (enrollment && enrollment.reviewer_notes) {
+      setReviewNotes(enrollment.reviewer_notes)
     }
-  }
+  }, [enrollment])
 
   const updateStatus = async (newStatus: 'reviewing' | 'approved' | 'rejected') => {
     if (!enrollment) return
@@ -187,7 +177,7 @@ export default function EnrollmentDetailPage() {
         newStatus === 'rejected' ? '반려' : '검토 중으로 변경'
       }되었습니다.`)
 
-      fetchEnrollmentDetail()
+      refetch()
     } catch (error) {
       console.error('Error updating status:', error)
       alert('상태 업데이트에 실패했습니다.')
@@ -435,7 +425,7 @@ export default function EnrollmentDetailPage() {
               <div className="mt-4">
                 <p className="text-sm text-gray-600 mb-2">동의한 카드사</p>
                 <div className="flex flex-wrap gap-2">
-                  {enrollment.agreed_card_companies.split(',').map((company) => (
+                  {enrollment.agreed_card_companies.split(',').map((company: string) => (
                     <Badge key={company} variant="outline">{company}</Badge>
                   ))}
                 </div>
@@ -493,7 +483,7 @@ export default function EnrollmentDetailPage() {
                 <div>
                   <p className="text-sm text-gray-600 mb-2">키워드</p>
                   <div className="flex flex-wrap gap-2">
-                    {enrollment.business_keywords.map((keyword) => (
+                    {enrollment.business_keywords.map((keyword: string) => (
                       <Badge key={keyword} variant="secondary">{keyword}</Badge>
                     ))}
                   </div>
@@ -576,7 +566,7 @@ export default function EnrollmentDetailPage() {
               woori_merchant_number: enrollment.woori_merchant_number,
               hana_merchant_number: enrollment.hana_merchant_number
             }}
-            onUpdate={() => fetchEnrollment(params.id as string)}
+            onUpdate={() => refetch()}
           />
         </TabsContent>
 

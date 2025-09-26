@@ -1,0 +1,461 @@
+<span id="markdown-mermaid" aria-hidden="true"
+                    data-dark-mode-theme="dark"
+                    data-light-mode-theme="default"
+                    data-max-text-size="50000"></span>
+                <hr>
+<p>title: &quot;네이버 커머스API 인증 토큰 발급 가이드&quot;
+source: &quot;<a href="https://apicenter.commerce.naver.com/docs/commerce-api/current/exchange-sellers-auth">https://apicenter.commerce.naver.com/docs/commerce-api/current/exchange-sellers-auth</a>&quot;
+author:
+published:
+created: 2025-09-26
+description: &quot;네이버 커머스API 사용을 위한 인증 토큰 발급 및 갱신 완전 가이드&quot;
+tags:</p>
+<ul>
+<li>&quot;clippings&quot;</li>
+<li>&quot;authentication&quot;</li>
+<li>&quot;api&quot;</li>
+<li>&quot;token&quot;</li>
+</ul>
+<hr>
+<h1 id="-네이버-커머스api-인증-토큰-발급-가이드">🎫 네이버 커머스API 인증 토큰 발급 가이드</h1>
+<h2 id="-목차">📋 목차</h2>
+<ul>
+<li><a href="#%EA%B0%9C%EC%9A%94">개요</a></li>
+<li><a href="#api-%EC%97%94%EB%93%9C%ED%8F%AC%EC%9D%B8%ED%8A%B8">API 엔드포인트</a></li>
+<li><a href="#%EC%9A%94%EC%B2%AD-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0">요청 파라미터</a></li>
+<li><a href="#%EC%9D%91%EB%8B%B5-%ED%98%95%EC%8B%9D">응답 형식</a></li>
+<li><a href="#%EC%8B%A4%EC%A0%9C-%EC%82%AC%EC%9A%A9-%EC%98%88%EC%8B%9C">실제 사용 예시</a></li>
+<li><a href="#%EC%98%A4%EB%A5%98-%EC%B2%98%EB%A6%AC">오류 처리</a></li>
+</ul>
+<hr>
+<h2 id="-개요">🔐 개요</h2>
+<h3 id="토큰-발급의-목적">토큰 발급의 목적</h3>
+<p>인증 토큰은 <strong>네이버 커머스API에 접근하기 위한 열쇠</strong>입니다. 마치 아파트 출입카드처럼, 이 토큰이 있어야 커머스API의 다양한 기능을 사용할 수 있습니다.</p>
+<h3 id="-토큰-유효시간-규칙">🕐 토큰 유효시간 규칙</h3>
+<blockquote>
+<p><strong>⏰ 토큰 수명: 3시간 (10,800초)</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>상황</th>
+<th>토큰 갱신 정책</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>남은 시간 30분 이상</td>
+<td>기존 토큰 반환</td>
+<td>아직 충분히 유효하므로 새로 발급하지 않음</td>
+</tr>
+<tr>
+<td>남은 시간 30분 미만</td>
+<td>새 토큰 발급</td>
+<td>곧 만료될 예정이므로 새 토큰 생성</td>
+</tr>
+<tr>
+<td>동시 사용 가능</td>
+<td>기존 + 새 토큰</td>
+<td>새 토큰 발급 후에도 기존 토큰은 만료 전까지 사용 가능</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-api-엔드포인트">🚀 API 엔드포인트</h2>
+<pre><code class="language-http">POST https://api.commerce.naver.com/external/v1/oauth2/token
+<span class="hljs-attribute">Content-Type</span><span class="hljs-punctuation">: </span>application/x-www-form-urlencoded
+</code></pre>
+<blockquote>
+<p><strong>📍 기본 URL</strong><br>
+<code>https://api.commerce.naver.com/external</code></p>
+</blockquote>
+<h2 id="-요청-파라미터">📝 요청 파라미터</h2>
+<h3 id="content-type">Content-Type</h3>
+<pre><code>application/x-www-form-urlencoded
+</code></pre>
+<h3 id="필수-파라미터">필수 파라미터</h3>
+<table>
+<thead>
+<tr>
+<th>파라미터</th>
+<th>타입</th>
+<th>필수</th>
+<th>설명</th>
+<th>예시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>client_id</code></td>
+<td>string</td>
+<td>✅</td>
+<td>네이버에서 발급받은 애플리케이션 ID</td>
+<td><code>7dMvteboKNHwyRremLXXXX</code></td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>integer</td>
+<td>✅</td>
+<td>현재 시간 (밀리초 단위)<br/><strong>⚠️ 5분 이내 유효</strong></td>
+<td><code>1706671059230</code></td>
+</tr>
+<tr>
+<td><code>grant_type</code></td>
+<td>string</td>
+<td>✅</td>
+<td>OAuth2 인증 방식<br/><strong>고정값: <code>client_credentials</code></strong></td>
+<td><code>client_credentials</code></td>
+</tr>
+<tr>
+<td><code>client_secret_sign</code></td>
+<td>string</td>
+<td>✅</td>
+<td><a href="https://apicenter.commerce.naver.com/docs/auth">전자서명</a> 생성 결과</td>
+<td><code>JDJhJDA0JFF...</code></td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>string</td>
+<td>✅</td>
+<td>토큰 발급 타입<br/><code>SELF</code> 또는 <code>SELLER</code></td>
+<td><code>SELLER</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="선택-파라미터">선택 파라미터</h3>
+<table>
+<thead>
+<tr>
+<th>파라미터</th>
+<th>타입</th>
+<th>필수</th>
+<th>설명</th>
+<th>예시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>account_id</code></td>
+<td>string</td>
+<td>⚠️</td>
+<td>판매자 ID 또는 UID<br/><strong><code>type</code>이 <code>SELLER</code>일 때 필수</strong></td>
+<td><code>ncp_2sRZTWJVbDtHPoz9OXXXX</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="-파라미터-상세-설명">📋 파라미터 상세 설명</h3>
+<h4 id="type-파라미터의-이해"><code>type</code> 파라미터의 이해</h4>
+<ul>
+<li><strong><code>SELF</code></strong>: 자신의 애플리케이션 정보에 접근</li>
+<li><strong><code>SELLER</code></strong>: 특정 판매자의 주문, 상품 정보에 접근 (이 경우 <code>account_id</code> 필수)</li>
+</ul>
+<h4 id="timestamp-생성-방법"><code>timestamp</code> 생성 방법</h4>
+<pre><code class="language-javascript"><span class="hljs-comment">// JavaScript</span>
+<span class="hljs-keyword">const</span> timestamp = <span class="hljs-title class_">Date</span>.<span class="hljs-title function_">now</span>();
+
+<span class="hljs-comment">// Python</span>
+<span class="hljs-keyword">import</span> time
+timestamp = <span class="hljs-title function_">int</span>(time.<span class="hljs-title function_">time</span>() * <span class="hljs-number">1000</span>)
+
+<span class="hljs-comment">// Java</span>
+long timestamp = <span class="hljs-title class_">System</span>.<span class="hljs-title function_">currentTimeMillis</span>();
+
+<span class="hljs-comment">// PHP</span>
+$timestamp = (int)(<span class="hljs-title function_">microtime</span>(<span class="hljs-literal">true</span>) * <span class="hljs-number">1000</span>);
+</code></pre>
+<hr>
+<h2 id="-응답-형식">📤 응답 형식</h2>
+<h3 id="성공-응답-200-ok">성공 응답 (200 OK)</h3>
+<pre><code class="language-json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;access_token&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;expires_in&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">10800</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;token_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Bearer&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>필드</th>
+<th>타입</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>access_token</code></td>
+<td>string</td>
+<td>실제 API 호출에 사용할 인증 토큰</td>
+</tr>
+<tr>
+<td><code>expires_in</code></td>
+<td>integer</td>
+<td>토큰 유효시간 (초 단위, 기본값: 10800 = 3시간)</td>
+</tr>
+<tr>
+<td><code>token_type</code></td>
+<td>string</td>
+<td>토큰 타입 (항상 &quot;Bearer&quot;)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="오류-응답">오류 응답</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP 상태</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>잘못된 요청 파라미터</td>
+</tr>
+<tr>
+<td>403</td>
+<td>인증 실패 (잘못된 전자서명 등)</td>
+</tr>
+<tr>
+<td>500</td>
+<td>서버 내부 오류</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-실제-사용-예시">🧪 실제 사용 예시</h2>
+<h3 id="step-1-전자서명-생성-및-토큰-발급">Step 1: 전자서명 생성 및 토큰 발급</h3>
+<h4 id="curl-예시">cURL 예시</h4>
+<pre><code class="language-bash"><span class="hljs-comment"># 전자서명을 미리 생성했다고 가정</span>
+curl -X POST <span class="hljs-string">&quot;https://api.commerce.naver.com/external/v1/oauth2/token&quot;</span> \
+  -H <span class="hljs-string">&quot;Content-Type: application/x-www-form-urlencoded&quot;</span> \
+  -H <span class="hljs-string">&quot;Accept: application/json&quot;</span> \
+  -d <span class="hljs-string">&quot;client_id=your_client_id&quot;</span> \
+  -d <span class="hljs-string">&quot;timestamp=1706671059230&quot;</span> \
+  -d <span class="hljs-string">&quot;grant_type=client_credentials&quot;</span> \
+  -d <span class="hljs-string">&quot;client_secret_sign=JDJhJDA0JFFLTG5vdTFEMmNTSDE5UGlhMzBiY3VNbE5FSGVCaHhUS3Uuajc0VmZ3TlNiOFhxVzNhXXXX&quot;</span> \
+  -d <span class="hljs-string">&quot;type=SELLER&quot;</span> \
+  -d <span class="hljs-string">&quot;account_id=ncp_2sRZTWJVbDtHPoz9OXXXX&quot;</span>
+</code></pre>
+<h4 id="javascript-nodejs-완전한-예시">JavaScript (Node.js) 완전한 예시</h4>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> axios = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;axios&#x27;</span>);
+<span class="hljs-keyword">const</span> bcrypt = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;bcrypt&#x27;</span>);
+
+<span class="hljs-comment">/**
+ * 네이버 커머스API 토큰 발급 완전 예제
+ */</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">NaverCommerceTokenManager</span> {
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">clientId, clientSecret</span>) {
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">clientId</span> = clientId;
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">clientSecret</span> = clientSecret;
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">baseUrl</span> = <span class="hljs-string">&#x27;https://api.commerce.naver.com/external&#x27;</span>;
+    }
+
+    <span class="hljs-comment">// 전자서명 생성</span>
+    <span class="hljs-title function_">generateSignature</span>(<span class="hljs-params">timestamp</span>) {
+        <span class="hljs-keyword">const</span> password = <span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.clientId}</span>_<span class="hljs-subst">${timestamp}</span>`</span>;
+        <span class="hljs-keyword">const</span> hashed = bcrypt.<span class="hljs-title function_">hashSync</span>(password, <span class="hljs-variable language_">this</span>.<span class="hljs-property">clientSecret</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-title class_">Buffer</span>.<span class="hljs-title function_">from</span>(hashed, <span class="hljs-string">&quot;utf-8&quot;</span>).<span class="hljs-title function_">toString</span>(<span class="hljs-string">&quot;base64&quot;</span>);
+    }
+
+    <span class="hljs-comment">// 토큰 발급</span>
+    <span class="hljs-keyword">async</span> <span class="hljs-title function_">getAccessToken</span>(<span class="hljs-params">type = <span class="hljs-string">&#x27;SELLER&#x27;</span>, accountId = <span class="hljs-literal">null</span></span>) {
+        <span class="hljs-keyword">const</span> timestamp = <span class="hljs-title class_">Date</span>.<span class="hljs-title function_">now</span>();
+        <span class="hljs-keyword">const</span> signature = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">generateSignature</span>(timestamp);
+
+        <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">new</span> <span class="hljs-title class_">URLSearchParams</span>({
+            <span class="hljs-attr">client_id</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">clientId</span>,
+            <span class="hljs-attr">timestamp</span>: timestamp.<span class="hljs-title function_">toString</span>(),
+            <span class="hljs-attr">grant_type</span>: <span class="hljs-string">&#x27;client_credentials&#x27;</span>,
+            <span class="hljs-attr">client_secret_sign</span>: signature,
+            <span class="hljs-attr">type</span>: type
+        });
+
+        <span class="hljs-comment">// SELLER 타입일 경우 account_id 추가</span>
+        <span class="hljs-keyword">if</span> (type === <span class="hljs-string">&#x27;SELLER&#x27;</span> &amp;&amp; accountId) {
+            data.<span class="hljs-title function_">append</span>(<span class="hljs-string">&#x27;account_id&#x27;</span>, accountId);
+        }
+
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> axios.<span class="hljs-title function_">post</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.baseUrl}</span>/v1/oauth2/token`</span>, data, {
+  <span class="hljs-attr">headers</span>: { 
+    <span class="hljs-string">&#x27;Content-Type&#x27;</span>: <span class="hljs-string">&#x27;application/x-www-form-urlencoded&#x27;</span>, 
+    <span class="hljs-string">&#x27;Accept&#x27;</span>: <span class="hljs-string">&#x27;application/json&#x27;</span>
+  }
+            });
+
+            <span class="hljs-keyword">return</span> response.<span class="hljs-property">data</span>;
+        } <span class="hljs-keyword">catch</span> (error) {
+            <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;토큰 발급 실패:&#x27;</span>, error.<span class="hljs-property">response</span>?.<span class="hljs-property">data</span> || error.<span class="hljs-property">message</span>);
+            <span class="hljs-keyword">throw</span> error;
+        }
+    }
+}
+
+<span class="hljs-comment">// 사용 예시</span>
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">main</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">const</span> tokenManager = <span class="hljs-keyword">new</span> <span class="hljs-title class_">NaverCommerceTokenManager</span>(
+        <span class="hljs-string">&#x27;your_client_id&#x27;</span>,                    <span class="hljs-comment">// 실제 클라이언트 ID로 교체</span>
+        <span class="hljs-string">&#x27;$2a$10$abcdefghijklmnopqrstuv&#x27;</span>      <span class="hljs-comment">// 실제 클라이언트 시크릿으로 교체</span>
+    );
+
+    <span class="hljs-keyword">try</span> {
+        <span class="hljs-keyword">const</span> tokenResult = <span class="hljs-keyword">await</span> tokenManager.<span class="hljs-title function_">getAccessToken</span>(<span class="hljs-string">&#x27;SELLER&#x27;</span>, <span class="hljs-string">&#x27;your_seller_id&#x27;</span>);
+        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;토큰 발급 성공:&#x27;</span>, tokenResult);
+        
+        <span class="hljs-comment">// 발급받은 토큰을 저장하여 다른 API 호출에 사용</span>
+        <span class="hljs-keyword">const</span> accessToken = tokenResult.<span class="hljs-property">access_token</span>;
+        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`토큰: <span class="hljs-subst">${accessToken}</span>`</span>);
+        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`유효시간: <span class="hljs-subst">${tokenResult.expires_in}</span>초 (<span class="hljs-subst">${tokenResult.expires_in/<span class="hljs-number">3600</span>}</span>시간)`</span>);
+        
+    } <span class="hljs-keyword">catch</span> (error) {
+        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;오류 발생:&#x27;</span>, error.<span class="hljs-property">message</span>);
+    }
+}
+
+<span class="hljs-comment">// 실행</span>
+<span class="hljs-title function_">main</span>();
+</code></pre>
+<h4 id="python-완전한-예시">Python 완전한 예시</h4>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">import</span> bcrypt
+<span class="hljs-keyword">import</span> pybase64
+<span class="hljs-keyword">import</span> time
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">NaverCommerceTokenManager</span>:
+    <span class="hljs-string">&quot;&quot;&quot;네이버 커머스API 토큰 관리 클래스&quot;&quot;&quot;</span>
+    
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, client_id, client_secret</span>):
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.base_url = <span class="hljs-string">&#x27;https://api.commerce.naver.com/external&#x27;</span>
+    
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_signature</span>(<span class="hljs-params">self, timestamp</span>):
+        <span class="hljs-string">&quot;&quot;&quot;전자서명 생성&quot;&quot;&quot;</span>
+        password = <span class="hljs-string">f&quot;<span class="hljs-subst">{self.client_id}</span>_<span class="hljs-subst">{timestamp}</span>&quot;</span>
+        hashed = bcrypt.hashpw(password.encode(<span class="hljs-string">&#x27;utf-8&#x27;</span>), self.client_secret.encode(<span class="hljs-string">&#x27;utf-8&#x27;</span>))
+        <span class="hljs-keyword">return</span> pybase64.standard_b64encode(hashed).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)
+    
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_access_token</span>(<span class="hljs-params">self, token_type=<span class="hljs-string">&#x27;SELLER&#x27;</span>, account_id=<span class="hljs-literal">None</span></span>):
+        <span class="hljs-string">&quot;&quot;&quot;토큰 발급&quot;&quot;&quot;</span>
+        timestamp = <span class="hljs-built_in">int</span>(time.time() * <span class="hljs-number">1000</span>)
+        signature = self.generate_signature(timestamp)
+        
+        data = {
+            <span class="hljs-string">&#x27;client_id&#x27;</span>: self.client_id,
+            <span class="hljs-string">&#x27;timestamp&#x27;</span>: <span class="hljs-built_in">str</span>(timestamp),
+            <span class="hljs-string">&#x27;grant_type&#x27;</span>: <span class="hljs-string">&#x27;client_credentials&#x27;</span>,
+            <span class="hljs-string">&#x27;client_secret_sign&#x27;</span>: signature,
+            <span class="hljs-string">&#x27;type&#x27;</span>: token_type
+        }
+        
+        <span class="hljs-comment"># SELLER 타입일 경우 account_id 추가</span>
+        <span class="hljs-keyword">if</span> token_type == <span class="hljs-string">&#x27;SELLER&#x27;</span> <span class="hljs-keyword">and</span> account_id:
+            data[<span class="hljs-string">&#x27;account_id&#x27;</span>] = account_id
+        
+        <span class="hljs-keyword">try</span>:
+            response = requests.post(
+                <span class="hljs-string">f&quot;<span class="hljs-subst">{self.base_url}</span>/v1/oauth2/token&quot;</span>,
+                data=data,
+                headers={
+                    <span class="hljs-string">&#x27;Content-Type&#x27;</span>: <span class="hljs-string">&#x27;application/x-www-form-urlencoded&#x27;</span>,
+                    <span class="hljs-string">&#x27;Accept&#x27;</span>: <span class="hljs-string">&#x27;application/json&#x27;</span>
+                }
+            )
+            response.raise_for_status()
+            <span class="hljs-keyword">return</span> response.json()
+            
+        <span class="hljs-keyword">except</span> requests.exceptions.RequestException <span class="hljs-keyword">as</span> e:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;토큰 발급 실패: <span class="hljs-subst">{e}</span>&quot;</span>)
+            <span class="hljs-keyword">if</span> <span class="hljs-built_in">hasattr</span>(e, <span class="hljs-string">&#x27;response&#x27;</span>) <span class="hljs-keyword">and</span> e.response <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
+                <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;응답 내용: <span class="hljs-subst">{e.response.text}</span>&quot;</span>)
+            <span class="hljs-keyword">raise</span>
+
+<span class="hljs-comment"># 사용 예시</span>
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:
+    token_manager = NaverCommerceTokenManager(
+        client_id=<span class="hljs-string">&#x27;your_client_id&#x27;</span>,                   <span class="hljs-comment"># 실제 클라이언트 ID로 교체</span>
+        client_secret=<span class="hljs-string">&#x27;$2a$10$abcdefghijklmnopqrstuv&#x27;</span>  <span class="hljs-comment"># 실제 클라이언트 시크릿으로 교체</span>
+    )
+    
+    <span class="hljs-keyword">try</span>:
+        token_result = token_manager.get_access_token(<span class="hljs-string">&#x27;SELLER&#x27;</span>, <span class="hljs-string">&#x27;your_seller_id&#x27;</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;토큰 발급 성공: <span class="hljs-subst">{token_result}</span>&quot;</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;액세스 토큰: <span class="hljs-subst">{token_result[<span class="hljs-string">&#x27;access_token&#x27;</span>]}</span>&quot;</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;유효시간: <span class="hljs-subst">{token_result[<span class="hljs-string">&#x27;expires_in&#x27;</span>]}</span>초 (<span class="hljs-subst">{token_result[<span class="hljs-string">&#x27;expires_in&#x27;</span>]/<span class="hljs-number">3600</span>}</span>시간)&quot;</span>)
+        
+    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;오류 발생: <span class="hljs-subst">{e}</span>&quot;</span>)
+</code></pre>
+<h3 id="step-2-발급받은-토큰으로-api-호출">Step 2: 발급받은 토큰으로 API 호출</h3>
+<pre><code class="language-javascript"><span class="hljs-comment">// 토큰을 사용하여 다른 API 호출</span>
+<span class="hljs-keyword">const</span> accessToken = <span class="hljs-string">&#x27;eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...&#x27;</span>; <span class="hljs-comment">// Step 1에서 받은 토큰</span>
+
+<span class="hljs-keyword">const</span> apiResponse = <span class="hljs-keyword">await</span> axios.<span class="hljs-title function_">get</span>(
+    <span class="hljs-string">&#x27;https://api.commerce.naver.com/external/v1/some-api-endpoint&#x27;</span>,
+    {
+        <span class="hljs-attr">headers</span>: {
+            <span class="hljs-string">&#x27;Authorization&#x27;</span>: <span class="hljs-string">`Bearer <span class="hljs-subst">${accessToken}</span>`</span>,
+            <span class="hljs-string">&#x27;Accept&#x27;</span>: <span class="hljs-string">&#x27;application/json&#x27;</span>
+        }
+    }
+);
+</code></pre>
+<hr>
+<h2 id="-오류-처리">🚨 오류 처리</h2>
+<h3 id="일반적인-오류와-해결방법">일반적인 오류와 해결방법</h3>
+<table>
+<thead>
+<tr>
+<th>오류 코드</th>
+<th>원인</th>
+<th>해결방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>필수 파라미터 누락</td>
+<td>모든 필수 파라미터가 포함되었는지 확인</td>
+</tr>
+<tr>
+<td>403</td>
+<td>전자서명 오류</td>
+<td>전자서명 생성 과정을 다시 확인</td>
+</tr>
+<tr>
+<td>403</td>
+<td>타임스탬프 만료</td>
+<td>현재 시간으로 새 타임스탬프 생성</td>
+</tr>
+<tr>
+<td>500</td>
+<td>서버 오류</td>
+<td>잠시 후 재시도</td>
+</tr>
+</tbody>
+</table>
+<h3 id="디버깅-팁">디버깅 팁</h3>
+<ol>
+<li><strong>전자서명 검증</strong>: <a href="https://apicenter.commerce.naver.com/docs/auth">인증 문서</a>의 예시와 결과 비교</li>
+<li><strong>타임스탬프 확인</strong>: 현재 시간으로부터 5분 이내인지 확인</li>
+<li><strong>Content-Type 확인</strong>: <code>application/x-www-form-urlencoded</code> 사용 필수</li>
+</ol>
+<hr>
+<blockquote>
+<p><strong>✅ 체크리스트</strong></p>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 클라이언트 ID와 시크릿 확인</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 전자서명 정확히 생성</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 타임스탬프가 5분 이내</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> Content-Type 올바르게 설정</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> type이 SELLER일 때 account_id 포함</li>
+</ul>
+</blockquote>
+<hr>
+<p><strong>참고 문서</strong></p>
+<ul>
+<li><a href="https://apicenter.commerce.naver.com/docs/auth">인증 방식 이해하기</a></li>
+<li><a href="https://apicenter.commerce.naver.com/docs/auth#%EC%A0%84%EC%9E%90%EC%84%9C%EB%AA%85">전자서명 생성 가이드</a></li>
+<li><a href="https://apicenter.commerce.naver.com/">커머스API 센터</a></li>
+</ul>
