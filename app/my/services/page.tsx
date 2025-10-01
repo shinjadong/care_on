@@ -108,7 +108,7 @@ function MyServicesContent() {
   const getServiceIcon = (service: string) => {
     switch (service) {
       case 'internet':
-        return <Wifi className="h-5 w-5 text-blue-500" />
+        return <Wifi className="h-5 w-5 text-primary" />
       case 'cctv':
         return <Camera className="h-5 w-5 text-green-500" />
       case 'pos':
@@ -150,7 +150,7 @@ function MyServicesContent() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-gray-600">서비스 정보를 불러오는 중...</p>
         </div>
       </div>
@@ -198,8 +198,8 @@ function MyServicesContent() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Building className="h-6 w-6 text-blue-600" />
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                  <Building className="h-6 w-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-bold text-lg">{serviceData.customer.business_name}</h3>
@@ -207,7 +207,7 @@ function MyServicesContent() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-2xl font-bold text-blue-600">{totalMonthlyFee.toLocaleString()}원</p>
+                <p className="text-2xl font-bold text-primary">{totalMonthlyFee.toLocaleString()}원</p>
                 <p className="text-sm text-gray-500">월 이용료</p>
               </div>
             </div>
@@ -234,7 +234,7 @@ function MyServicesContent() {
                   <p className="text-sm font-medium text-gray-600">월 이용료</p>
                   <p className="text-2xl font-bold">{totalMonthlyFee.toLocaleString()}원</p>
                 </div>
-                <DollarSign className="h-8 w-8 text-blue-600" />
+                <DollarSign className="h-8 w-8 text-primary" />
               </div>
             </CardContent>
           </Card>
@@ -524,7 +524,7 @@ export default function MyServicesPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-gray-600">서비스 정보를 불러오는 중...</p>
         </div>
       </div>

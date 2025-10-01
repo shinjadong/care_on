@@ -33,13 +33,13 @@ const navigation = [
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   return (
-    <div className="min-h-screen relative bg-gray-50">
+    <div className="min-h-screen relative" style={{ backgroundColor: 'var(--careon-bg)' }}>
       {/* 사이드바 */}
       <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200">
         <div className="flex h-full flex-col">
           {/* 로고/제목 */}
           <div className="flex h-16 items-center justify-center border-b border-gray-200">
-            <h1 className="text-xl font-bold text-gray-900">CareOn</h1>
+            <h1 className="text-xl font-bold text-black">CareOn</h1>
           </div>
 
           {/* 네비게이션 메뉴 */}
@@ -48,7 +48,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <Link
                 key={item.name}
                 href={item.href}
-                className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                className="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-700 hover:text-black hover:bg-teal-50 transition-colors"
               >
                 <item.icon className="w-5 h-5 mr-3" />
                 <span>{item.name}</span>

@@ -219,7 +219,7 @@ export default function FAQAdminPage() {
                   order_index: faqs.length > 0 ? Math.max(...faqs.map(f => f.order_index)) + 1 : 0 
                 })
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
             >
               <Plus className="w-4 h-4" />
               새 질문 추가
@@ -228,7 +228,7 @@ export default function FAQAdminPage() {
 
           {/* 새 질문 추가 폼 */}
           {isAdding && (
-            <div className="mb-6 p-4 border-2 border-teal-200 rounded-lg bg-teal-50">
+            <div className="mb-6 p-4 border-2 border-primary/20 rounded-lg bg-primary/5">
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">질문</label>
@@ -236,7 +236,7 @@ export default function FAQAdminPage() {
                     type="text"
                     value={editForm.question}
                     onChange={(e) => setEditForm({ ...editForm, question: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="질문을 입력하세요"
                   />
                 </div>
@@ -283,7 +283,7 @@ export default function FAQAdminPage() {
                     ref={setTextareaRef}
                     value={editForm.answer}
                     onChange={(e) => setEditForm({ ...editForm, answer: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-b-lg focus:outline-none focus:ring-2 focus:ring-teal-500 min-h-[120px] font-mono text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-b-lg focus:outline-none focus:ring-2 focus:ring-primary min-h-[120px] font-mono text-sm"
                     placeholder="답변을 입력하세요&#10;**굵게**, *기울임*, __밑줄__ 사용 가능"
                   />
                   
@@ -304,7 +304,7 @@ export default function FAQAdminPage() {
                       type="checkbox"
                       checked={editForm.visible}
                       onChange={(e) => setEditForm({ ...editForm, visible: e.target.checked })}
-                      className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
+                      className="w-4 h-4 text-primary rounded focus:ring-primary"
                     />
                     <span className="text-sm text-gray-700">공개</span>
                   </label>
@@ -320,7 +320,7 @@ export default function FAQAdminPage() {
                     </button>
                     <button
                       onClick={() => handleSave(editForm)}
-                      className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+                      className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
                     >
                       <Save className="w-4 h-4" />
                       저장
@@ -348,7 +348,7 @@ export default function FAQAdminPage() {
                         type="text"
                         value={editForm.question}
                         onChange={(e) => setEditForm({ ...editForm, question: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                       />
                     </div>
                     <div>
@@ -356,7 +356,7 @@ export default function FAQAdminPage() {
                       <textarea
                         value={editForm.answer}
                         onChange={(e) => setEditForm({ ...editForm, answer: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 min-h-[100px] font-mono text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary min-h-[100px] font-mono text-sm"
                       />
                     </div>
                     <div className="flex gap-2">
@@ -368,7 +368,7 @@ export default function FAQAdminPage() {
                       </button>
                       <button
                         onClick={() => handleSave(editForm)}
-                        className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700"
+                        className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
                       >
                         <Save className="w-4 h-4" />
                         저장

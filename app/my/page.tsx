@@ -127,7 +127,7 @@ export default function MyPage() {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="이름"
-                className="w-full text-center text-xl py-4 border-2 border-gray-300 rounded-2xl focus:border-blue-500 transition-colors"
+                className="w-full text-center text-xl py-4 border-2 border-gray-300 rounded-2xl focus:border-primary transition-colors"
                 autoFocus
                 required
               />
@@ -143,7 +143,7 @@ export default function MyPage() {
                 value={formData.phone}
                 onChange={(e) => handlePhoneChange(e.target.value)}
                 placeholder="전화번호"
-                className="w-full text-center text-xl py-4 border-2 border-gray-300 rounded-2xl focus:border-blue-500 transition-colors"
+                className="w-full text-center text-xl py-4 border-2 border-gray-300 rounded-2xl focus:border-primary transition-colors"
                 maxLength={13}
                 autoFocus
                 required
@@ -164,12 +164,12 @@ export default function MyPage() {
               </Button>
             )}
             
-            <Button 
-              type="submit" 
-              className="w-full py-4 text-xl rounded-2xl bg-blue-500 hover:bg-blue-600 transition-colors" 
+            <Button
+              type="submit"
+              className="w-full py-4 text-xl rounded-2xl bg-primary hover:bg-primary/90 transition-colors"
               disabled={
-                loading || 
-                (step === 1 && !formData.name.trim()) || 
+                loading ||
+                (step === 1 && !formData.name.trim()) ||
                 (step === 2 && !formData.phone.trim())
               }
             >

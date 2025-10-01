@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { useAuth } from "@/hooks/use-auth"
 import { GuestOnlyRoute } from "@/components/auth/protected-route"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { CareonButton } from "@/components/ui/careon-button"
+import { CareonInput } from "@/components/ui/careon-input"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -102,7 +102,7 @@ export default function SignupPage() {
 
   return (
     <GuestOnlyRoute>
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--careon-bg)' }}>
       <div className="max-w-md w-full">
         {/* 헤더 */}
         <div className="text-center mb-8">
@@ -115,11 +115,11 @@ export default function SignupPage() {
               className="mx-auto"
             />
           </Link>
-          <h2 className="text-2xl font-light text-gray-900 mb-2">회원가입</h2>
+          <h2 className="text-2xl font-semibold text-black mb-2">회원가입</h2>
           <p className="text-gray-600 text-sm">케어온과 함께 시작해보세요</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           {/* 구글 회원가입 버튼 */}
           <button
             onClick={handleGoogleSignup}
@@ -170,62 +170,45 @@ export default function SignupPage() {
           </div>
 
           {/* 이메일 회원가입 폼 */}
-          <form onSubmit={handleEmailSignup} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">이름</label>
-              <Input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="홍길동"
-                className="border-gray-200 focus:border-[#148777] focus:ring-[#148777] focus:ring-1"
-                required
-              />
-            </div>
+          <form onSubmit={handleEmailSignup} className="space-y-6">
+            <CareonInput
+              label="이름"
+              type="text"
+              value={name}
+              onChange={(value) => setName(value)}
+              placeholder="홍길동"
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">이메일</label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="border-gray-200 focus:border-[#148777] focus:ring-[#148777] focus:ring-1"
-                required
-              />
-            </div>
+            <CareonInput
+              label="이메일"
+              type="text"
+              value={email}
+              onChange={(value) => setEmail(value)}
+              placeholder="your@email.com"
+              inputMode="email"
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">비밀번호</label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="최소 6자 이상"
-                className="border-gray-200 focus:border-[#148777] focus:ring-[#148777] focus:ring-1"
-                required
-              />
-            </div>
+            <CareonInput
+              label="비밀번호"
+              type="password"
+              value={password}
+              onChange={(value) => setPassword(value)}
+              placeholder="최소 6자 이상"
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">비밀번호 확인</label>
-              <Input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="비밀번호를 다시 입력하세요"
-                className="border-gray-200 focus:border-[#148777] focus:ring-[#148777] focus:ring-1"
-                required
-              />
-            </div>
+            <CareonInput
+              label="비밀번호 확인"
+              type="password"
+              value={confirmPassword}
+              onChange={(value) => setConfirmPassword(value)}
+              placeholder="비밀번호를 다시 입력하세요"
+            />
 
-            <Button
-              type="submit"
+            <CareonButton
               disabled={isEmailLoading || isLoading}
-              className="w-full bg-[#148777] hover:bg-[#0f6b5c] text-white py-3 rounded-lg font-medium transition-colors duration-200"
             >
               {isEmailLoading ? "회원가입 중..." : "회원가입"}
-            </Button>
+            </CareonButton>
           </form>
 
           {/* 메시지 */}
@@ -243,7 +226,7 @@ export default function SignupPage() {
           <div className="mt-6 text-center">
             <p className="text-gray-600 text-sm">
               이미 계정이 있으신가요?{" "}
-              <Link href="/login" className="text-[#148777] hover:text-[#0f6b5c] font-medium">
+              <Link href="/login" className="font-medium transition-colors duration-200" style={{ color: 'var(--careon-primary)' }}>
                 로그인
               </Link>
             </p>

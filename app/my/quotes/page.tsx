@@ -182,7 +182,7 @@ function MyQuotesContent() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'quoted':
-        return <Badge className="bg-blue-100 text-blue-800"><Clock className="h-3 w-3 mr-1" />견적 대기</Badge>
+        return <Badge className="bg-primary/10 text-primary"><Clock className="h-3 w-3 mr-1" />견적 대기</Badge>
       case 'approved':
         return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />승인 완료</Badge>
       case 'active':
@@ -212,7 +212,7 @@ function MyQuotesContent() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-gray-600">견적서를 불러오는 중...</p>
         </div>
       </div>
@@ -292,7 +292,7 @@ function MyQuotesContent() {
 
         {/* 할인 정보 (미니멀하게 강조) */}
         {quote.contract_items && quote.contract_items.some(item => (item.original_price || 0) > item.fee) && (
-          <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-4">
+          <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4">
             <div className="text-center">
               <div className="text-sm text-gray-600 mb-1">매니저 특별 할인 적용</div>
               <div className="flex justify-center items-center space-x-4">
@@ -350,9 +350,9 @@ function MyQuotesContent() {
         {/* 액션 버튼 */}
         <div className="space-y-3">
           {quote.status === 'quoted' && (
-            <Button 
+            <Button
               onClick={() => setIsSignModalOpen(true)}
-              className="w-full py-4 text-lg bg-blue-600 hover:bg-blue-700 rounded-lg"
+              className="w-full py-4 text-lg bg-primary hover:bg-primary/90 rounded-lg"
             >
               계약 서명하기
             </Button>
@@ -378,7 +378,7 @@ function MyQuotesContent() {
             </DialogHeader>
             <div className="space-y-6">
               {/* 계약 요약 */}
-              <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="bg-primary/5 p-4 rounded-lg">
                 <h4 className="font-medium mb-2">계약 요약</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
@@ -462,7 +462,7 @@ export default function MyQuotesPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-gray-600">견적서를 불러오는 중...</p>
         </div>
       </div>

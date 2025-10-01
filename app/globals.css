@@ -3,50 +3,93 @@
 @tailwind utilities;
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  /* ===================================
+     Careon Design System Variables
+     ================================== */
+
+  /* Careon Brand Colors */
+  --careon-primary: #009da2;          /* Teal - Main brand color */
+  --careon-primary-hover: #008a8f;    /* Darker teal for hover states */
+  --careon-primary-light: #e6f7f8;    /* Light teal for backgrounds */
+  --careon-bg: #fbfbfb;               /* Off-white background */
+  --careon-text-primary: #000000;     /* Black text */
+  --careon-text-secondary: #666666;   /* Gray text */
+  --careon-text-muted: #9ca3af;       /* Light gray text */
+  --careon-border: #e5e7eb;           /* Light gray border */
+  --careon-border-focus: #009da2;     /* Teal border on focus */
+
+  /* ===================================
+     ShadcnUI Variables (Careon Override)
+     ================================== */
+
+  /* Background - Careon off-white */
+  --background: oklch(0.99 0 0);      /* #fbfbfb */
+  --foreground: oklch(0 0 0);         /* #000000 */
+
+  /* Cards */
+  --card: oklch(1 0 0);               /* White cards */
+  --card-foreground: oklch(0 0 0);
+
+  /* Popovers */
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0 0 0);
+
+  /* Primary - Careon Teal */
+  --primary: oklch(0.62 0.08 190);    /* #009da2 */
+  --primary-foreground: oklch(1 0 0); /* White */
+
+  /* Secondary */
+  --secondary: oklch(0.96 0 0);       /* Light gray */
+  --secondary-foreground: oklch(0.2 0 0);
+
+  /* Muted */
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.55 0 0);
+
+  /* Accent - Careon Teal Light */
+  --accent: oklch(0.95 0.02 190);     /* Light teal */
+  --accent-foreground: oklch(0.2 0 0);
+
+  /* Destructive */
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --destructive-foreground: oklch(0.985 0 0);
+
+  /* Borders & Inputs */
+  --border: oklch(0.92 0 0);          /* Light gray */
+  --input: oklch(0.92 0 0);
+  --ring: oklch(0.62 0.08 190);       /* Careon teal for focus ring */
+
+  /* Border Radius - Careon Style (rounded-xl) */
+  --radius: 0.75rem;                  /* 12px - Careon default */
+
+  /* Chart Colors */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Sidebar */
+  --sidebar: oklch(0.99 0 0);         /* Match Careon bg */
+  --sidebar-foreground: oklch(0 0 0);
+  --sidebar-primary: oklch(0.62 0.08 190); /* Careon teal */
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.95 0.02 190);
+  --sidebar-accent-foreground: oklch(0.2 0 0);
+  --sidebar-border: oklch(0.92 0 0);
+  --sidebar-ring: oklch(0.62 0.08 190);
 }
 
 .dark {
+  /* Dark mode: Keep original dark theme for now */
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.145 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: oklch(0.62 0.08 190);    /* Careon teal in dark mode */
+  --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -57,7 +100,7 @@
   --destructive-foreground: oklch(0.637 0.237 25.331);
   --border: oklch(0.269 0 0);
   --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
+  --ring: oklch(0.62 0.08 190);       /* Careon teal ring in dark */
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -65,12 +108,12 @@
   --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: oklch(0.62 0.08 190); /* Careon teal */
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --sidebar-ring: oklch(0.62 0.08 190);
 }
 
 @theme inline {
@@ -120,5 +163,68 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* ===================================
+   Careon UI Utility Classes
+   ================================== */
+
+@layer components {
+  /* Careon Button Styles */
+  .careon-btn {
+    @apply w-full py-4 px-6 rounded-xl font-semibold text-base text-white transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--careon-primary);
+  }
+
+  .careon-btn:hover:not(:disabled) {
+    background-color: var(--careon-primary-hover);
+  }
+
+  /* Careon Input Styles */
+  .careon-input {
+    @apply w-full py-4 px-0 border-0 border-b border-gray-200 bg-transparent text-base text-black placeholder-gray-400 transition-colors duration-200;
+  }
+
+  .careon-input:focus {
+    @apply outline-none;
+    border-color: var(--careon-border-focus);
+  }
+
+  .careon-input:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  /* Careon Container */
+  .careon-container {
+    @apply min-h-screen flex flex-col max-w-md mx-auto relative;
+    background-color: var(--careon-bg);
+  }
+
+  /* Careon Card */
+  .careon-card {
+    @apply rounded-xl bg-white border-2 border-gray-200 transition-colors;
+  }
+
+  .careon-card:hover {
+    @apply border-gray-300;
+  }
+
+  .careon-card.selected {
+    @apply bg-teal-50;
+    border-color: var(--careon-primary);
+  }
+
+  /* Careon Text Styles */
+  .careon-text-primary {
+    color: var(--careon-text-primary);
+  }
+
+  .careon-text-secondary {
+    color: var(--careon-text-secondary);
+  }
+
+  .careon-text-muted {
+    color: var(--careon-text-muted);
   }
 }

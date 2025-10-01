@@ -126,13 +126,13 @@ export default function ReviewPage() {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="bg-white rounded-lg shadow-lg p-8 text-center">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-              케어온 멤버십, <span className="text-teal-600">리얼 후기</span>
+              케어온 멤버십, <span className="text-primary">리얼 후기</span>
             </h1>
 
             {/* 카운트 버튼 */}
             <button
               onClick={handleScrollDown}
-              className="inline-flex items-center bg-teal-600 text-white px-6 py-3 rounded-full font-bold hover:scale-105 active:scale-95 transition-all duration-200 mb-6"
+              className="inline-flex items-center bg-primary text-white px-6 py-3 rounded-full font-bold hover:scale-105 active:scale-95 transition-all duration-200 mb-6"
             >
               <span className="text-xl md:text-2xl font-extrabold">
                 {Math.floor(totalCount * 3).toLocaleString()}명

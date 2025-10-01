@@ -61,20 +61,24 @@ export default function StepFreeService({ formData, updateFormData, onNext, onBa
     return () => clearInterval(interval)
   }, [])
 
+  // 조건부 렌더링: 인터넷이나 CCTV가 없는 경우에만 표시
+  const hasInternet = formData.hasInternet === "yes" || formData.hasInternet === true
+  const hasCCTV = formData.hasCCTV === "yes" || formData.hasCCTV === true
+
+  // 둘 다 있으면 이 단계를 건너뜀 - useEffect로 자동 이동
+  useEffect(() => {
+    if (hasInternet && hasCCTV) {
+      onNext()
+    }
+  }, [hasInternet, hasCCTV])
+
   const handleNext = () => {
     updateFormData("wantFreeService", wantFreeService)
     onNext()
   }
 
-  // 조건부 렌더링: 인터넷이나 CCTV가 없는 경우에만 표시
-  const hasInternet = formData.hasInternet === "yes" || formData.hasInternet === true
-  const hasCCTV = formData.hasCCTV === "yes" || formData.hasCCTV === true
-
-  // 둘 다 있으면 이 단계를 건너뜀
+  // 둘 다 있으면 렌더링하지 않음
   if (hasInternet && hasCCTV) {
-    useEffect(() => {
-      onNext()
-    }, [])
     return null
   }
 
