@@ -10,12 +10,12 @@ import { StepIndicator } from "@/components/ui/step-indicator"
 // failure-experience 이후 자연스럽게 문제 의식을 심화시키는 전환점
 
 export function WhyDoThis() {
-  const { sectionRef, step } = useStepScroll({ 
+  const { sectionRef, step } = useStepScroll({
     // 교육자 모드: 0(인트로) → 1(메인 카피) → 2(사장님의 1년을) → 3(케어온이 보장해드리겠습니다.)
-    maxSteps: 3, 
-    animationMs: 600, 
-    requireExtraScrollOnLastStep: true,
-    extraScrollCountOnLastStep: 1
+    maxSteps: 3,
+    animationMs: 600,
+    requireExtraScrollOnLastStep: false,  // 모바일에서 스크롤 문제 해결을 위해 비활성화
+    extraScrollCountOnLastStep: 0
   })
   const isMobile = useIsMobile()
 

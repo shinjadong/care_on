@@ -95,6 +95,11 @@ export function useStepScroll(options: UseStepScrollOptions): UseStepScrollRetur
         step === maxSteps &&
         options.requireExtraScrollOnLastStep
       ) {
+        const required = Math.max(1, options.extraScrollCountOnLastStep ?? 1)
+        // 추가 스크롤 요구를 충족했으면 기본 스크롤 허용
+        if (lastStepScrollCount.current >= required) {
+          return // preventDefault하지 않고 다음 섹션으로 스크롤 허용
+        }
         e.preventDefault()
         return
       }
@@ -123,7 +128,8 @@ export function useStepScroll(options: UseStepScrollOptions): UseStepScrollRetur
           lastStepScrollCount.current += 1
           return
         }
-        return
+        // 추가 스크롤 요구를 충족했으면 다음 섹션으로 스크롤 허용
+        // return 하지 않고 아래의 일반 스크롤 처리로 진행
       }
 
       if (goingDown && step < maxSteps) changeStep("down")
