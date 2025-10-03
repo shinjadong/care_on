@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Video, Wifi, Monitor, ShieldCheck, Check } from "lucide-react"
 import Image from "next/image"
+import { StepIndicator } from "@/components/ui/step-indicator"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 // 🎁 케어온의 오퍼 섹션 - 1년 무료 제공의 철학 전달
 // 기존 story-section에서 소개한 4가지 서비스를 1년간 무상 지원하는 메시지 전달
@@ -62,6 +64,7 @@ export function WhatOfferSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const touchStartY = useRef(0);
   const lastStepScrollCount = useRef(0);
+  const isMobile = useIsMobile();
 
   // 🔄 스크롤/터치 이벤트 제어 (기존 컴포넌트와 동일한 패턴)
   useEffect(() => {
@@ -163,10 +166,12 @@ export function WhatOfferSection() {
   }, [step, isAnimating]);
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       className="relative min-h-screen w-full bg-gradient-to-b from-[#f7f3ed] to-gray-100 flex items-center justify-center p-4"
     >
+      {/* 네비게이션 인디케이터 - 미니멀하게 표시 */}
+      <StepIndicator currentStep={step} totalSteps={MAX_STEPS} position={isMobile ? "bottom" : "right"} />
       <AnimatePresence mode="wait">
         {/* Step 0: 케어온 선물 메시지 */}
         {step === 0 && (

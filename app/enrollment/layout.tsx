@@ -72,6 +72,7 @@ export default function EnrollmentLayout({
 
         .enrollment-content {
           position: relative;
+          padding-top: 110px; /* 헤더 높이(105px) + 여백(5px) */
         }
 
         /* 버튼 영역 기본 스타일 */

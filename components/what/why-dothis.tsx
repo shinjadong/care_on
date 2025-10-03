@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useStepScroll } from "@/hooks/use-step-scroll"
+import { StepIndicator } from "@/components/ui/step-indicator"
 
 // 🤔 Why Do This 섹션 - 사용자의 내재된 의구심을 끌어내는 구간
 // failure-experience 이후 자연스럽게 문제 의식을 심화시키는 전환점
@@ -20,6 +21,8 @@ export function WhyDoThis() {
 
   return (
     <section ref={sectionRef} className="relative h-screen w-screen snap-start bg-gradient-to-b from-[#f7f3ed] to-gray-100 flex flex-col items-center justify-center p-4">
+      {/* 네비게이션 인디케이터 - 미니멀하게 우측에 표시 */}
+      <StepIndicator currentStep={step} totalSteps={3} position={isMobile ? "bottom" : "right"} />
       <div className="container mx-auto px-4 max-w-4xl">
         <AnimatePresence mode="wait">
           {/* Step 0: 혹시, 이런 생각 해본 적 없어요? */}

@@ -9,29 +9,20 @@ export function useAutoSave(formData: FormData, isEnabled: boolean = true) {
   const [isSaving, setIsSaving] = useState(false)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Load saved data on mount
+  // Load saved metadata on mount so the UI can show the previous save time
   useEffect(() => {
     if (!isEnabled) return
 
-    const loadDraft = () => {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY)
-        if (saved) {
-          const parsedData = JSON.parse(saved)
-          console.log('Draft loaded from localStorage')
-          return parsedData.data
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved) {
+        const parsedData = JSON.parse(saved)
+        if (parsedData?.timestamp) {
+          setLastSaved(new Date(parsedData.timestamp))
         }
-      } catch (error) {
-        console.error('Failed to load draft:', error)
       }
-      return null
-    }
-
-    const savedData = loadDraft()
-    if (savedData) {
-      // This would need to be handled by the parent component
-      // to update the form data
-      return savedData
+    } catch (error) {
+      console.error('Failed to inspect saved draft metadata:', error)
     }
   }, [isEnabled])
 

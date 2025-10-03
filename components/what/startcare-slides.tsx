@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
+import { StepIndicator } from "@/components/ui/step-indicator"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 /**
  * StartCareSlidesSection
@@ -19,6 +21,7 @@ export function StartCareSlidesSection() {
   const [isScrollLocked, setIsScrollLocked] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
   const touchStartY = useRef(0)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     if (step === 3) {
@@ -86,6 +89,8 @@ export function StartCareSlidesSection() {
       ref={sectionRef as any}
       className="relative min-h-screen w-full bg-gradient-to-b from-[#f7f3ed] to-gray-100 flex items-center justify-center p-4"
     >
+      {/* 네비게이션 인디케이터 - 미니멀하게 표시 */}
+      <StepIndicator currentStep={step} totalSteps={MAX_STEPS} position={isMobile ? "bottom" : "right"} />
       <motion.h2
         className="absolute z-20 text-[#222222] font-black text-3xl md:text-4xl text-center"
         initial={false}

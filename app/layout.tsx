@@ -1,9 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { FloatingBanner } from "@/components/floating-banner"
+import { ConditionalLayout } from "@/components/conditional-layout"
 import { ClientAuthProvider } from "@/components/providers/auth-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "sonner"
@@ -38,7 +36,7 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" />
       </head>
-      <body className="font-sans min-h-screen relative overflow-x-hidden overflow-y-auto" suppressHydrationWarning>
+      <body className="font-sans min-h-screen relative" suppressHydrationWarning>
         {/* CareOn x Instagram inspired gradient background */}
         <div
           className="fixed inset-0 bg-gradient-to-br from-teal-500 via-cyan-400 to-teal-600 -z-10"
@@ -60,14 +58,9 @@ export default function RootLayout({
           forcedTheme="light"
         >
           <ClientAuthProvider>
-            <div className="relative z-10 min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-              <FloatingBanner />
-            </div>
+            <ConditionalLayout>
+              {children}
+            </ConditionalLayout>
             <Toaster position="top-center" richColors />
           </ClientAuthProvider>
         </ThemeProvider>

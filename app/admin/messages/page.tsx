@@ -31,8 +31,13 @@ import {
   AlertCircle,
   Phone,
   MessageCircle,
-  Bell
+  Bell,
+  History,
+  FileText,
+  UserPlus
 } from 'lucide-react'
+import MessageHistory from '@/components/admin/messages/MessageHistory'
+import CustomerSelector from '@/components/admin/messages/CustomerSelector'
 
 interface AlimtalkTemplate {
   key: string
@@ -41,10 +46,20 @@ interface AlimtalkTemplate {
   content: string
 }
 
+interface SelectedCustomer {
+  id: string
+  name: string
+  phone: string
+  businessName?: string
+  customerId?: number
+  enrollmentId?: number
+}
+
 export default function MessagesPage() {
   const [loading, setLoading] = useState(false)
   const [sendingType, setSendingType] = useState('')
   const [templates, setTemplates] = useState<AlimtalkTemplate[]>([])
+  const [selectedCustomers, setSelectedCustomers] = useState<SelectedCustomer[]>([])
 
   // SMS 개별 발송 상태
   const [smsForm, setSmsForm] = useState({
@@ -58,6 +73,7 @@ export default function MessagesPage() {
     phoneNumbers: '',
     message: '',
     messageType: 'auto',
+    useCustomerSelector: true,
   })
 
   // 알림톡 개별 발송 상태
@@ -155,14 +171,32 @@ export default function MessagesPage() {
 
   // SMS 대량 발송 처리
   const handleSmsBulkSend = async () => {
-    const phoneNumbers = smsBulkForm.phoneNumbers
-      .split(/[\n,]/)
-      .map(p => p.trim())
-      .filter(p => p)
+    let recipients: any[] = []
 
-    if (phoneNumbers.length === 0) {
-      toast.error('수신번호를 입력해주세요.')
-      return
+    if (smsBulkForm.useCustomerSelector) {
+      // 고객 선택기 사용
+      if (selectedCustomers.length === 0) {
+        toast.error('수신자를 선택해주세요.')
+        return
+      }
+      recipients = selectedCustomers.map(c => ({
+        phone: c.phone,
+        name: c.name,
+        customerId: c.customerId,
+        enrollmentId: c.enrollmentId,
+      }))
+    } else {
+      // 직접 입력
+      const phoneNumbers = smsBulkForm.phoneNumbers
+        .split(/[\n,]/)
+        .map(p => p.trim())
+        .filter(p => p)
+
+      if (phoneNumbers.length === 0) {
+        toast.error('수신번호를 입력해주세요.')
+        return
+      }
+      recipients = phoneNumbers.map(phone => ({ phone }))
     }
 
     if (!smsBulkForm.message) {
@@ -174,34 +208,23 @@ export default function MessagesPage() {
     setSendingType('sms-bulk')
 
     try {
-      // 각 번호에 대해 개별 발송 (실제로는 대량 API 사용하는 것이 좋음)
-      let successCount = 0
-      let failCount = 0
+      // 통합 API를 통한 대량 발송
+      const res = await fetch('/api/admin/messages/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messageType: smsBulkForm.messageType === 'auto' ? 'SMS' : smsBulkForm.messageType,
+          recipients,
+          content: smsBulkForm.message,
+          saveHistory: true,
+        }),
+      })
 
-      for (const phoneNumber of phoneNumbers) {
-        try {
-          const res = await fetch('/api/sms/send', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              to: phoneNumber,
-              text: smsBulkForm.message,
-              type: smsBulkForm.messageType === 'auto' ? undefined : smsBulkForm.messageType,
-            }),
-          })
-
-          const data = await res.json()
-          if (data.success) {
-            successCount++
-          } else {
-            failCount++
-          }
-        } catch (error) {
-          failCount++
-        }
-      }
+      const data = await res.json()
+      const successCount = data.results?.successCount || 0
+      const failCount = data.results?.failedCount || 0
 
       if (successCount > 0) {
         toast.success(`${successCount}명에게 SMS를 발송했습니다.${failCount > 0 ? ` (실패: ${failCount}명)` : ''}`)
@@ -350,17 +373,35 @@ export default function MessagesPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="sms" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="sms">
-            <MessageCircle className="mr-2 h-4 w-4" />
-            SMS 문자
+      <Tabs defaultValue="send" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="send">
+            <Send className="mr-2 h-4 w-4" />
+            메시지 발송
           </TabsTrigger>
-          <TabsTrigger value="alimtalk">
-            <Bell className="mr-2 h-4 w-4" />
-            카카오 알림톡
+          <TabsTrigger value="history">
+            <History className="mr-2 h-4 w-4" />
+            발송 이력
+          </TabsTrigger>
+          <TabsTrigger value="templates">
+            <FileText className="mr-2 h-4 w-4" />
+            템플릿 관리
           </TabsTrigger>
         </TabsList>
+
+        {/* 메시지 발송 탭 */}
+        <TabsContent value="send" className="space-y-4">
+          <Tabs defaultValue="sms" className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="sms">
+                <MessageCircle className="mr-2 h-4 w-4" />
+                SMS 문자
+              </TabsTrigger>
+              <TabsTrigger value="alimtalk">
+                <Bell className="mr-2 h-4 w-4" />
+                카카오 알림톡
+              </TabsTrigger>
+            </TabsList>
 
         {/* SMS 탭 */}
         <TabsContent value="sms" className="space-y-4">
@@ -473,22 +514,51 @@ export default function MessagesPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* 수신자 선택 방법 */}
                   <div className="space-y-2">
-                    <Label htmlFor="sms-bulk-phones">수신번호 목록 *</Label>
-                    <Textarea
-                      id="sms-bulk-phones"
-                      placeholder="010-0000-0000&#10;010-1111-1111&#10;010-2222-2222"
-                      value={smsBulkForm.phoneNumbers}
-                      onChange={(e) => setSmsBulkForm({
+                    <Label>수신자 선택 방법</Label>
+                    <RadioGroup
+                      value={smsBulkForm.useCustomerSelector ? 'selector' : 'manual'}
+                      onValueChange={(value) => setSmsBulkForm({
                         ...smsBulkForm,
-                        phoneNumbers: e.target.value
+                        useCustomerSelector: value === 'selector'
                       })}
-                      rows={6}
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      한 줄에 하나씩 또는 콤마(,)로 구분하여 입력하세요.
-                    </p>
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="selector" id="selector" />
+                        <Label htmlFor="selector">고객 데이터베이스에서 선택</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="manual" id="manual" />
+                        <Label htmlFor="manual">직접 입력</Label>
+                      </div>
+                    </RadioGroup>
                   </div>
+
+                  {/* 고객 선택기 또는 직접 입력 */}
+                  {smsBulkForm.useCustomerSelector ? (
+                    <CustomerSelector
+                      onSelectionChange={setSelectedCustomers}
+                      selectedCustomers={selectedCustomers}
+                    />
+                  ) : (
+                    <div className="space-y-2">
+                      <Label htmlFor="sms-bulk-phones">수신번호 목록 *</Label>
+                      <Textarea
+                        id="sms-bulk-phones"
+                        placeholder="010-0000-0000&#10;010-1111-1111&#10;010-2222-2222"
+                        value={smsBulkForm.phoneNumbers}
+                        onChange={(e) => setSmsBulkForm({
+                          ...smsBulkForm,
+                          phoneNumbers: e.target.value
+                        })}
+                        rows={6}
+                      />
+                      <p className="text-sm text-muted-foreground">
+                        한 줄에 하나씩 또는 콤마(,)로 구분하여 입력하세요.
+                      </p>
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <div className="flex justify-between">
@@ -769,6 +839,31 @@ export default function MessagesPage() {
               </Card>
             </TabsContent>
           </Tabs>
+        </TabsContent>
+        </Tabs>
+        </TabsContent>
+
+        {/* 발송 이력 탭 */}
+        <TabsContent value="history">
+          <MessageHistory />
+        </TabsContent>
+
+        {/* 템플릿 관리 탭 */}
+        <TabsContent value="templates">
+          <Card>
+            <CardHeader>
+              <CardTitle>템플릿 관리</CardTitle>
+              <CardDescription>
+                자주 사용하는 메시지를 템플릿으로 관리합니다.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8 text-muted-foreground">
+                <FileText className="mx-auto h-12 w-12 mb-4" />
+                <p>템플릿 관리 기능이 준비 중입니다.</p>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

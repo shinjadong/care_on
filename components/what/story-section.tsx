@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Monitor, Wifi, ShieldCheck, Video } from "lucide-react"
 import Image from "next/image"
 import { useIsMobile } from "@/hooks/use-mobile" // 정확한 함수 이름으로 수정
+import { StepIndicator } from "@/components/ui/step-indicator"
 
 const features = [
     // 1) CCTV
@@ -156,6 +157,8 @@ export function WhatStorySection() {
 
     return (
         <section ref={sectionRef} className="relative min-h-screen w-full bg-gradient-to-t from-[#f7f3ed] to-gray-100 flex flex-col items-center justify-center px-4 py-8">
+            {/* 네비게이션 인디케이터 - 미니멀하게 표시 */}
+            <StepIndicator currentStep={step} totalSteps={MAX_STEPS} position={isMobile ? "bottom" : "right"} />
             <div className="absolute top-8 sm:top-12 md:top-16 left-1/2 -translate-x-1/2 text-lg sm:text-xl md:text-2xl lg:text-3xl text-center z-30 px-4">
                 <span className="font-bold text-gray-900">사장님</span>
                 <span className="font-semibold text-gray-700">을 위한,</span>
