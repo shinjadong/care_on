@@ -8,6 +8,13 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File
     const productId = formData.get('productId') as string
 
+    console.log('[Upload Image] Received request:', {
+      hasFile: !!file,
+      productId,
+      fileSize: file?.size,
+      fileType: file?.type
+    })
+
     if (!file) {
       return NextResponse.json(
         { error: '파일이 필요합니다.' },
@@ -38,26 +45,39 @@ export async function POST(request: NextRequest) {
     const fileName = `${timestamp}_${sanitizedFileName}`
     const filePath = productId ? `${productId}/${fileName}` : fileName
 
+    console.log('[Upload Image] File path:', filePath)
+
+    // File을 ArrayBuffer로 변환 (Vercel Edge Runtime 호환)
+    const arrayBuffer = await file.arrayBuffer()
+    const fileBuffer = new Uint8Array(arrayBuffer)
+
     // Supabase Storage에 업로드
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('products')
-      .upload(filePath, file, {
+      .upload(filePath, fileBuffer, {
         contentType: file.type,
         upsert: false
       })
 
     if (uploadError) {
-      console.error('Storage upload error:', uploadError)
+      console.error('[Upload Image] Storage upload error:', uploadError)
       return NextResponse.json(
-        { error: '이미지 업로드에 실패했습니다.' },
+        {
+          error: '이미지 업로드에 실패했습니다.',
+          details: uploadError.message
+        },
         { status: 500 }
       )
     }
+
+    console.log('[Upload Image] Upload successful:', uploadData)
 
     // Public URL 생성
     const { data: { publicUrl } } = supabase.storage
       .from('products')
       .getPublicUrl(filePath)
+
+    console.log('[Upload Image] Public URL:', publicUrl)
 
     // productId가 있으면 products 테이블 업데이트
     if (productId) {
@@ -77,10 +97,17 @@ export async function POST(request: NextRequest) {
       imageUrl: publicUrl,
       path: filePath
     })
-  } catch (error) {
-    console.error('[Product Image Upload API] Error:', error)
+  } catch (error: any) {
+    console.error('[Product Image Upload API] Error:', {
+      message: error?.message,
+      stack: error?.stack,
+      error
+    })
     return NextResponse.json(
-      { error: '이미지 업로드 중 오류가 발생했습니다.' },
+      {
+        error: '이미지 업로드 중 오류가 발생했습니다.',
+        details: error?.message || 'Unknown error'
+      },
       { status: 500 }
     )
   }
