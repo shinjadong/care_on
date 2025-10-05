@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr"
 import { cookies } from "next/headers"
+import type { Database } from "@/lib/database.types"
 
 export async function createClient() {
   try {
@@ -23,7 +24,7 @@ export async function createClient() {
       hasKey: !!supabaseKey,
     })
 
-    return createServerClient(supabaseUrl, supabaseKey, {
+    return createServerClient<Database>(supabaseUrl, supabaseKey, {
       cookies: {
         get(name: string) {
           try {
