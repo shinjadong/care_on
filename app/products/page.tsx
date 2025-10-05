@@ -6,10 +6,11 @@ import ProductsClientWrapper from './components/ProductsClientWrapper'
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: { category?: string }
+  searchParams: Promise<{ category?: string }>
 }) {
   // Get category from search params
-  const selectedCategory = searchParams.category || 'all'
+  const params = await searchParams
+  const selectedCategory = params.category || 'all'
 
   // Fetch products from database
   const { data: products, error: productsError } = await getProducts(

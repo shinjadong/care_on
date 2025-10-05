@@ -1,4 +1,4 @@
-import { createServerClient } from './server'
+import { createClient } from './server'
 
 export interface ProductFilters {
   category?: string
@@ -29,7 +29,7 @@ export interface Product {
 }
 
 export async function getProducts(filters?: ProductFilters) {
-  const supabase = createServerClient()
+  const supabase = await createClient()
 
   let query = supabase
     .from('products')
@@ -64,7 +64,7 @@ export async function getProducts(filters?: ProductFilters) {
 }
 
 export async function getProductById(product_id: string) {
-  const supabase = createServerClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('products')
@@ -79,7 +79,7 @@ export async function getProductById(product_id: string) {
 
 // products 테이블에서 고유 카테고리 목록 가져오기
 export async function getProductCategories() {
-  const supabase = createServerClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('products')
