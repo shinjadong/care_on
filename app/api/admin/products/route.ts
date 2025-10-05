@@ -18,7 +18,8 @@ export async function POST(request: NextRequest) {
         available: body.available ?? true,
         closure_refund_rate: body.closure_refund_rate ?? 0,
         max_discount_rate: body.max_discount_rate ?? 0,
-        discount_tiers: body.discount_tiers ?? []
+        discount_tiers: body.discount_tiers ?? [],
+        image_url: body.image_url ?? null
       })
       .select()
       .single()
@@ -66,6 +67,7 @@ export async function PUT(request: NextRequest) {
         closure_refund_rate: body.closure_refund_rate ?? 0,
         max_discount_rate: body.max_discount_rate ?? 0,
         discount_tiers: body.discount_tiers ?? [],
+        image_url: body.image_url,
         updated_at: new Date().toISOString()
       })
       .eq('product_id', body.product_id)

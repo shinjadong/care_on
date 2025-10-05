@@ -10,7 +10,8 @@ import {
   Settings,
   LogOut,
   UserPlus,
-  MessageSquare
+  MessageSquare,
+  ShoppingBag
 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -23,6 +24,7 @@ const navigation = [
   { name: '대시보드', href: '/admin/dashboard', icon: LayoutDashboard },
   { name: '가입 신청', href: '/admin/enrollments', icon: UserPlus },
   { name: '고객 관리', href: '/admin/customers', icon: Users },
+  { name: '네이버 주문', href: '/admin/naver-orders', icon: ShoppingBag },
   { name: '메시지 발송', href: '/admin/messages', icon: MessageSquare },
   { name: '계약 관리', href: '/manager/contracts', icon: FileText },
   { name: '견적 관리', href: '/admin/quotes', icon: FileText },

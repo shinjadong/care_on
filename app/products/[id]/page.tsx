@@ -1,361 +1,143 @@
-'use client'
-
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { notFound } from 'next/navigation'
+import { getProductById } from '@/lib/supabase/products'
+import ProductDetailClient from './ProductDetailClient'
 import {
-  ArrowLeft,
-  Star,
-  ShoppingCart,
-  Minus,
-  Plus,
-  Heart,
-  Share2,
-  CheckCircle,
-  Truck,
-  Shield as ShieldIcon,
-  CreditCard as CreditCardIcon,
-  Package
+  Shield,
+  CreditCard,
+  Wifi,
+  Camera,
+  Package,
+  Phone,
+  Monitor
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { getProductById } from '@/lib/products-data'
-import Link from 'next/link'
 
-export default function ProductDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const productId = parseInt(params.id as string)
-  const product = getProductById(productId)
+// 카테고리별 아이콘 매핑
+const categoryIcons: { [key: string]: any } = {
+  'CCTV': Camera,
+  '인터넷': Wifi,
+  '보험': Shield,
+  'POS': Monitor,
+  '키오스크': Monitor,
+  '통신': Phone,
+  '종합솔루션': Package
+}
 
-  const [quantity, setQuantity] = useState(1)
-  const [selectedTab, setSelectedTab] = useState('overview')
-  const [isLiked, setIsLiked] = useState(false)
+// 카테고리별 그라디언트 색상
+const categoryColors: { [key: string]: string } = {
+  'CCTV': 'from-blue-600 to-blue-400',
+  '인터넷': 'from-purple-600 to-purple-400',
+  '보험': 'from-green-600 to-green-400',
+  'POS': 'from-orange-600 to-orange-400',
+  '키오스크': 'from-pink-600 to-pink-400',
+  '통신': 'from-indigo-600 to-indigo-400',
+  '종합솔루션': 'from-teal-600 to-teal-400'
+}
 
-  useEffect(() => {
-    if (!product) {
-      router.push('/products')
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  
+  // Supabase에서 제품 데이터 가져오기
+  const { data: product, error } = await getProductById(id)
+
+  if (error || !product) {
+    notFound()
+  }
+
+  // DB 데이터를 UI에 맞게 변환
+  const ProductIcon = categoryIcons[product.category] || Package
+  const gradientColor = categoryColors[product.category] || 'from-gray-600 to-gray-400'
+
+  // 할인율 계산 (max_discount_rate 사용)
+  const hasDiscount = product.max_discount_rate > 0
+  const discountedPrice = hasDiscount 
+    ? Math.round(product.monthly_fee * (1 - product.max_discount_rate / 100))
+    : product.monthly_fee
+
+  // 기본 features 생성 (description 기반)
+  const features = product.description 
+    ? [product.description]
+    : ['고품질 제품', '전문 설치 지원', '24/7 고객센터']
+
+  // discount_tiers에서 주요 기능 생성 (아이콘 이름만 전달)
+  const keyFeatures = product.discount_tiers && product.discount_tiers.length > 0
+    ? product.discount_tiers.slice(0, 4).map((tier: any) => ({
+        iconName: 'Shield',
+        title: tier.condition || '특별 할인',
+        description: tier.description || `최대 ${tier.rate}% 할인 혜택`
+      }))
+    : [
+        {
+          iconName: 'Shield',
+          title: '품질 보증',
+          description: '검증된 고품질 제품'
+        },
+        {
+          iconName: 'CreditCard',
+          title: '간편 결제',
+          description: '다양한 결제 수단 지원'
+        }
+      ]
+
+  // 제품 사양 생성
+  const specifications = [
+    { label: '제공업체', value: product.provider || '케어온' },
+    { label: '서비스 기간', value: '월 단위 구독' },
+    { label: '설치 지원', value: '무료 방문 설치' },
+    { label: '고객 지원', value: '24/7 고객센터' },
+    ...(product.closure_refund_rate > 0 ? [
+      { label: '폐업 환급률', value: `${product.closure_refund_rate}%` }
+    ] : [])
+  ]
+
+  // 할인 배지 정보
+  const badge = hasDiscount ? {
+    text: `최대 ${product.max_discount_rate}% 할인`,
+    color: 'bg-red-500'
+  } : null
+
+  // 아이콘 이름 결정 (카테고리 기반)
+  let productIconName = 'Package'
+  if (categoryIcons[product.category]) {
+    // 카테고리에 직접 매핑된 아이콘 이름 찾기
+    const iconNames: { [key: string]: string } = {
+      'CCTV': 'Camera',
+      '인터넷': 'Wifi',
+      '보험': 'Shield',
+      'POS': 'Monitor',
+      '키오스크': 'Monitor',
+      '통신': 'Phone',
+      '종합솔루션': 'Package'
     }
-  }, [product, router])
-
-  if (!product) {
-    return null
+    productIconName = iconNames[product.category] || 'Package'
   }
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('ko-KR').format(price)
+  // 클라이언트 컴포넌트에 전달할 데이터 (아이콘 이름만 전달)
+  const productData = {
+    id: product.product_id,
+    name: product.name,
+    category: product.category,
+    price: discountedPrice,
+    originalPrice: hasDiscount ? product.monthly_fee : undefined,
+    badge,
+    rating: 4.5, // 기본값 (추후 리뷰 시스템 연동 시 변경)
+    reviews: 0, // 기본값 (추후 리뷰 시스템 연동 시 변경)
+    description: product.description || product.name,
+    longDescription: product.description || `${product.name}은 ${product.provider || '케어온'}에서 제공하는 고품질 서비스입니다.`,
+    inStock: product.available,
+    features,
+    keyFeatures,
+    specifications,
+    productIconName,
+    gradientColor,
+    provider: product.provider,
+    maxDiscountRate: product.max_discount_rate,
+    discountTiers: product.discount_tiers,
+    imageUrl: product.image_url
   }
 
-  const handleAddToCart = () => {
-    alert(`${product.name} ${quantity}개가 장바구니에 추가되었습니다.`)
-  }
-
-  const handleBuyNow = () => {
-    router.push('/enrollment')
-  }
-
-  const ProductIcon = product.keyFeatures[0]?.icon || Package
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      {/* 뒤로가기 버튼 */}
-      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b">
-        <div className="container mx-auto px-4 py-4">
-          <Link href="/products">
-            <Button
-              variant="ghost"
-              className="gap-2 hover:bg-gray-100"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              제품 목록으로
-            </Button>
-          </Link>
-        </div>
-      </div>
-
-      {/* 제품 상세 정보 */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* 왼쪽: 이미지 섹션 */}
-          <div>
-            <div className="relative aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl overflow-hidden">
-              {product.badge && (
-                <div className="absolute top-4 left-4 z-10">
-                  <Badge className={`${product.badge.color} text-white px-3 py-1 text-sm`}>
-                    {product.badge.text}
-                  </Badge>
-                </div>
-              )}
-
-              {/* 제품 아이콘 표시 */}
-              <div className="flex items-center justify-center h-full">
-                <div className={`p-8 bg-gradient-to-r ${
-                  product.id === 1 ? 'from-purple-600 to-purple-400' :
-                  product.id === 2 ? 'from-blue-600 to-blue-400' :
-                  product.id === 3 ? 'from-green-600 to-green-400' :
-                  product.id === 4 ? 'from-indigo-600 to-indigo-400' :
-                  product.id === 5 ? 'from-orange-600 to-orange-400' :
-                  product.id === 6 ? 'from-teal-600 to-teal-400' :
-                  product.id === 7 ? 'from-pink-600 to-pink-400' :
-                  product.id === 8 ? 'from-yellow-600 to-yellow-400' :
-                  'from-gray-600 to-gray-400'
-                } rounded-full`}>
-                  <ProductIcon className="w-32 h-32 text-white" />
-                </div>
-              </div>
-
-              {/* 액션 버튼들 */}
-              <div className="absolute top-4 right-4 flex gap-2">
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  className="bg-white/90 hover:bg-white"
-                  onClick={() => setIsLiked(!isLiked)}
-                >
-                  <Heart className={`w-5 h-5 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  className="bg-white/90 hover:bg-white"
-                >
-                  <Share2 className="w-5 h-5" />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* 오른쪽: 제품 정보 */}
-          <div
-            className="flex flex-col"
-          >
-            {/* 카테고리 */}
-            <p className="text-sm font-medium text-purple-600 mb-2">
-              {product.category}
-            </p>
-
-            {/* 제품명 */}
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              {product.name}
-            </h1>
-
-            {/* 평점 */}
-            <div className="flex items-center gap-4 mb-4">
-              <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`w-5 h-5 ${
-                      i < Math.floor(product.rating)
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-gray-300'
-                    }`}
-                  />
-                ))}
-                <span className="ml-2 font-semibold">{product.rating}</span>
-              </div>
-              <span className="text-gray-500">({product.reviews.toLocaleString()} 리뷰)</span>
-            </div>
-
-            {/* 설명 */}
-            <p className="text-gray-600 mb-6 leading-relaxed">
-              {product.longDescription}
-            </p>
-
-            {/* 가격 */}
-            <div className="mb-6">
-              {product.originalPrice && (
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-3xl font-bold text-gray-900">
-                    ₩{formatPrice(product.price)}
-                  </span>
-                  <span className="text-xl text-gray-400 line-through">
-                    ₩{formatPrice(product.originalPrice)}
-                  </span>
-                  <Badge className="bg-red-500 text-white">
-                    {Math.round((1 - product.price / product.originalPrice) * 100)}% 할인
-                  </Badge>
-                </div>
-              )}
-              {!product.originalPrice && (
-                <span className="text-3xl font-bold text-gray-900">
-                  ₩{formatPrice(product.price)}
-                </span>
-              )}
-              <p className="text-sm text-gray-500 mt-1">월 구독료 (VAT 별도)</p>
-            </div>
-
-            {/* 주요 기능 */}
-            <div className="bg-gray-50 rounded-xl p-6 mb-6">
-              <h3 className="font-semibold text-gray-900 mb-4">주요 기능</h3>
-              <div className="space-y-3">
-                {product.features.map((feature, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2"
-                  >
-                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    <span className="text-gray-700">{feature}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 수량 선택 및 구매 버튼 */}
-            {product.inStock ? (
-              <div className="space-y-4">
-                {/* 수량 선택 */}
-                <div className="flex items-center gap-4">
-                  <span className="text-gray-700 font-medium">수량:</span>
-                  <div className="flex items-center border rounded-lg">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      disabled={quantity === 1}
-                    >
-                      <Minus className="w-4 h-4" />
-                    </Button>
-                    <span className="px-4 py-2 min-w-[60px] text-center">
-                      {quantity}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setQuantity(quantity + 1)}
-                    >
-                      <Plus className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* 구매 버튼 */}
-                <div className="flex gap-3">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="flex-1"
-                    onClick={handleAddToCart}
-                  >
-                    <ShoppingCart className="w-5 h-5 mr-2" />
-                    장바구니 담기
-                  </Button>
-                  <Button
-                    size="lg"
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-                    onClick={handleBuyNow}
-                  >
-                    바로 구매하기
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-gray-100 rounded-lg p-4 text-center">
-                <p className="text-gray-600 font-medium">현재 품절된 상품입니다</p>
-                <p className="text-sm text-gray-500 mt-1">입고 알림 신청을 해주세요</p>
-              </div>
-            )}
-
-            {/* 혜택 정보 */}
-            <div className="flex gap-4 mt-6 pt-6 border-t">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Truck className="w-4 h-4 text-purple-600" />
-                <span>무료 설치</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <ShieldIcon className="w-4 h-4 text-purple-600" />
-                <span>품질 보증</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <CreditCardIcon className="w-4 h-4 text-purple-600" />
-                <span>카드 할부</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 탭 섹션 */}
-        <div
-          className="mt-16"
-        >
-          <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-            <TabsList className="grid grid-cols-3 w-full max-w-md">
-              <TabsTrigger value="overview">상세 정보</TabsTrigger>
-              <TabsTrigger value="features">주요 기능</TabsTrigger>
-              <TabsTrigger value="specs">제품 사양</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="overview" className="mt-8">
-              <Card className="p-8">
-                <h2 className="text-2xl font-bold mb-6">제품 상세 정보</h2>
-                <div className="prose max-w-none">
-                  <p className="text-gray-600 leading-relaxed mb-4">
-                    {product.longDescription}
-                  </p>
-                  <div className="mt-8">
-                    <h3 className="text-xl font-semibold mb-4">이런 분들께 추천합니다</h3>
-                    <ul className="space-y-2 text-gray-600">
-                      <li>• 창업을 준비 중이신 예비 창업자</li>
-                      <li>• 효율적인 매장 운영을 원하시는 사장님</li>
-                      <li>• 체계적인 고객 관리가 필요하신 분</li>
-                      <li>• 매출 증대를 목표로 하시는 분</li>
-                    </ul>
-                  </div>
-                </div>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="features" className="mt-8">
-              <Card className="p-8">
-                <h2 className="text-2xl font-bold mb-6">주요 기능</h2>
-                <div className="grid md:grid-cols-2 gap-6">
-                  {product.keyFeatures.map((feature, index) => {
-                    const Icon = feature.icon
-                    return (
-                      <div
-                        key={index}
-                        className="flex gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors"
-                      >
-                        <div className="flex-shrink-0">
-                          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                            <Icon className="w-6 h-6 text-purple-600" />
-                          </div>
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-gray-900 mb-1">
-                            {feature.title}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {feature.description}
-                          </p>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="specs" className="mt-8">
-              <Card className="p-8">
-                <h2 className="text-2xl font-bold mb-6">제품 사양</h2>
-                <div className="space-y-4">
-                  {product.specifications?.map((spec, index) => (
-                    <div
-                      key={index}
-                      className="flex justify-between py-3 border-b last:border-0"
-                    >
-                      <span className="text-gray-600">{spec.label}</span>
-                      <span className="font-medium text-gray-900">{spec.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
-    </div>
-  )
+  return <ProductDetailClient product={productData} />
 }

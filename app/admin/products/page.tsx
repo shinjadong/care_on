@@ -105,8 +105,10 @@ export default function ProductsPage() {
     provider: '',
     monthly_fee: 0,
     description: '',
-    available: true
+    available: true,
+    image_url: ''
   })
+  const [uploadingImage, setUploadingImage] = useState(false)
   const [newPackageForm, setNewPackageForm] = useState({
     name: '',
     monthly_fee: 0,
@@ -369,6 +371,60 @@ export default function ProductsPage() {
     }
   }
 
+  // 이미지 업로드 핸들러
+  const handleImageUpload = async (file: File, productId?: string) => {
+    try {
+      setUploadingImage(true)
+      const formData = new FormData()
+      formData.append('file', file)
+      if (productId) {
+        formData.append('productId', productId)
+      }
+
+      const response = await fetch('/api/admin/products/upload-image', {
+        method: 'POST',
+        body: formData
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        return data.imageUrl
+      } else {
+        alert(data.error || '이미지 업로드에 실패했습니다.')
+        return null
+      }
+    } catch (error) {
+      console.error('이미지 업로드 오류:', error)
+      alert('이미지 업로드 중 오류가 발생했습니다.')
+      return null
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  // 새 상품 이미지 업로드
+  const handleNewProductImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const imageUrl = await handleImageUpload(file)
+    if (imageUrl) {
+      setNewProductForm({ ...newProductForm, image_url: imageUrl })
+    }
+  }
+
+  // 수정 중인 상품 이미지 업로드
+  const handleEditProductImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !editingProduct) return
+
+    const imageUrl = await handleImageUpload(file, editingProduct.product_id)
+    if (imageUrl) {
+      setEditingProduct({ ...editingProduct, image_url: imageUrl })
+    }
+  }
+
   const handleAddProduct = async () => {
     try {
       if (!newProductForm.name || !newProductForm.category) {
@@ -391,7 +447,8 @@ export default function ProductsPage() {
           provider: '',
           monthly_fee: 0,
           description: '',
-          available: true
+          available: true,
+          image_url: ''
         })
         fetchData() // 목록 새로고침
       } else {
@@ -710,6 +767,40 @@ export default function ProductsPage() {
                     placeholder="상품에 대한 설명을 입력하세요" 
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="product_image">상품 이미지</Label>
+                  <div className="flex items-center gap-4">
+                    {newProductForm.image_url && (
+                      <div className="relative w-24 h-24 border rounded-lg overflow-hidden">
+                        <img 
+                          src={newProductForm.image_url} 
+                          alt="상품 이미지" 
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setNewProductForm({...newProductForm, image_url: ''})}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <Input
+                        id="product_image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleNewProductImageUpload}
+                        disabled={uploadingImage}
+                        className="cursor-pointer"
+                      />
+                      {uploadingImage && (
+                        <p className="text-sm text-gray-500 mt-1">업로드 중...</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
                 <div className="flex items-center space-x-2">
                   <Switch 
                     id="available" 
@@ -993,6 +1084,7 @@ export default function ProductsPage() {
                             className="rounded"
                           />
                         </TableHead>
+                        <TableHead className="w-[80px]">이미지</TableHead>
                         <TableHead>상품명</TableHead>
                         <TableHead>카테고리</TableHead>
                         <TableHead>공급사</TableHead>
@@ -1014,6 +1106,19 @@ export default function ProductsPage() {
                               onChange={(e) => handleSelectProduct(product.product_id, e.target.checked)}
                               className="rounded"
                             />
+                          </TableCell>
+                          <TableCell>
+                            {product.image_url ? (
+                              <img 
+                                src={product.image_url} 
+                                alt={product.name}
+                                className="w-16 h-16 object-cover rounded-lg border"
+                              />
+                            ) : (
+                              <div className="w-16 h-16 bg-gray-100 rounded-lg border flex items-center justify-center">
+                                <Package className="h-6 w-6 text-gray-400" />
+                              </div>
+                            )}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center space-x-3">
@@ -1261,6 +1366,40 @@ export default function ProductsPage() {
                   onChange={(e) => setEditingProduct({...editingProduct, description: e.target.value})}
                   placeholder="상품에 대한 설명을 입력하세요" 
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit_product_image">상품 이미지</Label>
+                <div className="flex items-center gap-4">
+                  {editingProduct.image_url && (
+                    <div className="relative w-24 h-24 border rounded-lg overflow-hidden">
+                      <img 
+                        src={editingProduct.image_url} 
+                        alt="상품 이미지" 
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setEditingProduct({...editingProduct, image_url: null})}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <Input
+                      id="edit_product_image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleEditProductImageUpload}
+                      disabled={uploadingImage}
+                      className="cursor-pointer"
+                    />
+                    {uploadingImage && (
+                      <p className="text-sm text-gray-500 mt-1">업로드 중...</p>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="flex items-center space-x-2">
                 <Switch 
