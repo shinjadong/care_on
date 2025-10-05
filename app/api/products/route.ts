@@ -1,46 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://pkehcfbjotctvneordob.supabase.co',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrZWhjZmJqb3RjdHZuZW9yZG9iIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzE5MjY4MSwiZXhwIjoyMDY4NzY4NjgxfQ.fn1IxRxjJZ6gihy_SCvyQrT6Vx3xb1yMaVzztOsLeyk',
-  {
-    auth: { autoRefreshToken: false, persistSession: false },
-    db: { schema: 'public' }
-  }
-)
+import { getProducts, ProductFilters } from '@/lib/supabase/products'
 
 // GET: 상품 목록 조회
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const category = searchParams.get('category')
-    const available = searchParams.get('available')
 
-    let query = supabase
-      .from('products')
-      .select(`
-        *,
-        max_discount_rate,
-        discount_tiers
-      `)
-      .order('category', { ascending: true })
-      .order('name', { ascending: true })
-
-    if (category && category !== 'all') {
-      query = query.eq('category', category)
+    const filters: ProductFilters = {
+      category: searchParams.get('category') || undefined,
+      minPrice: searchParams.get('minPrice')
+        ? parseFloat(searchParams.get('minPrice')!)
+        : undefined,
+      maxPrice: searchParams.get('maxPrice')
+        ? parseFloat(searchParams.get('maxPrice')!)
+        : undefined,
+      inStock: searchParams.get('inStock')
+        ? searchParams.get('inStock') === 'true'
+        : undefined,
+      featured: searchParams.get('featured')
+        ? searchParams.get('featured') === 'true'
+        : undefined,
+      searchTerm: searchParams.get('search') || undefined
     }
 
-    if (available !== null) {
-      query = query.eq('available', available === 'true')
+    const { data, error } = await getProducts(filters)
+
+    if (error) {
+      console.error('Error fetching products:', error)
+      return NextResponse.json(
+        { error: '상품 목록을 불러오는데 실패했습니다.' },
+        { status: 500 }
+      )
     }
-
-    const { data, error } = await query
-
-    if (error) throw error
 
     // 카테고리별로 그룹화
-    const groupedProducts = data.reduce((acc: any, product: any) => {
+    const groupedProducts = (data || []).reduce((acc: any, product: any) => {
       const category = product.category
       if (!acc[category]) {
         acc[category] = []
@@ -50,9 +44,11 @@ export async function GET(request: NextRequest) {
     }, {})
 
     return NextResponse.json({
-      products: data,
+      success: true,
+      products: data || [],
       grouped: groupedProducts,
-      categories: Object.keys(groupedProducts)
+      categories: Object.keys(groupedProducts),
+      count: data?.length || 0
     })
 
   } catch (error) {
@@ -64,93 +60,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST: 새 상품 생성
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const {
-      name,
-      category,
-      provider,
-      monthly_fee,
-      description,
-      available,
-      closure_refund_rate
-    } = body
-
-    // 필수 필드 검증
-    if (!name || !category) {
-      return NextResponse.json(
-        { error: '상품명과 카테고리는 필수입니다.' },
-        { status: 400 }
-      )
-    }
-
-    const { data, error } = await supabase
-      .from('products')
-      .insert([{
-        name,
-        category,
-        provider,
-        monthly_fee: parseInt(monthly_fee) || 0,
-        description,
-        available: available !== false,
-        closure_refund_rate: parseInt(closure_refund_rate) || 0
-      }])
-      .select()
-      .single()
-
-    if (error) throw error
-
-    return NextResponse.json({
-      message: '상품이 성공적으로 생성되었습니다.',
-      product: data
-    })
-
-  } catch (error) {
-    console.error('[Products API] POST error:', error)
-    return NextResponse.json(
-      { error: '상품 생성에 실패했습니다.' },
-      { status: 500 }
-    )
-  }
-}
-
-// PUT: 상품 업데이트
-export async function PUT(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const { product_id, ...updateData } = body
-
-    if (!product_id) {
-      return NextResponse.json(
-        { error: '상품 ID가 필요합니다.' },
-        { status: 400 }
-      )
-    }
-
-    const { data, error } = await supabase
-      .from('products')
-      .update({
-        ...updateData,
-        updated_at: new Date().toISOString()
-      })
-      .eq('product_id', product_id)
-      .select()
-      .single()
-
-    if (error) throw error
-
-    return NextResponse.json({
-      message: '상품이 성공적으로 업데이트되었습니다.',
-      product: data
-    })
-
-  } catch (error) {
-    console.error('[Products API] PUT error:', error)
-    return NextResponse.json(
-      { error: '상품 업데이트에 실패했습니다.' },
-      { status: 500 }
-    )
-  }
-}
+// Note: POST and PUT methods should be implemented in admin API routes with proper authentication
