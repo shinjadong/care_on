@@ -140,8 +140,8 @@ export default function ProductsPage() {
     try {
       setLoading(true)
       const [productsRes, packagesRes] = await Promise.all([
-        fetch('/api/products'),
-        fetch('/api/packages')
+        fetch('/api/admin/products'),
+        fetch('/api/admin/packages')
       ])
 
       if (productsRes.ok) {
@@ -235,8 +235,8 @@ export default function ProductsPage() {
         return
       }
 
-      const promises = productIds.map(id => 
-        fetch('/api/products', {
+      const promises = productIds.map(id =>
+        fetch('/api/admin/products', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -259,7 +259,7 @@ export default function ProductsPage() {
   // 복사 함수
   const handleCopyProduct = async (originalProduct: Product) => {
     try {
-      const response = await fetch('/api/products', {
+      const response = await fetch('/api/admin/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -288,8 +288,8 @@ export default function ProductsPage() {
   // 복구 함수
   const handleRestoreProducts = async (productIds: string[]) => {
     try {
-      const promises = productIds.map(id => 
-        fetch('/api/products', {
+      const promises = productIds.map(id =>
+        fetch('/api/admin/products', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -332,7 +332,7 @@ export default function ProductsPage() {
         active: true
       }
 
-      const packageResponse = await fetch('/api/packages', {
+      const packageResponse = await fetch('/api/admin/packages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -376,7 +376,7 @@ export default function ProductsPage() {
         return
       }
 
-      const response = await fetch('/api/products', {
+      const response = await fetch('/api/admin/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProductForm)
@@ -410,7 +410,7 @@ export default function ProductsPage() {
         return
       }
 
-      const response = await fetch('/api/packages', {
+      const response = await fetch('/api/admin/packages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPackageForm)
@@ -447,7 +447,7 @@ export default function ProductsPage() {
     try {
       if (!editingProduct) return
 
-      const response = await fetch('/api/products', {
+      const response = await fetch('/api/admin/products', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
