@@ -1,122 +1,98 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { NextRequest, NextResponse } from "next/server"
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://pkehcfbjotctvneordob.supabase.co',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrZWhjZmJqb3RjdHZuZW9yZG9iIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzE5MjY4MSwiZXhwIjoyMDY4NzY4NjgxfQ.fn1IxRxjJZ6gihy_SCvyQrT6Vx3xb1yMaVzztOsLeyk',
-  {
-    auth: { autoRefreshToken: false, persistSession: false },
-    db: { schema: 'public' }
+import type { Product } from "@/lib/db"
+import { createProduct, fetchProducts, updateProduct } from "@/lib/db/repositories/products"
+import { RepositoryError } from "@/lib/db/repositories/errors"
+
+function toIso(value: unknown) {
+  if (value instanceof Date) {
+    return value.toISOString()
   }
-)
+  return value ?? null
+}
 
-// GET: 상품 목록 조회
+function serializeProduct(product: Product) {
+  return {
+    product_id: product.productId,
+    name: product.name,
+    category: product.category,
+    provider: product.provider,
+    monthly_fee: product.monthlyFee,
+    description: product.description,
+    available: product.available,
+    closure_refund_rate: product.closureRefundRate,
+    max_discount_rate: product.maxDiscountRate,
+    discount_tiers: product.discountTiers,
+    created_at: toIso(product.createdAt),
+    updated_at: toIso(product.updatedAt),
+  }
+}
+
+function parseBoolean(value: string | null) {
+  if (value === null) return undefined
+  if (value === "true") return true
+  if (value === "false") return false
+  return undefined
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const category = searchParams.get('category')
-    const available = searchParams.get('available')
+    const category = searchParams.get("category")
+    const available = parseBoolean(searchParams.get("available"))
 
-    let query = supabase
-      .from('products')
-      .select(`
-        *,
-        max_discount_rate,
-        discount_tiers
-      `)
-      .order('category', { ascending: true })
-      .order('name', { ascending: true })
+    const records = await fetchProducts({ category, available })
+    const products = records.map(serializeProduct)
 
-    if (category && category !== 'all') {
-      query = query.eq('category', category)
-    }
-
-    if (available !== null) {
-      query = query.eq('available', available === 'true')
-    }
-
-    const { data, error } = await query
-
-    if (error) throw error
-
-    // 카테고리별로 그룹화
-    const groupedProducts = data.reduce((acc: any, product: any) => {
-      const category = product.category
-      if (!acc[category]) {
-        acc[category] = []
+    const grouped = products.reduce<Record<string, typeof products>>((acc, product) => {
+      const key = product.category || "기타"
+      if (!acc[key]) {
+        acc[key] = []
       }
-      acc[category].push(product)
+      acc[key].push(product)
       return acc
     }, {})
 
     return NextResponse.json({
-      products: data,
-      grouped: groupedProducts,
-      categories: Object.keys(groupedProducts)
+      products,
+      grouped,
+      categories: Object.keys(grouped),
     })
-
   } catch (error) {
-    console.error('[Products API] GET error:', error)
+    if (error instanceof RepositoryError) {
+      return NextResponse.json({ error: error.message }, { status: error.status })
+    }
+
+    console.error("[Products API] GET error:", error)
     return NextResponse.json(
-      { error: '상품 목록을 불러오는데 실패했습니다.' },
-      { status: 500 }
+      { error: "상품 목록을 불러오는데 실패했습니다." },
+      { status: 500 },
     )
   }
 }
 
-// POST: 새 상품 생성
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const {
-      name,
-      category,
-      provider,
-      monthly_fee,
-      description,
-      available,
-      closure_refund_rate
-    } = body
-
-    // 필수 필드 검증
-    if (!name || !category) {
-      return NextResponse.json(
-        { error: '상품명과 카테고리는 필수입니다.' },
-        { status: 400 }
-      )
-    }
-
-    const { data, error } = await supabase
-      .from('products')
-      .insert([{
-        name,
-        category,
-        provider,
-        monthly_fee: parseInt(monthly_fee) || 0,
-        description,
-        available: available !== false,
-        closure_refund_rate: parseInt(closure_refund_rate) || 0
-      }])
-      .select()
-      .single()
-
-    if (error) throw error
+    const product = await createProduct(body)
 
     return NextResponse.json({
-      message: '상품이 성공적으로 생성되었습니다.',
-      product: data
+      message: "상품이 성공적으로 생성되었습니다.",
+      product: serializeProduct(product),
     })
-
   } catch (error) {
-    console.error('[Products API] POST error:', error)
+    if (error instanceof RepositoryError) {
+      return NextResponse.json({ error: error.message }, { status: error.status })
+    }
+
+    console.error("[Products API] POST error:", error)
     return NextResponse.json(
-      { error: '상품 생성에 실패했습니다.' },
-      { status: 500 }
+      { error: "상품 생성에 실패했습니다." },
+      { status: 500 },
     )
   }
 }
 
-// PUT: 상품 업데이트
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
@@ -124,33 +100,26 @@ export async function PUT(request: NextRequest) {
 
     if (!product_id) {
       return NextResponse.json(
-        { error: '상품 ID가 필요합니다.' },
-        { status: 400 }
+        { error: "상품 ID가 필요합니다." },
+        { status: 400 },
       )
     }
 
-    const { data, error } = await supabase
-      .from('products')
-      .update({
-        ...updateData,
-        updated_at: new Date().toISOString()
-      })
-      .eq('product_id', product_id)
-      .select()
-      .single()
-
-    if (error) throw error
+    const product = await updateProduct(product_id, updateData)
 
     return NextResponse.json({
-      message: '상품이 성공적으로 업데이트되었습니다.',
-      product: data
+      message: "상품이 성공적으로 업데이트되었습니다.",
+      product: serializeProduct(product),
     })
-
   } catch (error) {
-    console.error('[Products API] PUT error:', error)
+    if (error instanceof RepositoryError) {
+      return NextResponse.json({ error: error.message }, { status: error.status })
+    }
+
+    console.error("[Products API] PUT error:", error)
     return NextResponse.json(
-      { error: '상품 업데이트에 실패했습니다.' },
-      { status: 500 }
+      { error: "상품 업데이트에 실패했습니다." },
+      { status: 500 },
     )
   }
 }
