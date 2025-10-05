@@ -1,0 +1,15 @@
+/**
+ * @deprecated This file is no longer used.
+ * All product data is now fetched from Supabase database.
+ * 
+ * Please use:
+ * - lib/supabase/products.ts - for product data fetching
+ * - app/products/page.tsx - for product list page (Supabase integrated)
+ * - app/products/[id]/page.tsx - for product detail page (Supabase integrated)
+ * 
+ * Migration completed: 2025-01-XX
+ * This file can be safely deleted after verification.
+ */
+
+// This file has been moved to .deprecated
+// All product data is now managed through Supabase

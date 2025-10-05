@@ -1,0 +1,61 @@
+-- Add test reviews with media content to verify functionality
+INSERT INTO reviews (
+  category,
+  business,
+  content,
+  highlight,
+  rating,
+  period,
+  author_name,
+  author_email,
+  images,
+  videos,
+  youtube_urls,
+  is_approved,
+  created_at
+) VALUES 
+(
+  '창업 준비',
+  '온라인 쇼핑몰',
+  '케어온 덕분에 온라인 쇼핑몰을 성공적으로 런칭할 수 있었습니다. 특히 마케팅 전략과 고객 관리 시스템 구축에 큰 도움을 받았어요. 매출이 꾸준히 증가하고 있고, 고객 만족도도 높아졌습니다.',
+  '매출이 꾸준히 증가하고 있고',
+  5,
+  '2023년 6월 ~ 현재',
+  '김영희',
+  'younghee@example.com',
+  ARRAY['https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800', 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800'],
+  ARRAY[]::text[],
+  ARRAY['https://www.youtube.com/watch?v=dQw4w9WgXcQ'],
+  true,
+  NOW() - INTERVAL '2 days'
+),
+(
+  '첫 1년',
+  '카페',
+  '카페 창업 후 첫 1년이 가장 힘들었는데, 케어온의 멘토링 덕분에 위기를 극복할 수 있었습니다. 메뉴 개발부터 인테리어, 직원 관리까지 모든 면에서 실질적인 도움을 받았어요.',
+  '위기를 극복할 수 있었습니다',
+  4,
+  '2022년 9월 ~ 2023년 9월',
+  '박민수',
+  'minsoo@example.com',
+  ARRAY['https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800'],
+  ARRAY['https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4'],
+  ARRAY[]::text[],
+  true,
+  NOW() - INTERVAL '1 day'
+),
+(
+  '성장기',
+  'IT 스타트업',
+  '스타트업이 성장기에 접어들면서 조직 관리와 투자 유치에 어려움을 겪었는데, 케어온의 전문적인 컨설팅으로 Series A 투자를 성공적으로 유치했습니다. 팀 빌딩과 비즈니스 모델 고도화에도 큰 도움이 되었어요.',
+  'Series A 투자를 성공적으로 유치했습니다',
+  5,
+  '2021년 3월 ~ 현재',
+  '이준호',
+  'junho@example.com',
+  ARRAY['https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800', 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800'],
+  ARRAY[]::text[],
+  ARRAY['https://www.youtube.com/watch?v=ScMzIvxBSi4', 'https://www.youtube.com/watch?v=M7lc1UVf-VE'],
+  true,
+  NOW() - INTERVAL '3 hours'
+);

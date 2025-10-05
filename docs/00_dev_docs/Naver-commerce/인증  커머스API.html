@@ -1,0 +1,319 @@
+<span id="markdown-mermaid" aria-hidden="true"
+                    data-dark-mode-theme="dark"
+                    data-light-mode-theme="default"
+                    data-max-text-size="50000"></span>
+                <hr>
+<p>title: &quot;네이버 커머스API 인증 가이드&quot;
+source: &quot;<a href="https://apicenter.commerce.naver.com/docs/auth">https://apicenter.commerce.naver.com/docs/auth</a>&quot;
+author:
+published:
+created: 2025-09-26
+description: &quot;네이버 커머스API의 OAuth2 인증 방식과 전자서명 생성 방법에 대한 완전 가이드&quot;
+tags:</p>
+<ul>
+<li>&quot;clippings&quot;</li>
+<li>&quot;authentication&quot;</li>
+<li>&quot;oauth2&quot;</li>
+<li>&quot;security&quot;</li>
+</ul>
+<hr>
+<h1 id="-네이버-커머스api-인증-가이드">📊 네이버 커머스API 인증 가이드</h1>
+<h2 id="-목차">📋 목차</h2>
+<ul>
+<li><a href="#%EA%B0%9C%EC%9A%94">개요</a></li>
+<li><a href="#%EC%9D%B8%EC%A6%9D-%ED%86%A0%ED%81%B0-%EB%B0%9C%EA%B8%89">인증 토큰 발급</a></li>
+<li><a href="#%EC%A0%84%EC%9E%90%EC%84%9C%EB%AA%85">전자서명</a></li>
+<li><a href="#api-%EC%9D%B8%EC%A6%9D-%EC%8B%A4%ED%8C%A8-%EB%8C%80%EC%9D%91">API 인증 실패 대응</a></li>
+<li><a href="#%EC%BD%94%EB%93%9C-%EC%98%88%EC%8B%9C">코드 예시</a></li>
+</ul>
+<hr>
+<h2 id="-개요">🔐 개요</h2>
+<blockquote>
+<p><strong>🎯 핵심 요약</strong><br>
+네이버 커머스API는 <strong>OAuth2 Client Credentials Grant</strong> 방식을 사용하여 서버 간 인증을 수행합니다.</p>
+</blockquote>
+<h3 id="인증-방식-이해하기">인증 방식 이해하기</h3>
+<p>커머스API는 <strong>서버 대 서버</strong> 통신을 위해 설계되었습니다. 마치 은행의 ATM이 본점 서버와 통신할 때 인증서를 사용하는 것처럼, 개발사의 서버가 네이버 커머스 서버와 안전하게 데이터를 주고받기 위해 OAuth2 인증을 사용합니다.</p>
+<p><strong>🔍 OAuth2 Client Credentials Grant란?</strong></p>
+<ul>
+<li>사용자의 개입 없이 애플리케이션끼리 직접 인증하는 방식</li>
+<li>웹사이트 로그인과 달리, 서버가 자동으로 인증 토큰을 받아서 API를 호출</li>
+<li>자세한 사양: <a href="https://tools.ietf.org/html/rfc6749#section-4.4">RFC 6749 Section 4.4</a></li>
+</ul>
+<h2 id="-인증-토큰-발급">🎫 인증 토큰 발급</h2>
+<h3 id="기본-개념">기본 개념</h3>
+<p>인증 토큰은 <strong>API 호출을 위한 임시 열쇠</strong>입니다. 마치 호텔에서 받는 키카드처럼, 일정 시간 동안만 유효하며 이 토큰으로 커머스API의 다양한 기능을 사용할 수 있습니다.</p>
+<blockquote>
+<p><strong>📖 상세 가이드</strong><br>
+토큰 발급 과정은 <a href="https://apicenter.commerce.naver.com/docs/commerce-api/current/exchange-sellers-auth">인증 토큰 발급 요청 API 문서</a>를 참고하세요.</p>
+</blockquote>
+<h3 id="-api-인증-실패-대응">🔄 API 인증 실패 대응</h3>
+<p><strong>문제 상황 인식하기</strong></p>
+<p>API 호출 중 다음과 같은 응답을 받으면 <strong>인증 토큰이 만료</strong>된 상황입니다:</p>
+<pre><code class="language-json">HTTP/<span class="hljs-number">1.1</span> <span class="hljs-number">401</span> Unauthorized
+date<span class="hljs-punctuation">:</span> Tue<span class="hljs-punctuation">,</span> <span class="hljs-number">05</span> Nov <span class="hljs-number">2023</span> <span class="hljs-number">14</span><span class="hljs-punctuation">:</span><span class="hljs-number">35</span><span class="hljs-punctuation">:</span><span class="hljs-number">24</span> GMT
+content-type<span class="hljs-punctuation">:</span> application/json
+content-length<span class="hljs-punctuation">:</span> <span class="hljs-number">168</span>
+gncp-gw-trace-id<span class="hljs-punctuation">:</span> cr3<span class="hljs-number">-000000</span>-aaaaaa^<span class="hljs-number">1730711073284</span>^<span class="hljs-number">6745261</span>
+
+<span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;code&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;GW.AUTHN&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;message&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;요청을 보낼 권한이 없습니다.&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;timestamp&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;2023-11-05T23:35:24.415+09:00&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;traceId&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;cr3-000000-aaaaaa^1730711073284^6745261&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p><strong>⚠️ 체크포인트</strong></p>
+<ul>
+<li>HTTP 상태 코드: <code>401 Unauthorized</code></li>
+<li>오류 코드: <code>GW.AUTHN</code></li>
+</ul>
+<p><strong>자동 재시도 구현하기</strong></p>
+<p>마치 출입카드가 만료되었을 때 새 카드를 발급받는 것처럼, 토큰 만료 시 자동으로 새 토큰을 발급받는 로직을 구현해야 합니다:</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// 의사코드 (Pseudocode)</span>
+retry {
+    response = <span class="hljs-variable constant_">API_</span>호출(<span class="hljs-keyword">with</span> access_token)
+} when {
+    response.<span class="hljs-property">status</span> == <span class="hljs-number">401</span> &amp;&amp; response.<span class="hljs-property">body</span>.<span class="hljs-property">code</span> == <span class="hljs-string">&#x27;GW.AUTHN&#x27;</span>
+} before {
+    access_token = 인증_토큰_발급_요청(client_id, client_secret_sign, timestamp, <span class="hljs-string">&#x27;client_credentials&#x27;</span>, <span class="hljs-string">&#x27;SELF&#x27;</span>)
+}
+</code></pre>
+<blockquote>
+<p><strong>💡 개발 팁</strong><br>
+토큰 만료 전에 미리 갱신하는 것이 좋습니다. 토큰 유효기간은 3시간이므로 2시간 30분 후에 자동 갱신하도록 설정하세요.</p>
+</blockquote>
+<h2 id="-전자서명">🔐 전자서명</h2>
+<h3 id="전자서명이-필요한-이유">전자서명이 필요한 이유</h3>
+<p>전자서명은 <strong>인터넷에서 신원을 증명하는 디지털 도장</strong>입니다. 마치 은행에서 거래할 때 도장이나 서명을 하는 것처럼, API 호출 시 &quot;이 요청이 정말 우리 회사에서 보낸 것이다&quot;라는 것을 증명하는 역할을 합니다.</p>
+<blockquote>
+<p><strong>🛡️ 보안 강화</strong><br>
+클라이언트 시크릿을 직접 전송하지 않고 전자서명을 사용함으로써, 네트워크상에서 중요한 비밀키가 노출되는 것을 방지합니다.</p>
+</blockquote>
+<h3 id="필요한-재료">필요한 재료</h3>
+<p>전자서명을 만들기 위해서는 다음 3가지가 필요합니다:</p>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>설명</th>
+<th>예시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>client_id</code></td>
+<td>애플리케이션 ID (우리가 누구인지 알려주는 ID)</td>
+<td><code>aaaabbbbcccc</code></td>
+</tr>
+<tr>
+<td><code>client_secret</code></td>
+<td>애플리케이션 시크릿 (비밀키, 절대 공개하면 안됨)</td>
+<td><code>$2a$10$abcdefghijklmnopqrstuv</code></td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>현재 시간 (밀리초 단위)</td>
+<td><code>1643956077762</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="-전자서명-생성-단계">📝 전자서명 생성 단계</h3>
+<h4 id="1단계-bcrypt-해싱">1단계: bcrypt 해싱</h4>
+<p><strong>bcrypt란?</strong> 비밀번호를 안전하게 저장하기 위한 암호화 방식입니다. 마치 고기를 갈아서 햄버거 패티로 만들면 원래 상태로 돌아갈 수 없는 것처럼, 원본 데이터를 복원할 수 없게 변환합니다.</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// bcrypt 함수 사용법</span>
+<span class="hljs-title class_">BCrypt</span>.<span class="hljs-title function_">hashpw</span>(password, salt)
+</code></pre>
+<p><strong>파라미터 준비:</strong></p>
+<ul>
+<li><code>password</code>: <code>client_id</code>와 <code>timestamp</code>를 밑줄로 연결
+<ul>
+<li>예: <code>aaaabbbb_1643956077762</code></li>
+</ul>
+</li>
+<li><code>salt</code>: <code>client_secret</code> 값 그대로 사용</li>
+</ul>
+<h4 id="2단계-base64-인코딩">2단계: Base64 인코딩</h4>
+<p>생성된 해시값을 <strong>HTTP로 안전하게 전송</strong>하기 위해 Base64로 인코딩합니다. 이는 한글을 URL에 넣을 때 퍼센트 인코딩하는 것과 비슷한 개념입니다.</p>
+<blockquote>
+<p><strong>🔄 변환 과정 요약</strong><br>
+<code>client_id + timestamp</code> → <code>bcrypt 해싱</code> → <code>Base64 인코딩</code> → <code>전자서명 완성</code></p>
+</blockquote>
+<h2 id="-코드-예시">💻 코드 예시</h2>
+<p>각 언어별로 전자서명을 생성하는 완전한 예제입니다. 복사해서 바로 사용할 수 있습니다.</p>
+<h3 id="-java">☕ Java</h3>
+<pre><code class="language-java"><span class="hljs-comment">/**
+ * 네이버 커머스API 전자서명 생성기
+ * 
+ * 필요 라이브러리: JBCrypt
+ * 다운로드: https://github.com/jeremyh/jBCrypt
+ * Maven: &lt;dependency&gt;&lt;groupId&gt;org.mindrot&lt;/groupId&gt;&lt;artifactId&gt;jbcrypt&lt;/artifactId&gt;&lt;/dependency&gt;
+ */</span>
+<span class="hljs-keyword">import</span> org.mindrot.jbcrypt.BCrypt;
+<span class="hljs-keyword">import</span> java.util.Base64;
+<span class="hljs-keyword">import</span> java.nio.charset.StandardCharsets;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">NaverCommerceAuth</span> {
+    
+    <span class="hljs-comment">/**
+     * 전자서명 생성 함수
+     * <span class="hljs-doctag">@param</span> clientId 네이버에서 발급받은 클라이언트 ID
+     * <span class="hljs-doctag">@param</span> clientSecret 네이버에서 발급받은 클라이언트 시크릿 (비밀키)
+     * <span class="hljs-doctag">@param</span> timestamp 현재 시간 (밀리초 단위)
+     * <span class="hljs-doctag">@return</span> Base64로 인코딩된 전자서명
+     */</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title function_">generateSignature</span><span class="hljs-params">(String clientId, String clientSecret, Long timestamp)</span> {
+        <span class="hljs-comment">// 1단계: 클라이언트ID와 타임스탬프를 밑줄로 연결</span>
+        <span class="hljs-type">String</span> <span class="hljs-variable">password</span> <span class="hljs-operator">=</span> clientId + <span class="hljs-string">&quot;_&quot;</span> + timestamp;
+        
+        <span class="hljs-comment">// 2단계: bcrypt로 해싱 (마치 고기를 갈아서 패티로 만드는 과정)</span>
+        <span class="hljs-type">String</span> <span class="hljs-variable">hashedPassword</span> <span class="hljs-operator">=</span> BCrypt.hashpw(password, clientSecret);
+        
+        <span class="hljs-comment">// 3단계: HTTP 전송을 위해 Base64로 인코딩</span>
+        <span class="hljs-keyword">return</span> Base64.getUrlEncoder().encodeToString(hashedPassword.getBytes(StandardCharsets.UTF_8));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
+        <span class="hljs-comment">// 테스트 데이터 (실제로는 네이버에서 발급받은 값을 사용)</span>
+        <span class="hljs-type">String</span> <span class="hljs-variable">clientId</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;aaaabbbbcccc&quot;</span>;
+        <span class="hljs-type">String</span> <span class="hljs-variable">clientSecret</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;$2a$10$abcdefghijklmnopqrstuv&quot;</span>;
+        <span class="hljs-type">Long</span> <span class="hljs-variable">timestamp</span> <span class="hljs-operator">=</span> System.currentTimeMillis(); <span class="hljs-comment">// 현재 시간</span>
+        
+        <span class="hljs-type">String</span> <span class="hljs-variable">signature</span> <span class="hljs-operator">=</span> generateSignature(clientId, clientSecret, timestamp);
+        System.out.println(<span class="hljs-string">&quot;생성된 전자서명: &quot;</span> + signature);
+    }
+}
+</code></pre>
+<h3 id="-python">🐍 Python</h3>
+<pre><code class="language-python"><span class="hljs-comment">#!/usr/bin/env python3</span>
+<span class="hljs-string">&quot;&quot;&quot;
+네이버 커머스API 전자서명 생성기
+
+필요 라이브러리:
+pip install bcrypt pybase64
+&quot;&quot;&quot;</span>
+<span class="hljs-keyword">import</span> bcrypt
+<span class="hljs-keyword">import</span> pybase64
+<span class="hljs-keyword">import</span> time
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_signature</span>(<span class="hljs-params">client_id, client_secret, timestamp</span>):
+    <span class="hljs-string">&quot;&quot;&quot;
+    전자서명 생성 함수
+    
+    Args:
+        client_id (str): 네이버에서 발급받은 클라이언트 ID
+        client_secret (str): 네이버에서 발급받은 클라이언트 시크릿
+        timestamp (int): 현재 시간 (밀리초 단위)
+    
+    Returns:
+        str: Base64로 인코딩된 전자서명
+    &quot;&quot;&quot;</span>
+    <span class="hljs-comment"># 1단계: 클라이언트ID와 타임스탬프를 밑줄로 연결</span>
+    password = <span class="hljs-string">f&quot;<span class="hljs-subst">{client_id}</span>_<span class="hljs-subst">{timestamp}</span>&quot;</span>
+    
+    <span class="hljs-comment"># 2단계: bcrypt로 해싱</span>
+    hashed = bcrypt.hashpw(password.encode(<span class="hljs-string">&#x27;utf-8&#x27;</span>), client_secret.encode(<span class="hljs-string">&#x27;utf-8&#x27;</span>))
+    
+    <span class="hljs-comment"># 3단계: Base64로 인코딩</span>
+    <span class="hljs-keyword">return</span> pybase64.standard_b64encode(hashed).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:
+    <span class="hljs-comment"># 테스트 데이터 (실제로는 네이버에서 발급받은 값을 사용)</span>
+    client_id = <span class="hljs-string">&quot;aaaabbbbcccc&quot;</span>
+    client_secret = <span class="hljs-string">&quot;$2a$10$abcdefghijklmnopqrstuv&quot;</span> 
+    timestamp = <span class="hljs-built_in">int</span>(time.time() * <span class="hljs-number">1000</span>)  <span class="hljs-comment"># 현재 시간을 밀리초로 변환</span>
+    
+    signature = generate_signature(client_id, client_secret, timestamp)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;생성된 전자서명: <span class="hljs-subst">{signature}</span>&quot;</span>)
+</code></pre>
+<h3 id="-nodejs">🟢 Node.js</h3>
+<pre><code class="language-javascript"><span class="hljs-comment">/**
+ * 네이버 커머스API 전자서명 생성기
+ * 
+ * 필요 패키지: npm install bcrypt
+ */</span>
+<span class="hljs-keyword">const</span> bcrypt = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;bcrypt&quot;</span>);
+
+<span class="hljs-comment">/**
+ * 전자서명 생성 함수
+ * <span class="hljs-doctag">@param</span> {<span class="hljs-type">string</span>} <span class="hljs-variable">clientId</span> - 네이버에서 발급받은 클라이언트 ID
+ * <span class="hljs-doctag">@param</span> {<span class="hljs-type">string</span>} <span class="hljs-variable">clientSecret</span> - 네이버에서 발급받은 클라이언트 시크릿
+ * <span class="hljs-doctag">@param</span> {<span class="hljs-type">number</span>} <span class="hljs-variable">timestamp</span> - 현재 시간 (밀리초 단위)
+ * <span class="hljs-doctag">@returns</span> {<span class="hljs-type">string</span>} Base64로 인코딩된 전자서명
+ */</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">generateSignature</span>(<span class="hljs-params">clientId, clientSecret, timestamp</span>) {
+    <span class="hljs-comment">// 1단계: 클라이언트ID와 타임스탬프를 밑줄로 연결</span>
+    <span class="hljs-keyword">const</span> password = <span class="hljs-string">`<span class="hljs-subst">${clientId}</span>_<span class="hljs-subst">${timestamp}</span>`</span>;
+    
+    <span class="hljs-comment">// 2단계: bcrypt로 해싱 (동기 방식 사용)</span>
+    <span class="hljs-keyword">const</span> hashed = bcrypt.<span class="hljs-title function_">hashSync</span>(password, clientSecret);
+    
+    <span class="hljs-comment">// 3단계: Base64로 인코딩</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">Buffer</span>.<span class="hljs-title function_">from</span>(hashed, <span class="hljs-string">&quot;utf-8&quot;</span>).<span class="hljs-title function_">toString</span>(<span class="hljs-string">&quot;base64&quot;</span>);
+}
+
+<span class="hljs-comment">// 사용 예시</span>
+<span class="hljs-keyword">const</span> clientId = <span class="hljs-string">&quot;aaaabbbbcccc&quot;</span>;
+<span class="hljs-keyword">const</span> clientSecret = <span class="hljs-string">&quot;$2a$10$abcdefghijklmnopqrstuv&quot;</span>;
+<span class="hljs-keyword">const</span> timestamp = <span class="hljs-title class_">Date</span>.<span class="hljs-title function_">now</span>(); <span class="hljs-comment">// 현재 시간 (밀리초)</span>
+
+<span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">const</span> signature = <span class="hljs-title function_">generateSignature</span>(clientId, clientSecret, timestamp);
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`생성된 전자서명: <span class="hljs-subst">${signature}</span>`</span>);
+} <span class="hljs-keyword">catch</span> (error) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&quot;전자서명 생성 중 오류:&quot;</span>, error.<span class="hljs-property">message</span>);
+}
+</code></pre>
+<h3 id="-php">🐘 PHP</h3>
+<pre><code class="language-php"><span class="hljs-meta">&lt;?php</span>
+<span class="hljs-comment">/**
+ * 네이버 커머스API 전자서명 생성기
+ * 
+ * PHP 기본 함수 사용 (추가 라이브러리 불필요)
+ */</span>
+
+<span class="hljs-comment">/**
+ * 전자서명 생성 함수
+ * <span class="hljs-doctag">@param</span> string $clientId 네이버에서 발급받은 클라이언트 ID
+ * <span class="hljs-doctag">@param</span> string $clientSecret 네이버에서 발급받은 클라이언트 시크릿
+ * <span class="hljs-doctag">@param</span> int $timestamp 현재 시간 (밀리초 단위)
+ * <span class="hljs-doctag">@return</span> string Base64로 인코딩된 전자서명
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generateSignature</span>(<span class="hljs-params"><span class="hljs-variable">$clientId</span>, <span class="hljs-variable">$clientSecret</span>, <span class="hljs-variable">$timestamp</span></span>) </span>{
+    <span class="hljs-comment">// 1단계: 클라이언트ID와 타임스탬프를 밑줄로 연결</span>
+    <span class="hljs-variable">$password</span> = <span class="hljs-variable">$clientId</span> . <span class="hljs-string">&#x27;_&#x27;</span> . <span class="hljs-variable">$timestamp</span>;
+    
+    <span class="hljs-comment">// 2단계: crypt 함수로 bcrypt 해싱</span>
+    <span class="hljs-variable">$hashed</span> = <span class="hljs-title function_ invoke__">crypt</span>(<span class="hljs-variable">$password</span>, <span class="hljs-variable">$clientSecret</span>);
+    
+    <span class="hljs-comment">// 3단계: Base64로 인코딩</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-title function_ invoke__">base64_encode</span>(<span class="hljs-variable">$hashed</span>);
+}
+
+<span class="hljs-comment">// 사용 예시</span>
+<span class="hljs-variable">$clientId</span> = <span class="hljs-string">&#x27;aaaabbbbcccc&#x27;</span>;
+<span class="hljs-variable">$clientSecret</span> = <span class="hljs-string">&#x27;$2a$10$abcdefghijklmnopqrstuv&#x27;</span>;
+<span class="hljs-variable">$timestamp</span> = (<span class="hljs-keyword">int</span>)(<span class="hljs-title function_ invoke__">microtime</span>(<span class="hljs-literal">true</span>) * <span class="hljs-number">1000</span>); <span class="hljs-comment">// 현재 시간을 밀리초로 변환</span>
+
+<span class="hljs-keyword">try</span> {
+    <span class="hljs-variable">$signature</span> = <span class="hljs-title function_ invoke__">generateSignature</span>(<span class="hljs-variable">$clientId</span>, <span class="hljs-variable">$clientSecret</span>, <span class="hljs-variable">$timestamp</span>);
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;생성된 전자서명: &quot;</span> . <span class="hljs-variable">$signature</span> . <span class="hljs-string">&quot;\n&quot;</span>;
+} <span class="hljs-keyword">catch</span> (<span class="hljs-built_in">Exception</span> <span class="hljs-variable">$e</span>) {
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;전자서명 생성 중 오류: &quot;</span> . <span class="hljs-variable">$e</span>-&gt;<span class="hljs-title function_ invoke__">getMessage</span>() . <span class="hljs-string">&quot;\n&quot;</span>;
+}
+<span class="hljs-meta">?&gt;</span>
+</code></pre>
+<hr>
+<blockquote>
+<p><strong>⚡ 실행 결과</strong><br>
+모든 언어에서 같은 입력값을 사용하면 동일한 전자서명이 생성됩니다:<br>
+<code>JDJhJDEwJGFiY2RlZmdoaWprbG1ub3BxcnN0dXVCVldZSk42T0VPdEx1OFY0cDQxa2IuTnpVaUEzbmsy</code></p>
+</blockquote>
+<blockquote>
+<p><strong>🚨 주의사항</strong></p>
+<ul>
+<li><code>client_secret</code>은 절대 외부에 노출되어서는 안 됩니다</li>
+<li><code>timestamp</code>는 서버 시간을 사용하며, 5분 이내에 유효합니다</li>
+<li>프로덕션 환경에서는 환경변수나 안전한 설정 파일에 인증 정보를 저장하세요</li>
+</ul>
+</blockquote>
