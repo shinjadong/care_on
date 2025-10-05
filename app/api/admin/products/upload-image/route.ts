@@ -4,58 +4,59 @@ import { createClient } from '@/lib/supabase/server'
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
-    const formData = await request.formData()
-    const file = formData.get('file') as File
-    const productId = formData.get('productId') as string
+    const body = await request.json()
+    const { fileData, fileName, fileType, productId } = body
 
     console.log('[Upload Image] Received request:', {
-      hasFile: !!file,
+      hasFileData: !!fileData,
+      fileName,
+      fileType,
       productId,
-      fileSize: file?.size,
-      fileType: file?.type
+      dataLength: fileData?.length
     })
 
-    if (!file) {
+    if (!fileData || !fileName || !fileType) {
       return NextResponse.json(
-        { error: '파일이 필요합니다.' },
+        { error: '파일 데이터, 파일명, 파일 타입이 필요합니다.' },
         { status: 400 }
       )
     }
 
     // 파일 유효성 검사
-    const maxSize = 5 * 1024 * 1024 // 5MB
-    if (file.size > maxSize) {
-      return NextResponse.json(
-        { error: '파일 크기는 5MB 이하여야 합니다.' },
-        { status: 400 }
-      )
-    }
-
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-    if (!allowedTypes.includes(file.type)) {
+    if (!allowedTypes.includes(fileType)) {
       return NextResponse.json(
         { error: '지원하지 않는 파일 형식입니다. (JPEG, PNG, WebP, GIF만 가능)' },
         { status: 400 }
       )
     }
 
+    // Base64 디코딩
+    const base64Data = fileData.split(',')[1] || fileData
+    const buffer = Buffer.from(base64Data, 'base64')
+
+    // 파일 크기 검사
+    const maxSize = 5 * 1024 * 1024 // 5MB
+    if (buffer.length > maxSize) {
+      return NextResponse.json(
+        { error: '파일 크기는 5MB 이하여야 합니다.' },
+        { status: 400 }
+      )
+    }
+
     // 파일명 생성 (타임스탬프 + 원본 파일명)
     const timestamp = Date.now()
-    const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-    const fileName = `${timestamp}_${sanitizedFileName}`
-    const filePath = productId ? `${productId}/${fileName}` : fileName
+    const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
+    const newFileName = `${timestamp}_${sanitizedFileName}`
+    const filePath = productId ? `${productId}/${newFileName}` : newFileName
 
     console.log('[Upload Image] File path:', filePath)
-
-    // File을 ArrayBuffer로 변환 (Vercel Edge Runtime 호환)
-    const arrayBuffer = await file.arrayBuffer()
-    const fileBuffer = new Uint8Array(arrayBuffer)
 
     // Supabase Storage에 업로드
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('products')
-      .upload(filePath, fileBuffer, {
-        contentType: file.type,
+      .upload(filePath, buffer, {
+        contentType: fileType,
         upsert: false
       })
 

@@ -43,7 +43,8 @@ export default async function ProductsPage({
     inStock: product.available,
     provider: product.provider,
     maxDiscountRate: product.max_discount_rate,
-    discountTiers: product.discount_tiers
+    discountTiers: product.discount_tiers,
+    imageUrl: product.image_url
   }))
 
   // Calculate product counts per category

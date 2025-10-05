@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import {
   ArrowLeft,
   Star,
@@ -72,6 +73,7 @@ interface ProductDetailClientProps {
     provider: string | null
     maxDiscountRate: number
     discountTiers: any[]
+    imageUrl?: string | null
   }
 }
 
@@ -126,12 +128,23 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 </div>
               )}
 
-              {/* 제품 아이콘 표시 */}
-              <div className="flex items-center justify-center h-full">
-                <div className={`p-8 bg-gradient-to-r ${product.gradientColor} rounded-full`}>
-                  <ProductIcon className="w-32 h-32 text-white" />
+              {/* 제품 이미지 또는 아이콘 표시 */}
+              {product.imageUrl ? (
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <div className={`p-8 bg-gradient-to-r ${product.gradientColor} rounded-full`}>
+                    <ProductIcon className="w-32 h-32 text-white" />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* 액션 버튼들 */}
               <div className="absolute top-4 right-4 flex gap-2">

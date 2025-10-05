@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Package, TrendingDown } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -18,6 +19,7 @@ interface ProductCardProps {
     provider?: string | null
     maxDiscountRate?: number
     discountTiers?: any[]
+    imageUrl?: string | null
   }
 }
 
@@ -59,11 +61,21 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* 이미지 영역 */}
         <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-          <div className="flex h-full items-center justify-center">
-            <div className={`p-6 bg-gradient-to-r ${getProductGradient(product.category)} rounded-full`}>
-              <Package className="h-16 w-16 text-white" />
+          {product.imageUrl ? (
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <div className={`p-6 bg-gradient-to-r ${getProductGradient(product.category)} rounded-full`}>
+                <Package className="h-16 w-16 text-white" />
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <CardContent className="p-6">

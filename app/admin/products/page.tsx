@@ -371,19 +371,28 @@ export default function ProductsPage() {
     }
   }
 
-  // 이미지 업로드 핸들러
+  // 이미지 업로드 핸들러 (Base64 방식)
   const handleImageUpload = async (file: File, productId?: string) => {
     try {
       setUploadingImage(true)
-      const formData = new FormData()
-      formData.append('file', file)
-      if (productId) {
-        formData.append('productId', productId)
-      }
+
+      // 파일을 Base64로 변환
+      const fileData = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(reader.result as string)
+        reader.onerror = reject
+        reader.readAsDataURL(file)
+      })
 
       const response = await fetch('/api/admin/products/upload-image', {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileData,
+          fileName: file.name,
+          fileType: file.type,
+          productId
+        })
       })
 
       const data = await response.json()
