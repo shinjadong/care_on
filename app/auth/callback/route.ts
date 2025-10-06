@@ -15,7 +15,24 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    
+    console.log('🔐 OAuth Callback - Exchanging code for session...')
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+
+    if (error) {
+      console.error('❌ OAuth Error Details:', {
+        message: error.message,
+        status: error.status,
+        name: error.name,
+        stack: error.stack,
+        code: code.substring(0, 20) + '...'
+      })
+    } else {
+      console.log('✅ OAuth Success:', {
+        user: data.user?.email,
+        provider: data.user?.app_metadata?.provider
+      })
+    }
 
     if (!error) {
       const forwardedHost = request.headers.get('x-forwarded-host')
