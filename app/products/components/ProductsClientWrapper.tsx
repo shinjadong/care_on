@@ -14,7 +14,6 @@ import {
 } from '@/components/ui/select'
 import { Search, Grid3X3, List, ShoppingCart } from 'lucide-react'
 import FlipProductCard from '@/components/products/FlipProductCard'
-import MobileProductCard from '@/components/products/MobileProductCard'
 import ShoppingCartComponent from '@/components/cart/ShoppingCart'
 import { useCartStore } from '@/lib/store/cart-store'
 
@@ -295,18 +294,9 @@ export default function ProductsClientWrapper({
             <p className="text-sm mt-2">다른 검색어를 입력해보세요</p>
           </div>
         ) : viewMode === 'grid' ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
-              <div key={product.product_id}>
-                {/* 모바일: 심플 카드 (768px 미만) */}
-                <div className="md:hidden">
-                  <MobileProductCard product={product} />
-                </div>
-                {/* 데스크톱: 3D 플립 카드 (768px 이상) */}
-                <div className="hidden md:block">
-                  <FlipProductCard product={product} />
-                </div>
-              </div>
+              <FlipProductCard key={product.product_id} product={product} />
             ))}
           </div>
         ) : (
