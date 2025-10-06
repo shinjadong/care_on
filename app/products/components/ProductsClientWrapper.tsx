@@ -42,15 +42,13 @@ interface ProductsClientWrapperProps {
   categories: Category[]
   productCounts: { [key: string]: number }
   initialCategory: string
-  isMobile: boolean
 }
 
 export default function ProductsClientWrapper({
   initialProducts,
   categories,
   productCounts,
-  initialCategory,
-  isMobile
+  initialCategory
 }: ProductsClientWrapperProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -299,11 +297,16 @@ export default function ProductsClientWrapper({
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {filteredProducts.map((product) => (
-              isMobile ? (
-                <MobileProductCard key={product.product_id} product={product} />
-              ) : (
-                <FlipProductCard key={product.product_id} product={product} />
-              )
+              <div key={product.product_id}>
+                {/* 모바일: 심플 카드 (768px 미만) */}
+                <div className="md:hidden">
+                  <MobileProductCard product={product} />
+                </div>
+                {/* 데스크톱: 3D 플립 카드 (768px 이상) */}
+                <div className="hidden md:block">
+                  <FlipProductCard product={product} />
+                </div>
+              </div>
             ))}
           </div>
         ) : (
