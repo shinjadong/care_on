@@ -210,6 +210,21 @@ export default function ShoppingCartComponent() {
 
         {items.length > 0 && (
           <SheetFooter className="flex-col gap-4 border-t pt-4">
+            {/* 장바구니 비우기 - 작게 구석에 배치 */}
+            <div className="w-full flex justify-end">
+              <button
+                onClick={() => {
+                  if (confirm('장바구니를 비우시겠습니까?')) {
+                    clearCart()
+                  }
+                }}
+                className="text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1"
+              >
+                <Trash2 size={12} />
+                비우기
+              </button>
+            </div>
+
             <div className="w-full space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">총 상품 수</span>
@@ -223,26 +238,19 @@ export default function ShoppingCartComponent() {
               </div>
             </div>
 
-            <div className="w-full space-y-2">
+            {/* 매장 세팅하기 - 매우 메인으로 강조 */}
+            <div className="w-full">
               <Button
-                className="w-full"
+                className="w-full h-14 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200 bg-gradient-to-r from-[#009da2] to-[#00c9cf] hover:from-[#008a8f] hover:to-[#00b8be]"
                 size="lg"
                 onClick={handleCheckout}
               >
-                <Store className="mr-2" size={18} />
+                <Store className="mr-2" size={22} />
                 이 구성으로 매장 세팅하기
               </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => {
-                  if (confirm('장바구니를 비우시겠습니까?')) {
-                    clearCart()
-                  }
-                }}
-              >
-                장바구니 비우기
-              </Button>
+              <p className="text-xs text-center text-gray-500 mt-2">
+                전문가가 직접 설치해드립니다
+              </p>
             </div>
           </SheetFooter>
         )}
