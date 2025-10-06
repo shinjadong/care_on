@@ -18,6 +18,14 @@ export async function POST(request: NextRequest) {
     const cleanPhone = phoneNumber.replace(/-/g, '')
     const supabase = await createClient()
 
+    console.log('🔍 인증 코드 검증 시도:', {
+      input_phone: phoneNumber,
+      clean_phone: cleanPhone,
+      phone_length: cleanPhone.length,
+      input_code: code,
+      current_time: new Date().toISOString(),
+    })
+
     // 인증 코드 조회
     const { data: verificationData, error: fetchError } = await supabase
       .from('verification_codes')
@@ -29,6 +37,12 @@ export async function POST(request: NextRequest) {
       .order('created_at', { ascending: false })
       .limit(1)
       .single()
+    
+    console.log('📋 DB 조회 결과:', {
+      found: !!verificationData,
+      error: fetchError?.message,
+      data: verificationData,
+    })
 
     if (fetchError || !verificationData) {
       // 시도 횟수 증가
@@ -84,40 +98,74 @@ export async function POST(request: NextRequest) {
       userId = existingUser.customer_id
       customerCode = existingUser.customer_code
     } else {
-      // 신규 사용자 생성 - customer_code 자동 생성을 위해 최근 고객 번호 조회
-      const { data: lastCustomer } = await supabase
-        .from('customers')
-        .select('customer_code')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
+      // 신규 사용자 생성 - customer_code 중복 방지 재시도 로직
+      let newUser = null
+      let createError = null
+      const maxRetries = 10
+      
+      for (let attempt = 0; attempt < maxRetries; attempt++) {
+        // 모든 고객 코드 조회하여 사용 가능한 다음 번호 찾기
+        const { data: allCustomers } = await supabase
+          .from('customers')
+          .select('customer_code')
+          .order('customer_code', { ascending: false })
 
-      // 고객 코드 생성 (CO000001, CO000002, ...)
-      let newCustomerCode = 'CO000001'
-      if (lastCustomer && lastCustomer.customer_code) {
-        const lastNumber = parseInt(lastCustomer.customer_code.replace('CO', ''))
-        newCustomerCode = `CO${String(lastNumber + 1).padStart(6, '0')}`
+        // 사용 중인 번호들 추출
+        const usedNumbers = new Set(
+          allCustomers
+            ?.filter(c => c.customer_code) // null 체크
+            .map(c => parseInt(c.customer_code.replace('CO', '')))
+            .filter(n => !isNaN(n)) || []
+        )
+
+        // 사용 가능한 다음 번호 찾기
+        let nextNumber = 1
+        while (usedNumbers.has(nextNumber)) {
+          nextNumber++
+        }
+
+        const newCustomerCode = `CO${String(nextNumber).padStart(6, '0')}`
+        console.log(`🔄 사용자 생성 시도 ${attempt + 1}/${maxRetries}, code: ${newCustomerCode}`)
+
+        // 신규 사용자 생성
+        const result = await supabase
+          .from('customers')
+          .insert({
+            customer_code: newCustomerCode,
+            phone: cleanPhone,
+            business_name: '미설정', // 나중에 매장 설정에서 입력
+            owner_name: '미설정', // 나중에 프로필에서 입력
+            status: 'active',
+            care_status: 'active', // 케어 서비스 활성
+            industry: '미분류',
+          })
+          .select()
+          .single()
+
+        if (!result.error) {
+          newUser = result.data
+          createError = null
+          console.log(`✅ 사용자 생성 성공: ${newCustomerCode}`)
+          break
+        }
+
+        // 중복 코드 에러가 아니면 바로 실패 처리
+        if (result.error.code !== '23505') {
+          createError = result.error
+          console.error(`❌ 사용자 생성 실패 (중복 아님):`, result.error)
+          break
+        }
+
+        console.log(`⚠️ customer_code 중복, 재시도... (${attempt + 1}/${maxRetries})`)
+        // 잠시 대기 후 재시도 (동시성 문제 방지)
+        await new Promise(resolve => setTimeout(resolve, 100))
+        createError = result.error
       }
-
-      // 신규 사용자 생성
-      const { data: newUser, error: createError } = await supabase
-        .from('customers')
-        .insert({
-          customer_code: newCustomerCode,
-          phone: cleanPhone,
-          business_name: '미설정', // 나중에 매장 설정에서 입력
-          owner_name: '미설정', // 나중에 프로필에서 입력
-          status: 'active',
-          care_status: 'active', // 케어 서비스 활성
-          industry: '미분류',
-        })
-        .select()
-        .single()
 
       if (createError || !newUser) {
         console.error('사용자 생성 실패:', createError)
         return NextResponse.json(
-          { error: '사용자 생성에 실패했습니다.' },
+          { error: '사용자 생성에 실패했습니다. 잠시 후 다시 시도해주세요.' },
           { status: 500 }
         )
       }

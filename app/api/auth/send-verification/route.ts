@@ -36,13 +36,22 @@ export async function POST(request: NextRequest) {
       .eq('verified', false)
 
     // 새 인증 코드 저장
+    const insertData = {
+      phone_number: cleanPhone,
+      code: code,
+      expires_at: expiresAt.toISOString(),
+    }
+    
+    console.log('💾 DB 저장 데이터:', {
+      phone_number: cleanPhone,
+      phone_length: cleanPhone.length,
+      code: code,
+      expires_at: expiresAt.toISOString(),
+    })
+    
     const { error: insertError } = await supabase
       .from('verification_codes')
-      .insert({
-        phone_number: cleanPhone,
-        code: code,
-        expires_at: expiresAt.toISOString(),
-      })
+      .insert(insertData)
 
     if (insertError) {
       console.error('인증 코드 저장 실패:', insertError)
