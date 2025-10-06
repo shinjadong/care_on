@@ -213,9 +213,11 @@ export default function ProductsClientWrapper({
       <div className="bg-white border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="relative flex-1 min-w-[300px]">
+            {/* 모바일: 세로 정렬, 데스크톱: 가로 정렬 */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              {/* 검색 및 필터 */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+                <div className="relative flex-1 sm:max-w-xs">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     placeholder="상품명, 공급사로 검색..."
@@ -226,12 +228,12 @@ export default function ProductsClientWrapper({
                 </div>
 
                 <Select value={selectedCategory} onValueChange={handleCategoryChange}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="카테고리 선택" />
+                  <SelectTrigger className="w-full sm:w-40">
+                    <SelectValue placeholder="카테고리" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">
-                      전체 카테고리 ({productCounts['all'] || 0})
+                      전체 ({productCounts['all'] || 0})
                     </SelectItem>
                     {categories.map(category => (
                       <SelectItem key={category.id} value={category.name}>
@@ -242,8 +244,8 @@ export default function ProductsClientWrapper({
                 </Select>
 
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue placeholder="정렬 기준" />
+                  <SelectTrigger className="w-full sm:w-36">
+                    <SelectValue placeholder="정렬" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="name_asc">이름 (가-하)</SelectItem>
@@ -254,7 +256,8 @@ export default function ProductsClientWrapper({
                 </Select>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* 뷰 모드 버튼 - 모바일에서 숨김 */}
+              <div className="hidden md:flex items-center gap-2">
                 <Button
                   variant={viewMode === 'grid' ? 'default' : 'outline'}
                   size="icon"

@@ -61,12 +61,12 @@ export default function FlipProductCard({ product }: FlipProductCardProps) {
       <div
         className={cn(
           "flip-card-inner",
-          isFlipped && "md:flipped" // 모바일에서는 플립 비활성화
+          isFlipped && "flipped"
         )}
       >
         {/* Front Side */}
         <Card
-          className="flip-card-front overflow-hidden md:cursor-pointer md:hover:shadow-lg transition-shadow bg-white border-2"
+          className="flip-card-front overflow-hidden cursor-pointer hover:shadow-lg transition-shadow bg-white border-2"
           onClick={() => setIsFlipped(true)}
           style={{ pointerEvents: isFlipped ? 'none' : 'auto' }}
         >
