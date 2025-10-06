@@ -24,6 +24,12 @@ function LoginContent() {
     try {
       const supabase = createClient()
 
+      console.log('Starting Kakao OAuth...', {
+        origin: window.location.origin,
+        redirectUrl,
+        callbackUrl: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectUrl)}`
+      })
+
       // Supabase Auth Kakao Provider 사용
       const { data, error: signInError } = await supabase.auth.signInWithOAuth({
         provider: 'kakao',
@@ -32,15 +38,18 @@ function LoginContent() {
         },
       })
 
+      console.log('OAuth response:', { data, error: signInError })
+
       if (signInError) {
+        console.error('SignIn error details:', signInError)
         throw signInError
       }
 
       // OAuth 리다이렉션은 자동으로 처리됨
     } catch (err) {
+      console.error('Kakao login error:', err)
       setError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.')
       setIsLoading(false)
-      console.error('Kakao login error:', err)
     }
   }
 
