@@ -69,25 +69,46 @@ export async function POST(request: NextRequest) {
     }
 
     // 사용자 조회 또는 생성
-    const { data: existingUser } = await supabase
+    const { data: existingUser, error: userFetchError } = await supabase
       .from('customers')
       .select('*')
       .eq('phone', cleanPhone)
-      .single()
+      .maybeSingle()
 
     let userId: string
+    let customerCode: string
 
     if (existingUser) {
       // 기존 사용자
       userId = existingUser.customer_id
+      customerCode = existingUser.customer_code
     } else {
+      // 신규 사용자 생성 - customer_code 자동 생성을 위해 최근 고객 번호 조회
+      const { data: lastCustomer } = await supabase
+        .from('customers')
+        .select('customer_code')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      // 고객 코드 생성 (CO000001, CO000002, ...)
+      let newCustomerCode = 'CO000001'
+      if (lastCustomer && lastCustomer.customer_code) {
+        const lastNumber = parseInt(lastCustomer.customer_code.replace('CO', ''))
+        newCustomerCode = `CO${String(lastNumber + 1).padStart(6, '0')}`
+      }
+
       // 신규 사용자 생성
       const { data: newUser, error: createError } = await supabase
         .from('customers')
         .insert({
+          customer_code: newCustomerCode,
           phone: cleanPhone,
-          business_name: '', // 나중에 매장 설정에서 입력
-          owner_name: '', // 나중에 프로필에서 입력
+          business_name: '미설정', // 나중에 매장 설정에서 입력
+          owner_name: '미설정', // 나중에 프로필에서 입력
+          status: 'active',
+          care_status: 'active', // 케어 서비스 활성
+          industry: '미분류',
         })
         .select()
         .single()
@@ -101,6 +122,7 @@ export async function POST(request: NextRequest) {
       }
 
       userId = newUser.customer_id
+      customerCode = newUser.customer_code
     }
 
     // 세션 토큰 생성 (간단한 JWT 대신 UUID 사용)
@@ -112,6 +134,7 @@ export async function POST(request: NextRequest) {
       message: '인증이 완료되었습니다.',
       user: {
         id: userId,
+        customerCode: customerCode,
         phone: cleanPhone,
         isNewUser: !existingUser,
       },
