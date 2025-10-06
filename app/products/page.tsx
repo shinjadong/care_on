@@ -1,3 +1,4 @@
+import { headers } from 'next/headers'
 import { getProducts, getProductCategories, Product } from '@/lib/supabase/products'
 import ProductsHeader from './components/ProductsHeader'
 import ProductsCTA from './components/ProductsCTA'
@@ -8,6 +9,11 @@ export default async function ProductsPage({
 }: {
   searchParams: Promise<{ category?: string }>
 }) {
+  // Device detection
+  const headersList = headers()
+  const userAgent = headersList.get('user-agent') || ''
+  const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+
   // Get category from search params
   const params = await searchParams
   const selectedCategory = params.category || 'all'
@@ -65,6 +71,7 @@ export default async function ProductsPage({
         categories={categories || []}
         productCounts={productCounts}
         initialCategory={selectedCategory}
+        isMobile={isMobile}
       />
 
       {/* CTA 섹션 */}

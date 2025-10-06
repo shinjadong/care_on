@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/select'
 import { Search, Grid3X3, List, ShoppingCart } from 'lucide-react'
 import FlipProductCard from '@/components/products/FlipProductCard'
+import MobileProductCard from '@/components/products/MobileProductCard'
 import ShoppingCartComponent from '@/components/cart/ShoppingCart'
 import { useCartStore } from '@/lib/store/cart-store'
 
@@ -41,13 +42,15 @@ interface ProductsClientWrapperProps {
   categories: Category[]
   productCounts: { [key: string]: number }
   initialCategory: string
+  isMobile: boolean
 }
 
 export default function ProductsClientWrapper({
   initialProducts,
   categories,
   productCounts,
-  initialCategory
+  initialCategory,
+  isMobile
 }: ProductsClientWrapperProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -294,9 +297,13 @@ export default function ProductsClientWrapper({
             <p className="text-sm mt-2">다른 검색어를 입력해보세요</p>
           </div>
         ) : viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {filteredProducts.map((product) => (
-              <FlipProductCard key={product.product_id} product={product} />
+              isMobile ? (
+                <MobileProductCard key={product.product_id} product={product} />
+              ) : (
+                <FlipProductCard key={product.product_id} product={product} />
+              )
             ))}
           </div>
         ) : (
