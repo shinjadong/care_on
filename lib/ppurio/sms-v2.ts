@@ -86,6 +86,41 @@ export async function sendSMS({ to, text, subject, type }: SendMessageParams) {
       }
     }
 
+    // EC2 프록시 서버를 통한 발송 (프로덕션 우선)
+    const SMS_PROXY_URL = process.env.SMS_PROXY_URL || process.env.NEXT_PUBLIC_SMS_PROXY_URL
+    
+    if (SMS_PROXY_URL) {
+      console.log('📡 EC2 프록시 서버를 통한 SMS 발송:', SMS_PROXY_URL)
+      try {
+        const response = await fetch(`${SMS_PROXY_URL}/api/sms/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            to, 
+            text, 
+            type: type || getMessageType(text) 
+          }),
+        })
+        
+        const result = await response.json()
+        
+        if (result.success) {
+          console.log('✅ EC2 프록시 SMS 전송 성공:', result.data)
+          return result
+        } else {
+          console.error('❌ EC2 프록시 SMS 전송 실패:', result.error)
+          // 프록시 실패 시 직접 발송으로 폴백
+          console.log('⚠️ 직접 발송으로 폴백 시도...')
+        }
+      } catch (proxyError) {
+        console.error('❌ EC2 프록시 연결 실패:', proxyError)
+        console.log('⚠️ 직접 발송으로 폴백 시도...')
+      }
+    }
+
+    // 직접 발송 (폴백 또는 프록시 미설정 시)
+    console.log('📱 Ppurio API 직접 발송 시도')
+
     // 환경변수 체크
     if (!PPURIO_CONFIG.username || !PPURIO_CONFIG.apiKey || !PPURIO_CONFIG.senderPhone) {
       console.error('뿌리오 API 설정이 누락되었습니다.')
@@ -130,22 +165,22 @@ export async function sendSMS({ to, text, subject, type }: SendMessageParams) {
 
     const result = await response.json()
 
-    if (response.ok && result.code === '200') {
-      console.log('SMS 전송 성공:', result)
+    if (response.ok && result.code === '1000') {
+      console.log('✅ 직접 발송 SMS 전송 성공:', result)
       return {
         success: true,
         messageKey: result.messageKey,
         type: messageType,
       }
     } else {
-      console.error('뿌리오 API 오류:', result)
+      console.error('❌ 뿌리오 API 오류:', result)
       return {
         success: false,
         error: result.description || '메시지 전송 실패',
       }
     }
   } catch (error) {
-    console.error('SMS 전송 오류:', error)
+    console.error('❌ SMS 전송 오류:', error)
     return {
       success: false,
       error: '메시지 전송 중 오류가 발생했습니다.',
