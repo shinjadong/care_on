@@ -1,54 +1,118 @@
 'use client'
 
-import { Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 
 function LoginContent() {
   const router = useRouter()
-  const searchParams = useSearchParams()
+  const [step, setStep] = useState<'phone' | 'code'>('phone')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [verificationCode, setVerificationCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
+  const [countdown, setCountdown] = useState(0)
 
-  const redirectUrl = searchParams.get('redirect') || '/store-setup'
+  // 휴대폰 번호 포맷팅 (자동 하이픈)
+  const formatPhoneNumber = (value: string) => {
+    const numbers = value.replace(/[^0-9]/g, '')
+    if (numbers.length <= 3) return numbers
+    if (numbers.length <= 7) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`
+    return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`
+  }
 
-  const handleKakaoLogin = async () => {
-    setIsLoading(true)
+  // 카운트다운 시작
+  const startCountdown = () => {
+    setCountdown(300) // 5분
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+  }
+
+  // 인증번호 발송
+  const handleSendCode = async () => {
     setError(null)
+    setMessage(null)
+    setIsLoading(true)
 
     try {
-      const supabase = createClient()
-
-      console.log('Starting Kakao OAuth...', {
-        origin: window.location.origin,
-        redirectUrl,
-        callbackUrl: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectUrl)}`
+      const response = await fetch('/api/auth/send-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber }),
       })
 
-      // Supabase Auth Kakao Provider 사용
-      const { data, error: signInError } = await supabase.auth.signInWithOAuth({
-        provider: 'kakao',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectUrl)}`,
-        },
-      })
+      const data = await response.json()
 
-      console.log('OAuth response:', { data, error: signInError })
-
-      if (signInError) {
-        console.error('SignIn error details:', signInError)
-        throw signInError
+      if (data.success) {
+        setMessage(data.message || '인증번호가 발송되었습니다.')
+        setStep('code')
+        startCountdown()
+        
+        // 개발 모드에서는 콘솔에 코드 표시
+        if (data.devCode) {
+          console.log('🔐 개발 모드 인증 코드:', data.devCode)
+          alert(`개발 모드: 인증번호는 ${data.devCode} 입니다.`)
+        }
+      } else {
+        setError(data.error || '인증번호 발송에 실패했습니다.')
       }
-
-      // OAuth 리다이렉션은 자동으로 처리됨
     } catch (err) {
-      console.error('Kakao login error:', err)
-      setError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.')
+      console.error('인증번호 발송 오류:', err)
+      setError('서버 오류가 발생했습니다.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // 인증번호 확인 및 로그인
+  const handleVerifyCode = async () => {
+    setError(null)
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('/api/auth/verify-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber, code: verificationCode }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // 세션 저장
+        if (data.sessionToken) {
+          localStorage.setItem('auth_token', data.sessionToken)
+          localStorage.setItem('user_id', data.user.id)
+        }
+
+        // 로그인 성공
+        setMessage('로그인 성공! 이동 중...')
+        setTimeout(() => {
+          if (data.user.isNewUser) {
+            router.push('/store-setup') // 신규 사용자는 매장 설정으로
+          } else {
+            router.push('/') // 기존 사용자는 홈으로
+          }
+        }, 1000)
+      } else {
+        setError(data.error || '인증에 실패했습니다.')
+      }
+    } catch (err) {
+      console.error('인증 확인 오류:', err)
+      setError('서버 오류가 발생했습니다.')
+    } finally {
       setIsLoading(false)
     }
   }
@@ -66,7 +130,7 @@ function LoginContent() {
             케어온에 오신 것을 환영합니다
           </CardTitle>
           <CardDescription className="text-base">
-            카카오톡으로 간편하게 시작하세요
+            {step === 'phone' ? '휴대폰 번호로 간편하게 시작하세요' : '인증번호를 입력해주세요'}
           </CardDescription>
         </CardHeader>
 
@@ -77,28 +141,104 @@ function LoginContent() {
             </Alert>
           )}
 
-          <Button
-            onClick={handleKakaoLogin}
-            disabled={isLoading}
-            className="w-full h-12 bg-[#FEE500] hover:bg-[#FDD835] text-[#000000] font-semibold text-base flex items-center justify-center gap-2 rounded-xl transition-all duration-200"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="h-5 w-5 animate-spin" />
-                <span>로그인 중...</span>
-              </>
-            ) : (
-              <>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 3C6.486 3 2 6.582 2 11c0 2.605 1.55 4.93 3.934 6.441l-1.328 4.88a.5.5 0 00.748.56l5.36-3.217C11.138 19.88 11.565 20 12 20c5.514 0 10-3.582 10-8s-4.486-8-10-8z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <span>카카오톡으로 시작하기</span>
-              </>
-            )}
-          </Button>
+          {message && (
+            <Alert>
+              <AlertDescription>{message}</AlertDescription>
+            </Alert>
+          )}
+
+          {step === 'phone' ? (
+            <>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">휴대폰 번호</label>
+                <Input
+                  type="tel"
+                  placeholder="010-1234-5678"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(formatPhoneNumber(e.target.value))}
+                  maxLength={13}
+                  className="h-12 text-base"
+                />
+              </div>
+
+              <Button
+                onClick={handleSendCode}
+                disabled={isLoading || phoneNumber.length < 12}
+                className="w-full h-12 bg-[#148777] hover:bg-[#0f6b5f] text-white font-semibold text-base rounded-xl"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                    <span>발송 중...</span>
+                  </>
+                ) : (
+                  <span>인증번호 받기</span>
+                )}
+              </Button>
+            </>
+          ) : (
+            <>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label className="text-sm font-medium">인증번호</label>
+                  {countdown > 0 && (
+                    <span className="text-sm text-red-600 font-medium">
+                      {Math.floor(countdown / 60)}:{String(countdown % 60).padStart(2, '0')}
+                    </span>
+                  )}
+                </div>
+                <Input
+                  type="text"
+                  placeholder="6자리 숫자 입력"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
+                  maxLength={6}
+                  className="h-12 text-base text-center text-2xl tracking-widest"
+                />
+                <p className="text-xs text-muted-foreground text-center">
+                  {phoneNumber}로 발송된 인증번호를 입력해주세요
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Button
+                  onClick={handleVerifyCode}
+                  disabled={isLoading || verificationCode.length !== 6}
+                  className="w-full h-12 bg-[#148777] hover:bg-[#0f6b5f] text-white font-semibold text-base rounded-xl"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                      <span>확인 중...</span>
+                    </>
+                  ) : (
+                    <span>인증 완료</span>
+                  )}
+                </Button>
+
+                <Button
+                  onClick={handleSendCode}
+                  variant="outline"
+                  disabled={isLoading || countdown > 240}
+                  className="w-full h-10 text-sm"
+                >
+                  인증번호 재발송
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    setStep('phone')
+                    setVerificationCode('')
+                    setCountdown(0)
+                  }}
+                  variant="ghost"
+                  className="w-full h-10 text-sm"
+                >
+                  번호 변경
+                </Button>
+              </div>
+            </>
+          )}
 
           <div className="text-center text-sm text-muted-foreground">
             <p>
