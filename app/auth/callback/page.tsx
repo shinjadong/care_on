@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { createClient } from '@/lib/supabase/client'
 
 function CallbackContent() {
   const router = useRouter()
@@ -15,42 +16,22 @@ function CallbackContent() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        const code = searchParams.get('code')
-        const state = searchParams.get('state') || '/store-setup'
-        const errorParam = searchParams.get('error')
-        const errorDescription = searchParams.get('error_description')
+        const supabase = createClient()
 
-        if (errorParam) {
-          setError(errorDescription || '로그인이 취소되었습니다.')
-          setIsProcessing(false)
-          return
-        }
+        // Supabase가 OAuth 콜백을 처리
+        const { data, error: authError } = await supabase.auth.exchangeCodeForSession(
+          window.location.href
+        )
 
-        if (!code) {
-          setError('인증 코드를 받지 못했습니다.')
-          setIsProcessing(false)
-          return
-        }
-
-        // 백엔드 API로 카카오 로그인 처리 요청
-        const response = await fetch('/api/auth/kakao/callback', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ code }),
-        })
-
-        const data = await response.json()
-
-        if (!response.ok) {
-          throw new Error(data.error || '로그인 처리 중 오류가 발생했습니다.')
+        if (authError) {
+          throw authError
         }
 
         // 로그인 성공 - 리다이렉트
-        router.push(state)
+        const redirectUrl = searchParams.get('redirect') || '/store-setup'
+        router.push(redirectUrl)
       } catch (err) {
-        console.error('Kakao callback error:', err)
+        console.error('Auth callback error:', err)
         setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.')
         setIsProcessing(false)
       }
@@ -102,7 +83,7 @@ function CallbackContent() {
   )
 }
 
-export default function KakaoCallbackPage() {
+export default function AuthCallbackPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#148777] via-cyan-500 to-teal-400">

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 function LoginContent() {
   const router = useRouter()
@@ -21,15 +22,21 @@ function LoginContent() {
     setError(null)
 
     try {
-      // 카카오 OAuth URL 구성
-      const kakaoAuthUrl = new URL('https://kauth.kakao.com/oauth/authorize')
-      kakaoAuthUrl.searchParams.append('client_id', process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID || '')
-      kakaoAuthUrl.searchParams.append('redirect_uri', `${window.location.origin}/auth/callback/kakao`)
-      kakaoAuthUrl.searchParams.append('response_type', 'code')
-      kakaoAuthUrl.searchParams.append('state', redirectUrl)
+      const supabase = createClient()
 
-      // 카카오 로그인 페이지로 이동
-      window.location.href = kakaoAuthUrl.toString()
+      // Supabase Auth Kakao Provider 사용
+      const { data, error: signInError } = await supabase.auth.signInWithOAuth({
+        provider: 'kakao',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectUrl)}`,
+        },
+      })
+
+      if (signInError) {
+        throw signInError
+      }
+
+      // OAuth 리다이렉션은 자동으로 처리됨
     } catch (err) {
       setError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.')
       setIsLoading(false)
