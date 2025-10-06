@@ -22,7 +22,7 @@ export default async function ProductsPage({
 
   if (productsError || categoriesError) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      <div className="min-h-screen bg-[#fbfbfb]">
         <div className="mx-auto max-w-7xl px-4 py-12">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900">오류가 발생했습니다</h2>
@@ -55,7 +55,7 @@ export default async function ProductsPage({
   productCounts['all'] = mappedProducts.length
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-[#fbfbfb]">
       {/* 헤더 섹션 */}
       <ProductsHeader />
 

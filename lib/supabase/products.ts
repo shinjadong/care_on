@@ -24,6 +24,7 @@ export interface Product {
     condition: string
     min_quantity: number
   }[]
+  image_url?: string | null
   created_at: string
   updated_at: string
 }

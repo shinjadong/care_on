@@ -10,9 +10,16 @@ import {
   SheetTrigger,
   SheetFooter,
 } from '@/components/ui/sheet'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ShoppingCart, Minus, Plus, Trash2, Store } from 'lucide-react'
+import { ShoppingCart, Minus, Plus, Trash2, Store, FileText } from 'lucide-react'
 import { useCartStore } from '@/lib/store/cart-store'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -22,6 +29,7 @@ export default function ShoppingCartComponent() {
   const { items, updateQuantity, removeItem, getTotalPrice, getTotalItems, clearCart } = useCartStore()
   const [isOpen, setIsOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
 
   // Hydration 문제 해결: 클라이언트에서만 렌더링
   useEffect(() => {
@@ -29,20 +37,40 @@ export default function ShoppingCartComponent() {
   }, [])
 
   const handleCheckout = () => {
-    // 카카오 로그인 페이지로 이동
-    router.push('/auth/login?redirect=/store-setup')
+    // 확인 다이얼로그 표시
+    setShowConfirmDialog(true)
+  }
+
+  const handleConfirmQuote = async () => {
+    // "좋아요" 버튼 클릭 시 인증 확인 후 이동
+    setShowConfirmDialog(false)
     setIsOpen(false)
+
+    try {
+      // 인증 상태 확인
+      const response = await fetch('/api/auth/check')
+      if (response.ok) {
+        // 이미 로그인되어 있으면 바로 완료 페이지로
+        router.push('/quote-complete')
+      } else {
+        // 로그인 필요
+        router.push('/auth/login?redirect=/quote-complete')
+      }
+    } catch (error) {
+      // 에러 발생 시 로그인 페이지로
+      router.push('/auth/login?redirect=/quote-complete')
+    }
   }
 
   const categoryColors: Record<string, string> = {
-    'POS': 'bg-blue-100 text-blue-800',
-    'KIOSK': 'bg-purple-100 text-purple-800',
-    '네트워크/인터넷': 'bg-green-100 text-green-800',
-    '보안/CCTV': 'bg-red-100 text-red-800',
-    '음악/사운드': 'bg-yellow-100 text-yellow-800',
-    '프린터/부가장비': 'bg-gray-100 text-gray-800',
-    'TV/디스플레이': 'bg-indigo-100 text-indigo-800',
-    '기타': 'bg-gray-100 text-gray-800',
+    'POS': 'bg-teal-100 text-teal-800',
+    'KIOSK': 'bg-teal-100 text-teal-800',
+    '네트워크/인터넷': 'bg-teal-100 text-teal-800',
+    '보안/CCTV': 'bg-teal-100 text-teal-800',
+    '음악/사운드': 'bg-teal-100 text-teal-800',
+    '프린터/부가장비': 'bg-teal-100 text-teal-800',
+    'TV/디스플레이': 'bg-teal-100 text-teal-800',
+    '기타': 'bg-teal-100 text-teal-800',
   }
 
   const totalItems = getTotalItems()
@@ -55,6 +83,7 @@ export default function ShoppingCartComponent() {
           <Button
             variant="outline"
             size="icon"
+            data-cart-button
             className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-shadow z-50 bg-[#009da2] hover:bg-[#008a8f] border-none text-white"
           >
             <div className="relative">
@@ -80,6 +109,7 @@ export default function ShoppingCartComponent() {
         <Button
           variant="outline"
           size="icon"
+          data-cart-button
           className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-shadow z-50 bg-[#009da2] hover:bg-[#008a8f] border-none text-white"
         >
           <div className="relative">
@@ -217,6 +247,79 @@ export default function ShoppingCartComponent() {
           </SheetFooter>
         )}
       </SheetContent>
+
+      {/* 견적서 확인 다이얼로그 - Enrollment 스타일 */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent className="sm:max-w-md bg-[#fbfbfb] border-none p-0">
+          <div className="p-6 pb-3">
+            <div className="w-16 h-16 mx-auto mb-4 bg-teal-100 rounded-full flex items-center justify-center animate-in zoom-in duration-300">
+              <FileText className="h-8 w-8 text-[#009da2]" />
+            </div>
+            <DialogHeader>
+              <DialogTitle className="text-center text-2xl font-semibold text-black leading-relaxed">
+                선택한 상품들 구성으로<br />
+                견적서 받아보시겠어요?
+              </DialogTitle>
+            </DialogHeader>
+          </div>
+          
+          <div className="px-6 space-y-6">
+
+            {/* 선택된 상품 요약 */}
+            <div className="bg-white rounded-xl border-2 border-gray-100 p-5 space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <h4 className="font-semibold text-gray-800 text-base">선택하신 상품</h4>
+              <div className="space-y-3">
+                {items.slice(0, 3).map((item, index) => (
+                  <div 
+                    key={item.product_id} 
+                    className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
+                        <span className="text-[#009da2] font-bold text-sm">✓</span>
+                      </div>
+                      <span className="text-gray-700 font-medium">{item.name}</span>
+                    </div>
+                    <span className="text-gray-600 font-medium">{item.quantity}개</span>
+                  </div>
+                ))}
+                {items.length > 3 && (
+                  <div className="text-sm text-gray-500 text-center pt-2">
+                    외 {items.length - 3}개 상품
+                  </div>
+                )}
+              </div>
+              <div className="bg-teal-50 rounded-lg p-4 mt-4">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold text-gray-800">월 총액</span>
+                  <span className="text-2xl font-bold text-[#009da2]">
+                    {getTotalPrice().toLocaleString()}원
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 버튼 영역 */}
+          <div className="p-6 pt-0 space-y-3">
+            <button
+              type="button"
+              onClick={handleConfirmQuote}
+              className="w-full py-4 px-6 rounded-xl font-semibold text-base text-white bg-[#009da2] hover:bg-[#008a8f] transition-all duration-200 active:scale-[0.98]"
+            >
+              좋아요
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowConfirmDialog(false)}
+              className="w-full py-4 px-6 rounded-xl font-medium text-base text-gray-600 bg-white hover:bg-gray-50 border-2 border-gray-200 transition-all duration-200 active:scale-[0.98]"
+            >
+              취소
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Sheet>
   )
 }

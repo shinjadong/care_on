@@ -17,6 +17,115 @@ import FlipProductCard from '@/components/products/FlipProductCard'
 import ShoppingCartComponent from '@/components/cart/ShoppingCart'
 import { useCartStore } from '@/lib/store/cart-store'
 
+// 장바구니로 날아가는 애니메이션 함수 (곡선 경로)
+const flyToCart = (startElement: HTMLElement, productImage?: string | null) => {
+  const cartButton = document.querySelector('[data-cart-button]') as HTMLElement
+  if (!cartButton) return
+
+  const startRect = startElement.getBoundingClientRect()
+  const endRect = cartButton.getBoundingClientRect()
+
+  const startX = startRect.left + startRect.width / 2
+  const startY = startRect.top + startRect.height / 2
+  const endX = endRect.left + endRect.width / 2
+  const endY = endRect.top + endRect.height / 2
+
+  const controlX = (startX + endX) / 2
+  const controlY = Math.min(startY, endY) - 150
+
+  const flyingElement = document.createElement('div')
+  flyingElement.style.cssText = `
+    position: fixed;
+    left: ${startX}px;
+    top: ${startY}px;
+    width: 60px;
+    height: 60px;
+    z-index: 9999;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+  `
+
+  if (productImage) {
+    flyingElement.innerHTML = `
+      <div style="
+        width: 100%;
+        height: 100%;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 157, 162, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        animation: fly-rotate 0.9s ease-out;
+      ">
+        <img src="${productImage}" style="width: 100%; height: 100%; object-fit: contain;" />
+      </div>
+    `
+  } else {
+    flyingElement.innerHTML = `
+      <div style="
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #009da2 0%, #00c9cf 100%);
+        border-radius: 50%;
+        box-shadow: 0 8px 24px rgba(0, 157, 162, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fly-rotate 0.9s ease-out;
+      ">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+      </div>
+    `
+  }
+
+  document.body.appendChild(flyingElement)
+
+  const addCartShake = () => {
+    cartButton.style.animation = 'cart-shake 0.5s ease-in-out'
+    setTimeout(() => {
+      cartButton.style.animation = ''
+    }, 500)
+  }
+
+  let startTime: number
+  const duration = 900
+
+  const animate = (currentTime: number) => {
+    if (!startTime) startTime = currentTime
+    const elapsed = currentTime - startTime
+    const progress = Math.min(elapsed / duration, 1)
+
+    const t = progress
+    const x = (1 - t) * (1 - t) * startX + 2 * (1 - t) * t * controlX + t * t * endX
+    const y = (1 - t) * (1 - t) * startY + 2 * (1 - t) * t * controlY + t * t * endY
+
+    flyingElement.style.left = `${x}px`
+    flyingElement.style.top = `${y}px`
+    
+    const scale = 1 - (progress * 0.7)
+    flyingElement.style.transform = `translate(-50%, -50%) scale(${scale})`
+    flyingElement.style.opacity = `${1 - (progress * 0.2)}`
+
+    if (progress < 1) {
+      requestAnimationFrame(animate)
+    } else {
+      flyingElement.style.opacity = '0'
+      addCartShake()
+      setTimeout(() => {
+        document.body.removeChild(flyingElement)
+      }, 100)
+    }
+  }
+
+  requestAnimationFrame(animate)
+}
+
 interface Product {
   id: string
   name: string
@@ -27,7 +136,7 @@ interface Product {
   provider: string | null
   maxDiscountRate: number
   discountTiers: any[]
-  imageUrl?: string
+  imageUrl?: string | null
 }
 
 interface Category {
@@ -340,8 +449,8 @@ export default function ProductsClientWrapper({
                       <span className="text-sm font-normal text-gray-600">/월</span>
                     </p>
                     <Button
-                      className="mt-2"
-                      onClick={() => {
+                      className="mt-2 bg-[#009da2] hover:bg-[#008a8f] text-white rounded-xl font-semibold transition-all duration-200 active:scale-[0.98]"
+                      onClick={(e) => {
                         useCartStore.getState().addItem({
                           product_id: product.product_id,
                           name: product.name,
@@ -350,6 +459,7 @@ export default function ProductsClientWrapper({
                           monthly_fee: product.monthly_fee,
                           image_url: product.image_url,
                         })
+                        flyToCart(e.currentTarget, product.image_url)
                       }}
                     >
                       장바구니 담기

@@ -14,12 +14,8 @@ import { useCartStore } from '@/lib/store/cart-store'
 
 interface StoreSetupForm {
   store_name: string
-  business_type: string
-  address: string
-  address_detail: string
   phone: string
   email: string
-  description: string
 }
 
 export default function StoreSetupPage() {
@@ -32,12 +28,8 @@ export default function StoreSetupPage() {
 
   const [formData, setFormData] = useState<StoreSetupForm>({
     store_name: '',
-    business_type: '',
-    address: '',
-    address_detail: '',
     phone: '',
     email: '',
-    description: '',
   })
 
   useEffect(() => {
@@ -67,10 +59,6 @@ export default function StoreSetupPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSelectChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, business_type: value }))
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -89,7 +77,7 @@ export default function StoreSetupPage() {
             product_id: item.product_id,
             product_name: item.name,
             quantity: item.quantity,
-            price: item.price,
+            price: item.monthly_fee,
           })),
           total_amount: getTotalPrice(),
         }),
@@ -104,11 +92,6 @@ export default function StoreSetupPage() {
       // 성공 시 장바구니 비우기
       clearCart()
       setSuccess(true)
-
-      // 2초 후 대시보드로 이동
-      setTimeout(() => {
-        router.push('/dashboard')
-      }, 2000)
     } catch (err) {
       console.error('Store setup error:', err)
       setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.')
@@ -118,92 +101,148 @@ export default function StoreSetupPage() {
 
   if (isCheckingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#148777] via-cyan-500 to-teal-400">
-        <Card className="w-full max-w-md">
-          <CardContent className="flex flex-col items-center gap-4 p-8">
-            <Loader2 className="h-12 w-12 animate-spin text-[#148777]" />
-            <p className="text-muted-foreground">인증 확인 중...</p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen flex items-center justify-center bg-[#fbfbfb]">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-12 w-12 animate-spin text-[#009da2]" />
+          <p className="text-gray-600">인증 확인 중...</p>
+        </div>
       </div>
     )
   }
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#148777] via-cyan-500 to-teal-400 p-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="flex flex-col items-center gap-4 p-8">
-            <CheckCircle2 className="h-16 w-16 text-green-500" />
-            <h2 className="text-2xl font-bold text-center">매장 세팅 완료!</h2>
-            <p className="text-muted-foreground text-center">
-              매장이 성공적으로 등록되었습니다.
-              <br />
-              대시보드로 이동합니다...
+      <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center space-y-6 animate-in fade-in zoom-in duration-500">
+            {/* 축하 이모지 애니메이션 */}
+            <div className="text-8xl mb-6 animate-bounce">
+              🎉
+            </div>
+
+            {/* 메인 메시지 */}
+            <div className="space-y-3">
+              <h1 className="text-4xl font-bold text-black">
+                접수가 완료됐어요!
+              </h1>
+              <p className="text-xl text-gray-700">
+                성공적으로 등록되었습니다
+              </p>
+            </div>
+
+            {/* 정보 카드 */}
+            <div className="bg-white rounded-2xl border-2 border-gray-100 p-8 space-y-6 shadow-lg">
+              {/* 체크 아이콘 */}
+              <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle2 className="h-12 w-12 text-green-600" />
+              </div>
+
+              {/* 안내 메시지 */}
+              <div className="space-y-4">
+                <div className="bg-teal-50 rounded-xl p-5 space-y-2">
+                  <div className="flex items-center justify-center gap-2 text-[#009da2] font-semibold">
+                    <Phone className="h-5 w-5" />
+                    <span>곧 연락드릴게요</span>
+                  </div>
+                  <p className="text-gray-700 text-center">
+                    전문 견적사가 빠른 시일 내에<br />
+                    연락을 드릴 예정입니다
+                  </p>
+                </div>
+
+                {/* 선택한 상품 요약 */}
+                {items.length > 0 && (
+                  <div className="pt-4 border-t border-gray-100">
+                    <p className="text-sm text-gray-600 mb-3">선택하신 상품</p>
+                    <div className="space-y-2">
+                      {items.slice(0, 3).map((item) => (
+                        <div key={item.product_id} className="flex justify-between text-sm">
+                          <span className="text-gray-700">{item.name}</span>
+                          <span className="text-gray-900 font-medium">{item.quantity}개</span>
+                        </div>
+                      ))}
+                      {items.length > 3 && (
+                        <p className="text-xs text-gray-500 text-center pt-1">
+                          외 {items.length - 3}개 상품
+                        </p>
+                      )}
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between">
+                      <span className="font-semibold text-gray-800">월 총액</span>
+                      <span className="text-xl font-bold text-[#009da2]">
+                        {getTotalPrice().toLocaleString()}원
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 홈으로 버튼 */}
+              <Button
+                onClick={() => router.push('/')}
+                className="w-full py-4 px-6 rounded-xl font-semibold text-base text-white bg-[#009da2] hover:bg-[#008a8f] transition-all duration-200 active:scale-[0.98]"
+              >
+                홈으로 돌아가기
+              </Button>
+            </div>
+
+            {/* 추가 안내 */}
+            <p className="text-sm text-gray-500">
+              등록하신 연락처로 곧 연락드리겠습니다
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#148777] via-cyan-500 to-teal-400 py-12 px-4">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-[#fbfbfb] py-8 px-4">
+      <div className="max-w-md mx-auto space-y-6">
         {/* 헤더 */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold text-[#148777] flex items-center gap-2">
-              <Store className="h-8 w-8" />
-              매장 세팅하기
-            </CardTitle>
-            <CardDescription className="text-lg">
-              선택하신 상품으로 매장을 설정합니다. 매장 정보를 입력해주세요.
-            </CardDescription>
-          </CardHeader>
-        </Card>
+        <div className="text-center space-y-2 mb-8">
+          <h1 className="text-3xl font-bold text-black">
+            매장 정보를<br />
+            입력해 주세요
+          </h1>
+          <p className="text-base text-gray-600">
+            전문 견적사가 연락드릴 수 있도록<br />
+            정보를 알려주세요
+          </p>
+        </div>
 
         {/* 선택한 상품 목록 */}
         {items.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>선택한 상품 ({items.length}개)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {items.map((item) => (
-                  <div
-                    key={item.product_id}
-                    className="flex justify-between items-center p-3 bg-muted rounded-lg"
-                  >
-                    <div>
-                      <p className="font-medium">{item.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {item.price.toLocaleString()}원 × {item.quantity}개
-                      </p>
-                    </div>
-                    <p className="font-bold text-[#148777]">
-                      {(item.price * item.quantity).toLocaleString()}원
+          <div className="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm">
+            <h3 className="font-semibold text-gray-800 mb-4">선택하신 상품 ({items.length}개)</h3>
+            <div className="space-y-3">
+              {items.map((item) => (
+                <div
+                  key={item.product_id}
+                  className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0"
+                >
+                  <div>
+                    <p className="font-medium text-gray-900">{item.name}</p>
+                    <p className="text-sm text-gray-600">
+                      {item.monthly_fee.toLocaleString()}원 × {item.quantity}개
                     </p>
                   </div>
-                ))}
-                <div className="flex justify-between items-center p-3 bg-[#148777] text-white rounded-lg font-bold">
-                  <span>총 금액</span>
-                  <span>{getTotalPrice().toLocaleString()}원</span>
+                  <p className="font-bold text-[#009da2]">
+                    {(item.monthly_fee * item.quantity).toLocaleString()}원
+                  </p>
                 </div>
+              ))}
+              <div className="flex justify-between items-center pt-3 mt-2 bg-teal-50 rounded-lg p-4">
+                <span className="font-semibold text-gray-800">월 총액</span>
+                <span className="text-xl font-bold text-[#009da2]">{getTotalPrice().toLocaleString()}원</span>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {/* 매장 정보 입력 폼 */}
-        <Card>
-          <CardHeader>
-            <CardTitle>매장 정보</CardTitle>
-            <CardDescription>정확한 매장 정보를 입력해주세요.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {error && (
                 <Alert variant="destructive">
                   <AlertDescription>{error}</AlertDescription>
@@ -211,133 +250,68 @@ export default function StoreSetupPage() {
               )}
 
               {/* 매장명 */}
-              <div className="space-y-2">
-                <Label htmlFor="store_name" className="flex items-center gap-2">
-                  <Store className="h-4 w-4" />
-                  매장명 *
-                </Label>
+              <div className="space-y-3">
+                <label className="block text-base font-medium text-black">매장명 *</label>
                 <Input
                   id="store_name"
                   name="store_name"
                   value={formData.store_name}
                   onChange={handleInputChange}
-                  placeholder="케어온 강남점"
+                  placeholder="예) 케어온 강남점"
                   required
-                />
-              </div>
-
-              {/* 업종 */}
-              <div className="space-y-2">
-                <Label htmlFor="business_type">업종 *</Label>
-                <Select value={formData.business_type} onValueChange={handleSelectChange} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="업종을 선택해주세요" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="restaurant">음식점</SelectItem>
-                    <SelectItem value="cafe">카페</SelectItem>
-                    <SelectItem value="retail">소매업</SelectItem>
-                    <SelectItem value="service">서비스업</SelectItem>
-                    <SelectItem value="beauty">미용/뷰티</SelectItem>
-                    <SelectItem value="education">교육</SelectItem>
-                    <SelectItem value="other">기타</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* 주소 */}
-              <div className="space-y-2">
-                <Label htmlFor="address" className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  주소 *
-                </Label>
-                <Input
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  placeholder="서울시 강남구 테헤란로 123"
-                  required
-                />
-              </div>
-
-              {/* 상세주소 */}
-              <div className="space-y-2">
-                <Label htmlFor="address_detail">상세주소</Label>
-                <Input
-                  id="address_detail"
-                  name="address_detail"
-                  value={formData.address_detail}
-                  onChange={handleInputChange}
-                  placeholder="1층 101호"
+                  className="w-full py-4 px-4 border-0 border-b-2 border-gray-200 bg-transparent text-base text-black placeholder-gray-400 transition-colors duration-200 focus:border-[#009da2] focus:outline-none rounded-none"
                 />
               </div>
 
               {/* 전화번호 */}
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
-                  전화번호 *
-                </Label>
+              <div className="space-y-3">
+                <label className="block text-base font-medium text-black">전화번호 *</label>
                 <Input
                   id="phone"
                   name="phone"
                   type="tel"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  placeholder="02-1234-5678"
+                  placeholder="예) 02-1234-5678"
                   required
+                  className="w-full py-4 px-4 border-0 border-b-2 border-gray-200 bg-transparent text-base text-black placeholder-gray-400 transition-colors duration-200 focus:border-[#009da2] focus:outline-none rounded-none"
                 />
               </div>
 
               {/* 이메일 */}
-              <div className="space-y-2">
-                <Label htmlFor="email" className="flex items-center gap-2">
-                  <Mail className="h-4 w-4" />
-                  이메일 *
-                </Label>
+              <div className="space-y-3">
+                <label className="block text-base font-medium text-black">이메일 *</label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="store@example.com"
+                  placeholder="예) store@example.com"
                   required
-                />
-              </div>
-
-              {/* 매장 설명 */}
-              <div className="space-y-2">
-                <Label htmlFor="description">매장 소개</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  placeholder="매장에 대한 간단한 소개를 입력해주세요"
-                  rows={4}
+                  className="w-full py-4 px-4 border-0 border-b-2 border-gray-200 bg-transparent text-base text-black placeholder-gray-400 transition-colors duration-200 focus:border-[#009da2] focus:outline-none rounded-none"
                 />
               </div>
 
               {/* 제출 버튼 */}
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-12 bg-[#148777] hover:bg-[#117766] text-white text-lg font-semibold"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                    처리 중...
-                  </>
-                ) : (
-                  '매장 세팅 완료하기'
-                )}
-              </Button>
+              <div className="pt-4">
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full py-4 px-6 rounded-xl font-semibold text-base text-white bg-[#009da2] hover:bg-[#008a8f] transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                      <span>처리 중...</span>
+                    </>
+                  ) : (
+                    <span>접수 완료하기</span>
+                  )}
+                </Button>
+              </div>
             </form>
-          </CardContent>
-        </Card>
+          </div>
       </div>
     </div>
   )

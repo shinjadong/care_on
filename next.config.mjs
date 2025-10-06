@@ -27,12 +27,12 @@ const nextConfig = {
       },
     ],
   },
-  // 루트 경로에서 /what으로 리다이렉트 (SEO 최적화)
+  // 루트 경로에서 /products로 리다이렉트 (SEO 최적화)
   async redirects() {
     return [
       {
         source: '/',
-        destination: '/what',
+        destination: '/products',
         permanent: false, // 임시 리다이렉트 (302)
       },
     ]

@@ -7,6 +7,8 @@ export async function GET(request: NextRequest) {
     const cookieStore = await cookies()
     const sessionCookie = cookieStore.get('careon_session')
 
+    console.log('🔍 Auth check - Cookie:', sessionCookie ? 'found' : 'not found')
+
     if (!sessionCookie) {
       return NextResponse.json(
         { error: '인증되지 않은 사용자입니다.' },
@@ -15,12 +17,13 @@ export async function GET(request: NextRequest) {
     }
 
     const customerId = sessionCookie.value
+    console.log('✅ Auth check - Customer ID:', customerId)
     const supabase = await createClient()
 
     // 사용자 정보 확인
     const { data: customer, error } = await supabase
       .from('customers')
-      .select('customer_id, name, email, profile_image_url')
+      .select('customer_id, phone, business_name')
       .eq('customer_id', customerId)
       .single()
 
