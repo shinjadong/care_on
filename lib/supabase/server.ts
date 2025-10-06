@@ -22,11 +22,14 @@ export async function createClient(useServiceRole = false) {
       throw new Error("Supabase URL and Key are required")
     }
 
-    console.log("🔧 Creating Supabase client with:", {
-      url: supabaseUrl,
-      hasKey: !!supabaseKey,
-      keyType: useServiceRole ? 'service_role' : 'anon',
-    })
+    // Production 환경에서는 로그 출력 안 함
+    if (process.env.NODE_ENV === 'development') {
+      console.log("🔧 Creating Supabase client with:", {
+        url: supabaseUrl,
+        hasKey: !!supabaseKey,
+        keyType: useServiceRole ? 'service_role' : 'anon',
+      })
+    }
 
     return createServerClient(supabaseUrl, supabaseKey, {
       cookies: {
