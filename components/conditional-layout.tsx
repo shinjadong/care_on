@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { FloatingBanner } from "@/components/floating-banner"
 
 interface ConditionalLayoutProps {
   children: React.ReactNode
@@ -27,13 +26,8 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
         {children}
       </main>
       
-      {/* 예외 페이지가 아닐 때만 푸터와 플로팅 배너 표시 */}
-      {!isExcludedPage && (
-        <>
-          <Footer />
-          <FloatingBanner />
-        </>
-      )}
+      {/* 예외 페이지가 아닐 때만 푸터 표시 */}
+      {!isExcludedPage && <Footer />}
     </div>
   )
 }
