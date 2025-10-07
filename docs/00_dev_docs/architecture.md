@@ -92,7 +92,7 @@ Next.js는 폴더 구조에 대해 강제하지 않으며(unopinionated), 프로
 
 ## 방법 1: 전역 Components 폴더 (사용자가 말씀하신 방식)
 
-```
+\`\`\`
 src/
 ├── app/
 │   ├── page.tsx              # 홈
@@ -107,7 +107,7 @@ src/
 │   └── ui/                   # 공통 UI
 │       ├── Button.tsx
 │       └── Input.tsx
-```
+\`\`\`
 
 **장점:**
 
@@ -123,7 +123,7 @@ src/
 
 App 디렉토리에서는 라우트 세그먼트 안에 프로젝트 파일을 안전하게 같이 둘 수 있으며(colocate), 실수로 라우팅되지 않습니다. [Getting Started: Project Structure | Next.js](https://nextjs.org/docs/app/getting-started/project-structure)
 
-```
+\`\`\`
 src/
 ├── app/
 │   ├── page.tsx
@@ -140,7 +140,7 @@ src/
     └── ui/
         ├── Button.tsx
         └── Input.tsx
-```
+\`\`\`
 
 **장점:**
 
@@ -149,7 +149,7 @@ src/
 
 ## 방법 3: 혼합 (실무에서 많이 씀)
 
-```
+\`\`\`
 src/
 ├── app/
 │   ├── (shop)/              # Route Group (URL에 안나타남)
@@ -165,11 +165,11 @@ src/
 │       └── register/
 └── components/
     └── ui/                  # 전역 UI만
-```
+\`\`\`
 
 ## 제 추천 (쇼핑몰 기준)
 
-```
+\`\`\`
 src/
 ├── app/
 │   ├── page.tsx                    # 홈
@@ -188,7 +188,7 @@ src/
 └── components/
     ├── ui/                         # Button, Input 등
     └── layout/                     # Header, Footer
-```
+\`\`\`
 
 **핵심 원칙:**
 
@@ -210,7 +210,7 @@ src/
 
 ### 1. 기본 구조 (추천)
 
-```
+\`\`\`
 src/
 ├── app/
 │   ├── layout.tsx              # 글로벌 CSS import
@@ -227,11 +227,11 @@ src/
         └── Card/
             ├── Card.tsx
             └── Card.module.css
-```
+\`\`\`
 
 ### 2. Tailwind 사용하는 경우 (요즘 대세)
 
-```
+\`\`\`
 src/
 ├── app/
 │   ├── layout.tsx
@@ -239,13 +239,13 @@ src/
 ├── styles/
 │   └── theme.ts           # 디자인 토큰
 └── tailwind.config.ts     # Tailwind 설정
-```
+\`\`\`
 
 **globals.css:**
 
 css
 
-```css
+\`\`\`css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -263,13 +263,13 @@ css
     @apply bg-blue-500 text-white px-4 py-2 rounded-lg;
   }
 }
-```
+\`\`\`
 
 **tailwind.config.ts:**
 
 typescript
 
-```typescript
+\`\`\`typescript
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
@@ -290,11 +290,11 @@ const config: Config = {
     },
   },
 }
-```
+\`\`\`
 
 ### 3. CSS Modules만 사용하는 경우
 
-```
+\`\`\`
 src/
 ├── app/
 │   ├── layout.tsx
@@ -307,13 +307,13 @@ src/
         └── Button/
             ├── Button.tsx
             └── Button.module.css
-```
+\`\`\`
 
 **variables.module.css:**
 
 css
 
-```css
+\`\`\`css
 :root {
   --color-primary: #3b82f6;
   --color-secondary: #8b5cf6;
@@ -326,13 +326,13 @@ css
   max-width: 1200px;
   margin: 0 auto;
 }
-```
+\`\`\`
 
 **Button.module.css:**
 
 css
 
-```css
+\`\`\`css
 .button {
   padding: var(--spacing-md);
   background: var(--color-primary);
@@ -342,11 +342,11 @@ css
 .button:hover {
   opacity: 0.9;
 }
-```
+\`\`\`
 
 ### 4. 디자인 토큰 TypeScript로 관리 (고급)
 
-```
+\`\`\`
 src/
 ├── styles/
 │   ├── tokens.ts          # 디자인 토큰
@@ -354,13 +354,13 @@ src/
 │   └── globals.css
 └── lib/
     └── cn.ts              # className 유틸리티
-```
+\`\`\`
 
 **tokens.ts:**
 
 typescript
 
-```typescript
+\`\`\`typescript
 export const colors = {
   primary: {
     50: '#eff6ff',
@@ -401,13 +401,13 @@ export const typography = {
     bold: 700,
   },
 } as const
-```
+\`\`\`
 
 **theme.ts:**
 
 typescript
 
-```typescript
+\`\`\`typescript
 import { colors, spacing, typography } from './tokens'
 
 export const theme = {
@@ -417,11 +417,11 @@ export const theme = {
 } as const
 
 export type Theme = typeof theme
-```
+\`\`\`
 
 ### 5. shadcn/ui 스타일 (요즘 인기)
 
-```
+\`\`\`
 src/
 ├── app/
 │   └── globals.css
@@ -433,13 +433,13 @@ src/
     └── themes/
         ├── light.css
         └── dark.css
-```
+\`\`\`
 
 **globals.css:**
 
 css
 
-```css
+\`\`\`css
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -455,13 +455,13 @@ css
     /* ... */
   }
 }
-```
+\`\`\`
 
 ## 제 추천 (쇼핑몰 기준)
 
 ### Tailwind + CSS Variables 조합
 
-```
+\`\`\`
 src/
 ├── app/
 │   ├── layout.tsx
@@ -479,13 +479,13 @@ src/
 ├── lib/
 │   └── utils.ts          # cn 헬퍼
 └── tailwind.config.ts
-```
+\`\`\`
 
 **globals.css:**
 
 css
 
-```css
+\`\`\`css
 @import './styles/tokens/colors.css';
 @import './styles/tokens/spacing.css';
 @import './styles/tokens/typography.css';
@@ -502,20 +502,20 @@ css
     @apply bg-background text-foreground;
   }
 }
-```
+\`\`\`
 
 **lib/utils.ts:**
 
 typescript
 
-```typescript
+\`\`\`typescript
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-```
+\`\`\`
 
 ## 핵심 원칙
 

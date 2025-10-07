@@ -29,7 +29,7 @@ Next.js caching is automatically configured for you. There's no action required 
 
 Edit your `save_cache` step in `.circleci/config.yml` to include `.next/cache`:
 
-```
+\`\`\`
 steps:
 
   - save_cache:
@@ -41,7 +41,7 @@ steps:
         - ./node_modules
 
         - ./.next/cache
-```
+\`\`\`
 
 If you do not have a `save_cache` key, please follow CircleCI's [documentation on setting up build caching](https://circleci.com/docs/2.0/caching/).
 
@@ -49,7 +49,7 @@ If you do not have a `save_cache` key, please follow CircleCI's [documentation o
 
 Add or merge the following into your `.travis.yml`:
 
-```
+\`\`\`
 cache:
 
   directories:
@@ -59,13 +59,13 @@ cache:
     - node_modules
 
     - .next/cache
-```
+\`\`\`
 
 ## GitLab CI
 
 Add or merge the following into your `.gitlab-ci.yml`:
 
-```
+\`\`\`
 cache:
 
   key: ${CI_COMMIT_REF_SLUG}
@@ -75,7 +75,7 @@ cache:
     - node_modules/
 
     - .next/cache/
-```
+\`\`\`
 
 ## Netlify CI
 
@@ -85,7 +85,7 @@ Use [Netlify Plugins](https://www.netlify.com/products/build/plugins/) with [`@n
 
 Add (or merge in) the following to your `buildspec.yml`:
 
-```
+\`\`\`
 cache:
 
   paths:
@@ -93,13 +93,13 @@ cache:
     - 'node_modules/**/*' # Cache \`node_modules\` for faster \`yarn\` or \`npm i\`
 
     - '.next/cache/**/*' # Cache Next.js for faster application rebuilds
-```
+\`\`\`
 
 ## GitHub Actions
 
 Using GitHub's [actions/cache](https://github.com/actions/cache), add the following step in your workflow file:
 
-```
+\`\`\`
 uses: actions/cache@v4
 
 with:
@@ -121,23 +121,23 @@ with:
   restore-keys: |
 
     ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-```
+\`\`\`
 
 ## Bitbucket Pipelines
 
 Add or merge the following into your `bitbucket-pipelines.yml` at the top level (same level as `pipelines`):
 
-```
+\`\`\`
 definitions:
 
   caches:
 
     nextcache: .next/cache
-```
+\`\`\`
 
 Then reference it in the `caches` section of your pipeline's `step`:
 
-```
+\`\`\`
 - step:
 
     name: your_step_name
@@ -147,21 +147,21 @@ Then reference it in the `caches` section of your pipeline's `step`:
       - node
 
       - nextcache
-```
+\`\`\`
 
 ## Heroku
 
 Using Heroku's [custom cache](https://devcenter.heroku.com/articles/nodejs-support#custom-caching), add a `cacheDirectories` array in your top-level package.json:
 
-```
+\`\`\`
 "cacheDirectories": [".next/cache"]
-```
+\`\`\`
 
 ## Azure Pipelines
 
 Using Azure Pipelines' [Cache task](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/cache), add the following task to your pipeline yaml file somewhere prior to the task that executes `next build`:
 
-```
+\`\`\`
 - task: Cache@2
 
   displayName: 'Cache .next/cache'
@@ -171,13 +171,13 @@ Using Azure Pipelines' [Cache task](https://docs.microsoft.com/en-us/azure/devop
     key: next | $(Agent.OS) | yarn.lock
 
     path: '$(System.DefaultWorkingDirectory)/.next/cache'
-```
+\`\`\`
 
 ## Jenkins (Pipeline)
 
 Using Jenkins' [Job Cacher](https://www.jenkins.io/doc/pipeline/steps/jobcacher/) plugin, add the following build step to your `Jenkinsfile` where you would normally run `next build` or `npm install`:
 
-```
+\`\`\`
 stage("Restore npm packages") {
 
     steps {
@@ -243,4 +243,4 @@ stage("Build") {
     }
 
 }
-```
+\`\`\`

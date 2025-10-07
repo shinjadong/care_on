@@ -23,7 +23,7 @@ The HTML [`<video>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/v
 
 app/ui/video.jsx
 
-```
+\`\`\`
 export function Video() {
 
   return (
@@ -51,7 +51,7 @@ export function Video() {
   )
 
 }
-```
+\`\`\`
 
 ### Common <video> tag attributes
 
@@ -83,7 +83,7 @@ The HTML `<iframe>` tag allows you to embed videos from external platforms like 
 
 app/page.jsx
 
-```
+\`\`\`
 export default function Page() {
 
   return (
@@ -93,7 +93,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 ### Common <iframe> tag attributes
 
@@ -128,7 +128,7 @@ The first step is to create a [Server Component](https://nextjs.org/docs/app/get
 
 app/ui/video-component.jsx
 
-```
+\`\`\`
 export default async function VideoComponent() {
 
   const src = await getVideoSrc()
@@ -138,7 +138,7 @@ export default async function VideoComponent() {
   return <iframe src={src} allowFullScreen />
 
 }
-```
+\`\`\`
 
 **2\. Stream the video component using React Suspense**
 
@@ -146,7 +146,7 @@ After creating the Server Component to embed the video, the next step is to [str
 
 app/page.jsx
 
-```
+\`\`\`
 import { Suspense } from 'react'
 
 import VideoComponent from '../ui/VideoComponent.jsx'
@@ -172,7 +172,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 > **Good to know**: When embedding videos from external platforms, consider the following best practices:
 > 
@@ -185,7 +185,7 @@ For a more engaging and informative loading experience, consider using a loading
 
 app/page.jsx
 
-```
+\`\`\`
 import { Suspense } from 'react'
 
 import VideoComponent from '../ui/VideoComponent.jsx'
@@ -213,7 +213,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 ## Self-hosted videos
 
@@ -240,7 +240,7 @@ Once the video is uploaded and stored, you can display it in your Next.js applic
 
 app/page.jsx
 
-```
+\`\`\`
 import { Suspense } from 'react'
 
 import { list } from '@vercel/blob'
@@ -290,7 +290,7 @@ async function VideoComponent({ fileName }) {
   )
 
 }
-```
+\`\`\`
 
 In this approach, the page uses the video's `@vercel/blob` URL to display the video using the `VideoComponent`. React Suspense is used to show a fallback until the video URL is fetched and the video is ready to be displayed.
 
@@ -300,7 +300,7 @@ If you have subtitles for your video, you can easily add them using the `<track>
 
 app/page.jsx
 
-```
+\`\`\`
 async function VideoComponent({ fileName }) {
 
   const { blobs } = await list({
@@ -332,7 +332,7 @@ async function VideoComponent({ fileName }) {
   )
 
 }
-```
+\`\`\`
 
 By following this approach, you can effectively self-host and integrate videos into your Next.js applications.
 

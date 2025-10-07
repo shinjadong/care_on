@@ -66,12 +66,12 @@ ExecuteClear
 
 #### Curl
 
-```bash
+\`\`\`bash
 curl -X 'POST' \
   'https://message.ppurio.com/v1/token' \
   -H 'accept: application/json' \
   -d ''
-```
+\`\`\`
 
 #### Request URL
 
@@ -178,7 +178,7 @@ application/json
 - Example Value
 - Schema
 
-```json
+\`\`\`json
 {
   "account": "뿌리오 계정",
   "messageType": "MMS",
@@ -213,7 +213,7 @@ application/json
     }
   ]
 }
-```
+\`\`\`
 
 #### Responses
 
@@ -309,7 +309,7 @@ ExecuteClear
 
 #### Curl
 
-```bash
+\`\`\`bash
 curl -X 'POST' \
   'https://message.ppurio.com/v1/kakao' \
   -H 'accept: application/json' \
@@ -356,7 +356,7 @@ curl -X 'POST' \
     }
   ]
 }'
-```
+\`\`\`
 
 #### Request URL
 
@@ -421,12 +421,12 @@ application/json
 - Example Value
 - Schema
 
-```json
+\`\`\`json
 {
   "account": "뿌리오 계정",
   "messageKey": "221128133505801SMS010542suchUL8P"
 }
-```
+\`\`\`
 
 #### Responses
 
@@ -478,12 +478,12 @@ application/json
 - Example Value
 - Schema
 
-```json
+\`\`\`json
 {
   "account": "뿌리오 계정",
   "messageKey": "221128133505801SMS010542suchUL8P"
 }
-```
+\`\`\`
 
 #### Responses
 

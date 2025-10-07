@@ -22,13 +22,13 @@ Next.js has built-in support for loading environment variables from `.env*` file
 
 .env
 
-```
+\`\`\`
 DB_HOST=localhost
 
 DB_USER=myuser
 
 DB_PASS=mypassword
-```
+\`\`\`
 
 > **Note**: Next.js also supports multiline variables inside of your `.env*` files:
 > 
@@ -62,7 +62,7 @@ For example:
 
 app/api/route.js
 
-```
+\`\`\`
 export async function GET() {
 
   const db = await myDB.connect({
@@ -78,7 +78,7 @@ export async function GET() {
   // ...
 
 }
-```
+\`\`\`
 
 If you need to load environment variables outside of the Next.js runtime, such as in a root config file for an ORM or test runner, you can use the `@next/env` package.
 
@@ -86,13 +86,13 @@ This package is used internally by Next.js to load environment variables from `.
 
 To use it, install the package and use the `loadEnvConfig` function to load the environment variables:
 
-```
+\`\`\`
 npm install @next/env
-```
+\`\`\`
 
 envConfig.ts
 
-```
+\`\`\`
 import { loadEnvConfig } from '@next/env'
 
  
@@ -100,13 +100,13 @@ import { loadEnvConfig } from '@next/env'
 const projectDir = process.cwd()
 
 loadEnvConfig(projectDir)
-```
+\`\`\`
 
 Then, you can import the configuration where needed. For example:
 
 orm.config.ts
 
-```
+\`\`\`
 import './envConfig.ts'
 
  
@@ -120,7 +120,7 @@ export default defineConfig({
   },
 
 })
-```
+\`\`\`
 
 ### Referencing Other Variables
 
@@ -128,11 +128,11 @@ Next.js will automatically expand variables that use `$` to reference other vari
 
 .env
 
-```
+\`\`\`
 TWITTER_USER=nextjs
 
 TWITTER_URL=https://x.com/$TWITTER_USER
-```
+\`\`\`
 
 In the above example, `process.env.TWITTER_URL` would be set to `https://x.com/nextjs`.
 
@@ -146,9 +146,9 @@ In order to make the value of an environment variable accessible in the browser,
 
 Terminal
 
-```
+\`\`\`
 NEXT_PUBLIC_ANALYTICS_ID=abcdefghijk
-```
+\`\`\`
 
 This will tell Next.js to replace all references to `process.env.NEXT_PUBLIC_ANALYTICS_ID` in the Node.js environment with the value from the environment in which you run `next build`, allowing you to use it anywhere in your code. It will be inlined into any JavaScript sent to the browser.
 
@@ -156,7 +156,7 @@ This will tell Next.js to replace all references to `process.env.NEXT_PUBLIC_ANA
 
 Note that dynamic lookups will *not* be inlined, such as:
 
-```
+\`\`\`
 // This will NOT be inlined, because it uses a variable
 
 const varName = 'NEXT_PUBLIC_ANALYTICS_ID'
@@ -170,7 +170,7 @@ setupAnalyticsService(process.env[varName])
 const env = process.env
 
 setupAnalyticsService(env.NEXT_PUBLIC_ANALYTICS_ID)
-```
+\`\`\`
 
 ### Runtime Environment Variables
 
@@ -199,7 +199,7 @@ There is a small difference between `test` environment, and both `development` a
 
 While running unit tests you can make sure to load your environment variables the same way Next.js does by leveraging the `loadEnvConfig` function from the `@next/env` package.
 
-```
+\`\`\`
 // The below can be used in a Jest global setup file or similar for your testing set-up
 
 import { loadEnvConfig } from '@next/env'
@@ -213,7 +213,7 @@ export default async () => {
   loadEnvConfig(projectDir)
 
 }
-```
+\`\`\`
 
 ## Environment Variable Load Order
 

@@ -21,7 +21,7 @@ Create a file named `.vscode/launch.json` at the root of your project with the f
 
 launch.json
 
-```
+\`\`\`
 {
 
   "version": "0.2.0",
@@ -111,7 +111,7 @@ launch.json
   ]
 
 }
-```
+\`\`\`
 
 > **Note**: To use Firefox debugging in VS Code, you'll need to install the [Firefox Debugger extension](https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug).
 
@@ -166,9 +166,9 @@ To debug server-side Next.js code with browser DevTools, you need to pass the [`
 
 Terminal
 
-```
+\`\`\`
 NODE_OPTIONS='--inspect' next dev
-```
+\`\`\`
 
 > **Good to know**: Use `NODE_OPTIONS='--inspect=0.0.0.0'` to allow remote debugging access outside localhost, such as when running the app in a Docker container.
 
@@ -176,7 +176,7 @@ If you're using `npm run dev` or `yarn dev` then you should update the `dev` scr
 
 package.json
 
-```
+\`\`\`
 {
 
   "scripts": {
@@ -186,19 +186,19 @@ package.json
   }
 
 }
-```
+\`\`\`
 
 Launching the Next.js dev server with the `--inspect` flag will look something like this:
 
 Terminal
 
-```
+\`\`\`
 Debugger listening on ws://127.0.0.1:9229/0cf90313-350d-4466-a748-cd60f4e47c95
 
 For help, see: https://nodejs.org/en/docs/inspector
 
 ready - started server on 0.0.0.0:3000, url: http://localhost:3000
-```
+\`\`\`
 
 For Chrome:
 
@@ -229,7 +229,7 @@ Windows users may run into an issue when using `NODE_OPTIONS='--inspect'` as tha
 
 package.json
 
-```
+\`\`\`
 {
 
   "scripts": {
@@ -239,7 +239,7 @@ package.json
   }
 
 }
-```
+\`\`\`
 
 `cross-env` will set the `NODE_OPTIONS` environment variable regardless of which platform you are on (including Mac, Linux, and Windows) and allow you to debug consistently across devices and operating systems.
 

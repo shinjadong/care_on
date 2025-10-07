@@ -6,7 +6,7 @@
 **products 테이블이 이미 존재함!**
 
 #### products 테이블 현재 구조:
-```sql
+\`\`\`sql
 CREATE TABLE public.products (
   product_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   name varchar NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE public.products (
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now()
 )
-```
+\`\`\`
 
 #### 관련 테이블들:
 - `packages` - 패키지 상품
@@ -60,14 +60,14 @@ CREATE TABLE public.products (
 ### Phase 1: 데이터 시딩 (즉시 실행 가능)
 1. 기존 `lib/products-data.ts`의 데이터를 products 테이블에 INSERT
 2. 샘플 SQL:
-   ```sql
+   \`\`\`sql
    INSERT INTO products (name, category, provider, monthly_fee, description, available)
    VALUES
    ('케어온 토탈 솔루션', '종합솔루션', '케어온', 150000,
     '창업부터 운영까지 모든 것을 한번에 해결하는 종합 패키지', true),
    ('CCTV 보안 시스템', '보안', '케어온', 80000,
     '24시간 실시간 모니터링과 AI 이상감지 기능', true);
-   ```
+   \`\`\`
 
 ### Phase 2: API 엔드포인트 (✅ 완료)
 - `/api/products` - 제품 목록 조회 ✅

@@ -39,14 +39,14 @@ RESTful API는 웹의 기본 프로토콜인 HTTP를 활용한 API 설계 방식
 ### Content Type
 **기본 형식: JSON (JavaScript Object Notation)**
 
-```json
+\`\`\`json
 {
   "orderId": "2023010112345",
   "productName": "스마트폰 케이스",
   "quantity": 2,
   "price": 15000
 }
-```
+\`\`\`
 
 > **📝 예외 상황**  
 > 파일 업로드/다운로드와 같은 특수한 경우에만 다른 형식을 사용합니다.
@@ -80,7 +80,7 @@ RESTful API는 웹의 기본 프로토콜인 HTTP를 활용한 API 설계 방식
 
 #### ☕ Java
 
-```java
+\`\`\`java
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
@@ -99,11 +99,11 @@ String instantTime = Instant.now()
 
 // 문자열을 ZonedDateTime으로 파싱
 ZonedDateTime parsed = ZonedDateTime.parse("2023-07-25T10:10:10.100+09:00");
-```
+\`\`\`
 
 #### 🐍 Python
 
-```python
+\`\`\`python
 from datetime import datetime
 import pytz
 
@@ -117,11 +117,11 @@ print(current_time)  # 2024-01-15T14:30:25.123+09:00
 # 문자열을 datetime 객체로 파싱
 from dateutil import parser
 parsed_time = parser.parse("2023-07-25T10:10:10.100+09:00")
-```
+\`\`\`
 
 #### 🟢 Node.js
 
-```javascript
+\`\`\`javascript
 // 현재 시간을 커머스API 형식으로 변환
 const now = new Date();
 const kstOffset = 9 * 60; // 9시간을 분으로 변환
@@ -133,11 +133,11 @@ console.log(formattedTime); // 2024-01-15T14:30:25.123+09:00
 
 // 문자열을 Date 객체로 파싱
 const parsedDate = new Date("2023-07-25T10:10:10.100+09:00");
-```
+\`\`\`
 
 #### 🐘 PHP
 
-```php
+\`\`\`php
 // 현재 시간을 커머스API 형식으로 변환
 $timezone = new DateTimeZone('Asia/Seoul');
 $now = new DateTime('now', $timezone);
@@ -146,7 +146,7 @@ echo $formatted; // 2024-01-15T14:30:25.123+09:00
 
 // 문자열을 DateTime 객체로 파싱
 $parsedDate = DateTime::createFromFormat('Y-m-d\TH:i:s.vP', '2023-07-25T10:10:10.100+09:00');
-```
+\`\`\`
 
 ---
 
@@ -159,12 +159,12 @@ $parsedDate = DateTime::createFromFormat('Y-m-d\TH:i:s.vP', '2023-07-25T10:10:10
 
 HTTP 상태 코드는 3자리 숫자로 구성되며, 첫 번째 숫자가 응답의 종류를 나타냅니다:
 
-```
+\`\`\`
 2xx → ✅ 성공 (Success)
 3xx → 🔄 리다이렉션 (Redirection) 
 4xx → ❌ 클라이언트 오류 (Client Error)
 5xx → 💥 서버 오류 (Server Error)
-```
+\`\`\`
 
 ### ✅ 2xx 성공 (Success)
 요청이 성공적으로 처리되었음을 나타냅니다.
@@ -212,7 +212,7 @@ HTTP 상태 코드는 3자리 숫자로 구성되며, 첫 번째 숫자가 응�
 
 #### 🔧 개발자를 위한 에러 처리 가이드
 
-```javascript
+\`\`\`javascript
 // Node.js 예시: 상태 코드별 에러 처리
 async function handleApiResponse(response) {
     switch (response.status) {
@@ -255,7 +255,7 @@ async function retryWithBackoff(maxRetries = 3, baseDelay = 1000) {
         }
     }
 }
-```
+\`\`\`
 
 > **💡 개발 팁**  
 > • **4xx 오류**: 클라이언트 코드 수정 필요  
@@ -280,7 +280,7 @@ async function retryWithBackoff(maxRetries = 3, baseDelay = 1000) {
 
 **Trace ID**는 마치 택배의 운송장 번호와 같습니다. API 요청마다 고유하게 부여되어 문제 발생 시 정확한 추적이 가능합니다.
 
-```javascript
+\`\`\`javascript
 // 응답에서 traceId 추출 예시
 const response = await fetch('https://api.commerce.naver.com/external/v1/orders');
 
@@ -290,12 +290,12 @@ const responseTime = response.headers.get('GNCP-GW-HttpClient-ResponseTime');
 
 console.log('Trace ID:', traceId);
 console.log('응답 시간:', responseTime + 'ms');
-```
+\`\`\`
 
 > **💡 개발 팁**  
 > 에러 로그에 Trace ID를 포함하면 빠른 문제 해결이 가능합니다.
 
-```javascript
+\`\`\`javascript
 // 에러 로깅 예시
 try {
     const result = await callCommerceAPI();
@@ -311,7 +311,7 @@ try {
         timestamp: new Date().toISOString()
     });
 }
-```
+\`\`\`
 
 ---
 
@@ -329,9 +329,9 @@ try {
 
 ### 완전한 API URL 구성
 
-```
+\`\`\`
 https://api.commerce.naver.com/external/v1/{endpoint}
-```
+\`\`\`
 
 **구성 요소 설명:**
 - `https://api.commerce.naver.com` - 기본 호스트
@@ -354,26 +354,26 @@ https://api.commerce.naver.com/external/v1/{endpoint}
 
 ### 필수 요청 헤더
 
-```http
+\`\`\`http
 POST /external/v1/oauth2/token HTTP/1.1
 Host: api.commerce.naver.com
 Content-Type: application/x-www-form-urlencoded  # 토큰 발급 시
 Accept: application/json
-```
+\`\`\`
 
 ### 일반적인 요청 헤더
 
-```http
+\`\`\`http
 POST /external/v1/pay-order/seller/product-orders/query HTTP/1.1
 Host: api.commerce.naver.com
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {access_token}
-```
+\`\`\`
 
 ### 응답 형식
 
-```json
+\`\`\`json
 {
   "timestamp": "2024-01-15T14:30:25.123+09:00",
   "traceId": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
@@ -381,7 +381,7 @@ Authorization: Bearer {access_token}
     // 실제 응답 데이터
   }
 }
-```
+\`\`\`
 
 ---
 

@@ -39,7 +39,7 @@ For example, the `<Page>` component is a Server Component that fetches data abou
 
 app/\[id\]/page.tsx
 
-```
+\`\`\`
 import LikeButton from '@/app/ui/like-button'
 
 import { getPost } from '@/lib/data'
@@ -81,11 +81,11 @@ export default async function Page({
   )
 
 }
-```
+\`\`\`
 
 app/ui/like-button.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -99,7 +99,7 @@ export default function LikeButton({ likes }: { likes: number }) {
   // ...
 
 }
-```
+\`\`\`
 
 ## How do Server and Client Components work in Next.js?
 
@@ -145,7 +145,7 @@ You can create a Client Component by adding the [`"use client"`](https://react.d
 
 app/ui/counter.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -173,7 +173,7 @@ export default function Counter() {
   )
 
 }
-```
+\`\`\`
 
 `"use client"` is used to declare a **boundary** between the Server and Client module graphs (trees).
 
@@ -187,7 +187,7 @@ For example, the `<Layout>` component contains mostly static elements like a log
 
 app/ui/search.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -197,7 +197,7 @@ export default function Search() {
   // ...
 
 }
-```
+\`\`\`
 
 ### Passing data from Server to Client Components
 
@@ -205,7 +205,7 @@ You can pass data from Server Components to Client Components using props.
 
 app/\[id\]/page.tsx
 
-```
+\`\`\`
 import LikeButton from '@/app/ui/like-button'
 
 import { getPost } from '@/lib/data'
@@ -231,11 +231,11 @@ export default async function Page({
   return <LikeButton likes={post.likes} />
 
 }
-```
+\`\`\`
 
 app/ui/like-button.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -245,7 +245,7 @@ export default function LikeButton({ likes }: { likes: number }) {
   // ...
 
 }
-```
+\`\`\`
 
 Alternatively, you can stream data from a Server Component to a Client Component with the [`use` Hook](https://react.dev/reference/react/use). See an [example](https://nextjs.org/docs/app/getting-started/fetching-data#streaming-data-with-the-use-hook).
 
@@ -259,7 +259,7 @@ A common pattern is to use `children` to create a *slot* in a `<ClientComponent>
 
 app/ui/modal.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -269,13 +269,13 @@ export default function Modal({ children }: { children: React.ReactNode }) {
   return <div>{children}</div>
 
 }
-```
+\`\`\`
 
 Then, in a parent Server Component (e.g.`<Page>`), you can pass a `<Cart>` as the child of the `<Modal>`:
 
 app/page.tsx
 
-```
+\`\`\`
 import Modal from './ui/modal'
 
 import Cart from './ui/cart'
@@ -295,7 +295,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 In this pattern, all Server Components will be rendered on the server ahead of time, including those as props. The resulting RSC payload will contain references of where Client Components should be rendered within the component tree.
 
@@ -307,7 +307,7 @@ To use context, create a Client Component that accepts `children`:
 
 app/theme-provider.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -333,13 +333,13 @@ export default function ThemeProvider({
   return <ThemeContext.Provider value="dark">{children}</ThemeContext.Provider>
 
 }
-```
+\`\`\`
 
 Then, import it into a Server Component (e.g. `layout`):
 
 app/layout.tsx
 
-```
+\`\`\`
 import ThemeProvider from './theme-provider'
 
  
@@ -369,7 +369,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 Your Server Component will now be able to directly render your provider, and all other Client Components throughout your app will be able to consume this context.
 
@@ -385,7 +385,7 @@ If you use `<Carousel />` within a Client Component, it will work as expected:
 
 app/gallery.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -417,7 +417,7 @@ export default function Gallery() {
   )
 
 }
-```
+\`\`\`
 
 However, if you try to use it directly within a Server Component, you'll see an error. This is because Next.js doesn't know `<Carousel />` is using client-only features.
 
@@ -425,7 +425,7 @@ To fix this, you can wrap third-party components that rely on client-only featur
 
 app/carousel.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -435,13 +435,13 @@ import { Carousel } from 'acme-carousel'
  
 
 export default Carousel
-```
+\`\`\`
 
 Now, you can use `<Carousel />` directly within a Server Component:
 
 app/page.tsx
 
-```
+\`\`\`
 import Carousel from './carousel'
 
  
@@ -463,7 +463,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 > **Advice for Library Authors**
 > 
@@ -493,9 +493,9 @@ In Next.js, installing `server-only` or `client-only` is **optional**. However, 
 
 Terminal
 
-```
+\`\`\`
 pnpm add server-only
-```
+\`\`\`
 
 Next.js handles `server-only` and `client-only` imports internally to provide clearer error messages when a module is used in the wrong environment. The contents of these packages from NPM are not used by Next.js.
 

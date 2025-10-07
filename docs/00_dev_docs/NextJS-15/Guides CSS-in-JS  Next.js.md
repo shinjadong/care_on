@@ -51,7 +51,7 @@ Then, wrap your [root layout](https://nextjs.org/docs/app/api-reference/file-con
 
 app/layout.tsx
 
-```
+\`\`\`
 import StyledJsxRegistry from './registry'
 
  
@@ -81,7 +81,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 [View an example here](https://github.com/vercel/next.js/tree/canary/examples/with-styled-jsx).
 
@@ -93,7 +93,7 @@ First, enable styled-components in `next.config.js`.
 
 next.config.js
 
-```
+\`\`\`
 module.exports = {
 
   compiler: {
@@ -103,7 +103,7 @@ module.exports = {
   },
 
 }
-```
+\`\`\`
 
 Then, use the `styled-components` API to create a global registry component to collect all CSS style rules generated during a render, and a function to return those rules. Then use the `useServerInsertedHTML` hook to inject the styles collected in the registry into the `<head>` HTML tag in the root layout.
 
@@ -111,7 +111,7 @@ Wrap the `children` of the root layout with the style registry component:
 
 app/layout.tsx
 
-```
+\`\`\`
 import StyledComponentsRegistry from './lib/registry'
 
  
@@ -141,7 +141,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 [View an example here](https://github.com/vercel/next.js/tree/canary/examples/with-styled-components).
 

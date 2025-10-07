@@ -23,9 +23,9 @@ To get started, install the `@next/third-parties` library:
 
 Terminal
 
-```
+\`\`\`
 npm install @next/third-parties@latest next@latest
-```
+\`\`\`
 
 `@next/third-parties` is currently an **experimental** library under active development. We recommend installing it with the **latest** or **canary** flags while we work on adding more third-party integrations.
 
@@ -41,7 +41,7 @@ To load Google Tag Manager for all routes, include the component directly in you
 
 app/layout.tsx
 
-```
+\`\`\`
 import { GoogleTagManager } from '@next/third-parties/google'
 
  
@@ -69,13 +69,13 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 To load Google Tag Manager for a single route, include the component in your page file:
 
 app/page.js
 
-```
+\`\`\`
 import { GoogleTagManager } from '@next/third-parties/google'
 
  
@@ -85,7 +85,7 @@ export default function Page() {
   return <GoogleTagManager gtmId="GTM-XYZ" />
 
 }
-```
+\`\`\`
 
 #### Sending Events
 
@@ -93,7 +93,7 @@ The `sendGTMEvent` function can be used to track user interactions on your page 
 
 app/page.js
 
-```
+\`\`\`
 'use client'
 
  
@@ -123,7 +123,7 @@ export function EventButton() {
   )
 
 }
-```
+\`\`\`
 
 Refer to the Tag Manager [developer documentation](https://developers.google.com/tag-platform/tag-manager/datalayer) to learn about the different variables and events that can be passed into the function.
 
@@ -154,7 +154,7 @@ To load Google Analytics for all routes, include the component directly in your 
 
 app/layout.tsx
 
-```
+\`\`\`
 import { GoogleAnalytics } from '@next/third-parties/google'
 
  
@@ -182,13 +182,13 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 To load Google Analytics for a single route, include the component in your page file:
 
 app/page.js
 
-```
+\`\`\`
 import { GoogleAnalytics } from '@next/third-parties/google'
 
  
@@ -198,7 +198,7 @@ export default function Page() {
   return <GoogleAnalytics gaId="G-XYZ" />
 
 }
-```
+\`\`\`
 
 #### Sending Events
 
@@ -206,7 +206,7 @@ The `sendGAEvent` function can be used to measure user interactions on your page
 
 app/page.js
 
-```
+\`\`\`
 'use client'
 
  
@@ -236,7 +236,7 @@ export function EventButton() {
   )
 
 }
-```
+\`\`\`
 
 Refer to the Google Analytics [developer documentation](https://developers.google.com/analytics/devguides/collection/ga4/event-parameters) to learn more about event parameters.
 
@@ -264,7 +264,7 @@ The `GoogleMapsEmbed` component can be used to add a [Google Maps Embed](https:/
 
 app/page.js
 
-```
+\`\`\`
 import { GoogleMapsEmbed } from '@next/third-parties/google'
 
  
@@ -290,7 +290,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 #### Options
 
@@ -318,7 +318,7 @@ The `YouTubeEmbed` component can be used to load and display a YouTube embed. Th
 
 app/page.js
 
-```
+\`\`\`
 import { YouTubeEmbed } from '@next/third-parties/google'
 
  
@@ -328,7 +328,7 @@ export default function Page() {
   return <YouTubeEmbed videoid="ogfYd705cRs" height={400} params="controls=0" />
 
 }
-```
+\`\`\`
 
 #### Options
 

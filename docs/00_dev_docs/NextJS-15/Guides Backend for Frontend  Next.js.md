@@ -19,9 +19,9 @@ If you are starting a new project, using `create-next-app` with the `--api` flag
 
 Terminal
 
-```
+\`\`\`
 npx create-next-app@latest --api
-```
+\`\`\`
 
 > **Good to know**: Next.js backend capabilities are not a full backend replacement. They serve as an API layer that:
 > 
@@ -43,9 +43,9 @@ Create a Route Handler using the `route.ts` or `route.js` file convention:
 
 /app/api/route.ts
 
-```
+\`\`\`
 export function GET(request: Request) {}
-```
+\`\`\`
 
 This handles `GET` requests sent to `/api`.
 
@@ -53,7 +53,7 @@ Use `try/catch` blocks for operations that may throw an exception:
 
 /app/api/route.ts
 
-```
+\`\`\`
 import { submit } from '@/lib/submit'
 
  
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
   }
 
 }
-```
+\`\`\`
 
 Avoid exposing sensitive information in error messages sent to the client.
 
@@ -115,7 +115,7 @@ Use Request [instance methods](https://developer.mozilla.org/en-US/docs/Web/API/
 
 /app/api/echo-body/route.ts
 
-```
+\`\`\`
 export async function POST(request: Request) {
 
   const res = await request.json()
@@ -123,13 +123,13 @@ export async function POST(request: Request) {
   return Response.json({ res })
 
 }
-```
+\`\`\`
 
 > **Good to know**: Validate data before passing it to other systems
 
 /app/api/send-email/route.ts
 
-```
+\`\`\`
 import { sendMail, validateInputs } from '@/lib/email-transporter'
 
  
@@ -167,13 +167,13 @@ export async function POST(request: Request) {
   }
 
 }
-```
+\`\`\`
 
 You can only read the request body once. Clone the request if you need to read it again:
 
 /app/api/clone/route.ts
 
-```
+\`\`\`
 export async function POST(request: Request) {
 
   try {
@@ -199,7 +199,7 @@ export async function POST(request: Request) {
   }
 
 }
-```
+\`\`\`
 
 ## Manipulating data
 
@@ -207,7 +207,7 @@ Route Handlers can transform, filter, and aggregate data from one or more source
 
 You can also offload heavy computations to the server and reduce client battery and data usage.
 
-```
+\`\`\`
 import { parseWeatherData } from '@/lib/weather'
 
  
@@ -255,7 +255,7 @@ export async function POST(request: Request) {
   }
 
 }
-```
+\`\`\`
 
 > **Good to know**: This example uses `POST` to avoid putting geo-location data in the URL. `GET` requests may be cached or logged, which could expose sensitive info.
 
@@ -265,7 +265,7 @@ You can use a Route Handler as a proxy to another backend. Add validation logic 
 
 /app/api/\[...slug\]/route.ts
 
-```
+\`\`\`
 import { isValidRequest } from '@/lib/utils'
 
  
@@ -313,7 +313,7 @@ export async function POST(request: Request, { params }) {
   }
 
 }
-```
+\`\`\`
 
 Or use:
 
@@ -334,7 +334,7 @@ You can pass `NextRequest` to any function expecting `Request`. Likewise, you ca
 
 /app/echo-pathname/route.ts
 
-```
+\`\`\`
 import { type NextRequest, NextResponse } from 'next/server'
 
  
@@ -364,7 +364,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ pathname: nextUrl.pathname })
 
 }
-```
+\`\`\`
 
 Learn more about [`NextRequest`](https://nextjs.org/docs/app/api-reference/functions/next-request) and [`NextResponse`](https://nextjs.org/docs/app/api-reference/functions/next-response).
 
@@ -376,7 +376,7 @@ For example, revalidate a route when content changes in a CMS. Configure the CMS
 
 /app/webhook/route.ts
 
-```
+\`\`\`
 import { type NextRequest, NextResponse } from 'next/server'
 
  
@@ -414,7 +414,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ success: true })
 
 }
-```
+\`\`\`
 
 Callback URLs are another use case. When a user completes a third-party flow, the third party sends them to a callback URL. Use a Route Handler to verify the response and decide where to redirect the user.
 
@@ -430,7 +430,7 @@ Use `middleware` to generate a response before the request reaches a route path.
 
 middleware.ts
 
-```
+\`\`\`
 import { isAuthenticated } from '@lib/auth'
 
  
@@ -458,13 +458,13 @@ export function middleware(request: Request) {
   }
 
 }
-```
+\`\`\`
 
 You can also proxy requests using `middleware`:
 
 middleware.ts
 
-```
+\`\`\`
 import { NextResponse } from 'next/server'
 
  
@@ -480,13 +480,13 @@ export function middleware(request: Request) {
   }
 
 }
-```
+\`\`\`
 
 Another type of response `middleware` can produce are redirects:
 
 middleware.ts
 
-```
+\`\`\`
 import { NextResponse } from 'next/server'
 
  
@@ -502,7 +502,7 @@ export function middleware(request: Request) {
   }
 
 }
-```
+\`\`\`
 
 ## Security
 
@@ -521,7 +521,7 @@ You can implement rate limiting in your Next.js backend. In addition to code-bas
 
 /app/resource/route.ts
 
-```
+\`\`\`
 import { NextResponse } from 'next/server'
 
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -545,7 +545,7 @@ export async function POST(request: Request) {
   return new Response(null, { status: 204 })
 
 }
-```
+\`\`\`
 
 ### Verify payloads
 
@@ -577,7 +577,7 @@ Community libraries often use the factory pattern for Route Handlers.
 
 /app/api/\[...path\]/route.ts
 
-```
+\`\`\`
 import { createHandler } from 'third-party-library'
 
  
@@ -595,7 +595,7 @@ export const GET = handler
 // or
 
 export { handler as POST }
-```
+\`\`\`
 
 This creates a shared handler for `GET` and `POST` requests. The library customizes behavior based on the `method` and `pathname` in the request.
 
@@ -603,13 +603,13 @@ Libraries can also provide a `middleware` factory.
 
 middleware.ts
 
-```
+\`\`\`
 import { createMiddleware } from 'third-party-library'
 
  
 
 export default createMiddleware()
-```
+\`\`\`
 
 See more examples on using [Router Handlers](https://nextjs.org/docs/app/api-reference/file-conventions/route#examples) and the [`middleware`](https://nextjs.org/docs/app/api-reference/file-conventions/middleware#examples) API references.
 
@@ -654,7 +654,7 @@ This can be used to generate static HTML, JSON, TXT, or other files.
 
 app/hello-world/route.ts
 
-```
+\`\`\`
 export const dynamic = 'force-static'
 
  
@@ -664,7 +664,7 @@ export function GET() {
   return new Response('Hello World', { status: 200 })
 
 }
-```
+\`\`\`
 
 ### Deployment environment
 

@@ -53,7 +53,7 @@ Supabase 대시보드에서 제공하는 Callback URL 확인:
 ## 3. 코드 구현
 
 ### useAuth 훅 (이미 구현됨)
-```typescript
+\`\`\`typescript
 // hooks/use-auth.tsx
 const signInWithKakao = async () => {
   try {
@@ -68,7 +68,7 @@ const signInWithKakao = async () => {
     // 에러 처리
   }
 }
-```
+\`\`\`
 
 ### 로그인/회원가입 페이지 (이미 구현됨)
 - 카카오 로그인 버튼이 추가되어 있음

@@ -34,7 +34,7 @@
 ### 1. 핵심 테이블 구조
 
 #### 🏢 고객 테이블 (customers)
-```sql
+\`\`\`sql
 CREATE TABLE customers (
   customer_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   customer_code VARCHAR(20) UNIQUE, -- 고객번호 (CO202309100001 형태)
@@ -53,10 +53,10 @@ CREATE TABLE customers (
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
-```
+\`\`\`
 
 #### 📦 상품 테이블 (products)
-```sql
+\`\`\`sql
 CREATE TABLE products (
   product_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(100) NOT NULL, -- 상품명
@@ -69,10 +69,10 @@ CREATE TABLE products (
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
-```
+\`\`\`
 
 #### 📋 패키지 테이블 (packages)
-```sql
+\`\`\`sql
 CREATE TABLE packages (
   package_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(100) NOT NULL, -- 패키지명
@@ -86,10 +86,10 @@ CREATE TABLE packages (
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
-```
+\`\`\`
 
 #### 🔗 패키지-상품 연결 (package_items)
-```sql
+\`\`\`sql
 CREATE TABLE package_items (
   package_id UUID REFERENCES packages(package_id),
   product_id UUID REFERENCES products(product_id),
@@ -97,10 +97,10 @@ CREATE TABLE package_items (
   item_fee INTEGER, -- 패키지 내 할당 요금
   PRIMARY KEY (package_id, product_id)
 );
-```
+\`\`\`
 
 #### 👥 직원 테이블 (employees)
-```sql
+\`\`\`sql
 CREATE TABLE employees (
   employee_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(100) NOT NULL,
@@ -111,12 +111,12 @@ CREATE TABLE employees (
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
-```
+\`\`\`
 
 ### 2. 계약 관리 강화
 
 #### 📄 계약 테이블 보완 (contracts)
-```sql
+\`\`\`sql
 -- 기존 contracts 테이블에 추가 필드
 ALTER TABLE contracts 
 ADD COLUMN IF NOT EXISTS customer_id UUID REFERENCES customers(customer_id),
@@ -134,10 +134,10 @@ ADD COLUMN IF NOT EXISTS billing_day SMALLINT CHECK (billing_day BETWEEN 1 AND 3
 ADD COLUMN IF NOT EXISTS remittance_day SMALLINT CHECK (remittance_day BETWEEN 1 AND 31),
 ADD COLUMN IF NOT EXISTS next_billing_at TIMESTAMPTZ,
 ADD COLUMN IF NOT EXISTS next_remittance_at TIMESTAMPTZ;
-```
+\`\`\`
 
 #### 🔗 계약-상품 연결 (contract_items)
-```sql
+\`\`\`sql
 CREATE TABLE contract_items (
   contract_id UUID REFERENCES contracts(id),
   product_id UUID REFERENCES products(product_id),
@@ -145,12 +145,12 @@ CREATE TABLE contract_items (
   fee INTEGER NOT NULL, -- 해당 상품의 계약 요금
   PRIMARY KEY (contract_id, product_id)
 );
-```
+\`\`\`
 
 ### 3. 청구/정산 시스템
 
 #### 💰 청구서 테이블 (invoices)
-```sql
+\`\`\`sql
 CREATE TABLE invoices (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   contract_id UUID NOT NULL REFERENCES contracts(id) ON DELETE CASCADE,
@@ -165,10 +165,10 @@ CREATE TABLE invoices (
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
-```
+\`\`\`
 
 #### 💸 송금/정산 테이블 (remittances)
-```sql
+\`\`\`sql
 CREATE TABLE remittances (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   contract_id UUID NOT NULL REFERENCES contracts(id) ON DELETE CASCADE,
@@ -185,12 +185,12 @@ CREATE TABLE remittances (
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
-```
+\`\`\`
 
 ### 4. CS 관리 시스템
 
 #### 🎫 CS 티켓 테이블 (cs_tickets)
-```sql
+\`\`\`sql
 CREATE TABLE cs_tickets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   customer_id UUID NOT NULL REFERENCES customers(customer_id) ON DELETE CASCADE,
@@ -207,10 +207,10 @@ CREATE TABLE cs_tickets (
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
-```
+\`\`\`
 
 #### 💬 CS 댓글/로그 (cs_comments)
-```sql
+\`\`\`sql
 CREATE TABLE cs_comments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   ticket_id UUID NOT NULL REFERENCES cs_tickets(id) ON DELETE CASCADE,
@@ -220,12 +220,12 @@ CREATE TABLE cs_comments (
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
-```
+\`\`\`
 
 ### 5. 서류 관리 시스템
 
 #### 📎 계약 서류 (contract_documents)
-```sql
+\`\`\`sql
 CREATE TABLE contract_documents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   contract_id UUID NOT NULL REFERENCES contracts(id) ON DELETE CASCADE,
@@ -239,7 +239,7 @@ CREATE TABLE contract_documents (
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
-```
+\`\`\`
 
 ---
 
@@ -247,7 +247,7 @@ CREATE TABLE contract_documents (
 
 ### OCR 처리 플로우
 
-```mermaid
+\`\`\`mermaid
 graph TD
     A[서류 이미지 업로드] --> B[OCR 엔진 실행]
     B --> C[텍스트 추출]
@@ -256,7 +256,7 @@ graph TD
     E --> F[DB 필드 자동 입력]
     F --> G[담당자 검증]
     G --> H[최종 승인 및 저장]
-```
+\`\`\`
 
 ### 추출 데이터 매핑
 
@@ -336,10 +336,10 @@ graph TD
 ## 🚀 마이그레이션 전략
 
 ### 1. 데이터 백업
-```sql
+\`\`\`sql
 -- 기존 데이터 전체 백업
 pg_dump careon_db > backup_$(date +%Y%m%d).sql
-```
+\`\`\`
 
 ### 2. 단계별 마이그레이션
 1. **새 테이블 생성** (기존 데이터에 영향 없음)

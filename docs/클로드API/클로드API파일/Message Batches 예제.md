@@ -7,7 +7,7 @@ Message Batches API는 Messages API와 동일한 기능 세트를 지원합니�
 ## Message Batch 생성하기
 
 <CodeGroup>
-  ```Python Python
+  \`\`\`Python Python
   import anthropic
   from anthropic.types.message_create_params import MessageCreateParamsNonStreaming
   from anthropic.types.messages.batch_create_params import Request
@@ -42,9 +42,9 @@ messages=[{
 )
 print(message_batch)
 
-```
+\`\`\`
 
-```TypeScript TypeScript
+\`\`\`TypeScript TypeScript
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic();
@@ -71,9 +71,9 @@ const message_batch = await anthropic.messages.batches.create({
   }]
 });
 console.log(message_batch);
-```
+\`\`\`
 
-```bash
+\`\`\`bash
 #!/bin/sh
 curl https://api.anthropic.com/v1/messages/batches \
     --header "x-api-key: $ANTHROPIC_API_KEY" \
@@ -103,11 +103,11 @@ curl https://api.anthropic.com/v1/messages/batches \
           }
       ]
     }'
-```
+\`\`\`
 
 </CodeGroup>
 
-```JSON
+\`\`\`JSON
 {
   "id": "msgbatch_013Zva2CMHLNnXjNJJKqJ2EF",
   "type": "message_batch",
@@ -125,14 +125,14 @@ curl https://api.anthropic.com/v1/messages/batches \
   "cancel_initiated_at": null,
   "results_url": null
 }
-```
+\`\`\`
 
 ## Message Batch 완료 폴링하기
 
 Message Batch를 폴링하려면 [생성](#creating-a-message-batch) 요청 시 응답으로 제공되거나 [나열](#listing-all-message-batches-in-a-workspace)을 통해 얻을 수 있는 `id`가 필요합니다. 예제 `id`: `msgbatch_013Zva2CMHLNnXjNJJKqJ2EF`.
 
 <CodeGroup>
-  ```Python Python
+  \`\`\`Python Python
   import anthropic
 
 client = anthropic.Anthropic()
@@ -149,9 +149,9 @@ break
   time.sleep(60)
 print(message_batch)
 
-```
+\`\`\`
 
-```TypeScript TypeScript
+\`\`\`TypeScript TypeScript
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic();
@@ -169,8 +169,8 @@ while (true) {
   await new Promise(resolve => setTimeout(resolve, 60_000));
 }
 console.log(messageBatch);
-```
-```bash
+\`\`\`
+\`\`\`bash
 #!/bin/sh
 
 until [[ $(curl -s "https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID" \
@@ -183,13 +183,13 @@ until [[ $(curl -s "https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH
 done
 
 echo "Batch $MESSAGE_BATCH_ID has finished processing"
-```
+\`\`\`
 </CodeGroup>
 
 ## 워크스페이스의 모든 Message Batch 나열하기
 
 <CodeGroup>
-  ```Python Python
+  \`\`\`Python Python
   import anthropic
 
 client = anthropic.Anthropic()
@@ -201,9 +201,9 @@ limit=20
 ):
 print(message_batch)
 
-```
+\`\`\`
 
-```TypeScript TypeScript
+\`\`\`TypeScript TypeScript
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic();
@@ -214,8 +214,8 @@ for await (const messageBatch of anthropic.messages.batches.list({
 })) {
   console.log(messageBatch);
 }
-```
-```bash
+\`\`\`
+\`\`\`bash
 #!/bin/sh
 
 if ! command -v jq &> /dev/null; then
@@ -249,10 +249,10 @@ while [ "$has_more" = true ]; do
         echo "$entry" | jq '.'
     done
 done
-```
+\`\`\`
 </CodeGroup>
 
-```Markup
+\`\`\`Markup
 {
   "id": "msgbatch_013Zva2CMHLNnXjNJJKqJ2EF",
   "type": "message_batch",
@@ -263,13 +263,13 @@ done
   "type": "message_batch",
   ...
 }
-```
+\`\`\`
 ## Message Batch 결과 검색하기
 
 Message Batch 상태가 `ended`가 되면 배치의 `results_url`을 확인하고 `.jsonl` 파일 형태로 결과를 검색할 수 있습니다.
 
 <CodeGroup>
-  ```Python Python
+  \`\`\`Python Python
   import anthropic
 
 client = anthropic.Anthropic()
@@ -281,9 +281,9 @@ MESSAGE_BATCH_ID,
 ):
 print(result)
 
-```
+\`\`\`
 
-```TypeScript TypeScript
+\`\`\`TypeScript TypeScript
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic();
@@ -294,8 +294,8 @@ for await (const result of await anthropic.messages.batches.results(
 )) {
     console.log(result);
 }
-```
-```bash
+\`\`\`
+\`\`\`bash
 #!/bin/sh
 curl "https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID" \
       --header "anthropic-version: 2023-06-01" \
@@ -310,10 +310,10 @@ curl "https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID" \
 #| while IFS= read -r line; do
 #    echo "$line" | jq '.'
 #  done
-```
+\`\`\`
 </CodeGroup>
 
-```Markup
+\`\`\`Markup
 {
   "id": "my-second-request",
   "result": {
@@ -336,13 +336,13 @@ curl "https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID" \
     }
   }
 }
-```
+\`\`\`
 ## Message Batch 취소하기
 
 취소 직후 배치의 `processing_status`는 `canceling`이 됩니다. 동일한 [배치 완료 폴링](#polling-for-message-batch-completion) 기법을 사용하여 취소가 완료되는 시점을 폴링할 수 있습니다. 취소된 배치도 `ended` 상태가 되며 결과를 포함할 수 있습니다.
 
 <CodeGroup>
-  ```Python Python
+  \`\`\`Python Python
   import anthropic
 
 client = anthropic.Anthropic()
@@ -352,9 +352,9 @@ MESSAGE_BATCH_ID,
 )
 print(message_batch)
 
-```
+\`\`\`
 
-```TypeScript TypeScript
+\`\`\`TypeScript TypeScript
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic();
@@ -363,16 +363,16 @@ const messageBatch = await anthropic.messages.batches.cancel(
     MESSAGE_BATCH_ID
 );
 console.log(messageBatch);
-```
-```bash
+\`\`\`
+\`\`\`bash
 #!/bin/sh
 curl --request POST https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH_ID/cancel \
     --header "x-api-key: $ANTHROPIC_API_KEY" \
     --header "anthropic-version: 2023-06-01"
-```
+\`\`\`
 </CodeGroup>
 
-```JSON
+\`\`\`JSON
 {
   "id": "msgbatch_013Zva2CMHLNnXjNJJKqJ2EF",
   "type": "message_batch",
@@ -390,4 +390,4 @@ curl --request POST https://api.anthropic.com/v1/messages/batches/$MESSAGE_BATCH
   "cancel_initiated_at": "2024-09-24T18:39:03.114875Z",
   "results_url": null
 }
-```
+\`\`\`

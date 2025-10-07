@@ -21,13 +21,13 @@ Create a [Route Handler](https://nextjs.org/docs/app/api-reference/file-conventi
 
 app/api/draft/route.ts
 
-```
+\`\`\`
 export async function GET(request: Request) {
 
   return new Response('')
 
 }
-```
+\`\`\`
 
 Then, import the [`draftMode`](https://nextjs.org/docs/app/api-reference/functions/draft-mode) function and call the `enable()` method.
 
@@ -46,9 +46,9 @@ To securely access the Route Handler from your headless CMS:
 
 Terminal
 
-```
+\`\`\`
 https://<your-site>/api/draft?secret=<token>&slug=<path>
-```
+\`\`\`
 
 > - `<your-site>` should be your deployment domain.
 > - `<token>` should be replaced with the secret token you generated.
@@ -60,7 +60,7 @@ https://<your-site>/api/draft?secret=<token>&slug=<path>
 
 app/api/draft/route.ts
 
-```
+\`\`\`
 import { draftMode } from 'next/headers'
 
 import { redirect } from 'next/navigation'
@@ -124,7 +124,7 @@ export async function GET(request: Request) {
   redirect(post.slug)
 
 }
-```
+\`\`\`
 
 If it succeeds, then the browser will be redirected to the path you want to view with the draft mode cookie.
 

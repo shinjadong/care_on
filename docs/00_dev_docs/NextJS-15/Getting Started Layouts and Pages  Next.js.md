@@ -25,13 +25,13 @@ page.js special file
 
 app/page.tsx
 
-```
+\`\`\`
 export default function Page() {
 
   return <h1>Hello Next.js!</h1>
 
 }
-```
+\`\`\`
 
 ## Creating a layout
 
@@ -47,7 +47,7 @@ layout.js special file
 
 app/layout.tsx
 
-```
+\`\`\`
 export default function DashboardLayout({
 
   children,
@@ -77,7 +77,7 @@ export default function DashboardLayout({
   )
 
 }
-```
+\`\`\`
 
 The layout above is called a [root layout](https://nextjs.org/docs/app/api-reference/file-conventions/layout#root-layout) because it's defined at the root of the `app` directory. The root layout is **required** and must contain `html` and `body` tags.
 
@@ -102,7 +102,7 @@ File hierarchy showing blog folder and a page.js file
 
 app/blog/page.tsx
 
-```
+\`\`\`
 // Dummy imports
 
 import { getPosts } from '@/lib/posts'
@@ -132,7 +132,7 @@ export default async function Page() {
   )
 
 }
-```
+\`\`\`
 
 You can continue nesting folders to create nested routes. For example, to create a route for a specific blog post, create a new `[slug]` folder inside `blog` and add a `page` file:
 
@@ -142,7 +142,7 @@ File hierarchy showing blog folder with a nested slug folder and a page.js file
 
 app/blog/\[slug\]/page.tsx
 
-```
+\`\`\`
 function generateStaticParams() {}
 
  
@@ -152,7 +152,7 @@ export default function Page() {
   return <h1>Hello, Blog Post Page!</h1>
 
 }
-```
+\`\`\`
 
 Wrapping a folder name in square brackets (e.g. `[slug]`) creates a [dynamic route segment](https://nextjs.org/docs/app/api-reference/file-conventions/dynamic-routes) which is used to generate multiple pages from data. e.g. blog posts, product pages, etc.
 
@@ -168,7 +168,7 @@ File hierarchy showing root layout wrapping the blog layout
 
 app/blog/layout.tsx
 
-```
+\`\`\`
 export default function BlogLayout({
 
   children,
@@ -182,7 +182,7 @@ export default function BlogLayout({
   return <section>{children}</section>
 
 }
-```
+\`\`\`
 
 If you were to combine the two layouts above, the root layout (`app/layout.js`) would wrap the blog layout (`app/blog/layout.js`), which would wrap the blog (`app/blog/page.js`) and blog post page (`app/blog/[slug]/page.js`).
 
@@ -194,7 +194,7 @@ To create a dynamic segment, wrap the segment (folder) name in square brackets: 
 
 app/blog/\[slug\]/page.tsx
 
-```
+\`\`\`
 export default async function BlogPostPage({
 
   params,
@@ -224,7 +224,7 @@ export default async function BlogPostPage({
   )
 
 }
-```
+\`\`\`
 
 Learn more about [Dynamic Segments](https://nextjs.org/docs/app/api-reference/file-conventions/dynamic-routes) and the [`params`](https://nextjs.org/docs/app/api-reference/file-conventions/page#params-optional) props.
 
@@ -234,7 +234,7 @@ In a Server Component **page**, you can access search parameters using the [`sea
 
 app/page.tsx
 
-```
+\`\`\`
 export default async function Page({
 
   searchParams,
@@ -248,7 +248,7 @@ export default async function Page({
   const filters = (await searchParams).filters
 
 }
-```
+\`\`\`
 
 Using `searchParams` opts your page into [**dynamic rendering**](https://nextjs.org/docs/app/getting-started/partial-prerendering#dynamic-rendering) because it requires a incoming request to read the search parameters from.
 
@@ -270,7 +270,7 @@ For example, to generate a list of blog posts, import `<Link>` from `next/link` 
 
 app/ui/post.tsx
 
-```
+\`\`\`
 import Link from 'next/link'
 
  
@@ -300,7 +300,7 @@ export default async function Post({ post }) {
   )
 
 }
-```
+\`\`\`
 
 > **Good to know**: `<Link>` is the primary way to navigate between routes in Next.js. You can also use the [`useRouter` hook](https://nextjs.org/docs/app/api-reference/functions/use-router) for more advanced navigation.
 
@@ -315,7 +315,7 @@ These are globally available helpers, generated when running either `next dev`, 
 
 app/blog/\[slug\]/page.tsx
 
-```
+\`\`\`
 export default async function Page(props: PageProps<'/blog/[slug]'>) {
 
   const { slug } = await props.params
@@ -323,11 +323,11 @@ export default async function Page(props: PageProps<'/blog/[slug]'>) {
   return <h1>Blog post: {slug}</h1>
 
 }
-```
+\`\`\`
 
 app/dashboard/layout.tsx
 
-```
+\`\`\`
 export default function Layout(props: LayoutProps<'/dashboard'>) {
 
   return (
@@ -345,7 +345,7 @@ export default function Layout(props: LayoutProps<'/dashboard'>) {
   )
 
 }
-```
+\`\`\`
 
 > **Good to know**
 > 

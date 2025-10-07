@@ -23,9 +23,9 @@ You can use `create-next-app` with the Next.js [with-vitest](https://github.com/
 
 Terminal
 
-```
+\`\`\`
 npx create-next-app@latest --example with-vitest with-vitest-app
-```
+\`\`\`
 
 ## Manual Setup
 
@@ -33,7 +33,7 @@ To manually set up Vitest, install `vitest` and the following packages as dev de
 
 Terminal
 
-```
+\`\`\`
 # Using TypeScript
 
 npm install -D vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/dom vite-tsconfig-paths
@@ -41,13 +41,13 @@ npm install -D vitest @vitejs/plugin-react jsdom @testing-library/react @testing
 # Using JavaScript
 
 npm install -D vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/dom
-```
+\`\`\`
 
 Create a `vitest.config.mts|js` file in the root of your project, and add the following options:
 
 vitest.config.mts
 
-```
+\`\`\`
 import { defineConfig } from 'vitest/config'
 
 import react from '@vitejs/plugin-react'
@@ -67,7 +67,7 @@ export default defineConfig({
   },
 
 })
-```
+\`\`\`
 
 For more information on configuring Vitest, please refer to the [Vitest Configuration](https://vitest.dev/config/#configuration) docs.
 
@@ -75,7 +75,7 @@ Then, add a `test` script to your `package.json`:
 
 package.json
 
-```
+\`\`\`
 {
 
   "scripts": {
@@ -91,7 +91,7 @@ package.json
   }
 
 }
-```
+\`\`\`
 
 When you run `npm run test`, Vitest will **watch** for changes in your project by default.
 
@@ -101,7 +101,7 @@ Check that everything is working by creating a test to check if the `<Page />` c
 
 app/page.tsx
 
-```
+\`\`\`
 import Link from 'next/link'
 
  
@@ -121,11 +121,11 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 \_\_tests\_\_/page.test.tsx
 
-```
+\`\`\`
 import { expect, test } from 'vitest'
 
 import { render, screen } from '@testing-library/react'
@@ -141,7 +141,7 @@ test('Page', () => {
   expect(screen.getByRole('heading', { level: 1, name: 'Home' })).toBeDefined()
 
 })
-```
+\`\`\`
 
 > **Good to know**: The example above uses the common `__tests__` convention, but test files can also be colocated inside the `app` router.
 
@@ -151,7 +151,7 @@ Then, run the following command to run your tests:
 
 Terminal
 
-```
+\`\`\`
 npm run test
 
 # or
@@ -165,7 +165,7 @@ pnpm test
 # or
 
 bun test
-```
+\`\`\`
 
 ## Additional Resources
 

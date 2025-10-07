@@ -50,7 +50,7 @@ For example, update your root layout to call the Promise, but do *not* await it.
 
 app/layout.tsx
 
-```
+\`\`\`
 import { UserProvider } from './user-provider'
 
 import { getUser } from './user' // some server-side function
@@ -86,7 +86,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 While you can [defer and pass a single Promise](https://nextjs.org/docs/app/getting-started/fetching-data#streaming-data-with-the-use-hook) as a prop to a Client Component, we generally see this pattern paired with a React context provider. This enables easier access from Client Components with a custom React Hook.
 
@@ -94,7 +94,7 @@ You can forward a Promise to the React context provider:
 
 app/user-provider.ts
 
-```
+\`\`\`
 'use client';
 
  
@@ -158,13 +158,13 @@ export function UserProvider({
   );
 
 }
-```
+\`\`\`
 
 Finally, you can call the `useUser()` custom hook in any Client Component and unwrap the Promise:
 
 app/profile.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -186,7 +186,7 @@ export function Profile() {
   return '...'
 
 }
-```
+\`\`\`
 
 The component that consumes the Promise (e.g. `Profile` above) will be suspended. This enables partial hydration. You can see the streamed and prerendered HTML before JavaScript has finished loading.
 
@@ -204,7 +204,7 @@ For example, wrap your application with `<SWRConfig>` and a `fallback`:
 
 app/layout.tsx
 
-```
+\`\`\`
 import { SWRConfig } from 'swr'
 
 import { getUser } from './user' // some server-side function
@@ -248,13 +248,13 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 Because this is a Server Component, `getUser()` can securely read cookies, headers, or talk to your database. No separate API route is needed. Client components below the `<SWRConfig>` can call `useSWR()` with the same key to retrieve the user data. The component code with `useSWR` **does not require any changes** from your existing client-fetching solution.
 
 app/profile.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -276,7 +276,7 @@ export function Profile() {
   return '...'
 
 }
-```
+\`\`\`
 
 The `fallback` data can be prerendered and included in the initial HTML response, then immediately read in the child components using `useSWR`. SWR’s polling, revalidation, and caching still run **client-side only**, so it preserves all the interactivity you rely on for an SPA.
 
@@ -299,7 +299,7 @@ Learn more in the [React Query documentation](https://tanstack.com/query/latest/
 
 Client components are [prerendered](https://github.com/reactwg/server-components/discussions/4) during `next build`. If you want to disable prerendering for a Client Component and only load it in the browser environment, you can use [`next/dynamic`](https://nextjs.org/docs/app/guides/lazy-loading#nextdynamic):
 
-```
+\`\`\`
 import dynamic from 'next/dynamic'
 
  
@@ -309,7 +309,7 @@ const ClientOnlyComponent = dynamic(() => import('./component'), {
   ssr: false,
 
 })
-```
+\`\`\`
 
 This can be useful for third-party libraries that rely on browser APIs like `window` or `document`. You can also add a `useEffect` that checks for the existence of these APIs, and if they do not exist, return `null` or a loading state which would be prerendered.
 
@@ -331,19 +331,19 @@ For example, create your first Server Action:
 
 app/actions.ts
 
-```
+\`\`\`
 'use server'
 
  
 
 export async function create() {}
-```
+\`\`\`
 
 You can import and use a Server Action from the client, similar to calling a JavaScript function. You do not need to create an API endpoint manually:
 
 app/button.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -357,7 +357,7 @@ export function Button() {
   return <button onClick={() => create()}>Create</button>
 
 }
-```
+\`\`\`
 
 Learn more about [mutating data with Server Actions](https://nextjs.org/docs/app/getting-started/updating-data).
 
@@ -372,7 +372,7 @@ To enable a static export, update your configuration:
 
 next.config.ts
 
-```
+\`\`\`
 import type { NextConfig } from 'next'
 
  
@@ -386,7 +386,7 @@ const nextConfig: NextConfig = {
  
 
 export default nextConfig
-```
+\`\`\`
 
 After running `next build`, Next.js will create an `out` folder with the HTML/CSS/JS assets for your application.
 

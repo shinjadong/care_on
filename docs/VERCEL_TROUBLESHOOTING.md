@@ -13,10 +13,10 @@
 ### B. 환경변수 설정 확인
 1. **Settings** → **Environment Variables**
 2. 다음 변수가 있는지 확인:
-   ```
+   \`\`\`
    NEXT_PUBLIC_SUPABASE_URL
    NEXT_PUBLIC_SUPABASE_ANON_KEY
-   ```
+   \`\`\`
 3. **중요**: 각 변수가 `Production` 환경에 체크되어 있는지 확인
 4. 값에 따옴표나 불필요한 공백이 없는지 확인
 
@@ -45,31 +45,31 @@
 5. 자동으로 재배포 시작됨
 
 ### 방법 3: Git에서 트리거
-```bash
+\`\`\`bash
 git commit --allow-empty -m "trigger: Vercel 재배포"
 git push origin main
-```
+\`\`\`
 
 ## 3. 디버깅
 
 ### 배포 후 확인
 1. 배포 완료 후 접속: `https://your-domain.vercel.app/api/check-env`
 2. 응답 확인:
-   ```json
+   \`\`\`json
    {
      "environment": {
        "NEXT_PUBLIC_SUPABASE_URL": "✅ 설정됨",
        "NEXT_PUBLIC_SUPABASE_ANON_KEY": "✅ 설정됨"
      }
    }
-   ```
+   \`\`\`
 
 ### 배포 로그 확인
 1. **Deployments** → 배포 선택
 2. **Building** 단계 로그에서:
-   ```
+   \`\`\`
    Environments: .env.production (또는 환경변수 로드 메시지)
-   ```
+   \`\`\`
 
 ## 4. 자주 발생하는 문제
 
@@ -110,11 +110,11 @@ git push origin main
    - 배포
 
 2. **Vercel CLI 사용**:
-   ```bash
+   \`\`\`bash
    npm i -g vercel
    vercel --prod
    # 환경변수 입력 프롬프트에서 설정
-   ```
+   \`\`\`
 
 3. **Support 문의**:
    - https://vercel.com/support

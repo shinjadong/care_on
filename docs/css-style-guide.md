@@ -19,7 +19,7 @@
 ## 🎨 CareOn 디자인 시스템
 
 ### 브랜드 색상
-```css
+\`\`\`css
 /* Primary - CareOn 브랜드 그린 */
 --primary: 171 74% 30%; /* #148777 */
 
@@ -28,18 +28,18 @@
 .text-brand      /* 브랜드 텍스트 색상 */
 .border-brand    /* 브랜드 테두리 */
 .ring-brand      /* 브랜드 포커스 링 */
-```
+\`\`\`
 
 ### 타이포그래피 시스템
-```css
+\`\`\`css
 /* 반응형 폰트 사이즈 (하드코딩 값 대체) */
 text-hero        /* clamp(3rem, 8vw, 6rem) - 히어로 제목 */
 text-hero-mobile /* clamp(2.5rem, 6vw, 5rem) - 모바일 히어로 */
 text-display     /* clamp(2.5rem, 5vw, 4rem) - 디스플레이 텍스트 */
-```
+\`\`\`
 
 ### 간격 시스템
-```css
+\`\`\`css
 /* 특정 컴포넌트용 간격 (하드코딩 값 대체) */
 w-phone-w        /* 260px - 모바일 폰 너비 */
 w-phone-w-sm     /* 280px - 작은 모바일 폰 너비 */
@@ -47,16 +47,16 @@ h-phone-h        /* 530px - 모바일 폰 높이 */
 h-phone-h-sm     /* 570px - 작은 모바일 폰 높이 */
 p-section        /* 80px - 섹션 패딩 */
 p-section-sm     /* 60px - 작은 섹션 패딩 */
-```
+\`\`\`
 
 ### 애니메이션 시스템
-```css
+\`\`\`css
 /* CareOn 표준 애니메이션 */
 animate-slide-down         /* 위에서 슬라이드 */
 animate-fade-in           /* 페이드인 + 살짝 위로 */
 animate-bounce-slow       /* 느린 바운스 */
 animate-slide-up-from-bottom /* 아래에서 슬라이드업 */
-```
+\`\`\`
 
 ---
 
@@ -65,7 +65,7 @@ animate-slide-up-from-bottom /* 아래에서 슬라이드업 */
 ### ✅ 권장하는 방식
 
 #### 1. 색상 사용
-```tsx
+\`\`\`tsx
 // ✅ 좋은 예시
 <button className="bg-brand text-brand-foreground hover:bg-brand/90">
   CareOn 버튼
@@ -73,10 +73,10 @@ animate-slide-up-from-bottom /* 아래에서 슬라이드업 */
 
 // ❌ 피해야 할 예시
 <button style={{backgroundColor: '#148777'}}>
-```
+\`\`\`
 
 #### 2. 카드 컴포넌트
-```tsx
+\`\`\`tsx
 // ✅ 새로운 CareOn 컴포넌트 시스템
 <div className="careon-card">
   <div className="careon-card-header">
@@ -87,61 +87,61 @@ animate-slide-up-from-bottom /* 아래에서 슬라이드업 */
     내용
   </div>
 </div>
-```
+\`\`\`
 
 #### 3. 폼 요소
-```tsx
+\`\`\`tsx
 // ✅ 통합된 폼 스타일
 <div>
   <label className="careon-label">라벨</label>
   <input className="careon-input" placeholder="입력하세요" />
 </div>
-```
+\`\`\`
 
 #### 4. 상태 표시
-```tsx
+\`\`\`tsx
 // ✅ 표준 상태 클래스
 <span className="status-success">성공</span>
 <span className="status-warning">경고</span>
 <span className="status-error">오류</span>
 <span className="status-info">정보</span>
-```
+\`\`\`
 
 ### ❌ 피해야 할 패턴
 
 #### 1. 하드코딩된 크기
-```tsx
+\`\`\`tsx
 // ❌ 피해야 할 예시
 <div className="w-[260px] h-[530px]">
 
 // ✅ 대신 이렇게
 <div className="w-phone-w h-phone-h">
-```
+\`\`\`
 
 #### 2. 인라인 스타일
-```tsx
+\`\`\`tsx
 // ❌ 피해야 할 예시
 <div style={{color: '#148777', fontSize: 'clamp(3rem, 8vw, 6rem)'}}>
 
 // ✅ 대신 이렇게
 <div className="text-brand text-hero">
-```
+\`\`\`
 
 #### 3. 커스텀 CSS 클래스
-```tsx
+\`\`\`tsx
 // ❌ 피해야 할 예시 (기존 Apple Music 스타일)
 <div className="hero-content-headline typography-hero-headline">
 
 // ✅ 대신 이렇게
 <div className="text-hero font-bold text-brand">
-```
+\`\`\`
 
 ---
 
 ## 🎯 관리자 대시보드 전용
 
 ### 사이드바 스타일링
-```tsx
+\`\`\`tsx
 // 관리자 사이드바 컴포넌트
 <div className="admin-sidebar">
   <nav>
@@ -149,10 +149,10 @@ animate-slide-up-from-bottom /* 아래에서 슬라이드업 */
     <a href="/admin/users" className="admin-nav-item">사용자</a>
   </nav>
 </div>
-```
+\`\`\`
 
 ### 차트 색상
-```tsx
+\`\`\`tsx
 // Recharts 등에서 사용할 색상
 const CHART_COLORS = [
   'hsl(var(--chart-1))', // 브랜드 색상 1
@@ -161,29 +161,29 @@ const CHART_COLORS = [
   'hsl(var(--chart-4))', // 보조 색상 1
   'hsl(var(--chart-5))', // 보조 색상 2
 ]
-```
+\`\`\`
 
 ---
 
 ## 📱 반응형 디자인
 
 ### 모바일 우선 유틸리티
-```tsx
+\`\`\`tsx
 // 모바일에서 세로 스택, 데스크톱에서 가로 배치
 <div className="flex flex-col sm:flex-row careon-mobile-stack">
 
 // 모바일에서 전체 너비
 <button className="careon-mobile-full sm:w-auto">
-```
+\`\`\`
 
 ### iOS 스타일 유틸리티
-```tsx
+\`\`\`tsx
 // iOS 스타일 블러 효과
 <header className="ios-blur">
 
 // iOS Safe Area 대응
 <div className="safe-top safe-bottom">
-```
+\`\`\`
 
 ---
 
@@ -192,7 +192,7 @@ const CHART_COLORS = [
 ### 기존 컴포넌트 업데이트 방법
 
 #### Before (기존)
-```tsx
+\`\`\`tsx
 <div className="section hero-sticky-container">
   <div className="hero-content-container">
     <h1 className="typography-hero-headline" style={{fontSize: 'clamp(3rem, 8vw, 6rem)'}}>
@@ -200,10 +200,10 @@ const CHART_COLORS = [
     </h1>
   </div>
 </div>
-```
+\`\`\`
 
 #### After (새로운 방식)
-```tsx
+\`\`\`tsx
 <div className="py-section">
   <div className="max-w-4xl mx-auto bg-black/30 backdrop-blur-md rounded-3xl p-hero-padding">
     <h1 className="text-hero font-bold text-white">
@@ -211,7 +211,7 @@ const CHART_COLORS = [
     </h1>
   </div>
 </div>
-```
+\`\`\`
 
 ### 우선순위별 마이그레이션
 
@@ -234,10 +234,10 @@ const CHART_COLORS = [
 ## 🧪 테스트 및 검증
 
 ### 개발 서버 확인
-```bash
+\`\`\`bash
 npm run dev
 # ✅ http://localhost:3000 에서 실행 중
-```
+\`\`\`
 
 ### 주요 페이지 테스트 체크리스트
 - [ ] `/` - 메인 페이지
@@ -247,12 +247,12 @@ npm run dev
 - [ ] 다크모드 토글 테스트
 
 ### CSS 로드 확인
-```bash
+\`\`\`bash
 # 개발자 도구에서 확인
 - globals.css 로드 확인
 - CSS 변수 적용 확인 (--brand, --primary 등)
 - Tailwind 클래스 작동 확인
-```
+\`\`\`
 
 ---
 

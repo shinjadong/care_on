@@ -65,7 +65,7 @@ Wrapping a component in Suspense doesn't make the component itself dynamic (your
 
 app/page.js
 
-```
+\`\`\`
 import { Suspense } from 'react'
 
 import StaticComponent from './StaticComponent'
@@ -99,7 +99,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 ### Streaming
 
@@ -123,7 +123,7 @@ You can enable PPR by adding the [`ppr`](https://rc.nextjs.org/docs/app/api-refe
 
 next.config.ts
 
-```
+\`\`\`
 import type { NextConfig } from 'next'
 
  
@@ -141,13 +141,13 @@ const nextConfig: NextConfig = {
  
 
 export default nextConfig
-```
+\`\`\`
 
 The `'incremental'` value allows you to adopt PPR for specific routes:
 
 /app/dashboard/layout.tsx
 
-```
+\`\`\`
 export const experimental_ppr = true
 
  
@@ -157,7 +157,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   // ...
 
 }
-```
+\`\`\`
 
 Routes that don't have `experimental_ppr` will default to `false` and will not be prerendered using PPR. You need to explicitly opt-in to PPR for each route.
 
@@ -176,7 +176,7 @@ The `<User />` component will be streamed while any other content inside `<Page 
 
 app/page.tsx
 
-```
+\`\`\`
 import { Suspense } from 'react'
 
 import { User, AvatarSkeleton } from './user'
@@ -206,7 +206,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 ### Passing dynamic props
 
@@ -214,7 +214,7 @@ Components only opt into dynamic rendering when the value is accessed. For examp
 
 app/page.tsx
 
-```
+\`\`\`
 import { Table, TableSkeleton } from './table'
 
 import { Suspense } from 'react'
@@ -248,13 +248,13 @@ export default function Page({
   )
 
 }
-```
+\`\`\`
 
 Inside of the table component, accessing the value from `searchParams` will make the component dynamic while the rest of the page will be prerendered.
 
 app/table.tsx
 
-```
+\`\`\`
 export async function Table({
 
   searchParams,
@@ -270,7 +270,7 @@ export async function Table({
   return '...'
 
 }
-```
+\`\`\`
 
 Learn more about the config option for Partial Prerendering.### [ppr](https://nextjs.org/docs/app/api-reference/config/next-config-js/ppr)
 

@@ -51,12 +51,12 @@ tags:
 
 ### 기본 요청 구조
 
-```http
+\`\`\`http
 GET /external/v1/pay-order/seller/orders/{orderId}/product-order-ids HTTP/1.1
 Host: api.commerce.naver.com
 Accept: application/json
 Authorization: Bearer {access_token}
-```
+\`\`\`
 
 ### 경로 파라미터
 
@@ -77,7 +77,7 @@ Authorization: Bearer {access_token}
 
 ### 성공 응답 (200 OK)
 
-```json
+\`\`\`json
 {
   "timestamp": "2023-01-16T17:14:51.794+09:00",
   "traceId": "abc123-def456-ghi789",
@@ -89,7 +89,7 @@ Authorization: Bearer {access_token}
     ]
   }
 }
-```
+\`\`\`
 
 ### 응답 필드 설명
 
@@ -115,7 +115,7 @@ Authorization: Bearer {access_token}
 
 ### 🟢 Node.js (axios)
 
-```javascript
+\`\`\`javascript
 const axios = require('axios');
 
 /**
@@ -164,11 +164,11 @@ async function main() {
 }
 
 main();
-```
+\`\`\`
 
 ### 🐍 Python (requests)
 
-```python
+\`\`\`python
 import requests
 import json
 
@@ -220,11 +220,11 @@ if __name__ == "__main__":
             
     except Exception as e:
         print(f"처리 실패: {e}")
-```
+\`\`\`
 
 ### 📎 cURL
 
-```bash
+\`\`\`bash
 #!/bin/bash
 
 # 환경 변수 설정
@@ -237,7 +237,7 @@ curl -L "https://api.commerce.naver.com/external/v1/pay-order/seller/orders/${OR
   -H "Authorization: Bearer ${ACCESS_TOKEN}" \
   -w "\nHTTP Status: %{http_code}\n" \
   | jq '.'  # JSON 형식으로 출력
-```
+\`\`\`
 
 ---
 
@@ -245,7 +245,7 @@ curl -L "https://api.commerce.naver.com/external/v1/pay-order/seller/orders/${OR
 
 ### 일반적인 에러 시나리오
 
-```javascript
+\`\`\`javascript
 // 에러 처리가 포함된 완전한 함수
 async function getProductOrderIdsWithErrorHandling(orderId, accessToken) {
     try {
@@ -312,7 +312,7 @@ async function getProductOrderIdsWithErrorHandling(orderId, accessToken) {
         }
     }
 }
-```
+\`\`\`
 
 ---
 
@@ -320,7 +320,7 @@ async function getProductOrderIdsWithErrorHandling(orderId, accessToken) {
 
 ### 1. 주문 처리 워크플로우
 
-```javascript
+\`\`\`javascript
 /**
  * 완전한 주문 처리 워크플로우
  */
@@ -348,11 +348,11 @@ async function processOrder(orderId, accessToken) {
     
     console.log(`주문 ${orderId} 처리 완료`);
 }
-```
+\`\`\`
 
 ### 2. 배치 처리 시스템
 
-```javascript
+\`\`\`javascript
 /**
  * 다수 주문의 일괄 처리
  */
@@ -384,11 +384,11 @@ async function batchProcessOrders(orderIds, accessToken) {
     
     return results;
 }
-```
+\`\`\`
 
 ### 3. 실시간 모니터링
 
-```javascript
+\`\`\`javascript
 /**
  * 특정 주문의 상품 개수 모니터링
  */
@@ -406,7 +406,7 @@ function monitorOrderProducts(orderId, accessToken, intervalMs = 30000) {
     
     return monitor; // 모니터링 중단 시 clearInterval(monitor) 호출
 }
-```
+\`\`\`
 
 ---
 

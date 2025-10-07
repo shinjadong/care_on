@@ -23,7 +23,7 @@ To enable a static export, change the output mode inside `next.config.js`:
 
 next.config.js
 
-```
+\`\`\`
 /**
 
  * @type {import('next').NextConfig}
@@ -57,7 +57,7 @@ const nextConfig = {
  
 
 module.exports = nextConfig
-```
+\`\`\`
 
 After running `next build`, Next.js will create an `out` folder with the HTML/CSS/JS assets for your application.
 
@@ -73,7 +73,7 @@ The resulting component will be rendered into static HTML for the initial page l
 
 app/page.tsx
 
-```
+\`\`\`
 export default async function Page() {
 
   // This fetch will run on the server during \`next build\`
@@ -87,7 +87,7 @@ export default async function Page() {
   return <main>...</main>
 
 }
-```
+\`\`\`
 
 ### Client Components
 
@@ -95,7 +95,7 @@ If you want to perform data fetching on the client, you can use a Client Compone
 
 app/other/page.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -127,13 +127,13 @@ export default function Page() {
   return data.title
 
 }
-```
+\`\`\`
 
 Since route transitions happen client-side, this behaves like a traditional SPA. For example, the following index route allows you to navigate to different posts on the client:
 
 app/page.tsx
 
-```
+\`\`\`
 import Link from 'next/link'
 
  
@@ -169,7 +169,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 ### Image Optimization
 
@@ -177,7 +177,7 @@ export default function Page() {
 
 next.config.js
 
-```
+\`\`\`
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
@@ -197,13 +197,13 @@ const nextConfig = {
  
 
 module.exports = nextConfig
-```
+\`\`\`
 
 This custom loader will define how to fetch images from a remote source. For example, the following loader will construct the URL for Cloudinary:
 
 my-loader.ts
 
-```
+\`\`\`
 export default function cloudinaryLoader({
 
   src,
@@ -231,13 +231,13 @@ export default function cloudinaryLoader({
   )}${src}\`
 
 }
-```
+\`\`\`
 
 You can then use `next/image` in your application, defining relative paths to the image in Cloudinary:
 
 app/page.tsx
 
-```
+\`\`\`
 import Image from 'next/image'
 
  
@@ -247,7 +247,7 @@ export default function Page() {
   return <Image alt="turtles" src="/turtles.jpg" width={300} height={300} />
 
 }
-```
+\`\`\`
 
 ### Route Handlers
 
@@ -255,13 +255,13 @@ Route Handlers will render a static response when running `next build`. Only the
 
 app/data.json/route.ts
 
-```
+\`\`\`
 export async function GET() {
 
   return Response.json({ name: 'Lee' })
 
 }
-```
+\`\`\`
 
 The above file `app/data.json/route.ts` will render to a static file during `next build`, producing `data.json` containing `{ name: 'Lee' }`.
 
@@ -271,7 +271,7 @@ If you need to read dynamic values from the incoming request, you cannot use a s
 
 Client Components are pre-rendered to HTML during `next build`. Because [Web APIs](https://developer.mozilla.org/docs/Web/API) like `window`, `localStorage`, and `navigator` are not available on the server, you need to safely access these APIs only when running in the browser. For example:
 
-```
+\`\`\`
 'use client';
 
  
@@ -295,7 +295,7 @@ export default function ClientComponent() {
   return ...;
 
 }
-```
+\`\`\`
 
 ## Unsupported Features
 
@@ -317,9 +317,9 @@ Features that require a Node.js server, or dynamic logic that cannot be computed
 
 Attempting to use any of these features with `next dev` will result in an error, similar to setting the [`dynamic`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic) option to `error` in the root layout.
 
-```
+\`\`\`
 export const dynamic = 'error'
-```
+\`\`\`
 
 ## Deploying
 
@@ -341,7 +341,7 @@ If you are using a static host like Nginx, you can configure rewrites from incom
 
 nginx.conf
 
-```
+\`\`\`
 server {
 
   listen 80;
@@ -383,7 +383,7 @@ server {
   }
 
 }
-```
+\`\`\`
 
 ## Version History
 

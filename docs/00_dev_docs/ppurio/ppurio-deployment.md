@@ -2,43 +2,43 @@
 
 ## 현재 구조
 
-```
+\`\`\`
 로컬 개발 → Vercel API → 뿌리오 (IP 제한으로 실패)
 프로덕션 → Supabase Edge Function → 뿌리오 (고정 IP 가능)
-```
+\`\`\`
 
 ## 1. Supabase Edge Function 배포
 
 ### 1-1. Supabase CLI 설치
-```bash
+\`\`\`bash
 npm install -g supabase
-```
+\`\`\`
 
 ### 1-2. 프로젝트 연결
-```bash
+\`\`\`bash
 supabase link --project-ref your-project-ref
-```
+\`\`\`
 
 ### 1-3. 환경변수 설정
-```bash
+\`\`\`bash
 # Supabase 대시보드에서 설정
 # Edge Functions > send-sms > Secrets
 
 PPURIO_USERNAME=nvr_7464463887
 PPURIO_API_KEY=d55f01a941947acd711702ede3f90b74fdda318a78ed26dbde193cceeb0af4ac
 SENDER_PHONE=01032453385
-```
+\`\`\`
 
 ### 1-4. Edge Function 배포
-```bash
+\`\`\`bash
 supabase functions deploy send-sms
-```
+\`\`\`
 
 ### 1-5. Edge Function IP 확인
-```bash
+\`\`\`bash
 # Edge Function의 IP 확인 (Deno Deploy 리전별 IP)
 curl https://your-project.supabase.co/functions/v1/send-sms/ip-check
-```
+\`\`\`
 
 ## 2. 뿌리오에 IP 등록
 
@@ -59,7 +59,7 @@ curl https://your-project.supabase.co/functions/v1/send-sms/ip-check
 
 ## 3. 클라이언트 코드 사용법
 
-```typescript
+\`\`\`typescript
 // 자동으로 환경에 따라 적절한 방식 선택
 import { sendSMS } from '@/lib/ppurio/sms-client'
 
@@ -69,15 +69,15 @@ await sendSMS({
   name: '홍길동',
   businessType: '요식업'
 })
-```
+\`\`\`
 
 ## 4. 폴백 전략
 
-```
+\`\`\`
 1차: Supabase Edge Function (프로덕션)
 2차: Vercel API (개발/폴백)
 3차: 콘솔 로그 (개발 모드)
-```
+\`\`\`
 
 ## 5. 모니터링
 
@@ -102,7 +102,7 @@ await sendSMS({
 ## 7. 테스트
 
 ### Edge Function 직접 테스트
-```bash
+\`\`\`bash
 curl -X POST https://your-project.supabase.co/functions/v1/send-sms \
   -H "Authorization: Bearer YOUR_ANON_KEY" \
   -H "Content-Type: application/json" \
@@ -111,10 +111,10 @@ curl -X POST https://your-project.supabase.co/functions/v1/send-sms \
     "name": "테스트",
     "businessType": "요식업"
   }'
-```
+\`\`\`
 
 ### 로컬 테스트
-```bash
+\`\`\`bash
 # Edge Function 로컬 실행
 supabase functions serve send-sms
 
@@ -122,14 +122,14 @@ supabase functions serve send-sms
 curl -X POST http://localhost:54321/functions/v1/send-sms \
   -H "Content-Type: application/json" \
   -d '{"to": "010-1234-5678", "text": "테스트"}'
-```
+\`\`\`
 
 ## 8. 대안: 고정 IP 프록시 서버
 
 만약 Supabase Edge Function도 IP 문제가 있다면:
 
 ### 옵션 1: AWS EC2 + Elastic IP
-```javascript
+\`\`\`javascript
 // EC2 인스턴스에 Express 서버 구축
 const express = require('express')
 const app = express()
@@ -138,7 +138,7 @@ app.post('/sms', async (req, res) => {
   // 뿌리오 API 호출
   // Elastic IP로 고정 IP 보장
 })
-```
+\`\`\`
 
 ### 옵션 2: Cloudflare Workers (Enterprise)
 - Enterprise 플랜에서 고정 IP 지원

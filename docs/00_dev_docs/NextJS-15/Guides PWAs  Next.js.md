@@ -29,7 +29,7 @@ For example, create a `app/manifest.ts` or `app/manifest.json` file:
 
 app/manifest.ts
 
-```
+\`\`\`
 import type { MetadataRoute } from 'next'
 
  
@@ -79,7 +79,7 @@ export default function manifest(): MetadataRoute.Manifest {
   }
 
 }
-```
+\`\`\`
 
 This file should contain information about the name, icons, and how it should be displayed as an icon on the user's device. This will allow users to install your PWA on their home screen, providing a native app-like experience.
 
@@ -102,7 +102,7 @@ First, let's create the main page component in `app/page.tsx`. We'll break it do
 
 Let’s now add a component to manage subscribing, unsubscribing, and sending push notifications.
 
-```
+\`\`\`
 function PushNotificationManager() {
 
   const [isSupported, setIsSupported] = useState(false)
@@ -256,11 +256,11 @@ function PushNotificationManager() {
   )
 
 }
-```
+\`\`\`
 
 Finally, let’s create a component to show a message for iOS devices to instruct them to install to their home screen, and only show this if the app is not already installed.
 
-```
+\`\`\`
 function InstallPrompt() {
 
   const [isIOS, setIsIOS] = useState(false)
@@ -352,7 +352,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 Now, let’s create the Server Actions which this file calls.
 
@@ -362,7 +362,7 @@ Create a new file to contain your actions at `app/actions.ts`. This file will ha
 
 app/actions.ts
 
-```
+\`\`\`
 'use server'
 
  
@@ -454,7 +454,7 @@ export async function sendNotification(message: string) {
   }
 
 }
-```
+\`\`\`
 
 Sending a notification will be handled by our service worker, created in step 5.
 
@@ -468,24 +468,24 @@ First, install web-push globally:
 
 Terminal
 
-```
+\`\`\`
 npm install -g web-push
-```
+\`\`\`
 
 Generate the VAPID keys by running:
 
 Terminal
 
-```
+\`\`\`
 web-push generate-vapid-keys
-```
+\`\`\`
 
 Copy the output and paste the keys into your `.env` file:
 
-```
+\`\`\`
 NEXT_PUBLIC_VAPID_PUBLIC_KEY=your_public_key_here
 VAPID_PRIVATE_KEY=your_private_key_here
-```
+\`\`\`
 
 ### 5\. Creating a Service Worker
 
@@ -493,7 +493,7 @@ Create a `public/sw.js` file for your service worker:
 
 public/sw.js
 
-```
+\`\`\`
 self.addEventListener('push', function (event) {
 
   if (event.data) {
@@ -537,7 +537,7 @@ self.addEventListener('notificationclick', function (event) {
   event.waitUntil(clients.openWindow('<https://your-website.com>'))
 
 })
-```
+\`\`\`
 
 This service worker supports custom images and notifications. It handles incoming push events and notification clicks.
 

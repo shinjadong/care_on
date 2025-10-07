@@ -63,7 +63,7 @@ To use `redirects`, add the option to your `next.config.js` file:
 
 next.config.ts
 
-```
+\`\`\`
 import type { NextConfig } from 'next'
 
  
@@ -107,7 +107,7 @@ const nextConfig: NextConfig = {
  
 
 export default nextConfig
-```
+\`\`\`
 
 See the [`redirects` API reference](https://nextjs.org/docs/app/api-reference/config/next-config-js/redirects) for more information.
 
@@ -146,7 +146,7 @@ A redirect map is a list of redirects that you can store in a database (usually 
 
 Consider the following data structure:
 
-```
+\`\`\`
 {
 
   "/old": {
@@ -166,13 +166,13 @@ Consider the following data structure:
   }
 
 }
-```
+\`\`\`
 
 In [Middleware](https://nextjs.org/docs/app/api-reference/file-conventions/middleware), you can read from a database such as Vercel's [Edge Config](https://vercel.com/docs/edge-config/get-started) or [Redis](https://vercel.com/docs/redis), and redirect the user based on the incoming request:
 
 middleware.ts
 
-```
+\`\`\`
 import { NextResponse, NextRequest } from 'next/server'
 
 import { get } from '@vercel/edge-config'
@@ -214,7 +214,7 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next()
 
 }
-```
+\`\`\`
 
 ### 2\. Optimizing data lookup performance
 
@@ -229,7 +229,7 @@ If it does, forward the request to a [Route Handler](https://nextjs.org/docs/app
 
 middleware.ts
 
-```
+\`\`\`
 import { NextResponse, NextRequest } from 'next/server'
 
 import { ScalableBloomFilter } from 'bloom-filters'
@@ -325,13 +325,13 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next()
 
 }
-```
+\`\`\`
 
 Then, in the Route Handler:
 
 app/api/redirects/route.ts
 
-```
+\`\`\`
 import { NextRequest, NextResponse } from 'next/server'
 
 import redirects from '@/app/redirects/redirects.json'
@@ -381,7 +381,7 @@ export function GET(request: NextRequest) {
   return NextResponse.json(redirect)
 
 }
-```
+\`\`\`
 
 > **Good to know:**
 > 

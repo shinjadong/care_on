@@ -34,7 +34,7 @@
 **목표**: 편집 속도 10배 향상, 캔바 수준 편집 경험
 
 #### 1.1 키보드 단축키 시스템
-```typescript
+\`\`\`typescript
 // 구현 위치: components/page-builder/page-builder.tsx
 const shortcuts = {
   'Ctrl+Z': 'undo',
@@ -45,10 +45,10 @@ const shortcuts = {
   'Delete': 'delete',
   'Arrow Keys': 'navigate'
 };
-```
+\`\`\`
 
 #### 1.2 인라인 편집 시스템
-```typescript
+\`\`\`typescript
 // 텍스트 더블클릭으로 즉시 편집
 const InlineTextEditor = ({ block, onUpdate }) => (
   <div
@@ -61,7 +61,7 @@ const InlineTextEditor = ({ block, onUpdate }) => (
     {block.content.text}
   </div>
 );
-```
+\`\`\`
 
 #### 1.3 스마트 편집 도구
 - **우클릭 컨텍스트 메뉴**: 복사/붙여넣기/삭제/복제
@@ -75,7 +75,7 @@ const InlineTextEditor = ({ block, onUpdate }) => (
 **목표**: 블록 수 8개 → 30개, 웬만한 디자인 모두 커버
 
 #### 2.1 레이아웃 블록 (필수)
-```typescript
+\`\`\`typescript
 const layoutBlocks = [
   'two-column',     // 2컬럼 레이아웃
   'three-column',   // 3컬럼 레이아웃
@@ -84,10 +84,10 @@ const layoutBlocks = [
   'section',        // 풀폭 섹션
   'grid'            // CSS 그리드
 ];
-```
+\`\`\`
 
 #### 2.2 콘텐츠 블록 (핵심)
-```typescript
+\`\`\`typescript
 const contentBlocks = [
   'gallery',        // 이미지 갤러리
   'slider',         // 이미지 슬라이더
@@ -100,10 +100,10 @@ const contentBlocks = [
   'stats',          // 통계/숫자
   'call-to-action'  // CTA 섹션
 ];
-```
+\`\`\`
 
 #### 2.3 인터랙티브 블록
-```typescript
+\`\`\`typescript
 const interactiveBlocks = [
   'contact-form',   // 연락처 폼
   'newsletter',     // 뉴스레터 가입
@@ -112,7 +112,7 @@ const interactiveBlocks = [
   'countdown',      // 카운트다운
   'social-feed'     // 소셜미디어 피드
 ];
-```
+\`\`\`
 
 **예상 효과**: 모든 일반적인 웹 디자인 요구사항 **95% 커버**
 
@@ -120,7 +120,7 @@ const interactiveBlocks = [
 **목표**: 캔바 수준 디자인 도구
 
 #### 3.1 글로벌 디자인 토큰
-```typescript
+\`\`\`typescript
 interface DesignSystem {
   colors: {
     primary: string[];
@@ -136,7 +136,7 @@ interface DesignSystem {
   borderRadius: number[];
   shadows: string[];
 }
-```
+\`\`\`
 
 #### 3.2 고급 스타일링 도구
 - **색상 팔레트 에디터**: HSL 슬라이더, 색상 조합 제안
@@ -145,7 +145,7 @@ interface DesignSystem {
 - **애니메이션 타임라인**: 키프레임 에디터
 
 #### 3.3 브랜드 시스템
-```typescript
+\`\`\`typescript
 interface BrandKit {
   logo: string;
   colors: string[];
@@ -154,7 +154,7 @@ interface BrandKit {
   borderRadius: number;
   shadows: string[];
 }
-```
+\`\`\`
 
 **예상 효과**: 디자인 일관성 **100% 확보**, 브랜딩 **자동 적용**
 
@@ -167,7 +167,7 @@ interface BrandKit {
 - **사용자 템플릿**: 저장/공유/재사용 시스템
 
 #### 4.2 AI 디자인 어시스턴트
-```typescript
+\`\`\`typescript
 // Claude AI API 연동
 const AIAssistant = {
   async suggestLayout(content: string) {
@@ -190,7 +190,7 @@ const AIAssistant = {
     // 디자인 변형 자동 생성
   }
 };
-```
+\`\`\`
 
 #### 4.3 고급 CMS 기능
 - **페이지 계층 구조**: 메인/서브페이지 관리
@@ -221,7 +221,7 @@ const AIAssistant = {
 
 ### 1.1 키보드 단축키 시스템 (3일)
 **구현 파일**: `components/page-builder/keyboard-shortcuts.tsx`
-```typescript
+\`\`\`typescript
 const useKeyboardShortcuts = (
   blocks: Block[],
   setBlocks: (blocks: Block[]) => void,
@@ -248,11 +248,11 @@ const useKeyboardShortcuts = (
 
   // ... 더 많은 단축키 구현
 };
-```
+\`\`\`
 
 ### 1.2 인라인 텍스트 편집 (2일)
 **구현 파일**: `components/page-builder/blocks/inline-text-editor.tsx`
-```typescript
+\`\`\`typescript
 const InlineTextEditor = ({ block, onUpdate, placeholder = "텍스트 입력..." }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(block.content.text || '');
@@ -279,11 +279,11 @@ const InlineTextEditor = ({ block, onUpdate, placeholder = "텍스트 입력..."
     </div>
   );
 };
-```
+\`\`\`
 
 ### 1.3 스마트 편집 도구 (2일)
 **구현 파일**: `components/page-builder/smart-editor-tools.tsx`
-```typescript
+\`\`\`typescript
 // 우클릭 컨텍스트 메뉴
 const ContextMenu = ({ x, y, blockId, onAction }) => (
   <div
@@ -315,14 +315,14 @@ const useMultiSelect = () => {
 
   return { selectedBlocks, handleBlockClick };
 };
-```
+\`\`\`
 
 ---
 
 ## 📦 Phase 2: 블록 라이브러리 확장 계획
 
 ### 2.1 핵심 레이아웃 블록 (1주)
-```typescript
+\`\`\`typescript
 // 구현할 블록들
 const essentialBlocks = [
   {
@@ -344,10 +344,10 @@ const essentialBlocks = [
     props: ['background', 'padding', 'pattern']
   }
 ];
-```
+\`\`\`
 
 ### 2.2 콘텐츠 블록 라이브러리 (1주)
-```typescript
+\`\`\`typescript
 const contentBlocks = [
   {
     name: 'gallery',
@@ -365,14 +365,14 @@ const contentBlocks = [
     props: ['plans', 'features', 'highlight', 'billing']
   }
 ];
-```
+\`\`\`
 
 ---
 
 ## 🎨 Phase 3: 디자인 시스템 계획
 
 ### 3.1 글로벌 디자인 토큰 시스템
-```typescript
+\`\`\`typescript
 // 구현 위치: lib/design-system/tokens.ts
 export const designTokens = {
   colors: {
@@ -419,10 +419,10 @@ export const designTokens = {
     xl: '0 20px 25px -5px rgb(0 0 0 / 0.1)'
   }
 };
-```
+\`\`\`
 
 ### 3.2 고급 스타일 에디터
-```typescript
+\`\`\`typescript
 // 색상 팔레트 에디터
 const ColorPaletteEditor = ({ onColorChange }) => (
   <div className="color-palette-editor">
@@ -442,14 +442,14 @@ const TypographyEditor = ({ onFontChange }) => (
     <ReadabilityAnalyzer />
   </div>
 );
-```
+\`\`\`
 
 ---
 
 ## 🤖 Phase 4: AI & 고급 CMS 계획
 
 ### 4.1 AI 디자인 어시스턴트
-```typescript
+\`\`\`typescript
 // Claude API 연동 디자인 어시스턴트
 class AIDesignAssistant {
   async analyzeContent(content: string) {
@@ -473,7 +473,7 @@ class AIDesignAssistant {
     });
   }
 }
-```
+\`\`\`
 
 ### 4.2 고급 CMS 기능
 - **동적 콘텐츠**: 데이터베이스 쿼리 블록

@@ -17,9 +17,9 @@ First, install [`sass`](https://github.com/sass/sass):
 
 Terminal
 
-```
+\`\`\`
 npm install --save-dev sass
-```
+\`\`\`
 
 > **Good to know**:
 > 
@@ -33,7 +33,7 @@ If you want to configure your Sass options, use `sassOptions` in `next.config`.
 
 next.config.ts
 
-```
+\`\`\`
 import type { NextConfig } from 'next'
 
  
@@ -51,7 +51,7 @@ const nextConfig: NextConfig = {
  
 
 export default nextConfig
-```
+\`\`\`
 
 #### Implementation
 
@@ -59,7 +59,7 @@ You can use the `implementation` property to specify the Sass implementation to 
 
 next.config.ts
 
-```
+\`\`\`
 import type { NextConfig } from 'next'
 
  
@@ -77,7 +77,7 @@ const nextConfig: NextConfig = {
  
 
 export default nextConfig
-```
+\`\`\`
 
 ### Sass Variables
 
@@ -87,7 +87,7 @@ For example, using the exported `primaryColor` Sass variable:
 
 app/variables.module.scss
 
-```
+\`\`\`
 $primary-color: #64ff00;
 
  
@@ -97,11 +97,11 @@ $primary-color: #64ff00;
   primaryColor: $primary-color;
 
 }
-```
+\`\`\`
 
 app/page.js
 
-```
+\`\`\`
 // maps to root \`/\` URL
 
  
@@ -115,4 +115,4 @@ export default function Page() {
   return <h1 style={{ color: variables.primaryColor }}>Hello, Next.js!</h1>
 
 }
-```
+\`\`\`

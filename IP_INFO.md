@@ -18,10 +18,10 @@
    - 애플리케이션명: 노백샵
 
 3. **IP 추가 방법**
-   ```
+   \`\`\`
    현재 설정: 211.205.114.124
    추가할 IP: 125.180.6.168
-   ```
+   \`\`\`
    - "API 호출 IP" 항목 찾기
    - "수정" 버튼 클릭
    - 새 줄에 `125.180.6.168` 입력
@@ -31,13 +31,13 @@
 
 IP 추가 후 터미널에서 실행:
 
-```bash
+\`\`\`bash
 # API 연결 테스트
 node scripts/test-naver-api.js
 
 # 관리자 페이지 접속
 http://localhost:3000/admin/naver-orders
-```
+\`\`\`
 
 ## 주의사항
 
@@ -47,10 +47,10 @@ http://localhost:3000/admin/naver-orders
 
 ## IP 변경 확인 명령어
 
-```bash
+\`\`\`bash
 # 현재 공인 IP 확인
 curl ifconfig.me
 
 # 상세 정보 확인
 curl ipinfo.io
-```
+\`\`\`

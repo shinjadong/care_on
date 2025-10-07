@@ -25,9 +25,9 @@ You can use `create-next-app` with the [with-cypress example](https://github.com
 
 Terminal
 
-```
+\`\`\`
 npx create-next-app@latest --example with-cypress with-cypress-app
-```
+\`\`\`
 
 ## Manual setup
 
@@ -35,7 +35,7 @@ To manually set up Cypress, install `cypress` as a dev dependency:
 
 Terminal
 
-```
+\`\`\`
 npm install -D cypress
 
 # or
@@ -45,13 +45,13 @@ yarn add -D cypress
 # or
 
 pnpm install -D cypress
-```
+\`\`\`
 
 Add the Cypress `open` command to the `package.json` scripts field:
 
 package.json
 
-```
+\`\`\`
 {
 
   "scripts": {
@@ -69,15 +69,15 @@ package.json
   }
 
 }
-```
+\`\`\`
 
 Run Cypress for the first time to open the Cypress testing suite:
 
 Terminal
 
-```
+\`\`\`
 npm run cypress:open
-```
+\`\`\`
 
 You can choose to configure **E2E Testing** and/or **Component Testing**. Selecting any of these options will automatically create a `cypress.config.js` file and a `cypress` folder in your project.
 
@@ -87,7 +87,7 @@ Ensure your `cypress.config` file has the following configuration:
 
 cypress.config.ts
 
-```
+\`\`\`
 import { defineConfig } from 'cypress'
 
  
@@ -101,13 +101,13 @@ export default defineConfig({
   },
 
 })
-```
+\`\`\`
 
 Then, create two new Next.js files:
 
 app/page.js
 
-```
+\`\`\`
 import Link from 'next/link'
 
  
@@ -127,11 +127,11 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 app/about/page.js
 
-```
+\`\`\`
 import Link from 'next/link'
 
  
@@ -151,7 +151,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 Add a test to check your navigation is working correctly:
 
@@ -176,7 +176,7 @@ Ensure your `cypress.config` file has the following configuration:
 
 cypress.config.ts
 
-```
+\`\`\`
 import { defineConfig } from 'cypress'
 
  
@@ -196,13 +196,13 @@ export default defineConfig({
   },
 
 })
-```
+\`\`\`
 
 Assuming the same components from the previous section, add a test to validate a component is rendering the expected output:
 
 cypress/component/about.cy.tsx
 
-```
+\`\`\`
 import Page from '../../app/page'
 
  
@@ -232,7 +232,7 @@ describe('<Page />', () => {
   })
 
 })
-```
+\`\`\`
 
 > **Good to know**:
 > 
@@ -249,7 +249,7 @@ In addition to interactive testing, you can also run Cypress headlessly using th
 
 package.json
 
-```
+\`\`\`
 {
 
   "scripts": {
@@ -267,7 +267,7 @@ package.json
   }
 
 }
-```
+\`\`\`
 
 You can learn more about Cypress and Continuous Integration from these resources:
 

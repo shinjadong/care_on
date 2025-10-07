@@ -23,11 +23,11 @@ Install Tailwind CSS and its peer dependencies, then run the `init` command to g
 
 Terminal
 
-```
+\`\`\`
 pnpm add -D tailwindcss@^3 postcss autoprefixer
 
 npx tailwindcss init -p
-```
+\`\`\`
 
 ## Configuring Tailwind v3
 
@@ -35,7 +35,7 @@ Configure your template paths in your `tailwind.config.js` file:
 
 tailwind.config.js
 
-```
+\`\`\`
 /** @type {import('tailwindcss').Config} */
 
 module.exports = {
@@ -59,25 +59,25 @@ module.exports = {
   plugins: [],
 
 }
-```
+\`\`\`
 
 Add the Tailwind directives to your global CSS file:
 
 app/globals.css
 
-```
+\`\`\`
 @tailwind base;
 
 @tailwind components;
 
 @tailwind utilities;
-```
+\`\`\`
 
 Import the CSS file in your root layout:
 
 app/layout.tsx
 
-```
+\`\`\`
 import './globals.css'
 
  
@@ -103,7 +103,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 ## Using classes
 
@@ -111,13 +111,13 @@ After installing Tailwind CSS and adding the global styles, you can use Tailwind
 
 app/page.tsx
 
-```
+\`\`\`
 export default function Page() {
 
   return <h1 className="text-3xl font-bold underline">Hello, Next.js!</h1>
 
 }
-```
+\`\`\`
 
 ## Usage with Turbopack
 

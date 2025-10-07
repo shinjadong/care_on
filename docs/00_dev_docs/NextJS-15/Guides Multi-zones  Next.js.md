@@ -38,7 +38,7 @@ A zone is a normal Next.js application where you also configure an [assetPrefix]
 
 next.config.js
 
-```
+\`\`\`
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
@@ -46,7 +46,7 @@ const nextConfig = {
   assetPrefix: '/blog-static',
 
 }
-```
+\`\`\`
 
 Next.js assets, such as JavaScript and CSS, will be prefixed with `assetPrefix` to make sure that they don't conflict with assets from other zones. These assets will be served under `/assetPrefix/_next/...` for each of the zones.
 
@@ -56,7 +56,7 @@ In versions older than Next.js 15, you may also need an additional rewrite to ha
 
 next.config.js
 
-```
+\`\`\`
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
@@ -84,7 +84,7 @@ const nextConfig = {
   },
 
 }
-```
+\`\`\`
 
 ## How to route requests to the right zone
 
@@ -94,7 +94,7 @@ To route to the correct zone using a Next.js application, you can use [`rewrites
 
 next.config.js
 
-```
+\`\`\`
 async rewrites() {
 
     return [
@@ -126,7 +126,7 @@ async rewrites() {
     ];
 
 }
-```
+\`\`\`
 
 `destination` should be a URL that is served by the zone, including scheme and domain. This should point to the zone's production domain, but it can also be used to route requests to `localhost` in local development.
 
@@ -138,7 +138,7 @@ Routing requests through [`rewrites`](https://nextjs.org/docs/app/api-reference/
 
 middleware.js
 
-```
+\`\`\`
 export async function middleware(request) {
 
   const { pathname, search } = req.nextUrl;
@@ -150,7 +150,7 @@ export async function middleware(request) {
   }
 
 }
-```
+\`\`\`
 
 ## Linking between zones
 
@@ -168,7 +168,7 @@ When using [Server Actions](https://nextjs.org/docs/app/getting-started/updating
 
 next.config.js
 
-```
+\`\`\`
 const nextConfig = {
 
   experimental: {
@@ -182,6 +182,6 @@ const nextConfig = {
   },
 
 }
-```
+\`\`\`
 
 See [`serverActions.allowedOrigins`](https://nextjs.org/docs/app/api-reference/config/next-config-js/serverActions#allowedorigins) for more information.

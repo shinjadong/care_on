@@ -96,17 +96,17 @@ If you're not using Server-Side Rendering or cookie-based Auth, you can directly
 
 When your user signs in, call [`signInWithOAuth()`](https://supabase.com/docs/reference/javascript/auth-signinwithoauth) with `kakao` as the `provider`:
 
-```
+\`\`\`
 12345async function () {  const { ,  } = await ..({    : 'kakao',  })}
-```
+\`\`\`
 
 For a PKCE flow, for example in Server-Side Auth, you need an extra step to handle the code exchange. When calling `signInWithOAuth`, provide a `redirectTo` URL which points to a callback route. This redirect URL should be added to your [redirect allow list](https://supabase.com/docs/guides/auth/redirect-urls).
 
 In the browser, `signInWithOAuth` automatically redirects to the OAuth provider's authentication endpoint, which then redirects to your endpoint.
 
-```
+\`\`\`
 123456await ..({  ,  : {    : \`http://example.com/auth/callback\`,  },})
-```
+\`\`\`
 
 At the callback endpoint, handle the code exchange to save the user session.
 
@@ -114,15 +114,15 @@ Create a new file at `app/auth/callback/route.ts` and populate with the followin
 
 ###### app/auth/callback/route.ts
 
-```
+\`\`\`
 12345678910111213141516171819202122232425262728293031323334import { NextResponse } from 'next/server'// The client you created from the Server-Side Auth instructionsimport { createClient } from '@/utils/supabase/server'export async function GET(request: Request) {  const { searchParams, origin } = new URL(request.url)  const code = searchParams.get('code')  // if "next" is in param, use it as the redirect URL  let next = searchParams.get('next') ?? '/'  if (!next.startsWith('/')) {    // if "next" is not a relative URL, use the default    next = '/'  }  if (code) {    const supabase = await createClient()    const { error } = await supabase.auth.exchangeCodeForSession(code)    if (!error) {      const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer      const isLocalEnv = process.env.NODE_ENV === 'development'      if (isLocalEnv) {        // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host        return NextResponse.redirect(\`${origin}${next}\`)      } else if (forwardedHost) {        return NextResponse.redirect(\`https://${forwardedHost}${next}\`)      } else {        return NextResponse.redirect(\`${origin}${next}\`)      }    }  }  // return the user to an error page with instructions  return NextResponse.redirect(\`${origin}/auth/auth-code-error\`)}
-```
+\`\`\`
 
 When your user signs out, call [signOut()](https://supabase.com/docs/reference/javascript/auth-signout) to remove them from the browser session and any objects from localStorage:
 
-```
+\`\`\`
 123async function signOut() {  const { error } = await supabase.auth.signOut()}
-```
+\`\`\`
 
 ## Using Kakao Login JS SDK
 
@@ -134,9 +134,9 @@ For example, this code shows a how to get ID Token:
 
 Use the ID Token to sign in:
 
-```
+\`\`\`
 1234const res = await auth.signInWithIdToken({  provider: 'kakao',  token: id_token,});
-```
+\`\`\`
 
 ### Configuration
 

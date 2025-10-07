@@ -31,9 +31,9 @@ To get started, install the following packages:
 
 Terminal
 
-```
+\`\`\`
 npm install @vercel/otel @opentelemetry/sdk-logs @opentelemetry/api-logs @opentelemetry/instrumentation
-```
+\`\`\`
 
 Next, create a custom [`instrumentation.ts`](https://nextjs.org/docs/app/guides/instrumentation) (or `.js`) file in the **root directory** of the project (or inside `src` folder if using one):
 
@@ -53,15 +53,15 @@ Firstly you need to install OpenTelemetry packages:
 
 Terminal
 
-```
+\`\`\`
 npm install @opentelemetry/sdk-node @opentelemetry/resources @opentelemetry/semantic-conventions @opentelemetry/sdk-trace-node @opentelemetry/exporter-trace-otlp-http
-```
+\`\`\`
 
 Now you can initialize `NodeSDK` in your `instrumentation.ts`. Unlike `@vercel/otel`, `NodeSDK` is not compatible with edge runtime, so you need to make sure that you are importing them only when `process.env.NEXT_RUNTIME === 'nodejs'`. We recommend creating a new file `instrumentation.node.ts` which you conditionally import only when using node:
 
 instrumentation.node.ts
 
-```
+\`\`\`
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
 
 import { Resource } from '@opentelemetry/resources'
@@ -87,7 +87,7 @@ const sdk = new NodeSDK({
 })
 
 sdk.start()
-```
+\`\`\`
 
 Doing this is equivalent to using `@vercel/otel`, but it's possible to modify and extend some features that are not exposed by the `@vercel/otel`. If edge runtime support is necessary, you will have to use `@vercel/otel`.
 
@@ -129,13 +129,13 @@ You can add a custom span with [OpenTelemetry APIs](https://opentelemetry.io/doc
 
 Terminal
 
-```
+\`\`\`
 npm install @opentelemetry/api
-```
+\`\`\`
 
 The following example demonstrates a function that fetches GitHub stars and adds a custom `fetchGithubStars` span to track the fetch request's result:
 
-```
+\`\`\`
 import { trace } from '@opentelemetry/api'
 
  
@@ -161,7 +161,7 @@ export async function fetchGithubStars() {
     })
 
 }
-```
+\`\`\`
 
 The `register` function will execute before your code runs in a new environment. You can start creating new spans, and they should be correctly added to the exported trace.
 

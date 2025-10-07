@@ -51,16 +51,16 @@
 
 ### 2.2 파일 구조
 
-```
+\`\`\`
 components/enrollment/
 ├── step-8.7-sales-info.tsx       # 매출 정보 입력
 ├── step-9.3-settlement-info.tsx  # 정산 정보 입력
 └── ... (기존 파일들)
-```
+\`\`\`
 
 ### 2.3 FormData 타입 업데이트
 
-```typescript
+\`\`\`typescript
 // 기존 optional 필드를 required로 변경
 export type FormData = {
   // ... 기존 필드들 ...
@@ -79,11 +79,11 @@ export type FormData = {
 
   // ... 기존 필드들 ...
 }
-```
+\`\`\`
 
 ### 2.4 스텝 순서 업데이트
 
-```typescript
+\`\`\`typescript
 const stepComponents = [
   { component: StepAgreements, name: "약관 동의" },
   { component: StepOwnerInfo, name: "대표자 정보" },
@@ -105,7 +105,7 @@ const stepComponents = [
   { component: StepFinalConfirmation, name: "최종 확인" },
   { component: StepConfirmation, name: "완료" },
 ]
-```
+\`\`\`
 
 ## 3. API 업데이트
 
@@ -113,7 +113,7 @@ const stepComponents = [
 - 61-71번 라인의 임시 데이터 처리 부분 제거
 - formData에서 실제 입력받은 값 사용
 
-```typescript
+\`\`\`typescript
 // Before (임시 데이터)
 monthly_sales: formData.monthlySales || "1000만원 이하",
 card_sales_ratio: formData.cardSalesRatio || 70,
@@ -121,12 +121,12 @@ card_sales_ratio: formData.cardSalesRatio || 70,
 // After (실제 데이터)
 monthly_sales: formData.monthlySales,
 card_sales_ratio: formData.cardSalesRatio,
-```
+\`\`\`
 
 ### 3.2 초기값 설정
 app/enrollment/page.tsx의 초기 formData에 새 필드 추가:
 
-```typescript
+\`\`\`typescript
 const [formData, setFormData] = useState<FormData>({
   // ... 기존 필드들 ...
 
@@ -144,7 +144,7 @@ const [formData, setFormData] = useState<FormData>({
 
   // ... 기존 필드들 ...
 })
-```
+\`\`\`
 
 ## 4. 유효성 검증
 

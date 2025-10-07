@@ -39,7 +39,7 @@ tags:
 6. **처리된 상태를 Google 스프레드시트에 기록**
 - 메인함수 중 문자 자동 전송을 위해 추가된 부분
 
-```
+\`\`\`
 /**
  * 전화번호에서 숫자를 제외한 나머지 문자를 제거하는 헬퍼 함수
  * @param {string} phoneNumber - 원본 전화번호 문자열
@@ -88,11 +88,11 @@ function sendCustomerSMS(phoneNumber) {
  * - ppurioGetAccessToken() : 문자 발송 API 액세스 토큰 발급 함수
  * - ppurioSendMessage(token, phoneNumber) : 문자 메시지 전송 함수
  */
-```
+\`\`\`
 
 - 문자 자동 전송을 위한 함수
 
-```
+\`\`\`
 // 전역 상수 설정
 const API_URL = "https://message.ppurio.com";
 const USER_NAME = "onix7";
@@ -244,7 +244,7 @@ function run() {
   // 예: testPpurioFlowWithRecipient("01011112222");
   testPpurioFlowWithRecipient();
 }
-```
+\`\`\`
 
 ### 📝 시도와 실패
 

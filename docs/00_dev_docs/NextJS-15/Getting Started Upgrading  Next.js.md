@@ -17,17 +17,17 @@ To update to the latest version of Next.js, you can use the `upgrade` codemod:
 
 Terminal
 
-```
+\`\`\`
 npx @next/codemod@latest upgrade latest
-```
+\`\`\`
 
 If you prefer to upgrade manually, install the latest Next.js and React versions:
 
 Terminal
 
-```
+\`\`\`
 pnpm i next@latest react@latest react-dom@latest eslint-config-next@latest
-```
+\`\`\`
 
 ## Canary version
 
@@ -35,9 +35,9 @@ To update to the latest canary, make sure you're on the latest version of Next.j
 
 Terminal
 
-```
+\`\`\`
 npm i next@canary
-```
+\`\`\`
 
 ### Features available in canary
 

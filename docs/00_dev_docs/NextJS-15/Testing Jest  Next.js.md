@@ -23,9 +23,9 @@ You can use `create-next-app` with the Next.js [with-jest](https://github.com/ve
 
 Terminal
 
-```
+\`\`\`
 npx create-next-app@latest --example with-jest with-jest-app
-```
+\`\`\`
 
 ## Manual setup
 
@@ -35,7 +35,7 @@ To set up Jest, install `jest` and the following packages as dev dependencies:
 
 Terminal
 
-```
+\`\`\`
 npm install -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
 
 # or
@@ -45,13 +45,13 @@ yarn add -D jest jest-environment-jsdom @testing-library/react @testing-library/
 # or
 
 pnpm install -D jest jest-environment-jsdom @testing-library/react @testing-library/dom @testing-library/jest-dom ts-node @types/jest
-```
+\`\`\`
 
 Generate a basic Jest configuration file by running the following command:
 
 Terminal
 
-```
+\`\`\`
 npm init jest@latest
 
 # or
@@ -61,7 +61,7 @@ yarn create jest@latest
 # or
 
 pnpm create jest@latest
-```
+\`\`\`
 
 This will take you through a series of prompts to setup Jest for your project, including automatically creating a `jest.config.ts|js` file.
 
@@ -69,7 +69,7 @@ Update your config file to use `next/jest`. This transformer has all the necessa
 
 jest.config.ts
 
-```
+\`\`\`
 import type { Config } from 'jest'
 
 import nextJest from 'next/jest.js'
@@ -105,7 +105,7 @@ const config: Config = {
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
 
 export default createJestConfig(config)
-```
+\`\`\`
 
 Under the hood, `next/jest` is automatically configuring Jest for you, including:
 
@@ -122,7 +122,7 @@ Under the hood, `next/jest` is automatically configuring Jest for you, including
 
 If your project is using [Module Path Aliases](https://nextjs.org/docs/app/getting-started/installation#set-up-absolute-imports-and-module-path-aliases), you will need to configure Jest to resolve the imports by matching the paths option in the `jsconfig.json` file with the `moduleNameMapper` option in the `jest.config.js` file. For example:
 
-```
+\`\`\`
 {
 
   "compilerOptions": {
@@ -142,11 +142,11 @@ If your project is using [Module Path Aliases](https://nextjs.org/docs/app/getti
   }
 
 }
-```
+\`\`\`
 
 jest.config.js
 
-```
+\`\`\`
 moduleNameMapper: {
 
   // ...
@@ -154,7 +154,7 @@ moduleNameMapper: {
   '^@/components/(.*)$': '<rootDir>/components/$1',
 
 }
-```
+\`\`\`
 
 ## Optional: Extend Jest with custom matchers
 
@@ -162,17 +162,17 @@ moduleNameMapper: {
 
 jest.config.ts
 
-```
+\`\`\`
 setupFilesAfterEnv: ['<rootDir>/jest.setup.ts']
-```
+\`\`\`
 
 Then, inside `jest.setup`, add the following import:
 
 jest.setup.ts
 
-```
+\`\`\`
 import '@testing-library/jest-dom'
-```
+\`\`\`
 
 > **Good to know:**, so if you are using `@testing-library/jest-dom` before version 6, you will need to import `@testing-library/jest-dom/extend-expect` instead.
 
@@ -184,7 +184,7 @@ Finally, add a Jest `test` script to your `package.json` file:
 
 package.json
 
-```
+\`\`\`
 {
 
   "scripts": {
@@ -202,7 +202,7 @@ package.json
   }
 
 }
-```
+\`\`\`
 
 `jest --watch` will re-run tests when a file is changed. For more Jest CLI options, please refer to the [Jest Docs](https://jestjs.io/docs/cli#reference).
 
@@ -214,7 +214,7 @@ For example, we can add a test to check if the `<Page />` component successfully
 
 app/page.js
 
-```
+\`\`\`
 import Link from 'next/link'
 
  
@@ -234,11 +234,11 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 \_\_tests\_\_/page.test.jsx
 
-```
+\`\`\`
 import '@testing-library/jest-dom'
 
 import { render, screen } from '@testing-library/react'
@@ -264,7 +264,7 @@ describe('Page', () => {
   })
 
 })
-```
+\`\`\`
 
 Optionally, add a [snapshot test](https://jestjs.io/docs/snapshot-testing) to keep track of any unexpected changes in your component:
 
@@ -274,7 +274,7 @@ Then, run the following command to run your tests:
 
 Terminal
 
-```
+\`\`\`
 npm run test
 
 # or
@@ -284,7 +284,7 @@ yarn test
 # or
 
 pnpm test
-```
+\`\`\`
 
 ## Additional Resources
 

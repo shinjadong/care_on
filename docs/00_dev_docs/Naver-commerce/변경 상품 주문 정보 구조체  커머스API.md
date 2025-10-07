@@ -128,7 +128,7 @@ tags:
 
 - \]
 
-```json
+\`\`\`json
 변경 상품 주문 정보 구조체[
   {
     "orderId": "string",
@@ -143,4 +143,4 @@ tags:
     "giftReceivingStatus": "string"
   }
 ]
-```
+\`\`\`

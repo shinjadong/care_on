@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 #### 1️⃣ 프로젝트 전체 파악 단계
 **모든 개발 작업 시작 전, 반드시 프로젝트 전체 구조를 파악하세요:**
 
-```bash
+\`\`\`bash
 # Desktop Commander MCP를 사용한 프로젝트 구조 파악
 # 1. 프로젝트 루트 디렉토리 탐색
 mcp_Desktop_Commander_list_directory("/home/tlswk/projects/careon/care_on")
@@ -28,12 +28,12 @@ mcp_Desktop_Commander_start_search(
   pattern="*.tsx",
   searchType="files"
 )
-```
+\`\`\`
 
 #### 2️⃣ 코드 구현 후 즉시 테스트
 **Chrome DevTools MCP를 활용한 자동 테스트:**
 
-```javascript
+\`\`\`javascript
 // 1. 개발 서버가 실행 중인지 확인
 // 터미널에서 npm run dev 실행 상태 체크
 
@@ -53,12 +53,12 @@ mcp_Chrome_DevTools_list_console_messages()
 mcp_Chrome_DevTools_list_network_requests({ 
   resourceTypes: ["fetch", "xhr"] 
 })
-```
+\`\`\`
 
 #### 3️⃣ 디버깅 자동화
 **에러 발견 시 즉시 원인 파악:**
 
-```bash
+\`\`\`bash
 # 1. 에러가 발생한 파일 찾기
 mcp_Desktop_Commander_start_search(
   path="/home/tlswk/projects/careon/care_on",
@@ -71,7 +71,7 @@ mcp_Desktop_Commander_read_file("파일경로")
 
 # 3. 수정 후 재테스트
 # Chrome DevTools로 실시간 확인
-```
+\`\`\`
 
 #### 4️⃣ 맥락 유지 전략
 **개발 진행 상황을 놓치지 않기 위한 체크리스트:**
@@ -88,7 +88,7 @@ mcp_Desktop_Commander_read_file("파일경로")
 
 ### 페이지 네비게이션
 
-```javascript
+\`\`\`javascript
 // 새 페이지 열기
 mcp_Chrome_DevTools_new_page({ url: "http://localhost:3000" })
 
@@ -107,11 +107,11 @@ mcp_Chrome_DevTools_select_page({ pageIdx: 1 })
 
 // 페이지 닫기
 mcp_Chrome_DevTools_close_page({ pageIdx: 1 })
-```
+\`\`\`
 
 ### 페이지 분석
 
-```javascript
+\`\`\`javascript
 // 페이지 스냅샷 (DOM 구조 + uid)
 mcp_Chrome_DevTools_take_snapshot()
 
@@ -133,11 +133,11 @@ mcp_Chrome_DevTools_resize_page({
   width: 1920, 
   height: 1080 
 })
-```
+\`\`\`
 
 ### 인터랙션 자동화
 
-```javascript
+\`\`\`javascript
 // 클릭 이벤트
 mcp_Chrome_DevTools_click({ 
   uid: "2_23",        // 요소 uid
@@ -181,11 +181,11 @@ mcp_Chrome_DevTools_handle_dialog({
 
 // 특정 텍스트 나타날 때까지 대기
 mcp_Chrome_DevTools_wait_for({ text: "로딩 완료" })
-```
+\`\`\`
 
 ### 네트워크 & 성능
 
-```javascript
+\`\`\`javascript
 // 네트워크 요청 목록
 mcp_Chrome_DevTools_list_network_requests({ 
   resourceTypes: ["fetch", "xhr", "script", "stylesheet"],
@@ -221,11 +221,11 @@ mcp_Chrome_DevTools_performance_stop_trace()
 mcp_Chrome_DevTools_performance_analyze_insight({ 
   insightName: "LCPBreakdown"  // 분석할 인사이트 이름
 })
-```
+\`\`\`
 
 ### 디버깅
 
-```javascript
+\`\`\`javascript
 // 콘솔 메시지 확인
 mcp_Chrome_DevTools_list_console_messages()
 
@@ -251,7 +251,7 @@ mcp_Chrome_DevTools_evaluate_script({
     return await response.json();
   }`
 })
-```
+\`\`\`
 
 ---
 
@@ -259,7 +259,7 @@ mcp_Chrome_DevTools_evaluate_script({
 
 ### 파일 시스템 탐색
 
-```javascript
+\`\`\`javascript
 // 디렉토리 내용 확인
 mcp_Desktop_Commander_list_directory({ 
   path: "/home/tlswk/projects/careon/care_on" 
@@ -290,11 +290,11 @@ mcp_Desktop_Commander_read_multiple_files({
     "/home/tlswk/projects/careon/care_on/tsconfig.json"
   ]
 })
-```
+\`\`\`
 
 ### 파일 수정
 
-```javascript
+\`\`\`javascript
 // 파일 쓰기 (덮어쓰기)
 mcp_Desktop_Commander_write_file({ 
   path: "/home/tlswk/projects/careon/care_on/test.txt",
@@ -331,11 +331,11 @@ mcp_Desktop_Commander_move_file({
   source: "/home/tlswk/projects/careon/care_on/old.txt",
   destination: "/home/tlswk/projects/careon/care_on/new.txt"
 })
-```
+\`\`\`
 
 ### 파일 검색 (강력한 기능!)
 
-```javascript
+\`\`\`javascript
 // 파일명 검색
 mcp_Desktop_Commander_start_search({ 
   path: "/home/tlswk/projects/careon/care_on",
@@ -371,11 +371,11 @@ mcp_Desktop_Commander_stop_search({
 
 // 활성 검색 목록
 mcp_Desktop_Commander_list_searches()
-```
+\`\`\`
 
 ### 프로세스 실행
 
-```javascript
+\`\`\`javascript
 // 프로세스 시작 (스마트 감지 포함)
 mcp_Desktop_Commander_start_process({ 
   command: "npm run dev",
@@ -418,14 +418,14 @@ mcp_Desktop_Commander_list_processes()
 mcp_Desktop_Commander_kill_process({ 
   pid: 12345 
 })
-```
+\`\`\`
 
 ---
 
 ## 🔄 지속적 개발 자동화 패턴
 
 ### Pattern 1: 기능 구현 → 즉시 테스트
-```javascript
+\`\`\`javascript
 // 1. 컴포넌트 작성
 mcp_Desktop_Commander_write_file({...})
 
@@ -438,10 +438,10 @@ mcp_Chrome_DevTools_list_console_messages()
 if (hasError) {
   mcp_Desktop_Commander_edit_block({...})
 }
-```
+\`\`\`
 
 ### Pattern 2: 전체 프로젝트 영향 분석
-```javascript
+\`\`\`javascript
 // 1. 수정한 파일이 어디에 import 되는지 검색
 mcp_Desktop_Commander_start_search({
   pattern: "from './modified-file'",
@@ -456,10 +456,10 @@ mcp_Desktop_Commander_get_more_search_results({...})
   mcp_Chrome_DevTools_navigate_page({ url: page })
   mcp_Chrome_DevTools_take_screenshot()
 })
-```
+\`\`\`
 
 ### Pattern 3: Database Migration 후 검증
-```javascript
+\`\`\`javascript
 // 1. Migration 실행
 mcp_Desktop_Commander_start_process({
   command: "npx supabase db reset"
@@ -475,10 +475,10 @@ mcp_Chrome_DevTools_evaluate_script({
     return await res.json();
   }`
 })
-```
+\`\`\`
 
 ### Pattern 4: 맥락 복구 (작업 재개 시)
-```javascript
+\`\`\`javascript
 // 1. 최근 수정 파일 파악
 mcp_Desktop_Commander_start_search({
   pattern: "*",
@@ -495,7 +495,7 @@ mcp_Desktop_Commander_start_search({
 // 3. 현재 페이지 상태 확인
 mcp_Chrome_DevTools_take_snapshot()
 mcp_Chrome_DevTools_list_console_messages()
-```
+\`\`\`
 
 ---
 
@@ -509,7 +509,7 @@ mcp_Chrome_DevTools_list_console_messages()
 
 ## Development Commands
 
-```bash
+\`\`\`bash
 # Development server
 npm run dev           # Start development server at http://localhost:3000
 
@@ -523,7 +523,7 @@ npm run lint         # Run Next.js linter
 # Database operations (requires Supabase CLI)
 npx supabase migration new <name>  # Create new migration
 npx supabase db reset              # Reset database with migrations
-```
+\`\`\`
 
 ## Architecture Overview
 
@@ -576,7 +576,7 @@ All API routes are in `app/api/` with key endpoints:
 
 ## Project Structure
 
-```
+\`\`\`
 app/
 ├── admin/          # Admin dashboard (protected routes)
 ├── api/            # API endpoints (all server-side)
@@ -640,12 +640,12 @@ scripts/
 
 types/
 └── [custom type definitions] # Shared TypeScript types
-```
+\`\`\`
 
 ## Environment Variables
 
 Required environment variables (create `.env.local`):
-```bash
+\`\`\`bash
 # Supabase (required)
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
@@ -663,7 +663,7 @@ BLOB_READ_WRITE_TOKEN=your_vercel_blob_token
 
 # SMS Service (Korean)
 PPURIO_API_KEY=your_ppurio_key
-```
+\`\`\`
 
 ## Design System
 
@@ -839,11 +839,11 @@ Follow the existing patterns:
 ### Working with Database
 
 **Creating Migrations:**
-```bash
+\`\`\`bash
 npx supabase migration new descriptive_migration_name
 # Edit the generated SQL file in supabase/migrations/
 npx supabase db reset  # Apply all migrations from scratch
-```
+\`\`\`
 
 **Migration Naming Convention:**
 - Format: `YYYYMMDD[HHMMSS]_description.sql`
@@ -851,7 +851,7 @@ npx supabase db reset  # Apply all migrations from scratch
 - Migrations run in chronological order
 
 **Using Supabase Clients:**
-```typescript
+\`\`\`typescript
 // Client-side (browser)
 import { createClient } from '@/lib/supabase/client'
 const supabase = createClient()
@@ -863,13 +863,13 @@ const adminSupabase = await createClient(true)  // service role key
 
 // Database types
 import type { Database } from '@/lib/database.types'
-```
+\`\`\`
 
 **Regenerating Types:**
-```bash
+\`\`\`bash
 # After schema changes, regenerate TypeScript types
 npx supabase gen types typescript --project-id YOUR_PROJECT_ID > lib/database.types.ts
-```
+\`\`\`
 
 ### Admin Dashboard Improvements (2025-09-26)
 

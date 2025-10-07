@@ -28,7 +28,7 @@
 #### 1. **불필요한 리렌더링 (Critical)**
 
 **위치**: `image-block.tsx:87-118`
-```tsx
+\`\`\`tsx
 // 🔴 문제: 10개 이상의 의존성으로 인한 과도한 리렌더링
 useEffect(() => {
   setContainerWidth(block.content.containerWidth || 100);
@@ -43,17 +43,17 @@ useEffect(() => {
   block.content.imageAlign,
   // ... 10개 이상의 의존성
 ]);
-```
+\`\`\`
 
 **위치**: `page-builder.tsx:114-119`
-```tsx
+\`\`\`tsx
 // 🔴 문제: initialBlocks 변경시 조건 없이 전체 재설정
 useEffect(() => {
   if (initialBlocks.length > 0) {
     setBlocks(initialBlocks); // 모든 블록 리렌더링 트리거
   }
 }, [initialBlocks]);
-```
+\`\`\`
 
 #### 2. **메모이제이션 누락 (High)**
 
@@ -66,7 +66,7 @@ useEffect(() => {
 #### 3. **무거운 계산 (Medium)**
 
 **위치**: `hero-block.tsx:119-145`
-```tsx
+\`\`\`tsx
 // 🔴 문제: 매 렌더링시 스타일 재계산
 const getTitleStyle = (): React.CSSProperties => {
   const style = heroData.titleStyle;
@@ -77,10 +77,10 @@ const getTitleStyle = (): React.CSSProperties => {
     // 복잡한 계산이 캐싱되지 않음
   };
 };
-```
+\`\`\`
 
 **위치**: `puck-config.tsx:353-384`
-```tsx
+\`\`\`tsx
 // 🔴 문제: 거대한 설정 객체 매번 재생성
 const ImageComponent: ComponentConfig = {
   fields: { /* 30개 필드 */ },
@@ -89,7 +89,7 @@ const ImageComponent: ComponentConfig = {
     // 복잡한 렌더링 로직
   }
 };
-```
+\`\`\`
 
 ---
 
@@ -100,7 +100,7 @@ const ImageComponent: ComponentConfig = {
 #### 1.1 React.memo 적용
 
 **`image-block.tsx` 최적화**:
-```tsx
+\`\`\`tsx
 // 🟢 개선 방안
 export const ImageBlockRenderer = React.memo(({ block, isEditing, onUpdate }) => {
   // 스타일 계산 메모이제이션
@@ -129,12 +129,12 @@ export const ImageBlockRenderer = React.memo(({ block, isEditing, onUpdate }) =>
   return JSON.stringify(prevProps.block) === JSON.stringify(nextProps.block) &&
          prevProps.isEditing === nextProps.isEditing;
 });
-```
+\`\`\`
 
 #### 1.2 상태 업데이트 최적화
 
 **`block-renderer.tsx` 개선**:
-```tsx
+\`\`\`tsx
 // 🟢 개선: 상태 업데이트 배치 처리
 const useBatchedBlockUpdate = (block: Block, onUpdate?: (block: Block) => void) => {
   const [pendingUpdates, setPendingUpdates] = useState<Partial<Block>>({});
@@ -158,14 +158,14 @@ const useBatchedBlockUpdate = (block: Block, onUpdate?: (block: Block) => void) 
 
   return { batchUpdate };
 };
-```
+\`\`\`
 
 ### Phase 2: 구조적 개선 (1주 내)
 
 #### 2.1 컴포넌트 분할
 
 **`image-block.tsx` 분할**:
-```tsx
+\`\`\`tsx
 // 🟢 개선: 편집 모드와 뷰 모드 분리
 const ImageEditMode = lazy(() => import('./ImageEditMode'));
 const ImageViewMode = lazy(() => import('./ImageViewMode'));
@@ -185,12 +185,12 @@ export const ImageBlockRenderer = ({ block, isEditing, onUpdate }) => {
     </Suspense>
   );
 };
-```
+\`\`\`
 
 #### 2.2 Context 기반 상태 관리
 
 **새로운 Context 구조**:
-```tsx
+\`\`\`tsx
 // 🟢 개선: 관심사별 Context 분리
 const PageBuilderContext = createContext<{
   blocks: Block[];
@@ -210,14 +210,14 @@ const BlockEditContext = createContext<{
   setEditingBlockId: (id: string | null) => void;
   updateBlock: (id: string, updates: Partial<Block>) => void;
 }>();
-```
+\`\`\`
 
 ### Phase 3: 고급 최적화 (2주 내)
 
 #### 3.1 번들 크기 최적화
 
 **라이브러리 트리 쉐이킹**:
-```tsx
+\`\`\`tsx
 // 🔴 현재: 전체 라이브러리 import
 import * as LucideIcons from 'lucide-react';
 
@@ -226,10 +226,10 @@ import {
   Settings, X, Upload, Download,
   Image as ImageIcon, Video, Type, Layout
 } from 'lucide-react';
-```
+\`\`\`
 
 **동적 임포트 적용**:
-```tsx
+\`\`\`tsx
 // 🟢 개선: 마크다운 처리 지연 로딩
 const ReactMarkdown = lazy(() => import('react-markdown'));
 const remarkGfm = lazy(() => import('remark-gfm'));
@@ -246,12 +246,12 @@ const TextBlock = ({ format, text }) => {
   }
   return <div>{text}</div>;
 };
-```
+\`\`\`
 
 #### 3.2 가상화 및 인터섹션 옵저버
 
 **대량 블록 처리**:
-```tsx
+\`\`\`tsx
 // 🟢 개선: 블록 가상화
 import { FixedSizeList as List } from 'react-window';
 
@@ -276,7 +276,7 @@ const VirtualizedBlockList = ({ blocks, isEditing }) => {
     </List>
   );
 };
-```
+\`\`\`
 
 ---
 
@@ -345,7 +345,7 @@ const VirtualizedBlockList = ({ blocks, isEditing }) => {
 ### 1. 이미지 블록 최적화
 
 **현재 문제**:
-```tsx
+\`\`\`tsx
 // 🔴 문제: 매번 새로운 객체 생성
 const imageStyle = {
   width: image.width ? `${image.width}px` : 'auto',
@@ -353,10 +353,10 @@ const imageStyle = {
   transform: `rotate(${rotation}deg)`,
   opacity: opacity / 100,
 };
-```
+\`\`\`
 
 **개선 방안**:
-```tsx
+\`\`\`tsx
 // 🟢 개선: 메모이제이션 적용
 const imageStyle = useMemo(() => ({
   width: image.width ? `${image.width}px` : 'auto',
@@ -364,20 +364,20 @@ const imageStyle = useMemo(() => ({
   transform: `rotate(${rotation}deg)`,
   opacity: opacity / 100,
 }), [image.width, image.height, rotation, opacity]);
-```
+\`\`\`
 
 ### 2. 파일 매니저 최적화
 
 **현재 문제**:
-```tsx
+\`\`\`tsx
 // 🔴 문제: 검색할 때마다 전체 리렌더링
 {files.filter(file =>
   file.name.toLowerCase().includes(searchTerm.toLowerCase())
 ).map(file => <FileItem key={file.id} file={file} />)}
-```
+\`\`\`
 
 **개선 방안**:
-```tsx
+\`\`\`tsx
 // 🟢 개선: 필터링 결과 메모이제이션
 const filteredFiles = useMemo(() =>
   files.filter(file =>
@@ -392,12 +392,12 @@ const FileItem = React.memo(({ file, onSelect }) => (
     {/* 파일 아이템 UI */}
   </div>
 ));
-```
+\`\`\`
 
 ### 3. 상태 관리 최적화
 
 **배치 업데이트 시스템**:
-```tsx
+\`\`\`tsx
 // 🟢 개선: 상태 업데이트 배치 처리
 const useBlockUpdates = () => {
   const [updates, setUpdates] = useState<Record<string, Partial<Block>>>({});
@@ -424,7 +424,7 @@ const useBlockUpdates = () => {
 
   return { batchUpdate };
 };
-```
+\`\`\`
 
 ---
 
@@ -437,7 +437,7 @@ const useBlockUpdates = () => {
 - **번들 크기**: 페이지 빌더 관련 JS 번들 크기
 
 ### 2. 모니터링 도구
-```tsx
+\`\`\`tsx
 // 🟢 권장: 성능 모니터링 훅
 const usePerformanceMonitor = (componentName: string) => {
   useEffect(() => {
@@ -449,7 +449,7 @@ const usePerformanceMonitor = (componentName: string) => {
     };
   });
 };
-```
+\`\`\`
 
 ---
 

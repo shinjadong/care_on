@@ -61,7 +61,7 @@ private.tistory.com
 
 #### 주문 상품 조회 소스
 
-```python
+\`\`\`python
 def get_new_order_list():
     from datetime import datetime, timedelta
 
@@ -93,7 +93,7 @@ def get_new_order_list():
         print(data) #주문 정보
 
 get_new_order_list()
-```
+\`\`\`
 
 #### lastChangedType(최종 변경 구분) 상태 표
 

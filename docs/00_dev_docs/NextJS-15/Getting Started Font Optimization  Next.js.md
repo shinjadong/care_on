@@ -21,7 +21,7 @@ To start using `next/font`, import it from [`next/font/local`](https://nextjs.or
 
 app/layout.tsx
 
-```
+\`\`\`
 import { Geist } from 'next/font/google'
 
  
@@ -47,7 +47,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   )
 
 }
-```
+\`\`\`
 
 Fonts are scoped to the component they're used in. To apply a font to your entire application, add it to the [Root Layout](https://nextjs.org/docs/app/api-reference/file-conventions/layout#root-layout).
 
@@ -59,7 +59,7 @@ To start using a Google Font, import your chosen font from `next/font/google`:
 
 app/layout.tsx
 
-```
+\`\`\`
 import { Geist } from 'next/font/google'
 
  
@@ -93,13 +93,13 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 We recommend using [variable fonts](https://fonts.google.com/variablefonts) for the best performance and flexibility. But if you can't use a variable font, you will need to specify a weight:
 
 app/layout.tsx
 
-```
+\`\`\`
 import { Roboto } from 'next/font/google'
 
  
@@ -135,7 +135,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 ## Local fonts
 
@@ -143,7 +143,7 @@ To use a local font, import your font from `next/font/local` and specify the [`s
 
 app/layout.tsx
 
-```
+\`\`\`
 import localFont from 'next/font/local'
 
  
@@ -177,11 +177,11 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 If you want to use multiple files for a single font family, `src` can be an array:
 
-```
+\`\`\`
 const roboto = localFont({
 
   src: [
@@ -229,7 +229,7 @@ const roboto = localFont({
   ],
 
 })
-```
+\`\`\`
 
 ## API Reference
 

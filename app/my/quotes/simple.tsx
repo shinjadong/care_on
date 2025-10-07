@@ -1,4 +1,4 @@
-  return (
+return (
     <div className="min-h-screen bg-white py-8">
       <div className="max-w-lg mx-auto px-4">
         {/* 심플 헤더 */}

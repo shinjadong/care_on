@@ -17,7 +17,7 @@ To load a third-party script for multiple routes, import `next/script` and inclu
 
 app/dashboard/layout.tsx
 
-```
+\`\`\`
 import Script from 'next/script'
 
  
@@ -45,7 +45,7 @@ export default function DashboardLayout({
   )
 
 }
-```
+\`\`\`
 
 The third-party script is fetched when the folder route (e.g. `dashboard/page.js`) or any nested route (e.g. `dashboard/settings/page.js`) is accessed by the user. Next.js will ensure the script will **only load once**, even if a user navigates between multiple routes in the same layout.
 
@@ -55,7 +55,7 @@ To load a third-party script for all routes, import `next/script` and include th
 
 app/layout.tsx
 
-```
+\`\`\`
 import Script from 'next/script'
 
  
@@ -83,7 +83,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 This script will load and execute when *any* route in your application is accessed. Next.js will ensure the script will **only load once**, even if a user navigates between multiple pages.
 
@@ -108,7 +108,7 @@ This strategy is still experimental and can only be used if the `nextScriptWorke
 
 next.config.js
 
-```
+\`\`\`
 module.exports = {
 
   experimental: {
@@ -118,15 +118,15 @@ module.exports = {
   },
 
 }
-```
+\`\`\`
 
 Then, run `next` (normally `npm run dev` or `yarn dev`) and Next.js will guide you through the installation of the required packages to finish the setup:
 
 Terminal
 
-```
+\`\`\`
 npm run dev
-```
+\`\`\`
 
 You'll see instructions like these: Please install Partytown by running `npm install @builder.io/partytown`
 
@@ -134,7 +134,7 @@ Once setup is complete, defining `strategy="worker"` will automatically instanti
 
 pages/home.tsx
 
-```
+\`\`\`
 import Script from 'next/script'
 
  
@@ -152,7 +152,7 @@ export default function Home() {
   )
 
 }
-```
+\`\`\`
 
 There are a number of trade-offs that need to be considered when loading a third-party script in a web worker. Please see Partytown's [tradeoffs](https://partytown.builder.io/trade-offs) documentation for more information.
 
@@ -176,7 +176,7 @@ These handlers will only work when `next/script` is imported and used inside of 
 
 app/page.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -208,7 +208,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 Refer to the [`next/script`](https://nextjs.org/docs/app/api-reference/components/script#onload) API reference to learn more about each event handler and view examples.
 
@@ -218,7 +218,7 @@ There are many DOM attributes that can be assigned to a `<script>` element that 
 
 app/page.tsx
 
-```
+\`\`\`
 import Script from 'next/script'
 
  
@@ -246,7 +246,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 ## API Reference
 

@@ -21,7 +21,7 @@ When used in a form, the function automatically receives the [`FormData`](https:
 
 app/invoices/page.tsx
 
-```
+\`\`\`
 export default function Page() {
 
   async function createInvoice(formData: FormData) {
@@ -53,7 +53,7 @@ export default function Page() {
   return <form action={createInvoice}>...</form>
 
 }
-```
+\`\`\`
 
 > **Good to know:** When working with forms that have multiple fields, you can use the [`entries()`](https://developer.mozilla.org/en-US/docs/Web/API/FormData/entries) method with JavaScript's [`Object.fromEntries()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries). For example: `const rawFormData = Object.fromEntries(formData)`.
 
@@ -63,7 +63,7 @@ Outside of form fields, you can pass additional arguments to a Server Function u
 
 app/client-component.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -91,19 +91,19 @@ export function UserProfile({ userId }: { userId: string }) {
   )
 
 }
-```
+\`\`\`
 
 The Server Function will receive the `userId` as an additional argument:
 
 app/actions.ts
 
-```
+\`\`\`
 'use server'
 
  
 
 export async function updateUser(userId: string, formData: FormData) {}
-```
+\`\`\`
 
 > **Good to know**:
 > 
@@ -119,7 +119,7 @@ Forms can be validated on the client or server.
 
 app/actions.ts
 
-```
+\`\`\`
 'use server'
 
  
@@ -167,7 +167,7 @@ export default async function createUser(formData: FormData) {
   // Mutate data
 
 }
-```
+\`\`\`
 
 To display validation errors or messages, turn the component that defines the `<form>` into a Client Component and use React [`useActionState`](https://react.dev/reference/react/useActionState).
 
@@ -175,7 +175,7 @@ When using `useActionState`, the Server function signature will change to receiv
 
 app/actions.ts
 
-```
+\`\`\`
 'use server'
 
  
@@ -195,7 +195,7 @@ export async function createUser(initialState: any, formData: FormData) {
   // ...
 
 }
-```
+\`\`\`
 
 You can then conditionally render the error message based on the `state` object.
 
@@ -215,7 +215,7 @@ You can use the React [`useOptimistic`](https://react.dev/reference/react/useOpt
 
 app/page.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -281,7 +281,7 @@ export function Thread({ messages }: { messages: Message[] }) {
   )
 
 }
-```
+\`\`\`
 
 ## Nested form elements
 
@@ -295,7 +295,7 @@ You can trigger a form submission programmatically using the [`requestSubmit()`]
 
 app/entry.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -333,6 +333,6 @@ export function Entry() {
   )
 
 }
-```
+\`\`\`
 
 This will trigger the submission of the nearest `<form>` ancestor, which will invoke the Server Function.

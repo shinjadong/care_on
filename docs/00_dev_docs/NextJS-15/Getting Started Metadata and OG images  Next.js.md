@@ -30,11 +30,11 @@ There are two default `meta` tags that are always added even if a route doesn't 
 - The [meta charset tag](https://developer.mozilla.org/docs/Web/HTML/Element/meta#attr-charset) sets the character encoding for the website.
 - The [meta viewport tag](https://developer.mozilla.org/docs/Web/HTML/Viewport_meta_tag) sets the viewport width and scale for the website to adjust for different devices.
 
-```
+\`\`\`
 <meta charset="utf-8" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-```
+\`\`\`
 
 The other metadata fields can be defined with the `Metadata` object (for [static metadata](https://nextjs.org/docs/app/getting-started/#static-metadata)) or the `generateMetadata` function (for [generated metadata](https://nextjs.org/docs/app/getting-started/#generated-metadata)).
 
@@ -42,7 +42,7 @@ To define static metadata, export a [`Metadata` object](https://nextjs.org/docs/
 
 app/blog/layout.tsx
 
-```
+\`\`\`
 import type { Metadata } from 'next'
 
  
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
  
 
 export default function Layout() {}
-```
+\`\`\`
 
 You can view a full list of available options, in the [`generateMetadata` documentation](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadata-fields).
 
@@ -66,7 +66,7 @@ You can use [`generateMetadata`](https://nextjs.org/docs/app/api-reference/funct
 
 app/blog/\[slug\]/page.tsx
 
-```
+\`\`\`
 import type { Metadata, ResolvingMetadata } from 'next'
 
  
@@ -116,7 +116,7 @@ export async function generateMetadata(
  
 
 export default function Page({ params, searchParams }: Props) {}
-```
+\`\`\`
 
 For dynamically rendered pages, if resolving `generateMetadata` might block rendering, Next.js streams the resolved metadata separately and injects it into the HTML as soon as it's ready.
 
@@ -130,7 +130,7 @@ There may be cases where you need to fetch the **same** data for metadata and th
 
 app/lib/data.ts
 
-```
+\`\`\`
 import { cache } from 'react'
 
 import { db } from '@/app/lib/db'
@@ -146,11 +146,11 @@ export const getPost = cache(async (slug: string) => {
   return res
 
 })
-```
+\`\`\`
 
 app/blog/\[slug\]/page.tsx
 
-```
+\`\`\`
 import { getPost } from '@/app/lib/data'
 
  
@@ -186,7 +186,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
   return <div>{post.title}</div>
 
 }
-```
+\`\`\`
 
 The following special files are available for metadata:
 
@@ -233,7 +233,7 @@ For example, to generate a unique OG image for each blog post, add a `opengraph-
 
 app/blog/\[slug\]/opengraph-image.ts
 
-```
+\`\`\`
 import { ImageResponse } from 'next/og'
 
 import { getPost } from '@/app/lib/data'
@@ -301,7 +301,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
   )
 
 }
-```
+\`\`\`
 
 `ImageResponse` supports common CSS properties including flexbox and absolute positioning, custom fonts, text wrapping, centering, and nested images. [See the full list of supported CSS properties](https://nextjs.org/docs/app/api-reference/functions/image-response).
 

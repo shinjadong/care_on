@@ -10,9 +10,9 @@ tags:
 ---
 ## 조건형 상품 주문 상세 내역 조회
 
-```markdown
+\`\`\`markdown
 GET /v1/pay-order/seller/product-orders
-```
+\`\`\`
 
 조건에 맞는 상품 주문에 대한 상세 내역을 조회합니다.
 
@@ -236,9 +236,9 @@ GET
 - REQUEST
 - UNIREST
 
-```
+\`\`\`
 const axios = require('axios');let config = {  method: 'get',  maxBodyLength: Infinity,  url: 'https://api.commerce.naver.com/external/v1/pay-order/seller/product-orders',  headers: {     'Accept': 'application/json',     'Authorization': 'Bearer <token>'  }};axios.request(config).then((response) => {  console.log(JSON.stringify(response.data));}).catch((error) => {  console.log(error);});
-```
+\`\`\`
 
 [
 
@@ -469,9 +469,9 @@ GET
 - REQUEST
 - UNIREST
 
-```
+\`\`\`
 const axios = require('axios');let config = {  method: 'get',  maxBodyLength: Infinity,  url: 'https://api.commerce.naver.com/external/v1/pay-order/seller/product-orders',  headers: {     'Accept': 'application/json',     'Authorization': 'Bearer <token>'  }};axios.request(config).then((response) => {  console.log(JSON.stringify(response.data));}).catch((error) => {  console.log(error);});
-```
+\`\`\`
 
 [
 
@@ -499,7 +499,7 @@ Copyright © [**NAVER Corp.**](https://www.navercorp.com/ "새창")All rights r
 
 
 
-```node
+\`\`\`node
 const axios = require('axios');
 
 let config = {
@@ -519,4 +519,4 @@ axios.request(config)
 .catch((error) => {
   console.log(error);
 });
-```
+\`\`\`

@@ -60,9 +60,9 @@ The first thing you need to do is to install `next` as a dependency:
 
 Terminal
 
-```
+\`\`\`
 npm install next@latest
-```
+\`\`\`
 
 ### Step 2: Create the Next.js Configuration File
 
@@ -70,7 +70,7 @@ Create a `next.config.mjs` at the root of your project. This file will hold your
 
 next.config.mjs
 
-```
+\`\`\`
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
@@ -84,7 +84,7 @@ const nextConfig = {
  
 
 export default nextConfig
-```
+\`\`\`
 
 > **Good to know:** You can use either `.js` or `.mjs` for your Next.js configuration file.
 
@@ -106,7 +106,7 @@ Here's an example of a working `tsconfig.json` with those changes:
 
 tsconfig.json
 
-```
+\`\`\`
 {
 
   "compilerOptions": {
@@ -158,7 +158,7 @@ tsconfig.json
   "exclude": ["./node_modules"]
 
 }
-```
+\`\`\`
 
 You can find more information about configuring TypeScript on the [Next.js docs](https://nextjs.org/docs/app/api-reference/config/typescript#ide-plugin).
 
@@ -175,7 +175,7 @@ In this step, you'll convert your `index.html` file into a root layout file:
 
 app/layout.tsx
 
-```
+\`\`\`
 export default function RootLayout({
 
   children,
@@ -189,7 +189,7 @@ export default function RootLayout({
   return '...'
 
 }
-```
+\`\`\`
 
 > **Good to know**: `.js`, `.jsx`, or `.tsx` extensions can be used for Layout files.
 
@@ -197,7 +197,7 @@ export default function RootLayout({
 
 app/layout.tsx
 
-```
+\`\`\`
 export default function RootLayout({
 
   children,
@@ -237,13 +237,13 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 1. Next.js already includes by default the [meta charset](https://developer.mozilla.org/docs/Web/HTML/Element/meta#charset) and [meta viewport](https://developer.mozilla.org/docs/Web/HTML/Viewport_meta_tag) tags, so you can safely remove those from your `<head>`:
 
 app/layout.tsx
 
-```
+\`\`\`
 export default function RootLayout({
 
   children,
@@ -279,13 +279,13 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 1. Any [metadata files](https://nextjs.org/docs/app/getting-started/metadata-and-og-images#file-based-metadata) such as `favicon.ico`, `icon.png`, `robots.txt` are automatically added to the application `<head>` tag as long as you have them placed into the top level of the `app` directory. After moving [all supported files](https://nextjs.org/docs/app/getting-started/metadata-and-og-images#file-based-metadata) into the `app` directory you can safely delete their `<link>` tags:
 
 app/layout.tsx
 
-```
+\`\`\`
 export default function RootLayout({
 
   children,
@@ -319,13 +319,13 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 1. Finally, Next.js can manage your last `<head>` tags with the [Metadata API](https://nextjs.org/docs/app/getting-started/metadata-and-og-images). Move your final metadata info into an exported [`metadata` object](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadata-object):
 
 app/layout.tsx
 
-```
+\`\`\`
 import type { Metadata } from 'next'
 
  
@@ -365,7 +365,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 With the above changes, you shifted from declaring everything in your `index.html` to using Next.js' convention-based approach built into the framework ([Metadata API](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)). This approach enables you to more easily improve your SEO and web shareability of your pages.
 
@@ -383,7 +383,7 @@ This directory is what is called an [optional catch-all route segment](https://n
 
 app/\[\[...slug\]\]/page.tsx
 
-```
+\`\`\`
 import '../../index.css'
 
  
@@ -401,7 +401,7 @@ export default function Page() {
   return '...' // We'll update this
 
 }
-```
+\`\`\`
 
 > **Good to know**: `.js`, `.jsx`, or `.tsx` extensions can be used for Page files.
 
@@ -413,7 +413,7 @@ Now, let's move the rest of our Vite application which will run client-only.
 
 app/\[\[...slug\]\]/client.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -433,21 +433,21 @@ export function ClientOnly() {
   return <App />
 
 }
-```
+\`\`\`
 
 This file is a [Client Component](https://nextjs.org/docs/app/getting-started/server-and-client-components), defined by the `'use client'` directive. Client Components are still [prerendered to HTML](https://nextjs.org/docs/app/getting-started/server-and-client-components#how-do-server-and-client-components-work-in-nextjs) on the server before being sent to the client.
 
 Since we want a client-only application to start, we can configure Next.js to disable prerendering from the `App` component down.
 
-```
+\`\`\`
 const App = dynamic(() => import('../../App'), { ssr: false })
-```
+\`\`\`
 
 Now, update your entrypoint page to use the new component:
 
 app/\[\[...slug\]\]/page.tsx
 
-```
+\`\`\`
 import '../../index.css'
 
 import { ClientOnly } from './client'
@@ -467,7 +467,7 @@ export default function Page() {
   return <ClientOnly />
 
 }
-```
+\`\`\`
 
 ### Step 6: Update Static Image Imports
 
@@ -475,7 +475,7 @@ Next.js handles static image imports slightly different from Vite. With Vite, im
 
 App.tsx
 
-```
+\`\`\`
 import image from './img.png' // \`image\` will be '/assets/img.2d8efhg.png' in production
 
  
@@ -485,7 +485,7 @@ export default function App() {
   return <img src={image} />
 
 }
-```
+\`\`\`
 
 With Next.js, static image imports return an object. The object can then be used directly with the Next.js [`<Image>` component](https://nextjs.org/docs/app/api-reference/components/image), or you can use the object's `src` property with your existing `<img>` tag.
 
@@ -495,7 +495,7 @@ Keeping the `<img>` tag will reduce the amount of changes in your application an
 
 1. **Convert absolute import paths for images imported from `/public` into relative imports:**
 
-```
+\`\`\`
 // Before
 
 import logo from '/logo.png'
@@ -505,11 +505,11 @@ import logo from '/logo.png'
 // After
 
 import logo from '../public/logo.png'
-```
+\`\`\`
 
 1. **Pass the image `src` property instead of the whole image object to your `<img>` tag:**
 
-```
+\`\`\`
 // Before
 
 <img src={logo} />
@@ -519,7 +519,7 @@ import logo from '../public/logo.png'
 // After
 
 <img src={logo.src} />
-```
+\`\`\`
 
 Alternatively, you can reference the public URL for the image asset based on the filename. For example, `public/logo.png` will serve the image at `/logo.png` for your application, which would be the `src` value.
 
@@ -544,17 +544,17 @@ Next.js also doesn't provide a built-in `BASE_URL` environment variable. However
 
 .env
 
-```
+\`\`\`
 # ...
 
 NEXT_PUBLIC_BASE_PATH="/some-base-path"
-```
+\`\`\`
 
 1. **Set [`basePath`](https://nextjs.org/docs/app/api-reference/config/next-config-js/basePath) to `process.env.NEXT_PUBLIC_BASE_PATH` in your `next.config.mjs` file:**
 
 next.config.mjs
 
-```
+\`\`\`
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
@@ -570,7 +570,7 @@ const nextConfig = {
  
 
 export default nextConfig
-```
+\`\`\`
 
 1. **Update `import.meta.env.BASE_URL` usages to `process.env.NEXT_PUBLIC_BASE_PATH`**
 
@@ -580,7 +580,7 @@ You should now be able to run your application to test if you successfully migra
 
 package.json
 
-```
+\`\`\`
 {
 
   "scripts": {
@@ -594,11 +594,11 @@ package.json
   }
 
 }
-```
+\`\`\`
 
 .gitignore
 
-```
+\`\`\`
 # ...
 
 .next
@@ -606,7 +606,7 @@ package.json
 next-env.d.ts
 
 dist
-```
+\`\`\`
 
 Now run `npm run dev`, and open [`http://localhost:3000`](http://localhost:3000/). You should see your application now running on Next.js.
 

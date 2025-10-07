@@ -24,7 +24,7 @@ To start using `<Image>`, import it from `next/image` and render it within your 
 
 app/page.tsx
 
-```
+\`\`\`
 import Image from 'next/image'
 
  
@@ -34,7 +34,7 @@ export default function Page() {
   return <Image src="" alt="" />
 
 }
-```
+\`\`\`
 
 The `src` property can be a [local](https://nextjs.org/docs/app/getting-started/#local-images) or [remote](https://nextjs.org/docs/app/getting-started/#remote-images) image.
 
@@ -50,7 +50,7 @@ Folder structure showing app and public folders
 
 app/page.tsx
 
-```
+\`\`\`
 import Image from 'next/image'
 
  
@@ -74,13 +74,13 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 If the image is statically imported, Next.js will automatically determine the intrinsic [`width`](https://nextjs.org/docs/app/api-reference/components/image#width-and-height) and [`height`](https://nextjs.org/docs/app/api-reference/components/image#width-and-height). These values are used to determine the image ratio and prevent [Cumulative Layout Shift](https://web.dev/articles/cls) while your image is loading.
 
 app/page.tsx
 
-```
+\`\`\`
 import Image from 'next/image'
 
 import ProfileImage from './profile.png'
@@ -110,7 +110,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 ## Remote images
 
@@ -118,7 +118,7 @@ To use a remote image, you can provide a URL string for the `src` property.
 
 app/page.tsx
 
-```
+\`\`\`
 import Image from 'next/image'
 
  
@@ -142,7 +142,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 Since Next.js does not have access to remote files during the build process, you'll need to provide the [`width`](https://nextjs.org/docs/app/api-reference/components/image#width-and-height), [`height`](https://nextjs.org/docs/app/api-reference/components/image#width-and-height) and optional [`blurDataURL`](https://nextjs.org/docs/app/api-reference/components/image#blurdataurl) props manually. The `width` and `height` are used to infer the correct aspect ratio of image and avoid layout shift from the image loading in. Alternatively, you can use the [`fill` property](https://nextjs.org/docs/app/api-reference/components/image#fill) to make the image fill the size of the parent element.
 
@@ -150,7 +150,7 @@ To safely allow images from remote servers, you need to define a list of support
 
 next.config.ts
 
-```
+\`\`\`
 import type { NextConfig } from 'next'
 
  
@@ -184,7 +184,7 @@ const config: NextConfig = {
  
 
 export default config
-```
+\`\`\`
 
 ## API Reference
 

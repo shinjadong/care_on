@@ -23,7 +23,7 @@
 
 ### 2. 데이터베이스 인덱스 최적화
 
-```sql
+\`\`\`sql
 -- 자주 검색되는 컬럼에 인덱스 추가
 CREATE INDEX idx_enrollment_status ON enrollment_applications(status);
 CREATE INDEX idx_enrollment_created_at ON enrollment_applications(created_at DESC);
@@ -40,11 +40,11 @@ USING gin(to_tsvector('simple',
   coalesce(representative_name, '') || ' ' ||
   coalesce(business_number, '')
 ));
-```
+\`\`\`
 
 ### 3. 데이터베이스 뷰 생성
 
-```sql
+\`\`\`sql
 -- 통계 전용 materialized view
 CREATE MATERIALIZED VIEW enrollment_stats AS
 SELECT
@@ -84,11 +84,11 @@ SELECT
    CASE WHEN id_card_back_url IS NOT NULL THEN 1 ELSE 0 END +
    CASE WHEN bankbook_url IS NOT NULL THEN 1 ELSE 0 END) as document_count
 FROM enrollment_applications;
-```
+\`\`\`
 
 ### 4. Supabase RPC 함수 생성
 
-```sql
+\`\`\`sql
 -- 효율적인 검색 함수
 CREATE OR REPLACE FUNCTION search_enrollments(
   search_query text,
@@ -148,12 +148,12 @@ BEGIN
   SELECT * FROM enrollment_stats;
 END;
 $$ LANGUAGE plpgsql;
-```
+\`\`\`
 
 ### 5. 캐싱 전략
 
 #### React Query 도입
-```typescript
+\`\`\`typescript
 // React Query로 캐싱 구현
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 
@@ -176,12 +176,12 @@ const { data: enrollment } = useQuery(
     enabled: !!id
   }
 )
-```
+\`\`\`
 
 ### 6. 가상 스크롤링 구현
 
 대량 데이터 처리를 위한 react-window 도입:
-```typescript
+\`\`\`typescript
 import { FixedSizeList } from 'react-window'
 
 <FixedSizeList
@@ -196,11 +196,11 @@ import { FixedSizeList } from 'react-window'
     </div>
   )}
 </FixedSizeList>
-```
+\`\`\`
 
 ### 7. 백그라운드 동기화
 
-```typescript
+\`\`\`typescript
 // Service Worker로 백그라운드 데이터 동기화
 // 통계 데이터 주기적 업데이트
 self.addEventListener('sync', (event) => {
@@ -217,7 +217,7 @@ setInterval(() => {
     })
   }
 }, 5 * 60 * 1000)
-```
+\`\`\`
 
 ## 성능 개선 예상 지표
 

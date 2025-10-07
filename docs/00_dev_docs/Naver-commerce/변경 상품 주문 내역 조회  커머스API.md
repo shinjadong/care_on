@@ -247,9 +247,3 @@ axios.request(config)
 .catch((error) => {
   console.log(error);
 });
-
-
-
-
-
-

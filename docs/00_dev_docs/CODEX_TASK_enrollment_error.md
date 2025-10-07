@@ -14,18 +14,18 @@
 **상태**: 페이지 로드 시 콘솔 에러 발생
 
 ### 에러 메시지
-```javascript
+\`\`\`javascript
 Console Error:
 useEffect must not return anything besides a function,
 which is used for clean-up. You returned: [object Object]
-```
+\`\`\`
 
 ---
 
 ## 🔍 에러 상세
 
 ### React 규칙
-```javascript
+\`\`\`javascript
 // ❌ 잘못된 패턴
 useEffect(() => {
   return someObject  // 객체를 리턴하면 에러!
@@ -42,7 +42,7 @@ useEffect(() => {
     // cleanup logic
   }
 }, [])
-```
+\`\`\`
 
 ---
 
@@ -53,7 +53,7 @@ useEffect(() => {
 - `app/enrollment/page.tsx` - 조사 필요
 
 ### 조사 필요 파일
-```bash
+\`\`\`bash
 components/enrollment/step-*.tsx  (19개 파일)
 - step-0-agreements.tsx
 - step-1-owner-info.tsx
@@ -74,14 +74,14 @@ components/enrollment/step-*.tsx  (19개 파일)
 - step-10-document-upload.tsx
 - step-11-final-confirmation.tsx
 - step-12-success.tsx
-```
+\`\`\`
 
 ---
 
 ## 🎯 수정 목표
 
 ### 1단계: 에러 원인 파일 특정
-```bash
+\`\`\`bash
 # 방법 1: 브라우저 DevTools 사용
 1. http://localhost:3000/enrollment 접속
 2. F12 → Console 탭
@@ -91,10 +91,10 @@ components/enrollment/step-*.tsx  (19개 파일)
 # 방법 2: 코드 검색
 grep -r "useEffect.*async" components/enrollment/
 grep -r "useEffect" components/enrollment/ | grep -v "return ()"
-```
+\`\`\`
 
 ### 2단계: 코드 수정
-```javascript
+\`\`\`javascript
 // 패턴 1: async/await 사용 시
 // Before
 useEffect(async () => {
@@ -125,10 +125,10 @@ useEffect(() => {
     subscription.unsubscribe()
   }
 }, [])
-```
+\`\`\`
 
 ### 3단계: 검증
-```bash
+\`\`\`bash
 # 1. 브라우저에서 확인
 http://localhost:3000/enrollment
 → 콘솔 에러 없어야 함
@@ -136,7 +136,7 @@ http://localhost:3000/enrollment
 # 2. 전체 스텝 테스트
 스텝 0 → 스텝 1 → ... → 스텝 12
 → 모든 스텝에서 에러 없어야 함
-```
+\`\`\`
 
 ---
 
@@ -178,7 +178,7 @@ http://localhost:3000/enrollment
 
 ## 📝 수정 완료 후 보고 양식
 
-```markdown
+\`\`\`markdown
 ## ✅ Enrollment useEffect 에러 수정 완료
 
 ### 문제 파일
@@ -188,7 +188,7 @@ http://localhost:3000/enrollment
 - [async useEffect / 잘못된 리턴값 / 기타]
 
 ### 수정 내용
-```javascript
+\`\`\`javascript
 // Before
 useEffect(() => {
   // 문제 코드
@@ -198,7 +198,7 @@ useEffect(() => {
 useEffect(() => {
   // 수정된 코드
 }, [])
-```
+\`\`\`
 
 ### 테스트 결과
 - ✅ 콘솔 에러 사라짐
@@ -207,7 +207,7 @@ useEffect(() => {
 
 ### 추가 발견 사항
 - [있다면 작성]
-```
+\`\`\`
 
 ---
 

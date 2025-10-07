@@ -369,9 +369,9 @@ DispatchProductOrder 배열
 - REQUEST
 - UNIREST
 
-```
+\`\`\`
 const axios = require('axios');let data = JSON.stringify({  "dispatchProductOrders": [    {      "productOrderId": "2022040521691281",      "deliveryMethod": "DELIVERY",      "deliveryCompanyCode": "string",      "trackingNumber": "",      "dispatchDate": "2022-04-05T12:17:35.000+09:00"    }  ]});let config = {  method: 'post',  maxBodyLength: Infinity,  url: 'https://api.commerce.naver.com/external/v1/pay-order/seller/product-orders/dispatch',  headers: {     'Content-Type': 'application/json',     'Accept': 'application/json',     'Authorization': 'Bearer <token>'  },  data : data};axios.request(config).then((response) => {  console.log(JSON.stringify(response.data));}).catch((error) => {  console.log(error);});
-```
+\`\`\`
 
 [
 
@@ -399,7 +399,7 @@ Copyright © [**NAVER Corp.**](https://www.navercorp.com/ "새창")All rights r
 
 
 
-```curl
+\`\`\`curl
 curl -L 'https://api.commerce.naver.com/external/v1/pay-order/seller/product-orders/dispatch' \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
@@ -415,12 +415,12 @@ curl -L 'https://api.commerce.naver.com/external/v1/pay-order/seller/product-ord
     }
   ]
 }'
-```
+\`\`\`
 
 
 ******
 
-```
+\`\`\`
 const axios = require('axios');
 let data = JSON.stringify({
   "dispatchProductOrders": [
@@ -453,5 +453,4 @@ axios.request(config)
 .catch((error) => {
   console.log(error);
 });
-```
-
+\`\`\`

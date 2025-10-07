@@ -31,7 +31,7 @@
 
 ## 📁 프로젝트 구조
 
-```
+\`\`\`
 care_on/
 ├── app/                    # Next.js App Router 페이지
 │   ├── admin/             # 관리자 페이지
@@ -51,7 +51,7 @@ care_on/
 ├── docs/                 # 문서
 ├── supabase/            # Supabase 설정
 └── types/               # TypeScript 타입 정의
-```
+\`\`\`
 
 ## 🚀 주요 기능
 
@@ -126,7 +126,7 @@ care_on/
 ## 🔧 개발 환경 설정
 
 ### 필수 환경 변수
-```bash
+\`\`\`bash
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
@@ -138,16 +138,16 @@ KAKAO_CLIENT_SECRET=
 
 # Vercel Blob
 BLOB_READ_WRITE_TOKEN=
-```
+\`\`\`
 
 ### 개발 명령어
-```bash
+\`\`\`bash
 npm install        # 의존성 설치
 npm run dev        # 개발 서버 실행
 npm run build      # 프로덕션 빌드
 npm run start      # 프로덕션 서버 실행
 npm run lint       # ESLint 실행
-```
+\`\`\`
 
 ## 📊 최근 업데이트 (Git 커밋 이력)
 

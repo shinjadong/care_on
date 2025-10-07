@@ -48,7 +48,7 @@ This approach centralizes all data access logic, making it easier to enforce con
 
 data/user-dto.tsx
 
-```
+\`\`\`
 import 'server-only'
 
 import { getCurrentUser } from './auth'
@@ -110,11 +110,11 @@ export async function getProfileDTO(slug: string) {
   }
 
 }
-```
+\`\`\`
 
 app/page.tsx
 
-```
+\`\`\`
 import { getProfile } from '../../data/user'
 
  
@@ -130,7 +130,7 @@ export async function Page({ params: { slug } }) {
   ...
 
 }
-```
+\`\`\`
 
 > **Good to know:** Secret keys should be stored in environment variables, but only the Data Access Layer should access `process.env`. This keeps secrets from being exposed to other parts of the application.
 
@@ -142,7 +142,7 @@ This approach, however, makes it easier to accidentally expose private data to t
 
 app/page.tsx
 
-```
+\`\`\`
 import Profile from './components/profile.tsx'
 
  
@@ -160,11 +160,11 @@ export async function Page({ params: { slug } }) {
   return <Profile user={userData} />
 
 }
-```
+\`\`\`
 
 app/ui/profile.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -192,13 +192,13 @@ export default async function Profile({ user }: { user: User }) {
   )
 
 }
-```
+\`\`\`
 
 You should sanitize the data before passing it to the Client Component:
 
 data/user.ts
 
-```
+\`\`\`
 import { sql } from './db'
 
  
@@ -220,11 +220,11 @@ export async function getUser(slug: string) {
   }
 
 }
-```
+\`\`\`
 
 app/page.tsx
 
-```
+\`\`\`
 import { getUser } from '../data/user'
 
 import Profile from './ui/profile'
@@ -246,7 +246,7 @@ export default async function Page({
   return <Profile user={publicProfile} />
 
 }
-```
+\`\`\`
 
 ## Reading data
 
@@ -277,7 +277,7 @@ You can enable usage in your Next.js app with the [`experimental.taint`](https:/
 
 next.config.js
 
-```
+\`\`\`
 module.exports = {
 
   experimental: {
@@ -287,7 +287,7 @@ module.exports = {
   },
 
 }
-```
+\`\`\`
 
 This prevents the tainted objects or values from being passed to the client. However, it's an additional layer of protection, you should still filter and sanitize the data in your [DAL](https://nextjs.org/docs/app/guides/#data-access-layer) before passing it to React's render context.
 
@@ -302,19 +302,19 @@ To prevent server-only code from being executed on the client, you can mark a mo
 
 Terminal
 
-```
+\`\`\`
 pnpm add server-only
-```
+\`\`\`
 
 lib/data.ts
 
-```
+\`\`\`
 import 'server-only'
 
  
 
 //...
-```
+\`\`\`
 
 This ensures that proprietary code or internal business logic stays on the server by causing a build error if the module is imported in the client environment.
 
@@ -335,7 +335,7 @@ To improve security, Next.js has the following built-in features:
 > 
 > The IDs are created during compilation and are cached for a maximum of 14 days. They will be regenerated when a new build is initiated or when the build cache is invalidated. This security improvement reduces the risk in cases where an authentication layer is missing. However, you should still treat Server Actions like public HTTP endpoints.
 
-```
+\`\`\`
 // app/actions.js
 
 'use server'
@@ -359,7 +359,7 @@ export async function updateUserAction(formData) {}
 // and will not create a public endpoint.
 
 export async function deleteUserAction(formData) {}
-```
+\`\`\`
 
 ### Validating client input
 
@@ -369,7 +369,7 @@ You should always ensure that a user is authorized to perform an action. For exa
 
 app/actions.ts
 
-```
+\`\`\`
 'use server'
 
  
@@ -393,7 +393,7 @@ export function addItem() {
   // ...
 
 }
-```
+\`\`\`
 
 Learn more about [Authentication](https://nextjs.org/docs/app/guides/authentication) in Next.js.
 
@@ -403,7 +403,7 @@ Defining a Server Action inside a component creates a [closure](https://develope
 
 app/page.tsx
 
-```
+\`\`\`
 export default async function Page() {
 
   const publishVersion = await getLatestVersion();
@@ -437,7 +437,7 @@ export default async function Page() {
   );
 
 }
-```
+\`\`\`
 
 Closures are useful when you need to capture a *snapshot* of data (e.g. `publishVersion`) at the time of rendering so that it can be used later when the action is invoked.
 
@@ -467,7 +467,7 @@ For large applications that use reverse proxies or multi-layered backend archite
 
 next.config.js
 
-```
+\`\`\`
 /** @type {import('next').NextConfig} */
 
 module.exports = {
@@ -483,7 +483,7 @@ module.exports = {
   },
 
 }
-```
+\`\`\`
 
 Learn more about [Security and Server Actions](https://nextjs.org/blog/security-nextjs-server-components-actions).
 
@@ -495,7 +495,7 @@ Instead, you should use Server Actions to handle mutations.
 
 app/page.tsx
 
-```
+\`\`\`
 // GOOD: Using Server Actions to handle mutations
 
 import { logout } from './actions'
@@ -521,7 +521,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 > **Good to know:** Next.js uses `POST` requests to handle mutations. This prevents accidental side-effects from GET requests, reducing Cross-Site Request Forgery (CSRF) risks.
 

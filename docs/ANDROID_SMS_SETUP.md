@@ -5,9 +5,9 @@
 안드로이드 폰을 전용 SMS 서버로 활용하여 자연스러운 문자를 발송합니다.
 
 ## 시스템 구조
-```
+\`\`\`
 [고객 신청] → [Supabase DB] → [Edge Function] → [Slack] → [안드로이드 폰] → [SMS 발송]
-```
+\`\`\`
 
 ---
 
@@ -28,11 +28,11 @@
 8. Webhook URL 복사 (예: `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXX`)
 
 ### 1.3 테스트
-```bash
+\`\`\`bash
 curl -X POST YOUR_WEBHOOK_URL \
   -H 'Content-Type: application/json' \
   -d '{"text":"테스트 메시지"}'
-```
+\`\`\`
 
 ---
 
@@ -93,7 +93,7 @@ curl -X POST YOUR_WEBHOOK_URL \
    - 종료 텍스트: `|`
    - 첫 번째 일치 항목만: 체크
 3. 메시지 내용:
-```
+\`\`\`
 [케어온]
 {name}님, 스타트케어 신청이 완료되었습니다.
 
@@ -101,7 +101,7 @@ curl -X POST YOUR_WEBHOOK_URL \
 업종: {businessType}
 
 문의: 1866-1845
-```
+\`\`\`
 
 4. 변수 설정 (메시지 내 {name}, {businessType} 처리):
    - {name} 클릭 → "매직 텍스트" → "알림 텍스트" → "텍스트 추출"

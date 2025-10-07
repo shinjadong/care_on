@@ -31,12 +31,12 @@
 ## 🔧 설정 정보
 
 ### 환경 변수
-```env
+\`\`\`env
 # Naver Commerce API
 NAVER_COMMERCE_CLIENT_ID=5NKxpyt3CoF2xn5bHwKduH
 NAVER_COMMERCE_CLIENT_SECRET=$2a$04$3tPVEEvnG35Smx7tcXrtfu
 NAVER_COMMERCE_SELLER_ID=ncp_1of59r_01  # 판매자 ID
-```
+\`\`\`
 
 ### API 호출 IP
 - **현재 허용 IP**: 211.205.114.124
@@ -60,30 +60,30 @@ NAVER_COMMERCE_SELLER_ID=ncp_1of59r_01  # 판매자 ID
 ## 🚀 사용 방법
 
 ### 1. 관리자 페이지 접속
-```
+\`\`\`
 http://localhost:3000/admin/naver-orders
-```
+\`\`\`
 
 ### 2. API 직접 호출
 
 #### 최근 7일 주문 조회
-```bash
+\`\`\`bash
 curl http://localhost:3000/api/naver/orders
-```
+\`\`\`
 
 #### 특정 기간 주문 조회
-```bash
+\`\`\`bash
 curl "http://localhost:3000/api/naver/orders?startDate=2025-01-01&endDate=2025-01-31"
-```
+\`\`\`
 
 #### 주문 상세 조회
-```bash
+\`\`\`bash
 curl http://localhost:3000/api/naver/orders/ORDER_ID
-```
+\`\`\`
 
 ### 3. 프로그래밍 방식 사용
 
-```typescript
+\`\`\`typescript
 import { NaverCommerceAuth } from '@/lib/naver-commerce/auth'
 import { NaverCommerceOrders } from '@/lib/naver-commerce/orders'
 
@@ -96,7 +96,7 @@ const auth = new NaverCommerceAuth({
 // 주문 조회
 const orders = new NaverCommerceOrders(auth)
 const recentOrders = await orders.getRecentOrders(7)
-```
+\`\`\`
 
 ## 📝 주의사항
 
@@ -140,9 +140,9 @@ const recentOrders = await orders.getRecentOrders(7)
 - 'all' 같은 명시적 값 사용 필요
 
 ### bcrypt 에러
-```bash
+\`\`\`bash
 npm install bcryptjs @types/bcryptjs
-```
+\`\`\`
 
 ## 📚 참고 문서
 - [네이버 커머스 API 문서](https://apicenter.commerce.naver.com)

@@ -17,7 +17,7 @@
 
 > **추가/수정 위치**: 파일 맨 아래에 붙여넣어도 됩니다. 기존 토큰은 손대지 않습니다.
 
-```css
+\`\`\`css
 /* ---- iOS brand token & utilities (append) ---- */
 @layer base {
   :root {
@@ -61,7 +61,7 @@
 
 /* 터치 하이라이트 제거 (모바일) */
 * { -webkit-tap-highlight-color: transparent; }
-```
+\`\`\`
 
 * **브랜드 대비 참고**: `#148777` 배경 위 흰색 텍스트 대비비율 ≈ **4.41:1**(큰/볼드 텍스트에는 적합, 일반 본문은 살짝 부족). 본문 칩/배지에 쓰면 `--brand`를 약간 더 어둡게(예: L=28%) 조정하거나 라지 텍스트에만 쓰도록 운용하세요.
 
@@ -71,7 +71,7 @@
 
 > 기존 테마 구조는 유지하고 **색상만 확장**합니다. `fontFamily`, `content` 등은 그대로 둡니다.
 
-```ts
+\`\`\`ts
 // tailwind.config.ts - extend.colors에 brand 추가
 extend: {
   // ...기존 설정 유지...
@@ -100,7 +100,7 @@ extend: {
   },
   // ...기존 extend 나머지...
 }
-```
+\`\`\`
 
 > **왜 `--primary`를 안바꿨나?**
 > 프로젝트의 `globals.css`는 토큰 기반(Shadcn 스타일)이고, `--primary`를 바꾸면 버튼·링크 등 전체 톤이 브랜드색으로 물들 위험이 있습니다. 따라서 \*\*별도 `--brand`\*\*만 만들고, **선택 상태/포커스/강조에만** 쓰면 “극미량 포인트” 원칙을 지킬 수 있습니다.
@@ -114,7 +114,7 @@ extend: {
 
 ### 3-1) `components/ios/IOSNav.tsx`
 
-```tsx
+\`\`\`tsx
 'use client';
 import React from 'react';
 
@@ -134,11 +134,11 @@ export default function IOSNav({ title, right, left }: Props) {
     </header>
   );
 }
-```
+\`\`\`
 
 ### 3-2) `components/ios/IOSTabBar.tsx`
 
-```tsx
+\`\`\`tsx
 'use client';
 import React from 'react';
 import Link from 'next/link';
@@ -163,11 +163,11 @@ export default function IOSTabBar({ items }: Props) {
 }
 
 // 사용 예: items={[{href:'/', label:'홈', icon:<Home size={20}/>, active:true},{href:'/me', label:'내 정보', icon:<User2 size={20}/>}]}
-```
+\`\`\`
 
 ### 3-3) `components/ios/IOSSegmented.tsx`
 
-```tsx
+\`\`\`tsx
 'use client';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 
@@ -205,11 +205,11 @@ export default function IOSSegmented({ items, value, onValueChange, className }:
     </ToggleGroup.Root>
   );
 }
-```
+\`\`\`
 
 ### 3-4) `components/ios/IOSSwitch.tsx`
 
-```tsx
+\`\`\`tsx
 'use client';
 import * as Switch from '@radix-ui/react-switch';
 
@@ -235,7 +235,7 @@ export default function IOSSwitch({ checked, onCheckedChange }: Props) {
     </Switch.Root>
   );
 }
-```
+\`\`\`
 
 ---
 
@@ -243,7 +243,7 @@ export default function IOSSwitch({ checked, onCheckedChange }: Props) {
 
 > 경로: `app/(demo)/ios/page.tsx` (또는 원하는 경로). Next 15(App Router)에서 클라이언트 UI이므로 `'use client'` 사용.
 
-```tsx
+\`\`\`tsx
 'use client';
 import React from 'react';
 import IOSNav from '@/components/ios/IOSNav';
@@ -295,7 +295,7 @@ export default function Page() {
     </div>
   );
 }
-```
+\`\`\`
 
 ---
 
@@ -304,14 +304,14 @@ export default function Page() {
 * 현재 Tailwind 기본 폰트가 `"Spoqa Han Sans Neo"`로 설정되어 있습니다. iOS 느낌을 더 내려면 `-apple-system` 계열 시스템 폰트 스택을 “대체 클래스”로 제공할 수 있습니다(기본은 유지). 원하면 `.font-ios` 유틸리티를 추가해 특정 페이지/섹션에만 적용하세요.
 * `tailwind.config.mobile.js`의 `xs: '375px'` 브레이크포인트는 iPhone 기본 폭 기준 컴포넌트 미세 조정에 유용합니다(세그먼티드 너비, 탭 라벨 숨김 등).
 
-```css
+\`\`\`css
 /* globals.css에 추가(선택) */
 @layer utilities {
   .font-ios {
     font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }
 }
-```
+\`\`\`
 
 ---
 
@@ -319,9 +319,9 @@ export default function Page() {
 
 지금은 `lucide-react`를 쓰고 있지만 필요 시 `ionicons` 패키지를 추가해 iOS/Material 듀얼 스킨 아이콘을 쓸 수 있습니다.
 
-```bash
+\`\`\`bash
 pnpm add ionicons
-```
+\`\`\`
 
 그리고 탭바에서 `<HomeOutline />` 등으로 교체하면 느낌이 더 가까워집니다. (설치 선택사항)
 

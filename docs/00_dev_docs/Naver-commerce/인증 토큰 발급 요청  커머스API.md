@@ -43,10 +43,10 @@ tags:
 
 ## 🚀 API 엔드포인트
 
-```http
+\`\`\`http
 POST https://api.commerce.naver.com/external/v1/oauth2/token
 Content-Type: application/x-www-form-urlencoded
-```
+\`\`\`
 
 > **📍 기본 URL**  
 > `https://api.commerce.naver.com/external`
@@ -54,9 +54,9 @@ Content-Type: application/x-www-form-urlencoded
 ## 📝 요청 파라미터
 
 ### Content-Type
-```
+\`\`\`
 application/x-www-form-urlencoded
-```
+\`\`\`
 
 ### 필수 파라미터
 
@@ -81,7 +81,7 @@ application/x-www-form-urlencoded
 - **`SELLER`**: 특정 판매자의 주문, 상품 정보에 접근 (이 경우 `account_id` 필수)
 
 #### `timestamp` 생성 방법
-```javascript
+\`\`\`javascript
 // JavaScript
 const timestamp = Date.now();
 
@@ -94,7 +94,7 @@ long timestamp = System.currentTimeMillis();
 
 // PHP
 $timestamp = (int)(microtime(true) * 1000);
-```
+\`\`\`
 
 ---
 
@@ -102,13 +102,13 @@ $timestamp = (int)(microtime(true) * 1000);
 
 ### 성공 응답 (200 OK)
 
-```json
+\`\`\`json
 {
   "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
   "expires_in": 10800,
   "token_type": "Bearer"
 }
-```
+\`\`\`
 
 | 필드 | 타입 | 설명 |
 |------|------|------|
@@ -132,7 +132,7 @@ $timestamp = (int)(microtime(true) * 1000);
 
 #### cURL 예시
 
-```bash
+\`\`\`bash
 # 전자서명을 미리 생성했다고 가정
 curl -X POST "https://api.commerce.naver.com/external/v1/oauth2/token" \
   -H "Content-Type: application/x-www-form-urlencoded" \
@@ -143,11 +143,11 @@ curl -X POST "https://api.commerce.naver.com/external/v1/oauth2/token" \
   -d "client_secret_sign=JDJhJDA0JFFLTG5vdTFEMmNTSDE5UGlhMzBiY3VNbE5FSGVCaHhUS3Uuajc0VmZ3TlNiOFhxVzNhXXXX" \
   -d "type=SELLER" \
   -d "account_id=ncp_2sRZTWJVbDtHPoz9OXXXX"
-```
+\`\`\`
 
 #### JavaScript (Node.js) 완전한 예시
 
-```javascript
+\`\`\`javascript
 const axios = require('axios');
 const bcrypt = require('bcrypt');
 
@@ -225,11 +225,11 @@ async function main() {
 
 // 실행
 main();
-```
+\`\`\`
 
 #### Python 완전한 예시
 
-```python
+\`\`\`python
 import requests
 import bcrypt
 import pybase64
@@ -299,11 +299,11 @@ if __name__ == "__main__":
         
     except Exception as e:
         print(f"오류 발생: {e}")
-```
+\`\`\`
 
 ### Step 2: 발급받은 토큰으로 API 호출
 
-```javascript
+\`\`\`javascript
 // 토큰을 사용하여 다른 API 호출
 const accessToken = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...'; // Step 1에서 받은 토큰
 
@@ -316,7 +316,7 @@ const apiResponse = await axios.get(
         }
     }
 );
-```
+\`\`\`
 
 ---
 
@@ -352,5 +352,3 @@ const apiResponse = await axios.get(
 - [인증 방식 이해하기](https://apicenter.commerce.naver.com/docs/auth)
 - [전자서명 생성 가이드](https://apicenter.commerce.naver.com/docs/auth#전자서명)
 - [커머스API 센터](https://apicenter.commerce.naver.com/)
-
-

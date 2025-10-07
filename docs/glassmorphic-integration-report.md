@@ -21,16 +21,16 @@ CareOn 프로젝트에 glassmorphic-nav 프로젝트의 아름다운 UI 스타�
 ### 새로 추가된 Glassmorphic 컴포넌트들
 
 #### 1. Navigation 컴포넌트
-```tsx
+\`\`\`tsx
 // components/ui/glass-nav.tsx
 <GlassNav menuItems={[
   { icon: Home, label: "Dashboard", isActive: true },
   { icon: Settings, label: "Settings" }
 ]} />
-```
+\`\`\`
 
 #### 2. Layout 컴포넌트들
-```tsx
+\`\`\`tsx
 // components/ui/glass-card.tsx
 <GlassCard>
   <GlassCard.Header>제목</GlassCard.Header>
@@ -44,29 +44,29 @@ CareOn 프로젝트에 glassmorphic-nav 프로젝트의 아름다운 UI 스타�
     <GlassSidebar.Item icon={Home} label="홈" isActive />
   </GlassSidebar.Nav>
 </GlassSidebar>
-```
+\`\`\`
 
 #### 3. Form 컴포넌트들
-```tsx
+\`\`\`tsx
 // components/ui/glass-input.tsx, glass-button.tsx
 <GlassInput placeholder="입력하세요" />
 <GlassTextarea rows={4} />
 <GlassButton variant="strong">버튼</GlassButton>
-```
+\`\`\`
 
 #### 4. Overlay 컴포넌트들
-```tsx
+\`\`\`tsx
 // components/ui/glass-modal.tsx
 <GlassModal isOpen={true} onClose={handleClose}>
   <GlassModal.Content>모달 내용</GlassModal.Content>
 </GlassModal>
-```
+\`\`\`
 
 ### 통합 인덱스 파일
-```tsx
+\`\`\`tsx
 // components/ui/glass.tsx - 모든 컴포넌트 한 번에 import
 import { GlassCard, GlassButton, GlassNav } from "@/components/ui/glass"
-```
+\`\`\`
 
 ---
 
@@ -75,7 +75,7 @@ import { GlassCard, GlassButton, GlassNav } from "@/components/ui/glass"
 ### app/globals.css에 추가된 glassmorphic 스타일
 
 #### 1. 기본 glassmorphic 클래스들
-```css
+\`\`\`css
 .glass-container {
   @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
 }
@@ -83,7 +83,7 @@ import { GlassCard, GlassButton, GlassNav } from "@/components/ui/glass"
 .glass-container-strong {
   @apply bg-white/15 backdrop-blur-lg border border-white/25 shadow-2xl;
 }
-```
+\`\`\`
 
 #### 2. 컴포넌트별 전용 클래스들
 - **Navigation**: `.glass-nav`, `.glass-nav-item`, `.glass-nav-icon`
@@ -93,7 +93,7 @@ import { GlassCard, GlassButton, GlassNav } from "@/components/ui/glass"
 - **Sidebar**: `.glass-sidebar`, `.glass-sidebar-item`
 
 #### 3. glassmorphic 유틸리티 클래스들
-```css
+\`\`\`css
 /* 배경 그라디언트 */
 .glass-bg-primary    /* CareOn 브랜드 그라디언트 */
 .glass-bg-secondary  /* 보조 색상 그라디언트 */
@@ -108,10 +108,10 @@ import { GlassCard, GlassButton, GlassNav } from "@/components/ui/glass"
 .glass-border-light   /* border-white/10 */
 .glass-border-medium  /* border-white/20 */
 .glass-border-strong  /* border-white/30 */
-```
+\`\`\`
 
 #### 4. glassmorphic 전용 애니메이션
-```css
+\`\`\`css
 @keyframes glass-slide-in-up { /* 부드러운 슬라이드 인 */ }
 @keyframes glass-slide-out-down { /* 부드러운 슬라이드 아웃 */ }
 @keyframes glass-progress-bar { /* 토스트 프로그레스 바 */ }
@@ -122,38 +122,38 @@ import { GlassCard, GlassButton, GlassNav } from "@/components/ui/glass"
 .animate-glass-slide-out
 .animate-glass-progress
 .animate-glass-fade-in
-```
+\`\`\`
 
 ---
 
 ## 🌈 3가지 UI 시스템 공존
 
 ### 1. CareOn 기본 시스템
-```tsx
+\`\`\`tsx
 // 기존 CareOn 스타일
 <div className="careon-card">
   <input className="careon-input" />
   <button className="careon-btn-primary">CareOn 버튼</button>
 </div>
-```
+\`\`\`
 
 ### 2. Glassmorphic 시스템 (새로 추가)
-```tsx
+\`\`\`tsx
 // 새로운 glassmorphic 스타일
 <GlassCard>
   <GlassInput />
   <GlassButton variant="strong">Glass 버튼</GlassButton>
 </GlassCard>
-```
+\`\`\`
 
 ### 3. shadcn/ui 시스템
-```tsx
+\`\`\`tsx
 // 기존 shadcn/ui 컴포넌트들
 <Card>
   <Input />
   <Button>shadcn 버튼</Button>
 </Card>
-```
+\`\`\`
 
 ---
 
@@ -171,11 +171,11 @@ import { GlassCard, GlassButton, GlassNav } from "@/components/ui/glass"
 5. **기능 소개 카드들**: glassmorphic UI의 특징들을 보여주는 카드들
 
 ### 배경 그라디언트
-```css
+\`\`\`css
 /* 아름다운 그라디언트 배경 */
 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 /* + 3개의 radial-gradient로 동적 효과 */
-```
+\`\`\`
 
 ---
 
@@ -187,7 +187,7 @@ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 - forwardRef 패턴으로 ref 전달 지원
 
 ### Compound Component 패턴
-```tsx
+\`\`\`tsx
 // 직관적이고 확장 가능한 API
 <GlassCard>
   <GlassCard.Header>헤더</GlassCard.Header>
@@ -196,7 +196,7 @@ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
 // 또는 개별 컴포넌트로
 <GlassCardHeader>헤더</GlassCardHeader>
-```
+\`\`\`
 
 ### CareOn 브랜드 통합
 - glassmorphic 그라디언트에 CareOn 브랜드 색상 (#148777) 적용
@@ -213,7 +213,7 @@ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 ## 📊 파일 구조 변화
 
 ### 새로 생성된 파일들
-```
+\`\`\`
 components/ui/
 ├── glass.tsx           # 통합 인덱스 파일
 ├── glass-nav.tsx       # 네비게이션 컴포넌트
@@ -229,20 +229,20 @@ app/
 
 docs/
 └── glassmorphic-integration-report.md  # 이 보고서
-```
+\`\`\`
 
 ### 수정된 파일들
-```
+\`\`\`
 app/globals.css         # glassmorphic 스타일 추가 (~200줄)
 docs/css-style-guide.md # 스타일 가이드 업데이트
-```
+\`\`\`
 
 ---
 
 ## 🚀 즉시 사용 가능한 예시들
 
 ### 1. 간단한 glassmorphic 카드
-```tsx
+\`\`\`tsx
 import { GlassCard } from "@/components/ui/glass"
 
 function SimpleCard() {
@@ -255,10 +255,10 @@ function SimpleCard() {
     </GlassCard>
   )
 }
-```
+\`\`\`
 
 ### 2. 관리자 사이드바
-```tsx
+\`\`\`tsx
 import { GlassSidebar } from "@/components/ui/glass"
 import { Home, Settings, Users } from "lucide-react"
 
@@ -273,10 +273,10 @@ function AdminSidebar() {
     </GlassSidebar>
   )
 }
-```
+\`\`\`
 
 ### 3. 로그인 폼
-```tsx
+\`\`\`tsx
 import { GlassCard, GlassInput, GlassButton } from "@/components/ui/glass"
 
 function LoginForm() {
@@ -297,7 +297,7 @@ function LoginForm() {
     </GlassCard>
   )
 }
-```
+\`\`\`
 
 ---
 

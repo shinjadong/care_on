@@ -14,7 +14,7 @@
 9. "Deploy" 클릭
 
 ### 방법 2: Wrangler CLI 사용 (선택사항)
-```bash
+\`\`\`bash
 # Wrangler 설치
 npm install -g wrangler
 
@@ -23,7 +23,7 @@ wrangler login
 
 # Worker 생성 및 배포
 wrangler deploy cloudflare-worker-sms.js --name careon-sms-proxy
-```
+\`\`\`
 
 ## 2. 뿌리오 IP 등록
 
@@ -52,25 +52,25 @@ Cloudflare Workers는 다음 IP 대역을 사용합니다:
 ## 3. Worker URL 확인
 
 배포 후 URL 형식:
-```
+\`\`\`
 https://careon-sms-proxy.{your-subdomain}.workers.dev
-```
+\`\`\`
 
 ### IP 확인:
-```
+\`\`\`
 https://careon-sms-proxy.{your-subdomain}.workers.dev/check-ip
-```
+\`\`\`
 
 ### SMS 전송:
-```
+\`\`\`
 POST https://careon-sms-proxy.{your-subdomain}.workers.dev
-```
+\`\`\`
 
 ## 4. 프론트엔드 코드 수정
 
 `components/what/CareonApplicationForm.tsx`에서:
 
-```javascript
+\`\`\`javascript
 // Cloudflare Worker URL로 변경
 const WORKER_URL = 'https://careon-sms-proxy.{your-subdomain}.workers.dev';
 
@@ -84,21 +84,21 @@ fetch(WORKER_URL, {
     businessType: businessType ? businessTypeMap[businessType] : undefined,
   }),
 })
-```
+\`\`\`
 
 ## 5. 테스트
 
 1. IP 확인 테스트:
-```bash
+\`\`\`bash
 curl https://careon-sms-proxy.{your-subdomain}.workers.dev/check-ip
-```
+\`\`\`
 
 2. SMS 전송 테스트:
-```bash
+\`\`\`bash
 curl -X POST https://careon-sms-proxy.{your-subdomain}.workers.dev \
   -H "Content-Type: application/json" \
   -d '{"to":"010-1234-5678","name":"테스트","businessType":"카페"}'
-```
+\`\`\`
 
 ## 장점
 - ✅ 무료 (월 100,000 요청)

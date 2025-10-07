@@ -138,9 +138,9 @@ POST
 
 - CURL
 
-```
+\`\`\`
 curl -L 'https://api.commerce.naver.com/external/v1/pay-order/seller/product-orders/:productOrderId/hope-delivery/change' \-H 'Content-Type: application/json' \-H 'Accept: application/json' \-H 'Authorization: Bearer <token>' \-d '{  "hopeDeliveryYmd": "20221231",  "hopeDeliveryHm": "1500",  "region": "string",  "changeReason": "string"}'
-```
+\`\`\`
 
 [
 
@@ -167,7 +167,7 @@ Copyright © [**NAVER Corp.**](https://www.navercorp.com/ "새창")All rights r
 ![](chrome-extension://cgococegfcmmfcjggpgelfbjkkncclkf/static/icon/ico_logo_128.png)
 
 
-```curl
+\`\`\`curl
 curl -L 'https://api.commerce.naver.com/external/v1/pay-order/seller/product-orders/:productOrderId/hope-delivery/change' \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
@@ -178,11 +178,11 @@ curl -L 'https://api.commerce.naver.com/external/v1/pay-order/seller/product-ord
   "region": "string",
   "changeReason": "string"
 }'
-```
+\`\`\`
 
 
 ******
-```node
+\`\`\`node
 curl -L 'https://api.commerce.naver.com/external/v1/pay-order/seller/product-orders/:productOrderId/hope-delivery/change' \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
@@ -193,6 +193,4 @@ curl -L 'https://api.commerce.naver.com/external/v1/pay-order/seller/product-ord
   "region": "string",
   "changeReason": "string"
 }'
-```
-
-
+\`\`\`

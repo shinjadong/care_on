@@ -78,7 +78,7 @@ To configure the ISR/Data Cache location when self-hosting, you can configure a 
 
 next.config.js
 
-```
+\`\`\`
 module.exports = {
 
   cacheHandler: require.resolve('./cache-handler.js'),
@@ -86,13 +86,13 @@ module.exports = {
   cacheMaxMemorySize: 0, // disable default in-memory caching
 
 }
-```
+\`\`\`
 
 Then, create `cache-handler.js` in the root of your project, for example:
 
 cache-handler.js
 
-```
+\`\`\`
 const cache = new Map()
 
  
@@ -166,7 +166,7 @@ module.exports = class CacheHandler {
   resetRequestCache() {}
 
 }
-```
+\`\`\`
 
 Using a custom cache handler will allow you to ensure consistency across all pods hosting your Next.js application. For instance, you can save the cached values anywhere, like [Redis](https://github.com/vercel/next.js/tree/canary/examples/cache-handler-redis) or AWS S3.
 
@@ -182,7 +182,7 @@ If you are rebuilding for each stage of your environment, you will need to gener
 
 next.config.js
 
-```
+\`\`\`
 module.exports = {
 
   generateBuildId: async () => {
@@ -194,7 +194,7 @@ module.exports = {
   },
 
 }
-```
+\`\`\`
 
 ## Version Skew
 

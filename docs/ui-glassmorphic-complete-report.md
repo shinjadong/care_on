@@ -49,7 +49,7 @@
 5. **반응형 호버 효과**: `hover:scale-[1.02]`, `hover:shadow-lg`
 
 ### 사용된 Glassmorphic 클래스들
-```css
+\`\`\`css
 /* 컨테이너 */
 .glass-container         /* 기본 glassmorphic 효과 */
 .glass-container-strong  /* 강한 glassmorphic 효과 */
@@ -68,14 +68,14 @@
 .glass-border-light      /* border-white/10 */
 .glass-border-medium     /* border-white/20 */
 .glass-border-strong     /* border-white/30 */
-```
+\`\`\`
 
 ---
 
 ## 🔄 변환 전후 비교
 
 ### Before (기존)
-```tsx
+\`\`\`tsx
 // 혼재된 스타일 시스템
 <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
   기존 버튼
@@ -84,10 +84,10 @@
 <Card className="rounded-lg border bg-card text-card-foreground shadow-sm">
   기존 카드
 </Card>
-```
+\`\`\`
 
 ### After (Glassmorphic 통일)
-```tsx
+\`\`\`tsx
 // 통일된 glassmorphic 시스템
 <Button variant="primary">
   Glassmorphic 버튼
@@ -96,14 +96,14 @@
 <Card>
   Glassmorphic 카드
 </Card>
-```
+\`\`\`
 
 ---
 
 ## 🚀 새로운 기능들
 
 ### 1. 확장된 Button Variants
-```tsx
+\`\`\`tsx
 <Button variant="default">Default</Button>
 <Button variant="primary">Primary</Button>
 <Button variant="secondary">Secondary</Button>
@@ -112,26 +112,26 @@
 <Button variant="outline">Outline</Button>
 <Button variant="ghost">Ghost</Button>
 <Button variant="link">Link</Button>
-```
+\`\`\`
 
 ### 2. 상태별 Badge 시스템
-```tsx
+\`\`\`tsx
 <Badge variant="default">Default</Badge>
 <Badge variant="secondary">Secondary</Badge>
 <Badge variant="success">Success</Badge>
 <Badge variant="destructive">Error</Badge>
 <Badge variant="warning">Warning</Badge>
 <Badge variant="outline">Outline</Badge>
-```
+\`\`\`
 
 ### 3. 애니메이션이 통합된 Dialog
-```tsx
+\`\`\`tsx
 <Dialog>
   <DialogContent>
     {/* glassmorphic 모달 + 부드러운 애니메이션 */}
   </DialogContent>
 </Dialog>
-```
+\`\`\`
 
 ---
 
@@ -174,7 +174,7 @@
 ## 🔧 기술적 구현 특징
 
 ### Class Variance Authority 활용
-```tsx
+\`\`\`tsx
 const buttonVariants = cva(
   "glass-container transition-all duration-300",
   {
@@ -187,30 +187,30 @@ const buttonVariants = cva(
     }
   }
 )
-```
+\`\`\`
 
 ### CSS 변수 시스템 통합
-```css
+\`\`\`css
 :root {
   --brand: 171 74% 30%; /* CareOn 브랜드 그린 */
   /* glassmorphic 시스템이 이 변수들을 활용 */
 }
-```
+\`\`\`
 
 ### 애니메이션 최적화
-```css
+\`\`\`css
 /* 모든 컴포넌트가 동일한 애니메이션 사용 */
 transition-all duration-300 ease-out
 hover:scale-[1.02] hover:shadow-lg
 active:scale-[0.98]
-```
+\`\`\`
 
 ---
 
 ## 📈 프로젝트 상태
 
 ### 📂 수정된 파일들
-```
+\`\`\`
 components/ui/
 ├── button.tsx       ✅ Glassmorphic 변환 완료
 ├── input.tsx        ✅ Glassmorphic 변환 완료
@@ -228,7 +228,7 @@ components/ui/
 app/
 ├── ui-test/page.tsx ✅ 전체 UI 테스트 페이지
 └── glass-demo/page.tsx ✅ Glassmorphic 데모 페이지
-```
+\`\`\`
 
 ### 📊 통계
 - **변환된 컴포넌트**: 11개 핵심 UI 컴포넌트

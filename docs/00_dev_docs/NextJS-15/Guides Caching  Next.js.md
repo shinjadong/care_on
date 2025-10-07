@@ -41,7 +41,7 @@ For example, if you need to use the same data across a route (e.g. in a Layout, 
 
 app/example.tsx
 
-```
+\`\`\`
 async function getItem() {
 
   // The \`fetch\` function is automatically memoized and the result
@@ -65,7 +65,7 @@ const item = await getItem() // cache MISS
 // The second call could be anywhere in your route
 
 const item = await getItem() // cache HIT
-```
+\`\`\`
 
 **How Request Memoization Works**
 
@@ -103,11 +103,11 @@ To manage individual requests, you can use the [`signal`](https://developer.mozi
 
 app/example.js
 
-```
+\`\`\`
 const { signal } = new AbortController()
 
 fetch(url, { signal })
-```
+\`\`\`
 
 ## Data Cache
 
@@ -150,11 +150,11 @@ Cached data can be revalidated in two ways, with:
 
 To revalidate data at a timed interval, you can use the `next.revalidate` option of `fetch` to set the cache lifetime of a resource (in seconds).
 
-```
+\`\`\`
 // Revalidate at most every hour
 
 fetch('https://...', { next: { revalidate: 3600 } })
-```
+\`\`\`
 
 Alternatively, you can use [Route Segment Config options](https://nextjs.org/docs/app/guides/#segment-config-options) to configure all `fetch` requests in a segment or for cases where you're not able to use `fetch`.
 
@@ -192,9 +192,9 @@ Diagram showing how on-demand revalidation works, the Data Cache is updated with
 
 If you do *not* want to cache the response from `fetch`, you can do the following:
 
-```
+\`\`\`
 let data = await fetch('https://api.vercel.app/blog', { cache: 'no-store' })
-```
+\`\`\`
 
 ## Full Route Cache
 
@@ -370,9 +370,9 @@ Data returned from `fetch` is *not* automatically cached in the Data Cache.
 
 The default caching behavior of `fetch` (e.g., when the `cache` option is not specified) is equal to setting the `cache` option to `no-store`:
 
-```
+\`\`\`
 let data = await fetch('https://api.vercel.app/blog', { cache: 'no-store' })
-```
+\`\`\`
 
 See the [`fetch` API Reference](https://nextjs.org/docs/app/api-reference/functions/fetch) for more options.
 
@@ -380,11 +380,11 @@ See the [`fetch` API Reference](https://nextjs.org/docs/app/api-reference/functi
 
 You can opt individual `fetch` into caching by setting the `cache` option to `force-cache`:
 
-```
+\`\`\`
 // Opt into caching
 
 fetch(\`https://...\`, { cache: 'force-cache' })
-```
+\`\`\`
 
 See the [`fetch` API Reference](https://nextjs.org/docs/app/api-reference/functions/fetch) for more options.
 
@@ -392,11 +392,11 @@ See the [`fetch` API Reference](https://nextjs.org/docs/app/api-reference/functi
 
 You can use the `next.revalidate` option of `fetch` to set the revalidation period (in seconds) of an individual `fetch` request. This will revalidate the Data Cache, which in turn will revalidate the Full Route Cache. Fresh data will be fetched, and components will be re-rendered on the server.
 
-```
+\`\`\`
 // Revalidate at most after 1 hour
 
 fetch(\`https://...\`, { next: { revalidate: 3600 } })
-```
+\`\`\`
 
 See the [`fetch` API reference](https://nextjs.org/docs/app/api-reference/functions/fetch) for more options.
 
@@ -409,19 +409,19 @@ Next.js has a cache tagging system for fine-grained data caching and revalidatio
 
 For example, you can set a tag when fetching data:
 
-```
+\`\`\`
 // Cache data with a tag
 
 fetch(\`https://...\`, { next: { tags: ['a', 'b', 'c'] } })
-```
+\`\`\`
 
 Then, call `revalidateTag` with a tag to purge the cache entry:
 
-```
+\`\`\`
 // Revalidate entries with a specific tag
 
 revalidateTag('a')
-```
+\`\`\`
 
 There are two places you can use `revalidateTag`, depending on what you're trying to achieve:
 
@@ -432,9 +432,9 @@ There are two places you can use `revalidateTag`, depending on what you're tryin
 
 `revalidatePath` allows you manually revalidate data **and** re-render the route segments below a specific path in a single operation. Calling the `revalidatePath` method revalidates the Data Cache, which in turn invalidates the Full Route Cache.
 
-```
+\`\`\`
 revalidatePath('/')
-```
+\`\`\`
 
 There are two places you can use `revalidatePath`, depending on what you're trying to achieve:
 
@@ -483,7 +483,7 @@ To statically render all paths at build time, supply the full list of paths to `
 
 app/blog/\[slug\]/page.js
 
-```
+\`\`\`
 export async function generateStaticParams() {
 
   const posts = await fetch('https://.../posts').then((res) => res.json())
@@ -497,13 +497,13 @@ export async function generateStaticParams() {
   }))
 
 }
-```
+\`\`\`
 
 To statically render a subset of paths at build time, and the rest the first time they're visited at runtime, return a partial list of paths:
 
 app/blog/\[slug\]/page.js
 
-```
+\`\`\`
 export async function generateStaticParams() {
 
   const posts = await fetch('https://.../posts').then((res) => res.json())
@@ -519,27 +519,27 @@ export async function generateStaticParams() {
   }))
 
 }
-```
+\`\`\`
 
 To statically render all paths the first time they're visited, return an empty array (no paths will be rendered at build time) or utilize [`export const dynamic = 'force-static'`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic):
 
 app/blog/\[slug\]/page.js
 
-```
+\`\`\`
 export async function generateStaticParams() {
 
   return []
 
 }
-```
+\`\`\`
 
 > **Good to know:** You must return an array from `generateStaticParams`, even if it's empty. Otherwise, the route will be dynamically rendered.
 
 app/changelog/\[slug\]/page.js
 
-```
+\`\`\`
 export const dynamic = 'force-static'
-```
+\`\`\`
 
 To disable caching at request time, add the `export const dynamicParams = false` option in a route segment. When this config option is used, only paths provided by `generateStaticParams` will be served, and other routes will 404 or match (in the case of [catch-all routes](https://nextjs.org/docs/app/api-reference/file-conventions/dynamic-routes#catch-all-segments)).
 
@@ -551,7 +551,7 @@ The React `cache` function allows you to memoize the return value of a function,
 
 utils/get-item.ts
 
-```
+\`\`\`
 import { cache } from 'react'
 
 import db from '@/lib/db'
@@ -565,4 +565,4 @@ export const getItem = cache(async (id: string) => {
   return item
 
 })
-```
+\`\`\`

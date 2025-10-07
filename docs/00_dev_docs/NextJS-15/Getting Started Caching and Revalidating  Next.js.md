@@ -28,13 +28,13 @@ By default, [`fetch`](https://nextjs.org/docs/app/api-reference/functions/fetch)
 
 app/page.tsx
 
-```
+\`\`\`
 export default async function Page() {
 
   const data = await fetch('https://...', { cache: 'force-cache' })
 
 }
-```
+\`\`\`
 
 > **Good to know**: Although `fetch` requests are not cached by default, Next.js will [prerender](https://nextjs.org/docs/app/getting-started/partial-prerendering#static-rendering) routes that have `fetch` requests and cache the HTML. If you want to guarantee a route is [dynamic](https://nextjs.org/docs/app/getting-started/partial-prerendering#dynamic-rendering), use the [`connection` API](https://nextjs.org/docs/app/api-reference/functions/connection).
 
@@ -42,13 +42,13 @@ To revalidate the data returned by a `fetch` request, you can use the `next.reva
 
 app/page.tsx
 
-```
+\`\`\`
 export default async function Page() {
 
   const data = await fetch('https://...', { next: { revalidate: 3600 } })
 
 }
-```
+\`\`\`
 
 This will revalidate the data after a specified amount of seconds.
 
@@ -58,7 +58,7 @@ See the [`fetch` API reference](https://nextjs.org/docs/app/api-reference/functi
 
 `unstable_cache` allows you to cache the result of database queries and other async functions. To use it, wrap `unstable_cache` around the function. For example:
 
-```
+\`\`\`
 import { db } from '@/lib/db'
 
 export async function getUserById(id: string) {
@@ -74,11 +74,11 @@ export async function getUserById(id: string) {
     .then((res) => res[0])
 
 }
-```
+\`\`\`
 
 app/page.tsx
 
-```
+\`\`\`
 import { unstable_cache } from 'next/cache'
 
 import { getUserById } from '@/app/lib/data'
@@ -112,7 +112,7 @@ export default async function Page({
   )
 
 }
-```
+\`\`\`
 
 The function accepts a third optional object to define how the cache should be revalidated. It accepts:
 
@@ -121,7 +121,7 @@ The function accepts a third optional object to define how the cache should be r
 
 app/page.tsx
 
-```
+\`\`\`
 const getCachedUser = unstable_cache(
 
   async () => {
@@ -141,7 +141,7 @@ const getCachedUser = unstable_cache(
   }
 
 )
-```
+\`\`\`
 
 See the [`unstable_cache` API reference](https://nextjs.org/docs/app/api-reference/functions/unstable_cache) to learn more.
 
@@ -151,7 +151,7 @@ See the [`unstable_cache` API reference](https://nextjs.org/docs/app/api-referen
 
 app/lib/data.ts
 
-```
+\`\`\`
 export async function getUserById(id: string) {
 
   const data = await fetch(\`https://...\`, {
@@ -165,13 +165,13 @@ export async function getUserById(id: string) {
   })
 
 }
-```
+\`\`\`
 
 Alternatively, you can mark an `unstable_cache` function with the `tags` option:
 
 app/lib/data.ts
 
-```
+\`\`\`
 export const getUserById = unstable_cache(
 
   async (id: string) => {
@@ -189,13 +189,13 @@ export const getUserById = unstable_cache(
   }
 
 )
-```
+\`\`\`
 
 Then, call `revalidateTag` in a [Route Handler](https://nextjs.org/docs/app/api-reference/file-conventions/route) or Server Action:
 
 app/lib/actions.ts
 
-```
+\`\`\`
 import { revalidateTag } from 'next/cache'
 
  
@@ -207,7 +207,7 @@ export async function updateUser(id: string) {
   revalidateTag('user')
 
 }
-```
+\`\`\`
 
 You can reuse the same tag in multiple functions to revalidate them all at once.
 
@@ -219,7 +219,7 @@ See the [`revalidateTag` API reference](https://nextjs.org/docs/app/api-referenc
 
 app/lib/actions.ts
 
-```
+\`\`\`
 import { revalidatePath } from 'next/cache'
 
  
@@ -229,7 +229,7 @@ export async function updateUser(id: string) {
   // Mutate data
 
   revalidatePath('/profile')
-```
+\`\`\`
 
 See the [`revalidatePath` API reference](https://nextjs.org/docs/app/api-reference/functions/revalidatePath) to learn more.
 

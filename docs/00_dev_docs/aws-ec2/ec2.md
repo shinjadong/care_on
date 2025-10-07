@@ -42,16 +42,16 @@ Heading 1 <Alt+Ctrl+1>Heading 2 <Alt+Ctrl+2>Heading 3 <Alt+Ctrl+3>Heading 4 <Alt
 
 **SSH 접속 준비**:
 
-```bash
+\`\`\`bash
 # 인스턴스 Public IP로 SSH 접속
 ssh -i <your-key.pem> ubuntu@13.209.135.199
 
 # 만약 키파일이 없다면, EC2 콘솔에서 "Connect" 버튼으로 Session Manager 사용
-```
+\`\`\`
 
 **Node.js 설치**:
 
-```bash
+\`\`\`bash
 # 시스템 업데이트
 sudo apt update && sudo apt upgrade -y
 
@@ -62,11 +62,11 @@ sudo apt-get install -y nodejs
 # 설치 확인
 node --version
 npm --version
-```
+\`\`\`
 
 **SMS 프록시 서버 코드 작성**:
 
-```bash
+\`\`\`bash
 # 작업 디렉토리 생성
 mkdir -p ~/sms-proxy
 cd ~/sms-proxy
@@ -74,11 +74,11 @@ cd ~/sms-proxy
 # package.json 생성
 npm init -y
 npm install express axios dotenv
-```
+\`\`\`
 
 **`~/sms-proxy/server.js` 작성**:
 
-```javascript
+\`\`\`javascript
 const express = require('express');
 const axios = require('axios');
 require('dotenv').config();
@@ -121,18 +121,18 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`SMS Proxy Server running on port ${PORT}`);
 });
-```
+\`\`\`
 
 **`.env` 파일 작성**:
 
-```bash
+\`\`\`bash
 PPURIO_API_KEY=d55f01a941947acd711702ede3f90b74fdda318a78ed26dbde193cceeb0af4ac
 PORT=3000
-```
+\`\`\`
 
 ### 4. PM2로 프로세스 관리 설정
 
-```bash
+\`\`\`bash
 # PM2 설치
 sudo npm install -g pm2
 
@@ -146,7 +146,7 @@ pm2 save
 # 상태 확인
 pm2 status
 pm2 logs sms-proxy
-```
+\`\`\`
 
 ### 5. Security Group 설정
 
@@ -164,7 +164,7 @@ pm2 logs sms-proxy
 
 **`/lib/ppurio/sms-v2.ts` 수정**:
 
-```typescript
+\`\`\`typescript
 // BEFORE: 직접 Ppurio API 호출
 const response = await fetch('https://api.ppurio.com/v2/send', {
   method: 'POST',
@@ -183,17 +183,17 @@ const response = await fetch('http://13.209.135.199:3000/api/sms/send', {
   },
   body: JSON.stringify({ to, text, type }),
 })
-```
+\`\`\`
 
 **환경변수 추가** (Vercel Dashboard):
 
-```
+\`\`\`
 SMS_PROXY_URL=http://13.209.135.199:3000
-```
+\`\`\`
 
 **코드 수정 후**:
 
-```typescript
+\`\`\`typescript
 const SMS_PROXY_URL = process.env.SMS_PROXY_URL || 'http://13.209.135.199:3000';
 
 const response = await fetch(`${SMS_PROXY_URL}/api/sms/send`, {
@@ -201,11 +201,11 @@ const response = await fetch(`${SMS_PROXY_URL}/api/sms/send`, {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ to, text, type }),
 })
-```
+\`\`\`
 
 ### 7. 테스트 및 배포
 
-```bash
+\`\`\`bash
 # 로컬에서 테스트
 curl -X POST http://13.209.135.199:3000/api/sms/send \
   -H "Content-Type: application/json" \
@@ -217,7 +217,7 @@ git commit -m "feat: SMS 전송을 EC2 프록시 서버 경유로 변경"
 git push
 
 # Vercel 자동 배포 후 프로덕션에서 SMS 테스트
-```
+\`\`\`
 
 ## 💰 비용 예상
 

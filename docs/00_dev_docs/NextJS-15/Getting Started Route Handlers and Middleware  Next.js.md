@@ -29,9 +29,9 @@ Route Handlers are defined in a [`route.js|ts` file](https://nextjs.org/docs/app
 
 app/api/route.ts
 
-```
+\`\`\`
 export async function GET(request: Request) {}
-```
+\`\`\`
 
 Route Handlers can be nested anywhere inside the `app` directory, similar to `page.js` and `layout.js`. But there **cannot** be a `route.js` file at the same route segment level as `page.js`.
 
@@ -70,7 +70,7 @@ Each `route.js` or `page.js` file takes over all HTTP verbs for that route.
 
 app/page.ts
 
-```
+\`\`\`
 export default function Page() {
 
   return <h1>Hello, Next.js!</h1>
@@ -84,7 +84,7 @@ export default function Page() {
 // \`app/route.ts\`
 
 export async function POST(request: Request) {}
-```
+\`\`\`
 
 Read more about how Route Handlers [complement your frontend application](https://nextjs.org/docs/app/guides/backend-for-frontend), or explore the Route Handlers [API Reference](https://nextjs.org/docs/app/api-reference/file-conventions/route).
 
@@ -94,7 +94,7 @@ In TypeScript, you can type the `context` parameter for Route Handlers with the 
 
 app/users/\[id\]/route.ts
 
-```
+\`\`\`
 import type { NextRequest } from 'next/server'
 
  
@@ -106,7 +106,7 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/users/[id]'>) {
   return Response.json({ id })
 
 }
-```
+\`\`\`
 
 > **Good to know**
 > 
@@ -141,7 +141,7 @@ Create a `middleware.ts` (or `.js`) file in the project root, or inside `src` if
 
 middleware.ts
 
-```
+\`\`\`
 import { NextResponse } from 'next/server'
 
 import type { NextRequest } from 'next/server'
@@ -165,7 +165,7 @@ export const config = {
   matcher: '/about/:path*',
 
 }
-```
+\`\`\`
 
 Read more about [using `middleware`](https://nextjs.org/docs/app/guides/backend-for-frontend#middleware), or refer to the `middleware` [API reference](https://nextjs.org/docs/app/api-reference/file-conventions/middleware).
 

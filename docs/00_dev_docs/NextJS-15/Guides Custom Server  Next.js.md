@@ -22,7 +22,7 @@ Take a look at the [following example](https://github.com/vercel/next.js/tree/ca
 
 server.ts
 
-```
+\`\`\`
 import { createServer } from 'http'
 
 import { parse } from 'url'
@@ -64,7 +64,7 @@ app.prepare().then(() => {
   )
 
 })
-```
+\`\`\`
 
 > `server.js` does not run through the Next.js Compiler or bundling process. Make sure the syntax and source code this file requires are compatible with the current Node.js version you are using. [View an example](https://github.com/vercel/next.js/tree/canary/examples/custom-server).
 
@@ -72,7 +72,7 @@ To run the custom server, you'll need to update the `scripts` in `package.json` 
 
 package.json
 
-```
+\`\`\`
 {
 
   "scripts": {
@@ -86,17 +86,17 @@ package.json
   }
 
 }
-```
+\`\`\`
 
 Alternatively, you can set up `nodemon` ([example](https://github.com/vercel/next.js/tree/canary/examples/custom-server)). The custom server uses the following import to connect the server with the Next.js application:
 
-```
+\`\`\`
 import next from 'next'
 
  
 
 const app = next({})
-```
+\`\`\`
 
 The above `next` import is a function that receives an object with the following options:
 

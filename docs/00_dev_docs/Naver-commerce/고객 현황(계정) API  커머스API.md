@@ -48,7 +48,7 @@ tags:
 
 응답은 배열 형태로, 각 요소는 일별 고객 현황 데이터입니다.
 
-```json
+\`\`\`json
 [
   {
     "aggregateDate": "2023-01-01",
@@ -63,7 +63,7 @@ tags:
     "isNotProvided": false
   }
 ]
-```
+\`\`\`
 
 #### 1️⃣ 기본 정보
 - `aggregateDate` (string): 집계일 (yyyy-MM-dd 형식)
@@ -71,7 +71,7 @@ tags:
 - `isNotProvided` (boolean): 통계 제공 여부 (집계 고객 수가 10건 미만인 경우 false)
 
 #### 2️⃣ 주문 고객 통계 (`purchaseStats`)
-```json
+\`\`\`json
 {
   "customerCount": 1000,           // 전체 고객 수
   "newCustomerCount": 200,         // 신규 고객 수
@@ -81,17 +81,17 @@ tags:
   "purchaseCount": 1500,           // 전체 주문 건수
   "refundCount": 50                // 전체 환불 건수
 }
-```
+\`\`\`
 
 #### 3️⃣ 성별 구매 통계
 - `malePurchaseStats`: 남성 구매 통계
 - `femalePurchaseStats`: 여성 구매 통계
 
-```json
+\`\`\`json
 {
   "ratio": 0.45  // 구매 비율
 }
-```
+\`\`\`
 
 #### 4️⃣ 연령대별 구매 통계 (`agePurchaseStats`)
 각 연령대별로 남성/여성 구매 통계를 포함합니다.
@@ -110,7 +110,7 @@ tags:
 | 60대 이상 | `senior` | 60세 이상 구매 통계 |
 
 각 연령대 객체 구조:
-```json
+\`\`\`json
 {
   "malePurchaseStats": {
     "ratio": 0.3
@@ -119,30 +119,30 @@ tags:
     "ratio": 0.7
   }
 }
-```
+\`\`\`
 
 #### 5️⃣ 관심 고객 통계 (`interestStats`)
-```json
+\`\`\`json
 {
   "interestCustomer": 5000,                    // 관심 고객 수(누적)
   "interestCustomerFluctuation": 100,          // 관심 고객 수(증감)
   "notificationCustomer": 2000,                // 알림 고객 수(누적)
   "notificationCustomerFluctuation": 50        // 알림 고객 수(증감)
 }
-```
+\`\`\`
 
 #### 6️⃣ 일반 고객 등급 (`normalGrade`)
-```json
+\`\`\`json
 {
   "silver": 1000,  // 실버 고객 수
   "gold": 500,     // 골드 고객 수
   "vip": 100,      // VIP 고객 수
   "vvip": 20       // VVIP 고객 수
 }
-```
+\`\`\`
 
 #### 7️⃣ 라운지 고객 등급 (`loungeStats`)
-```json
+\`\`\`json
 {
   "totalCount": 1500,        // 전체 등급 수
   "incrementCount": 50,      // 전체 등급 변동
@@ -154,7 +154,7 @@ tags:
   "level4Count": 200,        // 레벨 4 등급 수
   "level5Count": 100         // 레벨 5 등급 수
 }
-```
+\`\`\`
 
 ---
 
@@ -185,16 +185,16 @@ axios.request(config)
   .catch((error) => {
     console.error('API 호출 실패:', error.response?.data || error.message);
   });
-```
+\`\`\`
 
 ### cURL
 
-```bash
+\`\`\`bash
 curl -X GET \
   'https://api.commerce.naver.com/external/v1/customer-data/customer-status/account/statistics?startDate=2023-01-01&endDate=2023-01-31' \
   -H 'Accept: application/json;charset=UTF-8' \
   -H 'Authorization: Bearer YOUR_ACCESS_TOKEN'
-```
+\`\`\`
 
 ---
 
@@ -221,7 +221,7 @@ curl -X GET \
 ## 📝 사용 예시
 
 ### 월간 고객 현황 분석
-```javascript
+\`\`\`javascript
 // 한 달간 고객 현황 데이터 수집
 const startDate = '2023-01-01';
 const endDate = '2023-01-31';
@@ -245,10 +245,10 @@ const analyzeCustomerData = (data) => {
   
   return totalStats;
 };
-```
+\`\`\`
 
 ### 고객 등급별 현황 모니터링
-```javascript
+\`\`\`javascript
 // 라운지 등급 변동 추적
 const trackGradeChanges = (data) => {
   return data.map(dailyData => ({
@@ -259,7 +259,7 @@ const trackGradeChanges = (data) => {
     leaves: dailyData.loungeStats.leaveCount
   }));
 };
-```
+\`\`\`
 
 ---
 

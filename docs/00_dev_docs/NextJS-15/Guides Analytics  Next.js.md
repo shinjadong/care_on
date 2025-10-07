@@ -21,7 +21,7 @@ To use it, create an `instrumentation-client.js` or `instrumentation-client.ts` 
 
 instrumentation-client.js
 
-```
+\`\`\`
 // Initialize analytics before the app starts
 
 console.log('Analytics initialized')
@@ -37,13 +37,13 @@ window.addEventListener('error', (event) => {
   reportError(event.error)
 
 })
-```
+\`\`\`
 
 ## Build Your Own
 
 app/\_components/web-vitals.js
 
-```
+\`\`\`
 'use client'
 
  
@@ -61,11 +61,11 @@ export function WebVitals() {
   })
 
 }
-```
+\`\`\`
 
 app/layout.js
 
-```
+\`\`\`
 import { WebVitals } from './_components/web-vitals'
 
  
@@ -89,7 +89,7 @@ export default function Layout({ children }) {
   )
 
 }
-```
+\`\`\`
 
 > Since the `useReportWebVitals` hook requires the `'use client'` directive, the most performant approach is to create a separate component that the root layout imports. This confines the client boundary exclusively to the `WebVitals` component.
 
@@ -110,7 +110,7 @@ You can handle all the results of these metrics using the `name` property.
 
 app/\_components/web-vitals.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -144,7 +144,7 @@ export function WebVitals() {
   })
 
 }
-```
+\`\`\`
 
 ## Sending results to external systems
 

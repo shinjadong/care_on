@@ -32,7 +32,7 @@ By default, Server Components are automatically [code split](https://developer.m
 
 app/page.js
 
-```
+\`\`\`
 'use client'
 
  
@@ -86,7 +86,7 @@ export default function ClientComponentExample() {
   )
 
 }
-```
+\`\`\`
 
 > **Note:** When a Server Component dynamically imports a Client Component, automatic [code splitting](https://developer.mozilla.org/docs/Glossary/Code_splitting) is currently **not** supported.
 
@@ -98,9 +98,9 @@ When using `React.lazy()` and Suspense, Client Components will be [prerendered](
 
 If you want to disable pre-rendering for a Client Component, you can use the `ssr` option set to `false`:
 
-```
+\`\`\`
 const ComponentC = dynamic(() => import('../components/C'), { ssr: false })
-```
+\`\`\`
 
 ### Importing Server Components
 
@@ -108,7 +108,7 @@ If you dynamically import a Server Component, only the Client Components that ar
 
 app/page.js
 
-```
+\`\`\`
 import dynamic from 'next/dynamic'
 
  
@@ -132,7 +132,7 @@ export default function ServerComponentExample() {
   )
 
 }
-```
+\`\`\`
 
 > **Note:**`ssr: false` option is not supported in Server Components. You will see an error if you try to use it in Server Components.`ssr: false` is not allowed with `next/dynamic` in Server Components. Please move it into a Client Component.
 
@@ -140,7 +140,7 @@ External libraries can be loaded on demand using the [`import()`](https://develo
 
 app/page.js
 
-```
+\`\`\`
 'use client'
 
  
@@ -194,11 +194,11 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 app/page.js
 
-```
+\`\`\`
 'use client'
 
  
@@ -236,7 +236,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 ### Importing Named Exports
 
@@ -244,7 +244,7 @@ To dynamically import a named export, you can return it from the Promise returne
 
 components/hello.js
 
-```
+\`\`\`
 'use client'
 
  
@@ -254,11 +254,11 @@ export function Hello() {
   return <p>Hello!</p>
 
 }
-```
+\`\`\`
 
 app/page.js
 
-```
+\`\`\`
 import dynamic from 'next/dynamic'
 
  
@@ -268,4 +268,4 @@ const ClientComponent = dynamic(() =>
   import('../components/hello').then((mod) => mod.Hello)
 
 )
-```
+\`\`\`

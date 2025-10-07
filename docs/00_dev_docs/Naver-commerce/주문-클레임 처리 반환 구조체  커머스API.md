@@ -79,9 +79,9 @@ tags:
 
 주문-클레임 처리 반환 구조체
 
-```
+\`\`\`
 {  "timestamp": "2023-01-16T17:14:51.794+09:00",  "traceId": "string",  "data": {    "successProductOrderIds": [      "string"    ],    "failProductOrderInfos": [      {        "productOrderId": "string",        "code": "string",        "message": "string"      }    ]  }}
-```
+\`\`\`
 
 [
 
@@ -109,7 +109,7 @@ Copyright © [**NAVER Corp.**](https://www.navercorp.com/ "새창")All rights r
 
 
 
-```
+\`\`\`
 {
   "timestamp": "2023-01-16T17:14:51.794+09:00",
   "traceId": "string",
@@ -126,4 +126,4 @@ Copyright © [**NAVER Corp.**](https://www.navercorp.com/ "새창")All rights r
     ]
   }
 }
-```
+\`\`\`

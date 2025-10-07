@@ -20,12 +20,12 @@
 
 `.env.local` 파일에 다음 환경변수 추가:
 
-```env
+\`\`\`env
 # 뿌리오 SMS API
 PPURIO_ACCOUNT_ID=your_account_id
 PPURIO_API_KEY=your_api_key
 PPURIO_FROM_NUMBER=18661845
-```
+\`\`\`
 
 ## 3. 메시지 전송 흐름
 
@@ -38,7 +38,7 @@ PPURIO_FROM_NUMBER=18661845
 ## 4. 메시지 템플릿
 
 ### 신청 완료 메시지
-```
+\`\`\`
 [케어온]
 {고객명}님, 스타트케어 신청이 완료되었습니다.
 
@@ -46,7 +46,7 @@ PPURIO_FROM_NUMBER=18661845
 업종: {업종명}
 
 문의: 1866-1845
-```
+\`\`\`
 
 ## 5. 테스트 방법
 
@@ -70,14 +70,14 @@ PPURIO_FROM_NUMBER=18661845
 4. 뿌리오 계정 잔액 확인
 
 ### 에러 로그 확인
-```bash
+\`\`\`bash
 # Vercel 로그 확인
 vercel logs --follow
 
 # 로컬 개발 환경
 npm run dev
 # 브라우저 개발자 도구 콘솔 확인
-```
+\`\`\`
 
 ## 8. 비용 정보
 

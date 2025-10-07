@@ -29,9 +29,9 @@ To update to Next.js version 13, run the following command using your preferred 
 
 Terminal
 
-```
+\`\`\`
 npm install next@latest react@latest react-dom@latest
-```
+\`\`\`
 
 ### ESLint Version
 
@@ -39,9 +39,9 @@ If you're using ESLint, you need to upgrade your ESLint version:
 
 Terminal
 
-```
+\`\`\`
 npm install -D eslint-config-next@latest
-```
+\`\`\`
 
 > **Good to know**: You may need to restart the ESLint server in VS Code for the ESLint changes to take effect. Open the Command Palette (`cmd+shift+p` on Mac; `ctrl+shift+p` on Windows) and search for `ESLint: Restart ESLint Server`.
 
@@ -73,7 +73,7 @@ The [`<Link>` Component](https://nextjs.org/docs/app/api-reference/components/li
 
 For example:
 
-```
+\`\`\`
 import Link from 'next/link'
 
  
@@ -95,7 +95,7 @@ import Link from 'next/link'
   About
 
 </Link>
-```
+\`\`\`
 
 To upgrade your links to Next.js 13, you can use the [`new-link` codemod](https://nextjs.org/docs/app/guides/upgrading/codemods#new-link).
 
@@ -140,9 +140,9 @@ We recommend reducing the combined complexity of these updates by breaking down 
 
 Update to the latest Next.js version (requires 13.4 or greater):
 
-```
+\`\`\`
 npm install next@latest
-```
+\`\`\`
 
 Then, create a new `app` directory at the root of your project (or `src/` directory).
 
@@ -152,7 +152,7 @@ Create a new `app/layout.tsx` file inside the `app` directory. This is a [root l
 
 app/layout.tsx
 
-```
+\`\`\`
 export default function RootLayout({
 
   // Layouts must accept a children prop.
@@ -178,7 +178,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 - The `app` directory **must** include a root layout.
 - The root layout must define `<html>`, and `<body>` tags since Next.js does not automatically create them
@@ -189,7 +189,7 @@ To manage `<head>` HTML elements, you can use the [built-in SEO support](https:/
 
 app/layout.tsx
 
-```
+\`\`\`
 import type { Metadata } from 'next'
 
  
@@ -201,7 +201,7 @@ export const metadata: Metadata = {
   description: 'Welcome to Next.js',
 
 }
-```
+\`\`\`
 
 #### Migrating \_document.js and \_app.js
 
@@ -219,7 +219,7 @@ See before and after example
 
 components/DashboardLayout.js
 
-```
+\`\`\`
 export default function DashboardLayout({ children }) {
 
   return (
@@ -235,11 +235,11 @@ export default function DashboardLayout({ children }) {
   )
 
 }
-```
+\`\`\`
 
 pages/dashboard/index.js
 
-```
+\`\`\`
 import DashboardLayout from '../components/DashboardLayout'
 
  
@@ -257,20 +257,20 @@ Page.getLayout = function getLayout(page) {
   return <DashboardLayout>{page}</DashboardLayout>
 
 }
-```
+\`\`\`
 
 **After**
 
 - Remove the `Page.getLayout` property from `pages/dashboard/index.js` and follow the [steps for migrating pages](https://nextjs.org/docs/app/guides/migrating/#step-4-migrating-pages) to the `app` directory.
 	app/dashboard/page.js
-	```
+	\`\`\`
 	export default function Page() {
 	  return <p>My Page</p>
 	}
-	```
+	\`\`\`
 - Move the contents of `DashboardLayout` into a new [Client Component](https://nextjs.org/docs/app/getting-started/server-and-client-components) to retain `pages` directory behavior.
 	app/dashboard/DashboardLayout.js
-	```
+	\`\`\`
 	'use client' // this directive should be at top of the file, before any imports.
 	 
 	// This is a Client Component
@@ -282,17 +282,17 @@ Page.getLayout = function getLayout(page) {
 	    </div>
 	  )
 	}
-	```
+	\`\`\`
 - Import the `DashboardLayout` into a new `layout.js` file inside the `app` directory.
 	app/dashboard/layout.js
-	```
+	\`\`\`
 	import DashboardLayout from './DashboardLayout'
 	 
 	// This is a Server Component
 	export default function Layout({ children }) {
 	  return <DashboardLayout>{children}</DashboardLayout>
 	}
-	```
+	\`\`\`
 - You can incrementally move non-interactive parts of `DashboardLayout.js` (Client Component) into `layout.js` (Server Component) to reduce the amount of component JavaScript you send to the client.
 
 ### Step 3: Migrating next/head
@@ -303,7 +303,7 @@ In the `pages` directory, the `next/head` React component is used to manage `<he
 
 pages/index.tsx
 
-```
+\`\`\`
 import Head from 'next/head'
 
  
@@ -325,13 +325,13 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 **After:**
 
 app/page.tsx
 
-```
+\`\`\`
 import type { Metadata } from 'next'
 
  
@@ -349,7 +349,7 @@ export default function Page() {
   return '...'
 
 }
-```
+\`\`\`
 
 [See all metadata options](https://nextjs.org/docs/app/api-reference/functions/generate-metadata).
 
@@ -419,7 +419,7 @@ The `pages` directory uses `getServerSideProps` and `getStaticProps` to fetch da
 
 app/page.tsx
 
-```
+\`\`\`
 export default async function Page() {
 
   // This request should be cached until manually invalidated.
@@ -455,7 +455,7 @@ export default async function Page() {
   return <div>...</div>
 
 }
-```
+\`\`\`
 
 #### Server-side Rendering (getServerSideProps)
 
@@ -463,7 +463,7 @@ In the `pages` directory, `getServerSideProps` is used to fetch data on the serv
 
 pages/dashboard.js
 
-```
+\`\`\`
 // \`pages\` directory
 
  
@@ -499,7 +499,7 @@ export default function Dashboard({ projects }) {
   )
 
 }
-```
+\`\`\`
 
 In the App Router, we can colocate our data fetching inside our React components using [Server Components](https://nextjs.org/docs/app/getting-started/server-and-client-components). This allows us to send less JavaScript to the client, while maintaining the rendered HTML from the server.
 
@@ -507,7 +507,7 @@ By setting the `cache` option to `no-store`, we can indicate that the fetched da
 
 app/dashboard/page.tsx
 
-```
+\`\`\`
 // \`app\` directory
 
  
@@ -549,7 +549,7 @@ export default async function Dashboard() {
   )
 
 }
-```
+\`\`\`
 
 #### Accessing Request Object
 
@@ -568,7 +568,7 @@ In the `pages` directory, the `getStaticProps` function is used to pre-render a 
 
 pages/index.js
 
-```
+\`\`\`
 // \`pages\` directory
 
  
@@ -592,13 +592,13 @@ export default function Index({ projects }) {
   return projects.map((project) => <div>{project.name}</div>)
 
 }
-```
+\`\`\`
 
 In the `app` directory, data fetching with [`fetch()`](https://nextjs.org/docs/app/api-reference/functions/fetch) will default to `cache: 'force-cache'`, which will cache the request data until manually invalidated. This is similar to `getStaticProps` in the `pages` directory.
 
 app/page.js
 
-```
+\`\`\`
 // \`app\` directory
 
  
@@ -628,7 +628,7 @@ export default async function Index() {
   return projects.map((project) => <div>{project.name}</div>)
 
 }
-```
+\`\`\`
 
 #### Dynamic paths (getStaticPaths)
 
@@ -636,7 +636,7 @@ In the `pages` directory, the `getStaticPaths` function is used to define the dy
 
 pages/posts/\[id\].js
 
-```
+\`\`\`
 // \`pages\` directory
 
 import PostLayout from '@/components/post-layout'
@@ -674,7 +674,7 @@ export default function Post({ post }) {
   return <PostLayout post={post} />
 
 }
-```
+\`\`\`
 
 In the `app` directory, `getStaticPaths` is replaced with [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params).
 
@@ -682,7 +682,7 @@ In the `app` directory, `getStaticPaths` is replaced with [`generateStaticParams
 
 app/posts/\[id\]/page.js
 
-```
+\`\`\`
 // \`app\` directory
 
 import PostLayout from '@/components/post-layout'
@@ -720,7 +720,7 @@ export default async function Post({ params }) {
   return <PostLayout post={post} />
 
 }
-```
+\`\`\`
 
 Using the name `generateStaticParams` is more appropriate than `getStaticPaths` for the new model in the `app` directory. The `get` prefix is replaced with a more descriptive `generate`, which sits better alone now that `getStaticProps` and `getServerSideProps` are no longer necessary. The `Paths` suffix is replaced by `Params`, which is more appropriate for nested routing with multiple dynamic segments.
 
@@ -732,7 +732,7 @@ In the `pages` directory, the `fallback` property returned from `getStaticPaths`
 
 pages/posts/\[id\].js
 
-```
+\`\`\`
 // \`pages\` directory
 
  
@@ -764,7 +764,7 @@ export default function Post({ post }) {
   return ...
 
 }
-```
+\`\`\`
 
 In the `app` directory the [`config.dynamicParams` property](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamicparams) controls how params outside of [`generateStaticParams`](https://nextjs.org/docs/app/api-reference/functions/generate-static-params) are handled:
 
@@ -775,7 +775,7 @@ This replaces the `fallback: true | false | 'blocking'` option of `getStaticPath
 
 app/posts/\[id\]/page.js
 
-```
+\`\`\`
 // \`app\` directory
 
  
@@ -809,7 +809,7 @@ export default async function Post({ params }) {
   return ...
 
 }
-```
+\`\`\`
 
 With [`dynamicParams`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamicparams) set to `true` (the default), when a route segment is requested that hasn't been generated, it will be server-rendered and cached.
 
@@ -819,7 +819,7 @@ In the `pages` directory, the `getStaticProps` function allows you to add a `rev
 
 pages/index.js
 
-```
+\`\`\`
 // \`pages\` directory
 
  
@@ -857,13 +857,13 @@ export default function Index({ posts }) {
   )
 
 }
-```
+\`\`\`
 
 In the `app` directory, data fetching with [`fetch()`](https://nextjs.org/docs/app/api-reference/functions/fetch) can use `revalidate`, which will cache the request for the specified amount of seconds.
 
 app/page.js
 
-```
+\`\`\`
 // \`app\` directory
 
  
@@ -891,7 +891,7 @@ export default async function PostList() {
   return posts.map((post) => <div>{post.name}</div>)
 
 }
-```
+\`\`\`
 
 #### API Routes
 
@@ -901,9 +901,9 @@ Route Handlers allow you to create custom request handlers for a given route usi
 
 app/api/route.ts
 
-```
+\`\`\`
 export async function GET(request: Request) {}
-```
+\`\`\`
 
 > **Good to know**: If you previously used API routes to call an external API from the client, you can now use [Server Components](https://nextjs.org/docs/app/getting-started/server-and-client-components) instead to securely fetch data. Learn more about [data fetching](https://nextjs.org/docs/app/getting-started/fetching-data).
 
@@ -928,7 +928,7 @@ If you're using Tailwind CSS, you'll need to add the `app` directory to your `ta
 
 tailwind.config.js
 
-```
+\`\`\`
 module.exports = {
 
   content: [
@@ -942,13 +942,13 @@ module.exports = {
   ],
 
 }
-```
+\`\`\`
 
 You'll also need to import your global styles in your `app/layout.js` file:
 
 app/layout.js
 
-```
+\`\`\`
 import '../styles/globals.css'
 
  
@@ -966,7 +966,7 @@ export default function RootLayout({ children }) {
   )
 
 }
-```
+\`\`\`
 
 Learn more about [styling with Tailwind CSS](https://nextjs.org/docs/app/getting-started/css#tailwind-css)
 

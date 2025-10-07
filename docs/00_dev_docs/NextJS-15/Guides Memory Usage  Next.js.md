@@ -35,9 +35,9 @@ To look for memory issues, you can record a heap profile from Node.js and load i
 
 In your terminal, pass the `--heap-prof` flag to Node.js when starting your Next.js build:
 
-```
+\`\`\`
 node --heap-prof node_modules/next/dist/bin/next build
-```
+\`\`\`
 
 At the end of the build, a `.heapprofile` file will be created by Node.js.
 
@@ -75,7 +75,7 @@ You can disable this behavior by adding a [custom Webpack configuration](https:/
 
 next.config.mjs
 
-```
+\`\`\`
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
@@ -109,7 +109,7 @@ const nextConfig = {
  
 
 export default nextConfig
-```
+\`\`\`
 
 ## Disable static analysis
 
@@ -117,7 +117,7 @@ Typechecking and linting may require a lot of memory, especially in large projec
 
 next.config.mjs
 
-```
+\`\`\`
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
@@ -151,7 +151,7 @@ const nextConfig = {
  
 
 export default nextConfig
-```
+\`\`\`
 
 - [Ignoring TypeScript Errors](https://nextjs.org/docs/app/api-reference/config/typescript#disabling-typescript-errors-in-production)
 - [ESLint in Next.js config](https://nextjs.org/docs/pages/api-reference/config/next-config-js/eslint)
@@ -178,7 +178,7 @@ To disable this optimization, set the `experimental.preloadEntriesOnStart` flag 
 
 next.config.ts
 
-```
+\`\`\`
 import type { NextConfig } from 'next'
 
  
@@ -196,6 +196,6 @@ const config: NextConfig = {
  
 
 export default config
-```
+\`\`\`
 
 Next.js doesn't unload these JavaScript modules, meaning that even with this optimization disabled, the memory footprint of your Next.js server will eventually be the same if all pages are eventually requested.

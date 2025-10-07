@@ -30,7 +30,7 @@ CareOn 관리자 시스템은 현재 기본적인 CRUD 기능은 구현되어 �
 
 ### 📊 현재 구조
 
-```
+\`\`\`
 app/admin/
 ├── dashboard/        ✅ 기본 구현 (하드코딩 데이터)
 ├── customers/        ✅ 기본 CRUD
@@ -40,7 +40,7 @@ app/admin/
 ├── products/         ⚠️ 미구현
 ├── quotes/           ⚠️ 미구현
 └── reviews/          ✅ 기본 구현
-```
+\`\`\`
 
 ### 🔴 주요 문제점
 
@@ -116,7 +116,7 @@ app/admin/
 
 #### 1.1 Dashboard Stats API
 
-```typescript
+\`\`\`typescript
 // app/api/dashboard/stats/route.ts
 export async function GET() {
   const supabase = createClient()
@@ -131,21 +131,21 @@ export async function GET() {
 
   return NextResponse.json({ stats: { ... } })
 }
-```
+\`\`\`
 
 #### 1.2 Customer Management API
 
-```typescript
+\`\`\`typescript
 // app/api/admin/customers/route.ts
 - GET: 고객 목록 조회 (페이지네이션, 필터, 검색)
 - POST: 신규 고객 등록
 - PUT: 고객 정보 수정
 - DELETE: 고객 삭제 (soft delete)
-```
+\`\`\`
 
 #### 1.3 Enrollment Approval API
 
-```typescript
+\`\`\`typescript
 // app/api/admin/enrollments/[id]/approve/route.ts
 export async function POST(request, { params }) {
   // 1. 신청 정보 검증
@@ -154,23 +154,23 @@ export async function POST(request, { params }) {
   // 4. 고객 계정 생성
   // 5. 환영 이메일/SMS 발송
 }
-```
+\`\`\`
 
 #### 1.4 Billing Summary API
 
-```typescript
+\`\`\`typescript
 // app/api/admin/billing/summary/route.ts
 - 월별 청구 요약
 - 연체 현황
 - 수금 예정
 - 정산 대기
-```
+\`\`\`
 
 ### 2단계: 인증 시스템 구축
 
 #### 2.1 관리자 역할 정의
 
-```sql
+\`\`\`sql
 -- supabase/migrations/admin_roles.sql
 CREATE TYPE admin_role AS ENUM ('super_admin', 'admin', 'cs_manager', 'viewer');
 
@@ -183,11 +183,11 @@ CREATE TABLE admin_users (
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP DEFAULT NOW()
 );
-```
+\`\`\`
 
 #### 2.2 RLS 정책 설정
 
-```sql
+\`\`\`sql
 -- Row Level Security 정책
 CREATE POLICY "Super admin can do everything" ON admin_users
   FOR ALL USING (auth.jwt() ->> 'role' = 'super_admin');
@@ -197,11 +197,11 @@ CREATE POLICY "Admin can manage customers" ON customers
 
 CREATE POLICY "CS manager can view and update tickets" ON cs_tickets
   FOR SELECT, UPDATE USING (auth.jwt() ->> 'role' IN ('super_admin', 'admin', 'cs_manager'));
-```
+\`\`\`
 
 #### 2.3 Protected Route Middleware
 
-```typescript
+\`\`\`typescript
 // app/admin/middleware.ts
 export function middleware(request: NextRequest) {
   const session = await getSession()
@@ -218,13 +218,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect('/admin/unauthorized')
   }
 }
-```
+\`\`\`
 
 ### 3단계: 핵심 워크플로우 자동화
 
 #### 3.1 가입 신청 워크플로우
 
-```mermaid
+\`\`\`mermaid
 graph LR
     A[신청 접수] --> B[서류 검토]
     B --> C{승인 여부}
@@ -232,11 +232,11 @@ graph LR
     C -->|거절| E[거절 통지]
     D --> F[온보딩 시작]
     F --> G[서비스 활성화]
-```
+\`\`\`
 
 #### 3.2 청구/정산 워크플로우
 
-```mermaid
+\`\`\`mermaid
 graph LR
     A[월초 청구서 생성] --> B[자동 발송]
     B --> C[결제 대기]
@@ -244,13 +244,13 @@ graph LR
     D -->|Yes| E[정산 처리]
     D -->|No| F[연체 알림]
     F --> G[수금 활동]
-```
+\`\`\`
 
 ### 데이터베이스 스키마 개선
 
 #### 필요한 새 테이블
 
-```sql
+\`\`\`sql
 -- 대시보드 캐시 테이블
 CREATE TABLE dashboard_cache (
   id SERIAL PRIMARY KEY,
@@ -280,7 +280,7 @@ CREATE TABLE notifications (
   is_read BOOLEAN DEFAULT false,
   created_at TIMESTAMP DEFAULT NOW()
 );
-```
+\`\`\`
 
 ## 기대 효과
 

@@ -36,7 +36,7 @@ A Server Function can be defined by using the [`use server`](https://react.dev/r
 
 app/lib/actions.ts
 
-```
+\`\`\`
 export async function createPost(formData: FormData) {
 
   'use server'
@@ -68,7 +68,7 @@ export async function deletePost(formData: FormData) {
   // Revalidate cache
 
 }
-```
+\`\`\`
 
 ### Server Components
 
@@ -76,7 +76,7 @@ Server Functions can be inlined in Server Components by adding the `"use server"
 
 app/page.tsx
 
-```
+\`\`\`
 export default function Page() {
 
   // Server Action
@@ -94,7 +94,7 @@ export default function Page() {
   return <></>
 
 }
-```
+\`\`\`
 
 > **Good to know:** Server Components support progressive enhancement by default, meaning forms that call Server Actions will be submitted even if JavaScript hasn't loaded yet or is disabled.
 
@@ -104,17 +104,17 @@ It's not possible to define Server Functions in Client Components. However, you 
 
 app/actions.ts
 
-```
+\`\`\`
 'use server'
 
  
 
 export async function createPost() {}
-```
+\`\`\`
 
 app/ui/button.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -128,7 +128,7 @@ export function Button() {
   return <button formAction={createPost}>Create</button>
 
 }
-```
+\`\`\`
 
 > **Good to know:** In Client Components, forms invoking Server Actions will queue submissions if JavaScript isn't loaded yet, and will be prioritized for hydration. After hydration, the browser does not refresh on form submission.
 
@@ -136,13 +136,13 @@ export function Button() {
 
 You can also pass an action to a Client Component as a prop:
 
-```
+\`\`\`
 <ClientComponent updateItemAction={updateItem} />
-```
+\`\`\`
 
 app/client-component.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -160,7 +160,7 @@ export default function ClientComponent({
   return <form action={updateItemAction}>{/* ... */}</form>
 
 }
-```
+\`\`\`
 
 ## Invoking Server Functions
 
@@ -179,7 +179,7 @@ When invoked in a form, the function automatically receives the [`FormData`](htt
 
 app/ui/form.tsx
 
-```
+\`\`\`
 import { createPost } from '@/app/actions'
 
  
@@ -201,11 +201,11 @@ export function Form() {
   )
 
 }
-```
+\`\`\`
 
 app/actions.ts
 
-```
+\`\`\`
 'use server'
 
  
@@ -223,7 +223,7 @@ export async function createPost(formData: FormData) {
   // Revalidate cache
 
 }
-```
+\`\`\`
 
 ### Event Handlers
 
@@ -231,7 +231,7 @@ You can invoke a Server Function in a Client Component by using event handlers s
 
 app/like-button.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -275,7 +275,7 @@ export default function LikeButton({ initialLikes }: { initialLikes: number }) {
   )
 
 }
-```
+\`\`\`
 
 ## Examples
 
@@ -285,7 +285,7 @@ While executing a Server Function, you can show a loading indicator with React's
 
 app/ui/button.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -315,7 +315,7 @@ export function Button() {
   )
 
 }
-```
+\`\`\`
 
 ### Revalidating
 
@@ -323,7 +323,7 @@ After performing an update, you can revalidate the Next.js cache and show the up
 
 app/lib/actions.ts
 
-```
+\`\`\`
 import { revalidatePath } from 'next/cache'
 
  
@@ -341,7 +341,7 @@ export async function createPost(formData: FormData) {
   revalidatePath('/posts')
 
 }
-```
+\`\`\`
 
 ### Redirecting
 
@@ -363,7 +363,7 @@ You can use the React [`useEffect`](https://react.dev/reference/react/useEffect)
 
 app/view-count.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -401,7 +401,7 @@ export default function ViewCount({ initialViews }: { initialViews: number }) {
   return <p>Total Views: {views}</p>
 
 }
-```
+\`\`\`
 
 ## API Reference
 

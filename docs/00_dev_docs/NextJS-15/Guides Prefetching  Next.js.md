@@ -60,7 +60,7 @@ Next.js tries to do the right prefetching by default, but power users can eject 
 
 For example, you might have to only trigger prefetches on hover, instead of when entering the viewport (the default behavior):
 
-```
+\`\`\`
 'use client'
 
  
@@ -108,7 +108,7 @@ export function HoverPrefetchLink({
   )
 
 }
-```
+\`\`\`
 
 `prefetch={null}` restores default (static) prefetching once the user shows intent.
 
@@ -126,7 +126,7 @@ Alternatively, you can use [`useRouter`](https://nextjs.org/docs/app/api-referen
 
 You can fully disable prefetching for certain routes for more fine-grained control over resource consumption.
 
-```
+\`\`\`
 'use client'
 
  
@@ -146,7 +146,7 @@ function NoPrefetchLink({
   return <Link {...rest} prefetch={false} />
 
 }
-```
+\`\`\`
 
 For example, you may still want to have consistent usage of `<Link>` in your application, but links in your footer might not need to be prefetched when entering the viewport.
 
@@ -189,7 +189,7 @@ To avoid this, you should move side-effects to a `useEffect` hook or a Server Ac
 
 app/dashboard/layout.tsx
 
-```
+\`\`\`
 import { trackPageView } from '@/lib/analytics'
 
  
@@ -205,13 +205,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return <div>{children}</div>
 
 }
-```
+\`\`\`
 
 **After**:
 
 app/ui/analytics-tracker.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -235,11 +235,11 @@ export function AnalyticsTracker() {
   return null
 
 }
-```
+\`\`\`
 
 app/dashboard/layout.tsx
 
-```
+\`\`\`
 import { AnalyticsTracker } from '@/app/ui/analytics-tracker'
 
  
@@ -259,7 +259,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   )
 
 }
-```
+\`\`\`
 
 ### Preventing too many prefetches
 
@@ -271,13 +271,13 @@ You can disable prefetching by setting the `prefetch` prop of the `<Link>` compo
 
 app/ui/no-prefetch-link.tsx
 
-```
+\`\`\`
 <Link prefetch={false} href={\`/blog/${post.id}\`}>
 
   {post.title}
 
 </Link>
-```
+\`\`\`
 
 However, this means static routes will only be fetched on click, and dynamic routes will wait for the server to render before navigating.
 
@@ -285,7 +285,7 @@ To reduce resource usage without disabling prefetch entirely, you can defer pref
 
 app/ui/hover-prefetch-link.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -333,4 +333,4 @@ export function HoverPrefetchLink({
   )
 
 }
-```
+\`\`\`

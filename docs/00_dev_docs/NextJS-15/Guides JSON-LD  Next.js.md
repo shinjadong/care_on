@@ -21,7 +21,7 @@ Review your organization's recommended approach to sanitize potentially dangerou
 
 app/products/\[id\]/page.tsx
 
-```
+\`\`\`
 export default async function Page({ params }) {
 
   const { id } = await params
@@ -71,13 +71,13 @@ export default async function Page({ params }) {
   )
 
 }
-```
+\`\`\`
 
 You can validate and test your structured data with the [Rich Results Test](https://search.google.com/test/rich-results) for Google or the generic [Schema Markup Validator](https://validator.schema.org/).
 
 You can type your JSON-LD with TypeScript using community packages like [`schema-dts`](https://www.npmjs.com/package/schema-dts):
 
-```
+\`\`\`
 import { Product, WithContext } from 'schema-dts'
 
  
@@ -95,4 +95,4 @@ const jsonLd: WithContext<Product> = {
   description: 'Dynamic at the speed of static.',
 
 }
-```
+\`\`\`

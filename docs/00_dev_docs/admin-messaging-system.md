@@ -31,7 +31,7 @@
 
 ## 📁 시스템 구조
 
-```
+\`\`\`
 app/admin/messages/
 ├── page.tsx                    # 메인 메시지 발송 페이지
 ├── api/
@@ -54,12 +54,12 @@ lib/ppurio/
 │
 supabase/migrations/
 └── 20250126_create_message_history.sql  # 메시지 이력 테이블
-```
+\`\`\`
 
 ## 💾 데이터베이스 스키마
 
 ### message_history 테이블
-```sql
+\`\`\`sql
 - id: 고유 ID
 - message_type: SMS/LMS/ALIMTALK
 - recipient_phone: 수신자 전화번호
@@ -71,10 +71,10 @@ supabase/migrations/
 - error_message: 오류 메시지
 - sent_at: 발송 시간
 - created_at: 생성 시간
-```
+\`\`\`
 
 ### message_templates 테이블
-```sql
+\`\`\`sql
 - id: 고유 ID
 - name: 템플릿 이름
 - code: 템플릿 코드
@@ -83,10 +83,10 @@ supabase/migrations/
 - variables: 변수 정의 (JSON)
 - is_active: 활성 상태
 - approval_status: 승인 상태
-```
+\`\`\`
 
 ### message_batch_jobs 테이블
-```sql
+\`\`\`sql
 - id: 고유 ID
 - job_name: 작업명
 - message_type: 메시지 유형
@@ -95,14 +95,14 @@ supabase/migrations/
 - sent_count: 발송 성공 수
 - failed_count: 발송 실패 수
 - status: pending/processing/completed/failed
-```
+\`\`\`
 
 ## 🔧 설치 및 설정
 
 ### 1. 환경 변수 설정
 `.env.local` 파일에 다음 환경 변수 추가:
 
-```bash
+\`\`\`bash
 # 뿌리오 SMS/알림톡 API
 PPURIO_USERNAME=your_username
 PPURIO_API_KEY=your_api_key
@@ -112,14 +112,14 @@ PPURIO_SENDER_PROFILE=@your_profile  # 카카오 발신프로필
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-```
+\`\`\`
 
 ### 2. 데이터베이스 마이그레이션 적용
 
 #### 방법 1: 스크립트 실행
-```bash
+\`\`\`bash
 node scripts/apply-message-history-migration.js
-```
+\`\`\`
 
 #### 방법 2: Supabase Dashboard SQL Editor
 1. Supabase Dashboard > SQL Editor 접속
@@ -134,9 +134,9 @@ node scripts/apply-message-history-migration.js
 ## 📱 사용 방법
 
 ### 관리자 페이지 접속
-```
+\`\`\`
 http://localhost:3000/admin/messages
-```
+\`\`\`
 
 ### SMS 개별 발송
 1. "메시지 발송" 탭 선택
@@ -173,7 +173,7 @@ http://localhost:3000/admin/messages
 ## 🔌 API 엔드포인트
 
 ### 통합 메시지 발송
-```typescript
+\`\`\`typescript
 POST /api/admin/messages/send
 {
   messageType: "SMS" | "LMS" | "ALIMTALK",
@@ -189,15 +189,15 @@ POST /api/admin/messages/send
   variables?: object,
   saveHistory?: boolean
 }
-```
+\`\`\`
 
 ### 발송 이력 조회
-```typescript
+\`\`\`typescript
 GET /api/admin/messages/history?page=1&limit=20&type=SMS&status=sent
-```
+\`\`\`
 
 ### 대량 발송 작업 생성
-```typescript
+\`\`\`typescript
 POST /api/admin/messages/batch
 {
   job_name: string,
@@ -206,10 +206,10 @@ POST /api/admin/messages/batch
   content: string,
   scheduled_at?: string
 }
-```
+\`\`\`
 
 ### 고객 목록 조회
-```typescript
+\`\`\`typescript
 GET /api/admin/messages/customers?search=홍길동&page=1
 
 POST /api/admin/messages/customers
@@ -217,10 +217,10 @@ POST /api/admin/messages/customers
   groupType: "all_customers" | "active_customers" | "pending_enrollments",
   filters: object
 }
-```
+\`\`\`
 
 ### 템플릿 관리
-```typescript
+\`\`\`typescript
 GET /api/admin/messages/templates?type=ALIMTALK&active=true
 
 POST /api/admin/messages/templates
@@ -231,30 +231,30 @@ POST /api/admin/messages/templates
   content: string,
   variables?: object
 }
-```
+\`\`\`
 
 ## 🎨 UI 컴포넌트
 
 ### CustomerSelector
 고객 선택을 위한 컴포넌트:
 
-```tsx
+\`\`\`tsx
 import CustomerSelector from '@/components/admin/messages/CustomerSelector'
 
 <CustomerSelector
   onSelectionChange={(customers) => console.log(customers)}
   selectedCustomers={[]}
 />
-```
+\`\`\`
 
 ### MessageHistory
 발송 이력 표시 컴포넌트:
 
-```tsx
+\`\`\`tsx
 import MessageHistory from '@/components/admin/messages/MessageHistory'
 
 <MessageHistory />
-```
+\`\`\`
 
 ## 🐛 문제 해결
 

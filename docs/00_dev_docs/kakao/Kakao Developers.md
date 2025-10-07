@@ -146,25 +146,25 @@ REST API 방식의 카카오 로그인은 PC 및 모바일 웹에서 사용하�
 
 ##### 요청
 
-```bash
+\`\`\`bash
 https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}
-```
+\`\`\`
 
 ##### 응답: 사용자가 \[동의하고 계속하기\] 선택, 로그인 진행
 
-```
+\`\`\`
 HTTP/1.1 302
 Content-Length: 0
 Location: ${REDIRECT_URI}?code=${AUTHORIZE_CODE}
-```
+\`\`\`
 
 ##### 응답: 로그인 취소
 
-```
+\`\`\`
 HTTP/1.1 302
 Content-Length: 0
 Location: ${REDIRECT_URI}?error=access_denied&error_description=User%20denied%20access
-```
+\`\`\`
 
 ### 토큰 요청
 
@@ -241,18 +241,18 @@ Location: ${REDIRECT_URI}?error=access_denied&error_description=User%20denied%20
 
 ##### 요청
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kauth.kakao.com/oauth/token" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -d "grant_type=authorization_code" \
     -d "client_id=${REST_API_KEY}" \
     --data-urlencode "redirect_uri=${REDIRECT_URI}" \
     -d "code=${AUTHORIZE_CODE}"
-```
+\`\`\`
 
 ##### 응답: 성공
 
-```json
+\`\`\`json
 HTTP/1.1 200
 Content-Type: application/json;charset=UTF-8
 {
@@ -263,11 +263,11 @@ Content-Type: application/json;charset=UTF-8
     "refresh_token_expires_in":5184000,
     "scope":"account_email profile"
 }
-```
+\`\`\`
 
 ##### 응답: 성공, OpenID Connect를 활성화한 앱, ID 토큰 포함
 
-```json
+\`\`\`json
 HTTP/1.1 200
 {
     "token_type": "bearer",
@@ -278,11 +278,11 @@ HTTP/1.1 200
     "refresh_token_expires_in": 86399,
     "scope": "profile_image openid profile_nickname"
 }
-```
+\`\`\`
 
 ##### 응답: ID 토큰 페이로드 예시
 
-```json
+\`\`\`json
 {
   "aud": "${APP_KEY}",
   "sub": "${USER_ID}",
@@ -294,7 +294,7 @@ HTTP/1.1 200
   "picture": "http://yyy.kakao.com/.../img_110x110.jpg",
   "email": "jordy@kakao.com"
 }
-```
+\`\`\`
 
 ### 추가 기능
 
@@ -312,9 +312,9 @@ HTTP/1.1 200
 
 [동의항목 추가 동의 요청](https://developers.kakao.com/docs/latest/ko/kakaologin/utilize#additional-consent) 은 사용자가 동의하지 않은 동의항목에 대한 추가 동의를 요청하는 추가 기능입니다. 인가 코드 요청 시 `scope` 파라미터로 추가 동의받을 항목의 ID 목록을 지정합니다. 응답으로 받은 인가 코드로 [토큰 요청 API](https://developers.kakao.com/docs/latest/ko/kakaologin/#request-token) 를 호출해 카카오 로그인을 완료한 뒤, 이후 새로 발급받은 토큰을 사용해야 합니다. 아래는 `scope` 에 이메일, 성별의 추가 동의를 요청하는 예제입니다.
 
-```bash
+\`\`\`bash
 https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=account_email,gender
-```
+\`\`\`
 
 **주의: OpenID Connect**
 
@@ -326,17 +326,17 @@ OpenID Connect를 사용하는 앱의 경우, 동의항목 추가 동의 요청 
 
 카카오톡에서 자동 로그인은 카카오톡 인앱브라우저에서 서비스 페이지 진입 시 서비스 가입 여부에 따른 분기 처리를 지원하는 추가 기능입니다. [활용하기](https://developers.kakao.com/docs/latest/ko/kakaologin/utilize#login-auto) 에서 자세한 안내를 확인한 후 사용해야 합니다. 인가 코드 요청 시 `prompt` 파라미터 값을 `none` 으로 지정합니다.
 
-```bash
+\`\`\`bash
 https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&prompt=none
-```
+\`\`\`
 
 서비스 가입을 완료하지 않아 아직 앱과 연결되지 않은 사용자인 경우, 아래와 같이 사용자 동의가 필요하다는 에러 응답이 `redirect_uri` 로 전달됩니다. 이 경우, 사용자가 직접 서비스 페이지에서 카카오 로그인 및 서비스 가입을 해야 합니다.
 
-```
+\`\`\`
 HTTP/1.1 302
 Content-Length: 0
 Location: ${REDIRECT_URI}?error=consent_required&error_description=user%20consent%20required.
-```
+\`\`\`
   
 
 ##### 서비스 약관 선택해 동의 요청
@@ -347,61 +347,61 @@ Location: ${REDIRECT_URI}?error=consent_required&error_description=user%20consen
 
 서비스 약관 선택해 동의 요청은 카카오 로그인 동의 화면에 포함할 서비스 약관을 지정하는 추가 기능입니다. 사용자의 서비스 가입 시나리오에 따라 앱에 등록된 서비스 약관 중 특정 서비스 약관을 지정해 동의받고자 할 때 사용합니다. 인가 코드 요청 시 `service_terms` 파라미터로 동의 화면에 포함할 서비스 약관 태그 목록을 지정합니다. 요청 시 \[필수 동의\]로 설정된 서비스 약관을 하나 이상 포함해야 동의 화면을 출력하고 사용자에게 동의받을 수 있습니다.
 
-```bash
+\`\`\`bash
 https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&service_terms=${TAG1,TAG2,TAG3}
-```
+\`\`\`
   
 
 ##### OpenID Connect ID 토큰 발급
 
 [OpenID Connect](https://developers.kakao.com/docs/latest/ko/kakaologin/utilize#oidc) 사용 서비스인 경우, [OpenID Connect 사용 설정](https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite#kakao-login-oidc) 이 되어 있다면 별도 파라미터 없이도 ID 토큰을 함께 발급받을 수 있습니다. OpenID Connect 사용 시 ID 토큰 재생 공격을 방지하기 위해 `nonce` 파라미터 사용을 권장합니다. 단, [동의항목 추가 동의 요청](https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-code-additional-consent) 시에는 `scope` 파라미터에 `openid` 를 포함해야 ID 토큰 재발급이 가능합니다. (참고: [인가 코드 요청 API의 scope 파라미터](https://developers.kakao.com/docs/latest/ko/kakaologin/utilize#additional-consent-scope))
 
-```bash
+\`\`\`bash
 https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&nonce=${NONCE}
-```
+\`\`\`
   
 
 ##### 기존 로그인 여부와 상관없이 로그인
 
 기존 로그인 여부와 상관없이 로그인은 서비스의 필요에 따라 사용자 인증을 다시 수행하고자 할 때 사용하는 추가 기능입니다. 이 기능을 사용하면 사용자가 브라우저에 카카오계정으로 로그인되어 있는 상태라도 다시 카카오계정으로 로그인하는 과정을 거쳐 서비스에 카카오 로그인하도록 할 수 있습니다. 인가 코드 요청 시 `prompt` 파라미터 값을 `login` 으로 지정합니다.
 
-```bash
+\`\`\`bash
 https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&prompt=login
-```
+\`\`\`
   
 
 ##### 카카오계정 가입 후 로그인
 
 사용자에게 카카오계정 신규 가입 후 로그인하도록 하기 위해 사용하는 추가 기능입니다. 이 기능을 사용하면 [카카오계정 가입 페이지](https://accounts.kakao.com/weblogin/create_account) 로 이동 후, 카카오계정 가입 완료 후에 동의 화면을 출력합니다. `prompt` 파라미터의 값을 `create` 로 지정해 카카오 로그인을 요청합니다.
 
-```bash
+\`\`\`bash
 https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&prompt=create
-```
+\`\`\`
   
 
 ##### 로그인 힌트
 
 인가 코드 요청 시 `login_hint` 파라미터를 사용하면, 해당 파라미터 값이 ID란에 자동 입력된 카카오계정 로그인 화면을 호출합니다.
 
-```bash
+\`\`\`bash
 https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&login_hint=${HINT}
-```
+\`\`\`
   
 
 ##### 카카오톡에서 자동 로그인, 로그인 힌트 함께 사용
 
-```bash
+\`\`\`bash
 https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&prompt=none&login_hint=${HINT}
-```
+\`\`\`
   
 
 ##### 카카오계정 간편로그인
 
 [카카오계정 간편로그인](https://developers.kakao.com/docs/latest/ko/kakaologin/utilize#login-simple) 을 사용하려면 `prompt` 파라미터의 값을 `select_account` 로 지정해 카카오 로그인을 요청합니다.
 
-```
+\`\`\`
 https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&prompt=select_account
-```
+\`\`\`
 
 ## 로그아웃
 
@@ -470,31 +470,31 @@ https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_
 
 ##### 요청: 액세스 토큰 방식
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v1/user/logout" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -H "Authorization: Bearer ${ACCESS_TOKEN}"
-```
+\`\`\`
 
 ##### 요청: 서비스 앱 어드민 키 방식
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v1/user/logout" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
     -d "target_id_type=user_id" \
     -d "target_id=123456789"
-```
+\`\`\`
 
 ##### 응답
 
-```json
+\`\`\`json
 HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 {
     "id":123456789
 }
-```
+\`\`\`
 
 ## 카카오계정과 함께 로그아웃
 
@@ -542,16 +542,16 @@ Content-Type: application/json;charset=UTF-8
 
 ##### 요청
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kauth.kakao.com/oauth/logout?client_id=${YOUR_REST_API_KEY}&logout_redirect_uri=${YOUR_LOGOUT_REDIRECT_URI}"
-```
+\`\`\`
 
 ##### 응답
 
-```
+\`\`\`
 HTTP/1.1 302
 Location: ${LOGOUT_REDIRECT_URI}?state=${STATE}
-```
+\`\`\`
 
 ## 연결 해제
 
@@ -611,29 +611,29 @@ REST API 사용 시 연결 해제는 사용자의 액세스 토큰 또는 앱 �
 
 ##### 요청: 액세스 토큰 방식
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v1/user/unlink" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -H "Authorization: Bearer ${ACCESS_TOKEN}"
-```
+\`\`\`
 
 ##### 요청: 서비스 앱 어드민 키 방식
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v1/user/unlink" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
     -d "target_id_type=user_id" \
     -d "target_id=123456789"
-```
+\`\`\`
 
 ##### 응답
 
-```json
+\`\`\`json
 {
   "id": 123456789
 }
-```
+\`\`\`
 
 ## 액세스 토큰 정보 조회
 
@@ -687,21 +687,21 @@ curl -v -X POST "https://kapi.kakao.com/v1/user/unlink" \
 
 ##### 요청
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v1/user/access_token_info" \
   -H "Authorization: Bearer ${ACCESS_TOKEN}"
-```
+\`\`\`
 
 ##### 응답
 
-```json
+\`\`\`json
 HTTP/1.1 200 OK
 {
     "id":123456789,
     "expires_in": 7199,
     "app_id":1234
 }
-```
+\`\`\`
 
 ## 토큰 갱신
 
@@ -763,17 +763,17 @@ HTTP/1.1 200 OK
 
 ##### 요청
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kauth.kakao.com/oauth/token" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -d "grant_type=refresh_token" \
     -d "client_id=${REST_API_KEY}" \
     -d "refresh_token=${USER_REFRESH_TOKEN}"
-```
+\`\`\`
 
 ##### 응답
 
-```json
+\`\`\`json
 HTTP/1.1 200
 Content-Type: application/json;charset=UTF-8
 {
@@ -783,7 +783,7 @@ Content-Type: application/json;charset=UTF-8
     "refresh_token_expires_in":5184000,  //optional
     "expires_in":43199,
 }
-```
+\`\`\`
 
 ## 사용자 정보 조회
 
@@ -930,35 +930,35 @@ Content-Type: application/json;charset=UTF-8
 
 ##### 요청: 액세스 토큰 방식으로 모든 정보 조회
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v2/user/me" \
   -H "Authorization: Bearer ${ACCESS_TOKEN}"
-```
+\`\`\`
 
 ##### 요청: 액세스 토큰 방식으로 email 정보 조회
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v2/user/me" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -H "Authorization: Bearer ${ACCESS_TOKEN}" \
     --data-urlencode 'property_keys=["kakao_account.email"]'
-```
+\`\`\`
 
 ##### 요청: 서비스 앱 어드민 키 방식으로 email 정보 조회
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v2/user/me" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
     -d "target_id_type=user_id" \
     -d "target_id=123456789"  \
     --data-urlencode 'property_keys=["kakao_account.email"]'
-```
+\`\`\`
 
 ##### 응답: 성공, 모든 사용자 정보 포함
 
 - 일부 사용자 정보의 동의항목은 설정 권한 필요, [동의항목](https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite#scope) 참고
-```json
+\`\`\`json
 HTTP/1.1 200 OK
 {
     "id":123456789,
@@ -1015,11 +1015,11 @@ HTTP/1.1 200 OK
         "uuid": "${UUID}"
     }
 }
-```
+\`\`\`
 
 ##### 응답: 성공, 앱에 닉네임 동의항목만 설정하고 사용자에게 동의받은 경우
 
-```json
+\`\`\`json
 HTTP/1.1 200 OK
 {
     "id":123456789,
@@ -1035,7 +1035,7 @@ HTTP/1.1 200 OK
         ...
     }
 }
-```
+\`\`\`
 
 ## 여러 사용자 정보 조회
 
@@ -1059,29 +1059,29 @@ HTTP/1.1 200 OK
 
 `property_keys` 파라미터 값은 요청할 사용자 정보와 사전 정의된 [사용자 프로퍼티](https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite#user-properties) 키(Key)의 문자열(String) 배열로 구성하여 아래와 같이 전달합니다.
 
-```bash
+\`\`\`bash
 property_keys=["id","has_signed_up","kakao_account.email"]
-```
+\`\`\`
 
 조회할 사용자 정보에 하위 항목이 존재하는 경우, 아래와 같이 상위 항목의 키에 온점(.)을 추가해 모든 하위 항목을 요청할 수 있습니다.
 
-```bash
+\`\`\`bash
 property_keys=["kakao_account.","properties."]
-```
+\`\`\`
 
 특정 하위 항목만 요청하려면, 아래와 같이 온점(.) 뒤에 하위 항목의 키를 명시하여 전달합니다.
 
-```bash
+\`\`\`bash
 property_keys=["kakao_account.email","kakao_account.gender"]
-```
+\`\`\`
 
 세트로 구성된 응답은 관련 정보가 함께 전달됩니다. 예를 들어 `property_keys` 에 "kakao\_account.email"을 포함해 이메일 정보를 요청한 경우, 관련 정보인 `kakao_account.email_needs_agreement`, `kakao_account.is_email_valid`, `kakao_account.is_email_verified` 가 응답에 함께 포함됩니다.
 
 **사용자 정보 전체** 를 요청하려면 아래와 같이 `property_keys` 파라미터 값을 전달합니다.
 
-```json
+\`\`\`json
 property_keys=["kakao_account.","properties.","has_signed_up"]
-```
+\`\`\`
 
 별도 파라미터 지정 없이 특정 사용자 한 명의 사용자 정보 전체를 요청하려면 [사용자 정보 조회](https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info) API를 사용합니다.
 
@@ -1126,39 +1126,39 @@ property_keys=["kakao_account.","properties.","has_signed_up"]
 
 ##### 요청
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v2/app/users" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -d "target_id_type=user_id" \
     --data-urlencode "target_ids=[1399634384,1406264199]"
-```
+\`\`\`
 
 ##### 요청: property\_keys로 이메일, 프로필 지정 요청
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v2/app/users" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -d "target_id_type=user_id" \
     --data-urlencode "target_ids=[1399634384,1406264199]" \
     --data-urlencode 'property_keys=["kakao_account.email","kakao_account.profile"]'
-```
+\`\`\`
 
 ##### 요청: 조회 가능한 모든 사용자 정보 요청
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v2/app/users" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -d "target_id_type=user_id" \
     --data-urlencode "target_ids=[1285016924429472463]" \
     --data-urlencode 'property_keys=["kakao_account.","properties.","has_signed_up"]'
-```
+\`\`\`
 
 ##### 응답
 
-```json
+\`\`\`json
 [
     {
         "id":1406264199,
@@ -1174,11 +1174,11 @@ curl -v -G GET "https://kapi.kakao.com/v2/app/users" \
     }
     ...
 ]
-```
+\`\`\`
 
 ##### 응답: property\_keys로 이메일, 프로필 지정 요청
 
-```json
+\`\`\`json
 [
     {
         "id":1399634384,
@@ -1213,7 +1213,7 @@ curl -v -G GET "https://kapi.kakao.com/v2/app/users" \
     }
     ...
 ]
-```
+\`\`\`
 
 ##### 응답: 모든 사용자 정보 요청
 
@@ -1270,25 +1270,25 @@ curl -v -G GET "https://kapi.kakao.com/v2/app/users" \
 
 ##### 요청: 첫 사용자 100명 정보 조회
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v1/user/ids" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}"
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
-```
+\`\`\`
 
 ##### 요청: 회원번호 12345와 그보다 큰 회원번호를 가진 사용자 3명 정보 보기
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v1/user/ids" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -d "limit=3&order=asc" \
     -d "from_id=12345"
-```
+\`\`\`
 
 ##### 응답: 성공
 
-```json
+\`\`\`json
 HTTP/1.1 200 OK
 {
     "elements": [
@@ -1297,17 +1297,17 @@ HTTP/1.1 200 OK
     "before_url": "http://kapi.kakao.com/v1/user/ids?limit=3&order=desc&from_id=1376016924426111111&app_key=12345674ae6e12379d5921f4417b399e7",
     "after_url": "http://kapi.kakao.com/v1/user/ids?limit=3&order=asc&from_id=1376016924426333333&app_key=12345674ae6e12379d5921f4417b399e7"
 }
-```
+\`\`\`
 
 ##### 응답: 실패, 분당 쿼터를 초과한 경우
 
-```json
+\`\`\`json
 HTTP/1.1 429 Too Many Request
 {
   "msg": "API limit has been exceeded.",
   "code": -10
 }
-```
+\`\`\`
 
 ## 사용자 프로퍼티 저장
 
@@ -1356,22 +1356,22 @@ HTTP/1.1 429 Too Many Request
 
 ##### 요청
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v1/user/update_profile" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -H "Authorization: Bearer ${ACCESS_TOKEN}" \
     --data-urlencode 'properties={"${CUSTOM_PROPERTY_KEY}":"${CUSTOM_PROPERTY_VALUE}"}'
-```
+\`\`\`
 
 ##### 응답
 
-```json
+\`\`\`json
 HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 {
     "id":123456789
 }
-```
+\`\`\`
 
 ## 배송지 조회
 
@@ -1459,23 +1459,23 @@ Content-Type: application/json;charset=UTF-8
 
 ##### 요청: 액세스 토큰 방식
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v1/user/shipping_address" \
   -H "Authorization: Bearer ${ACCESS_TOKEN}"
-```
+\`\`\`
 
 ##### 요청: 서비스 앱 어드민 키 방식
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v1/user/shipping_address" \
   -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
   -d "target_id_type=user_id" \
   -d "target_id=${USER_ID}"
-```
+\`\`\`
 
 ##### 응답
 
-```json
+\`\`\`json
 {
   "user_id": 9876543211234,
   "shipping_addresses": [
@@ -1510,7 +1510,7 @@ curl -v -G GET "https://kapi.kakao.com/v1/user/shipping_address" \
   ],
   "shipping_addresses_needs_agreement": false
 }
-```
+\`\`\`
 
 ## 동의항목 동의 내역 조회
 
@@ -1587,31 +1587,31 @@ curl -v -G GET "https://kapi.kakao.com/v1/user/shipping_address" \
 
 ##### 요청: 액세스 토큰 방식
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v2/user/scopes" \
     -H "Authorization: Bearer ${ACCESS_TOKEN}"
-```
+\`\`\`
 
 ##### 요청: 액세스 토큰 방식으로 특정 동의항목만 조회
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v2/user/scopes" \
     -H "Authorization: Bearer ${ACCESS_TOKEN}" \
     --data-urlencode 'scopes=["account_email","friends"]'
-```
+\`\`\`
 
 ##### 요청: 서비스 앱 어드민 키 방식
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v2/user/scopes" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
     -d "target_id_type=user_id" \
     -d "target_id=123456789"
-```
+\`\`\`
 
 ##### 응답
 
-```json
+\`\`\`json
 {
     "id":123456789,
     "scopes":[
@@ -1641,11 +1641,11 @@ curl -v -G GET "https://kapi.kakao.com/v2/user/scopes" \
         ...
     ]
 }
-```
+\`\`\`
 
 ##### 응답: 이메일, 카카오 서비스 내 친구 목록에 대한 동의 내역
 
-```json
+\`\`\`json
 {
     "id":123456789,
     "scopes":
@@ -1667,7 +1667,7 @@ curl -v -G GET "https://kapi.kakao.com/v2/user/scopes" \
         }
     ]
 }
-```
+\`\`\`
 
 ## 동의항목 동의 철회
 
@@ -1728,27 +1728,27 @@ curl -v -G GET "https://kapi.kakao.com/v2/user/scopes" \
 
 ##### 요청: 액세스 토큰 방식
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v2/user/revoke/scopes" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -H "Authorization: Bearer ${ACCESS_TOKEN}" \
     --data-urlencode 'scopes=["account_email"]'
-```
+\`\`\`
 
 ##### 요청: 서비스 앱 어드민 키 방식
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v2/user/revoke/scopes" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
     -d "target_id_type=user_id" \
     -d "target_id=123456789" \
     --data-urlencode 'scopes=["account_email"]'
-```
+\`\`\`
 
 ##### 응답
 
-```json
+\`\`\`json
 {
     "id":123456789,
     "scopes":[
@@ -1786,27 +1786,27 @@ curl -v -X POST "https://kapi.kakao.com/v2/user/revoke/scopes" \
         ...
     ]
 }
-```
+\`\`\`
 
 ##### 응답: 실패, 필수 동의항목의 철회를 요청한 경우
 
-```json
+\`\`\`json
 HTTP/1.1 403 Forbidden
 {
     "msg":"[profile] is not revocable. check out if it's set as required on developers.kakao.com",
     "code":-3
 }
-```
+\`\`\`
 
 ##### 응답: 실패, 철회할 동의항목 ID가 잘못된 경우
 
-```json
+\`\`\`json
 HTTP/1.1 400 Bad Request
 {
   "msg":"There is no scopes to revoke. check out if given scope id([email]) is correct again.",
   "code":-2
 }
-```
+\`\`\`
 
 ## 서비스 약관
 
@@ -1899,32 +1899,32 @@ HTTP/1.1 400 Bad Request
 
 ##### 요청: 액세스 토큰 방식, 사용자가 동의한 서비스 약관 조회
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v2/user/service_terms" \
     -H "Authorization: Bearer ${ACCESS_TOKEN}"
-```
+\`\`\`
 
 ##### 요청: 액세스 토큰 방식, 앱에 사용 설정된 서비스 약관 목록 조회
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v2/user/service_terms" \
     -H 'Authorization: Bearer ${ACCESS_TOKEN}' \
     -d "result=app_service_terms"
-```
+\`\`\`
 
 ##### 요청: 서비스 앱 어드민 키 방식, 특정 태그의 서비스 약관만 조회
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v2/user/service_terms" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
     -d "target_id_type=user_id" \
     -d "target_id=${USER_ID}" \
     -d "tags=optional_no_consent,service_2020_0218"
-```
+\`\`\`
 
 ##### 응답: 사용자가 동의한 서비스 약관
 
-```json
+\`\`\`json
 {
     "id": 111111,
     "service_terms": [
@@ -1947,11 +1947,11 @@ curl -v -G GET "https://kapi.kakao.com/v2/user/service_terms" \
         ...
     ]
 }
-```
+\`\`\`
 
 ##### 응답: 앱에 사용 설정된 서비스 약관 목록
 
-```json
+\`\`\`json
 {
     "id": 111111,
     "service_terms": [
@@ -1980,11 +1980,11 @@ curl -v -G GET "https://kapi.kakao.com/v2/user/service_terms" \
         ...
     ]
 }
-```
+\`\`\`
 
 ##### 응답: 특정 태그의 서비스 약관
 
-```json
+\`\`\`json
 {
     "id": 111111,
     "service_terms": [
@@ -2004,17 +2004,17 @@ curl -v -G GET "https://kapi.kakao.com/v2/user/service_terms" \
         }
     ]
 }
-```
+\`\`\`
 
 ##### 응답: 실패, 존재하지 않는 서비스 약관 태그
 
-```json
+\`\`\`json
 HTTP/1.1 400 Bad Request
 {
     "msg": "There is no tags to get service terms. check out to configured this tags([test]) in app(docu_test).",
     "code": -2
 }
-```
+\`\`\`
 
 ### 서비스 약관 동의 철회
 
@@ -2089,25 +2089,25 @@ HTTP/1.1 400 Bad Request
 
 ##### 요청: 액세스 토큰 방식
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v2/user/revoke/service_terms" \
     -H "Authorization: Bearer ${ACCESS_TOKEN}"
     -d "tags=optional_20200616,optional_no_consent"
-```
+\`\`\`
 
 ##### 요청: 서비스 앱 어드민 키 방식
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v2/user/revoke/service_terms" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
     -d "target_id_type=user_id" \
     -d "target_id=${USER_ID}" \
     -d "tags=optional_20200616,optional_no_consent"
-```
+\`\`\`
 
 ##### 응답
 
-```json
+\`\`\`json
 {
     "id": 111111,
     "revoked_service_terms": [
@@ -2121,17 +2121,17 @@ curl -v -X POST "https://kapi.kakao.com/v2/user/revoke/service_terms" \
         }
     ]
 }
-```
+\`\`\`
 
 ##### 응답: 실패, 존재하지 않는 서비스 약관 태그
 
-```json
+\`\`\`json
 HTTP/1.1 400 Bad Request
 {
     "msg": "There is no tags to revoke. check out to configured this tags([test_tag]) in app(test_app).",
     "code": -2
 }
-```
+\`\`\`
 
 ### 고급: 서비스 약관에 동의
 
@@ -2206,25 +2206,25 @@ HTTP/1.1 400 Bad Request
 
 ##### 요청: 액세스 토큰 방식
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v2/user/upgrade/service_terms" \
     -H "Authorization: Bearer ${ACCESS_TOKEN}" \
     -d "tags=term01,term02,term03"
-```
+\`\`\`
 
 ##### 요청: 서비스 앱 어드민 키 방식
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v2/user/upgrade/service_terms" \
     -H "Authorization: KakaoAK ${SERVICE_APP_ADMIN_KEY}" \
     -d "target_id=${USER_ID}" \
     -d "target_id_type=user_id" \
     -d "tags=term01,term02,term03"
-```
+\`\`\`
 
 ##### 응답: 사용자가 동의한 서비스 약관
 
-```json
+\`\`\`json
 HTTP/1.1 200 OK
 {
     "id": 1376016924429759243,
@@ -2247,11 +2247,11 @@ HTTP/1.1 200 OK
         }
     ]
 }
-```
+\`\`\`
 
 ##### 응답: 동의 처리에 성공한 일부 서비스 약관만 포함
 
-```json
+\`\`\`json
 HTTP/1.1 200 OK
 {
     "id": 1376016924429759243,
@@ -2263,7 +2263,7 @@ HTTP/1.1 200 OK
         }
     ]
 }
-```
+\`\`\`
 
 ## OpenID Connect
 
@@ -2310,13 +2310,13 @@ HTTP/1.1 200 OK
 
 ##### 요청
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kauth.kakao.com/.well-known/openid-configuration"
-```
+\`\`\`
 
 ##### 응답
 
-```json
+\`\`\`json
 HTTP/1.1 200
 Content-Type: application/json;charset=utf-8
 {
@@ -2348,7 +2348,7 @@ Content-Type: application/json;charset=utf-8
         "email"
     ]
 }
-```
+\`\`\`
   
 
 ### OIDC: 공개키 목록 조회
@@ -2390,13 +2390,13 @@ Content-Type: application/json;charset=utf-8
 
 #### 예제: 요청
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kauth.kakao.com/.well-known/jwks.json"
-```
+\`\`\`
 
 #### 예제: 응답, 성공
 
-```json
+\`\`\`json
 HTTP/1.1 200
 {
     "keys": [
@@ -2417,7 +2417,7 @@ HTTP/1.1 200
         }
     ]
 }
-```
+\`\`\`
   
 
 ### OIDC: ID 토큰 정보 조회
@@ -2464,15 +2464,15 @@ ID 토큰 유효성 검증을 위한 참고 정보를 제공합니다. 서비스
 
 ##### 요청
 
-```bash
+\`\`\`bash
 curl -v POST "https://kauth.kakao.com/oauth/tokeninfo" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -d "id_token=${ID_TOKEN}"
-```
+\`\`\`
 
 ##### 응답: 성공
 
-```json
+\`\`\`json
 HTTP/1.1 200
 {
     "iss": "https://kauth.kakao.com",
@@ -2483,18 +2483,18 @@ HTTP/1.1 200
     "nonce": "${NONCE}",
     "auth_time": 1647183250
 }
-```
+\`\`\`
 
 ##### 응답: 실패, 유효하지 않은 ID 토큰
 
-```json
+\`\`\`json
 HTTP/1.1 400 Bad Request
 {
     "error": "invalid_token",
     "error_description": "${ERROR_DESCRIPTION}",
     "error_code": "KOE400"
 }
-```
+\`\`\`
   
 
 ### OIDC: 사용자 정보 조회
@@ -2544,14 +2544,14 @@ HTTP/1.1 400 Bad Request
 
 ##### 요청
 
-```bash
+\`\`\`bash
 curl -v -G GET "https://kapi.kakao.com/v1/oidc/userinfo" \
  -H "Authorization: Bearer ${ACCESS_TOKEN}"
-```
+\`\`\`
 
 ##### 응답: 성공
 
-```json
+\`\`\`json
 HTTP/ 1.1 200 OK
 {
     "sub": "123456789",
@@ -2565,7 +2565,7 @@ HTTP/ 1.1 200 OK
     "phone_number": "+82 00-0000-0000",
     "phone_number_verified": true
 }
-```
+\`\`\`
 
 ## 고급: 수동 연결
 
@@ -2642,57 +2642,57 @@ HTTP/ 1.1 200 OK
 
 ##### 요청: 사용자 프로퍼티 저장 없이 수동 연결만 요청
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v1/user/signup" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -H "Authorization: Bearer ${ACCESS_TOKEN}"
-```
+\`\`\`
 
 ##### 요청: 수동 연결 요청 시 사용자 프로퍼티 저장
 
-```bash
+\`\`\`bash
 curl -v -X POST "https://kapi.kakao.com/v1/user/signup" \
     -H "Content-Type: application/x-www-form-urlencoded;charset=utf-8" \
     -H "Authorization: Bearer ${ACCESS_TOKEN}" \
     --data-urlencode 'properties={"${CUSTOM_PROPERTY_KEY}":"${CUSTOM_PROPERTY_VALUE}"}'
-```
+\`\`\`
 
 ##### 응답: 성공
 
-```json
+\`\`\`json
 HTTP/1.1 200 OK
 {
     "id":1376016924429759228
 }
-```
+\`\`\`
 
 ##### 응답: 실패, 앱과 이미 연결되어 있는 사용자인 경우
 
-```json
+\`\`\`json
 HTTP/1.1 400 Bad Request
 {
     "msg":"already registered",
     "code":-102
 }
-```
+\`\`\`
 
 ##### 응답: 실패, 요청 시 사용한 액세스 토큰이 유효하지 않은 경우
 
-```json
+\`\`\`json
 HTTP/1.1 401 Unauthorized
 WWW-Authenticate: Bearer error=invalid_token
 {
     "msg":"this access token does not exist",
     "code":-401
 }
-```
+\`\`\`
 
 ##### 응답: 실패, 앱에 설정돼 있지 않은 사용자 프로퍼티 저장을 요청한 경우
 
-```json
+\`\`\`json
 HTTP/1.1 400 Bad Request
 {
     "msg":"user property not found ([gender, age] for appId=${APP_ID})",
     "code":-201
 }
-```
+\`\`\`

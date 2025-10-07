@@ -51,7 +51,7 @@ tags:
 
 API 호출 중 다음과 같은 응답을 받으면 **인증 토큰이 만료**된 상황입니다:
 
-```json
+\`\`\`json
 HTTP/1.1 401 Unauthorized
 date: Tue, 05 Nov 2023 14:35:24 GMT
 content-type: application/json
@@ -64,7 +64,7 @@ gncp-gw-trace-id: cr3-000000-aaaaaa^1730711073284^6745261
     "timestamp":"2023-11-05T23:35:24.415+09:00",
     "traceId":"cr3-000000-aaaaaa^1730711073284^6745261"
 }
-```
+\`\`\`
 
 **⚠️ 체크포인트**
 - HTTP 상태 코드: `401 Unauthorized`
@@ -74,7 +74,7 @@ gncp-gw-trace-id: cr3-000000-aaaaaa^1730711073284^6745261
 
 마치 출입카드가 만료되었을 때 새 카드를 발급받는 것처럼, 토큰 만료 시 자동으로 새 토큰을 발급받는 로직을 구현해야 합니다:
 
-```javascript
+\`\`\`javascript
 // 의사코드 (Pseudocode)
 retry {
     response = API_호출(with access_token)
@@ -83,7 +83,7 @@ retry {
 } before {
     access_token = 인증_토큰_발급_요청(client_id, client_secret_sign, timestamp, 'client_credentials', 'SELF')
 }
-```
+\`\`\`
 
 > **💡 개발 팁**  
 > 토큰 만료 전에 미리 갱신하는 것이 좋습니다. 토큰 유효기간은 3시간이므로 2시간 30분 후에 자동 갱신하도록 설정하세요.
@@ -113,10 +113,10 @@ retry {
 
 **bcrypt란?** 비밀번호를 안전하게 저장하기 위한 암호화 방식입니다. 마치 고기를 갈아서 햄버거 패티로 만들면 원래 상태로 돌아갈 수 없는 것처럼, 원본 데이터를 복원할 수 없게 변환합니다.
 
-```javascript
+\`\`\`javascript
 // bcrypt 함수 사용법
 BCrypt.hashpw(password, salt)
-```
+\`\`\`
 
 **파라미터 준비:**
 - `password`: `client_id`와 `timestamp`를 밑줄로 연결
@@ -136,7 +136,7 @@ BCrypt.hashpw(password, salt)
 
 ### ☕ Java
 
-```java
+\`\`\`java
 /**
  * 네이버 커머스API 전자서명 생성기
  * 
@@ -178,11 +178,11 @@ class NaverCommerceAuth {
         System.out.println("생성된 전자서명: " + signature);
     }
 }
-```
+\`\`\`
 
 ### 🐍 Python
 
-```python
+\`\`\`python
 #!/usr/bin/env python3
 """
 네이버 커머스API 전자서명 생성기
@@ -223,11 +223,11 @@ if __name__ == "__main__":
     
     signature = generate_signature(client_id, client_secret, timestamp)
     print(f"생성된 전자서명: {signature}")
-```
+\`\`\`
 
 ### 🟢 Node.js
 
-```javascript
+\`\`\`javascript
 /**
  * 네이버 커머스API 전자서명 생성기
  * 
@@ -264,11 +264,11 @@ try {
 } catch (error) {
     console.error("전자서명 생성 중 오류:", error.message);
 }
-```
+\`\`\`
 
 ### 🐘 PHP
 
-```php
+\`\`\`php
 <?php
 /**
  * 네이버 커머스API 전자서명 생성기
@@ -306,7 +306,7 @@ try {
     echo "전자서명 생성 중 오류: " . $e->getMessage() . "\n";
 }
 ?>
-```
+\`\`\`
 
 ---
 

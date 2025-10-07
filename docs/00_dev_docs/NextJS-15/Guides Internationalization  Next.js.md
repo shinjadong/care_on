@@ -30,7 +30,7 @@ Routing can be internationalized by either the sub-path (`/fr/products`) or doma
 
 middleware.js
 
-```
+\`\`\`
 import { NextResponse } from "next/server";
 
  
@@ -94,13 +94,13 @@ export const config = {
   ],
 
 }
-```
+\`\`\`
 
 Finally, ensure all special files inside `app/` are nested under `app/[lang]`. This enables the Next.js router to dynamically handle different locales in the route, and forward the `lang` parameter to every layout and page. For example:
 
 app/\[lang\]/page.tsx
 
-```
+\`\`\`
 // You now have access to the current locale
 
 // e.g. /en-US/products -> \`lang\` is "en-US"
@@ -120,7 +120,7 @@ export default async function Page({
   return ...
 
 }
-```
+\`\`\`
 
 The root layout can also be nested in the new folder (e.g. `app/[lang]/layout.js`).
 
@@ -132,7 +132,7 @@ Let’s assume we want to support both English and Dutch content inside our appl
 
 dictionaries/en.json
 
-```
+\`\`\`
 {
 
   "products": {
@@ -142,11 +142,11 @@ dictionaries/en.json
   }
 
 }
-```
+\`\`\`
 
 dictionaries/nl.json
 
-```
+\`\`\`
 {
 
   "products": {
@@ -156,13 +156,13 @@ dictionaries/nl.json
   }
 
 }
-```
+\`\`\`
 
 We can then create a `getDictionary` function to load the translations for the requested locale:
 
 app/\[lang\]/dictionaries.ts
 
-```
+\`\`\`
 import 'server-only'
 
  
@@ -180,13 +180,13 @@ const dictionaries = {
 export const getDictionary = async (locale: 'en' | 'nl') =>
 
   dictionaries[locale]()
-```
+\`\`\`
 
 Given the currently selected language, we can fetch the dictionary inside of a layout or page.
 
 app/\[lang\]/page.tsx
 
-```
+\`\`\`
 import { getDictionary } from './dictionaries'
 
  
@@ -208,7 +208,7 @@ export default async function Page({
   return <button>{dict.products.cart}</button> // Add to Cart
 
 }
-```
+\`\`\`
 
 Because all layouts and pages in the `app/` directory default to [Server Components](https://nextjs.org/docs/app/getting-started/server-and-client-components), we do not need to worry about the size of the translation files affecting our client-side JavaScript bundle size. This code will **only run on the server**, and only the resulting HTML will be sent to the browser.
 
@@ -218,7 +218,7 @@ To generate static routes for a given set of locales, we can use `generateStatic
 
 app/\[lang\]/layout.tsx
 
-```
+\`\`\`
 export async function generateStaticParams() {
 
   return [{ lang: 'en-US' }, { lang: 'de' }]
@@ -252,7 +252,7 @@ export default async function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 ## Resources
 

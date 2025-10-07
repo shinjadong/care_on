@@ -64,7 +64,7 @@ Continuing from the previous example:
 
 app/actions/auth.tsx
 
-```
+\`\`\`
 export async function signup(state: FormState, formData: FormData) {
 
   // 1. Validate form fields
@@ -126,7 +126,7 @@ export async function signup(state: FormState, formData: FormData) {
   // 5. Redirect user
 
 }
-```
+\`\`\`
 
 After successfully creating the user account or verifying the user credentials, you can create a session to manage the user's auth state. Depending on your session management strategy, the session can be stored in a cookie or database, or both. Continue to the [Session Management](https://nextjs.org/docs/app/guides/#session-management) section to learn more.
 
@@ -164,25 +164,25 @@ There are a few ways you can generate secret key to sign your session. For examp
 
 terminal
 
-```
+\`\`\`
 openssl rand -base64 32
-```
+\`\`\`
 
 This command generates a 32-character random string that you can use as your secret key and store in your [environment variables file](https://nextjs.org/docs/app/guides/environment-variables):
 
 .env
 
-```
+\`\`\`
 SESSION_SECRET=your_secret_key
-```
+\`\`\`
 
 You can then reference this key in your session management logic:
 
 app/lib/session.js
 
-```
+\`\`\`
 const secretKey = process.env.SESSION_SECRET
-```
+\`\`\`
 
 #### 2\. Encrypting and decrypting sessions
 
@@ -233,7 +233,7 @@ For example:
 
 app/lib/session.ts
 
-```
+\`\`\`
 import cookies from 'next/headers'
 
 import { db } from '@/app/lib/db'
@@ -297,7 +297,7 @@ export async function createSession(id: number) {
   })
 
 }
-```
+\`\`\`
 
 > **Tips**:
 > 
@@ -332,7 +332,7 @@ For example:
 
 middleware.ts
 
-```
+\`\`\`
 import { NextRequest, NextResponse } from 'next/server'
 
 import { decrypt } from '@/app/lib/session'
@@ -410,7 +410,7 @@ export const config = {
   matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
 
 }
-```
+\`\`\`
 
 While Middleware can be useful for initial checks, it should not be your only line of defense in protecting your data. The majority of security checks should be performed as close as possible to your data source, see [Data Access Layer](https://nextjs.org/docs/app/guides/#creating-a-data-access-layer-dal) for more information.
 
@@ -432,7 +432,7 @@ You can then invoke the `verifySession()` function in your data requests, Server
 
 app/lib/dal.ts
 
-```
+\`\`\`
 export const getUser = cache(async () => {
 
   const session = await verifySession()
@@ -478,7 +478,7 @@ export const getUser = cache(async () => {
   }
 
 })
-```
+\`\`\`
 
 > **Tip**:
 > 
@@ -494,7 +494,7 @@ However, if you have no control over the returned data structure, or are working
 
 app/lib/dto.ts
 
-```
+\`\`\`
 import 'server-only'
 
 import { getUser } from '@/app/lib/dal'
@@ -550,7 +550,7 @@ export async function getProfileDTO(slug: string) {
   }
 
 }
-```
+\`\`\`
 
 By centralizing your data requests and authorization logic in a DAL and using DTOs, you can ensure that all data requests are secure and consistent, making it easier to maintain, audit, and debug as your application scales.
 
@@ -577,7 +577,7 @@ This guarantees that wherever `getUser()` is called within your application, the
 
 app/layout.tsx
 
-```
+\`\`\`
 export default async function Layout({
 
   children,
@@ -599,11 +599,11 @@ export default async function Layout({
   )
 
 }
-```
+\`\`\`
 
 app/lib/dal.ts
 
-```
+\`\`\`
 export const getUser = cache(async () => {
 
   const session = await verifySession()
@@ -615,7 +615,7 @@ export const getUser = cache(async () => {
   // Get user ID from session and fetch data
 
 })
-```
+\`\`\`
 
 > **Good to know:**
 > 
@@ -629,7 +629,7 @@ In the example below, we check the user's role before allowing the action to pro
 
 app/lib/actions.ts
 
-```
+\`\`\`
 'use server'
 
 import { verifySession } from '@/app/lib/dal'
@@ -657,7 +657,7 @@ export async function serverAction(formData: FormData) {
   // Proceed with the action for authorized users
 
 }
-```
+\`\`\`
 
 ### Route Handlers
 
@@ -667,7 +667,7 @@ For example:
 
 app/api/route.ts
 
-```
+\`\`\`
 import { verifySession } from '@/app/lib/dal'
 
  
@@ -707,7 +707,7 @@ export async function GET() {
   // Continue for authorized users
 
 }
-```
+\`\`\`
 
 The example above demonstrates a Route Handler with a two-tier security check. It first checks for an active session, and then verifies if the logged-in user is an 'admin'.
 
@@ -719,7 +719,7 @@ This works, but any child Server Components will be rendered on the server first
 
 app/layout.ts
 
-```
+\`\`\`
 import { ContextProvider } from 'auth-lib'
 
  
@@ -741,9 +741,9 @@ export default function RootLayout({ children }) {
   )
 
 }
-```
+\`\`\`
 
-```
+\`\`\`
 'use client';
 
  
@@ -767,7 +767,7 @@ export default function Profile() {
   );
 
 }
-```
+\`\`\`
 
 If session data is needed in Client Components (e.g. for client-side data fetching), use React’s [`taintUniqueValue`](https://react.dev/reference/react/experimental_taintUniqueValue) API to prevent sensitive session data from being exposed to the client.
 

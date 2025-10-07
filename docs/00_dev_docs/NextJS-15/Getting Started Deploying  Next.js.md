@@ -19,7 +19,7 @@ Next.js can be deployed to any provider that supports Node.js. Ensure your `pack
 
 package.json
 
-```
+\`\`\`
 {
 
   "scripts": {
@@ -33,7 +33,7 @@ package.json
   }
 
 }
-```
+\`\`\`
 
 Then, run `npm run build` to build your application and `npm run start` to start the Node.js server. This server supports all Next.js features. If needed, you can also eject to a [custom server](https://nextjs.org/docs/app/guides/custom-server).
 

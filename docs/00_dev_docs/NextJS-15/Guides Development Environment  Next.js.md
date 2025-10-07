@@ -33,11 +33,11 @@ Make sure you're using the latest version of Next.js. Each new version often inc
 
 Turbopack is a new bundler integrated into Next.js that can improve local performance.
 
-```
+\`\`\`
 npm install next@latest
 
 npm run dev --turbopack
-```
+\`\`\`
 
 [Learn more about Turbopack](https://nextjs.org/blog/turbopack-for-development-stable). See our [upgrade guides](https://nextjs.org/docs/app/guides/upgrading) and codemods for more information.
 
@@ -49,7 +49,7 @@ The way you import code can greatly affect compilation and bundling time. Learn 
 
 Libraries like `@material-ui/icons`, `@phosphor-icons/react`, or `react-icons` can import thousands of icons, even if you only use a few. Try to import only the icons you need:
 
-```
+\`\`\`
 // Instead of this:
 
 import { TriangleIcon } from '@phosphor-icons/react'
@@ -59,7 +59,7 @@ import { TriangleIcon } from '@phosphor-icons/react'
 // Do this:
 
 import { TriangleIcon } from '@phosphor-icons/react/dist/csr/Triangle'
-```
+\`\`\`
 
 You can often find what import pattern to use in the documentation for the icon library you're using. This example follows [`@phosphor-icons/react`](https://www.npmjs.com/package/@phosphor-icons/react#import-performance-optimization) recommendation.
 
@@ -84,7 +84,7 @@ Try to import directly from specific files when possible. [Learn more about barr
 
 Next.js can automatically optimize imports for certain packages. If you are using packages that utilize barrel files, add them to your `next.config.js`:
 
-```
+\`\`\`
 module.exports = {
 
   experimental: {
@@ -94,7 +94,7 @@ module.exports = {
   },
 
 }
-```
+\`\`\`
 
 Turbopack automatically analyzes imports and optimizes them. It does not require this configuration.
 
@@ -107,7 +107,7 @@ A common mistake is configuring your `content` array in a way which includes `no
 Tailwind CSS version 3.4.8 or newer will warn you about settings that might slow down your build.
 
 1. In your `tailwind.config.js`, be specific about which files to scan:
-	```
+	\`\`\`
 	module.exports = {
 	  content: [
 	    './src/**/*.{js,ts,jsx,tsx}', // Good
@@ -116,16 +116,16 @@ Tailwind CSS version 3.4.8 or newer will warn you about settings that might slow
 	    // '../../packages/**/*.{js,ts,jsx,tsx}',
 	  ],
 	}
-	```
+	\`\`\`
 2. Avoid scanning unnecessary files:
-	```
+	\`\`\`
 	module.exports = {
 	  content: [
 	    // Better - only scans the 'src' folder
 	    '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
 	  ],
 	}
-	```
+	\`\`\`
 
 ### 5\. Check custom webpack settings
 
@@ -167,7 +167,7 @@ This performance difference is due to how Docker handles filesystem operations o
 
 Use the `logging.fetches` option in your `next.config.js` file, to see more detailed information about what's happening during development:
 
-```
+\`\`\`
 module.exports = {
 
   logging: {
@@ -181,7 +181,7 @@ module.exports = {
   },
 
 }
-```
+\`\`\`
 
 [Learn more about fetch logging](https://nextjs.org/docs/app/api-reference/config/next-config-js/logging).
 
@@ -191,20 +191,20 @@ Turbopack tracing is a tool that helps you understand the performance of your ap
 
 1. Make sure you have the latest version of Next.js installed.
 2. Generate a Turbopack trace file:
-	```
+	\`\`\`
 	NEXT_TURBOPACK_TRACING=1 npm run dev
-	```
+	\`\`\`
 3. Navigate around your application or make edits to files to reproduce the problem.
 4. Stop the Next.js development server.
 5. A file called `trace-turbopack` will be available in the `.next` folder.
 6. You can interpret the file using `npx next internal trace [path-to-file]`:
-	```
+	\`\`\`
 	npx next internal trace .next/trace-turbopack
-	```
+	\`\`\`
 	On versions where `trace` is not available, the command was named `turbo-trace-server`:
-	```
+	\`\`\`
 	npx next internal turbo-trace-server .next/trace-turbopack
-	```
+	\`\`\`
 7. Once the trace server is running you can view the trace at [https://trace.nextjs.org/](https://trace.nextjs.org/).
 8. By default the trace viewer will aggregate timings, in order to see each individual time you can switch from "Aggregated in order" to "Spans in order" at the top right of the viewer.
 

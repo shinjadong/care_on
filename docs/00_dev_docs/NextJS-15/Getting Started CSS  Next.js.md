@@ -28,15 +28,15 @@ Install Tailwind CSS:
 
 Terminal
 
-```
+\`\`\`
 pnpm add -D tailwindcss @tailwindcss/postcss
-```
+\`\`\`
 
 Add the PostCSS plugin to your `postcss.config.mjs` file:
 
 postcss.config.mjs
 
-```
+\`\`\`
 export default {
 
   plugins: {
@@ -46,21 +46,21 @@ export default {
   },
 
 }
-```
+\`\`\`
 
 Import Tailwind in your global CSS file:
 
 app/globals.css
 
-```
+\`\`\`
 @import 'tailwindcss';
-```
+\`\`\`
 
 Import the CSS file in your root layout:
 
 app/layout.tsx
 
-```
+\`\`\`
 import './globals.css'
 
  
@@ -86,13 +86,13 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 Now you can start using Tailwind's utility classes in your application:
 
 app/page.tsx
 
-```
+\`\`\`
 export default function Page() {
 
   return (
@@ -106,7 +106,7 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 > **Good to know:** If you need broader browser support for very old browsers, see the [Tailwind CSS v3 setup instructions](https://nextjs.org/docs/app/guides/tailwind-v3-css).
 
@@ -118,17 +118,17 @@ To start using CSS Modules, create a new file with the extension `.module.css` a
 
 app/blog/blog.module.css
 
-```
+\`\`\`
 .blog {
 
   padding: 24px;
 
 }
-```
+\`\`\`
 
 app/blog/page.tsx
 
-```
+\`\`\`
 import styles from './blog.module.css'
 
  
@@ -138,7 +138,7 @@ export default function Page() {
   return <main className={styles.blog}></main>
 
 }
-```
+\`\`\`
 
 ## Global CSS
 
@@ -148,7 +148,7 @@ Create a `app/global.css` file and import it in the root layout to apply the sty
 
 app/global.css
 
-```
+\`\`\`
 body {
 
   padding: 20px 20px 60px;
@@ -158,11 +158,11 @@ body {
   margin: 0 auto;
 
 }
-```
+\`\`\`
 
 app/layout.tsx
 
-```
+\`\`\`
 // These styles apply to every route in the application
 
 import './global.css'
@@ -190,7 +190,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 > **Good to know:** Global styles can be imported into any layout, page, or component inside the `app` directory. However, since Next.js uses React's built-in support for stylesheets to integrate with Suspense, this currently does not remove stylesheets as you navigate between routes which can lead to conflicts. We recommend using global styles for *truly* global CSS (like Tailwind's base styles), [Tailwind CSS](https://nextjs.org/docs/app/getting-started/#tailwind-css) for component styling, and [CSS Modules](https://nextjs.org/docs/app/getting-started/#css-modules) for custom scoped CSS when needed.
 
@@ -200,7 +200,7 @@ Stylesheets published by external packages can be imported anywhere in the `app`
 
 app/layout.tsx
 
-```
+\`\`\`
 import 'bootstrap/dist/css/bootstrap.css'
 
  
@@ -226,7 +226,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 > **Good to know:** In React 19, `<link rel="stylesheet" href="..." />` can also be used. See the [React `link` documentation](https://react.dev/reference/react-dom/components/link) for more information.
 
@@ -238,7 +238,7 @@ For example, `base-button.module.css` will be ordered before `page.module.css` s
 
 page.tsx
 
-```
+\`\`\`
 import { BaseButton } from './base-button'
 
 import styles from './page.module.css'
@@ -250,11 +250,11 @@ export default function Page() {
   return <BaseButton className={styles.primary} />
 
 }
-```
+\`\`\`
 
 base-button.tsx
 
-```
+\`\`\`
 import styles from './base-button.module.css'
 
  
@@ -264,7 +264,7 @@ export function BaseButton() {
   return <button className={styles.primary} />
 
 }
-```
+\`\`\`
 
 To keep CSS ordering predictable:
 

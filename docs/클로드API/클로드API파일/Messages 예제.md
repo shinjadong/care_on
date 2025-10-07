@@ -7,7 +7,7 @@
 ## 기본 요청 및 응답
 
 <CodeGroup>
-  ```bash Shell
+  \`\`\`bash Shell
   #!/bin/sh
   curl https://api.anthropic.com/v1/messages \
        --header "x-api-key: $ANTHROPIC_API_KEY" \
@@ -21,9 +21,9 @@
           {"role": "user", "content": "Hello, Claude"}
       ]
   }'
-  ```
+  \`\`\`
 
-```Python
+\`\`\`Python
 import anthropic
 
 message = anthropic.Anthropic().messages.create(
@@ -34,9 +34,9 @@ message = anthropic.Anthropic().messages.create(
     ]
 )
 print(message)
-```
+\`\`\`
 
-```TypeScript
+\`\`\`TypeScript
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic();
@@ -49,11 +49,11 @@ const message = await anthropic.messages.create({
   ]
 });
 console.log(message);
-```
+\`\`\`
 
 </CodeGroup>
 
-```JSON
+\`\`\`JSON
 {
   "id": "msg_01XFDUDYJgAACzvnptvVoYEL",
   "type": "message",
@@ -72,14 +72,14 @@ console.log(message);
     "output_tokens": 6
   }
 }
-```
+\`\`\`
 
 ## 여러 대화 턴
 
 Messages API는 상태가 없으므로 항상 전체 대화 기록을 API에 보냅니다. 이 패턴을 사용하여 시간이 지남에 따라 대화를 구축할 수 있습니다. 이전 대화 턴이 반드시 Claude에서 실제로 발생한 것일 필요는 없습니다. 합성 `assistant` 메시지를 사용할 수 있습니다.
 
 <CodeGroup>
-  ```bash Shell
+  \`\`\`bash Shell
   #!/bin/sh
   curl https://api.anthropic.com/v1/messages \
        --header "x-api-key: $ANTHROPIC_API_KEY" \
@@ -97,9 +97,9 @@ Messages API는 상태가 없으므로 항상 전체 대화 기록을 API에 보
   ]
 }'
 
-```
+\`\`\`
 
-```Python Python
+\`\`\`Python Python
 import anthropic
 
 message = anthropic.Anthropic().messages.create(
@@ -113,8 +113,8 @@ message = anthropic.Anthropic().messages.create(
 )
 print(message)
 
-```
-```TypeScript
+\`\`\`
+\`\`\`TypeScript
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic();
@@ -128,10 +128,10 @@ await anthropic.messages.create({
     {"role": "user", "content": "Can you describe LLMs to me?"}
   ]
 });
-```
+\`\`\`
 </CodeGroup>
 
-```JSON
+\`\`\`JSON
 {
     "id": "msg_018gCsTGsXkYJVqYPxTgDHBU",
     "type": "message",
@@ -149,13 +149,13 @@ await anthropic.messages.create({
       "output_tokens": 309
     }
 }
-```
+\`\`\`
 ## Claude의 입에 말을 넣기
 
 입력 메시지 목록의 마지막 위치에서 Claude의 응답 일부를 미리 채울 수 있습니다. 이는 Claude의 응답을 형성하는 데 사용할 수 있습니다. 아래 예제는 `"max_tokens": 1`을 사용하여 Claude로부터 단일 객관식 답변을 얻습니다.
 
 <CodeGroup>
-  ```bash Shell
+  \`\`\`bash Shell
   #!/bin/sh
   curl https://api.anthropic.com/v1/messages \
        --header "x-api-key: $ANTHROPIC_API_KEY" \
@@ -170,9 +170,9 @@ await anthropic.messages.create({
           {"role": "assistant", "content": "The answer is ("}
       ]
   }'
-  ```
+  \`\`\`
 
-```Python
+\`\`\`Python
 import anthropic
 
 message = anthropic.Anthropic().messages.create(
@@ -184,8 +184,8 @@ message = anthropic.Anthropic().messages.create(
     ]
 )
 print(message)
-```
-```TypeScript
+\`\`\`
+\`\`\`TypeScript
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic();
@@ -199,10 +199,10 @@ const message = await anthropic.messages.create({
   ]
 });
 console.log(message);
-```
+\`\`\`
 </CodeGroup>
 
-```JSON
+\`\`\`JSON
 {
   "id": "msg_01Q8Faay6S7QPTvEUUQARt7h",
   "type": "message",
@@ -221,13 +221,13 @@ console.log(message);
     "output_tokens": 1
   }
 }
-```
+\`\`\`
 ## 비전
 
 Claude는 요청에서 텍스트와 이미지를 모두 읽을 수 있습니다. 이미지에 대해 `base64` 및 `url` 소스 유형과 `image/jpeg`, `image/png`, `image/gif`, `image/webp` 미디어 유형을 지원합니다. 자세한 내용은 [비전 가이드](/ko/docs/build-with-claude/vision)를 참조하세요.
 
 <CodeGroup>
-  ```bash Shell
+  \`\`\`bash Shell
   #!/bin/sh
 
 # 옵션 1: Base64로 인코딩된 이미지
@@ -277,9 +277,9 @@ curl https://api.anthropic.com/v1/messages
 ]
 }'
 
-```
+\`\`\`
 
-```Python Python
+\`\`\`Python Python
 import anthropic
 import base64
 import httpx
@@ -338,8 +338,8 @@ message_from_url = anthropic.Anthropic().messages.create(
     ],
 )
 print(message_from_url)
-```
-```TypeScript
+\`\`\`
+\`\`\`TypeScript
 import Anthropic from '@anthropic-ai/sdk';
 
 const anthropic = new Anthropic();
@@ -399,10 +399,10 @@ const messageFromUrl = await anthropic.messages.create({
       ]
 });
 console.log(messageFromUrl);
-```
+\`\`\`
 </CodeGroup>
 
-```JSON
+\`\`\`JSON
 {
   "id": "msg_01EcyWo6m4hyW8KHs2y2pei5",
   "type": "message",
@@ -421,7 +421,7 @@ console.log(messageFromUrl);
     "output_tokens": 71
   }
 }
-```
+\`\`\`
 ## 도구 사용, JSON 모드, 컴퓨터 사용
 
 Messages API와 함께 도구를 사용하는 방법에 대한 예제는 [가이드](/ko/docs/agents-and-tools/tool-use/overview)를 참조하세요.

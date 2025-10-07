@@ -27,7 +27,7 @@ Here's a minimal example:
 
 app/blog/\[id\]/page.tsx
 
-```
+\`\`\`
 interface Post {
 
   id: string
@@ -97,7 +97,7 @@ export default async function Page({
   )
 
 }
-```
+\`\`\`
 
 Here's how this example works:
 
@@ -128,7 +128,7 @@ This fetches and displays a list of blog posts on /blog. After an hour has passe
 
 app/blog/page.tsx
 
-```
+\`\`\`
 interface Post {
 
   id: string
@@ -172,7 +172,7 @@ export default async function Page() {
   )
 
 }
-```
+\`\`\`
 
 We recommend setting a high revalidation time. For instance, 1 hour instead of 1 second. If you need more precision, consider using on-demand revalidation. If you need real-time data, consider switching to [dynamic rendering](https://nextjs.org/docs/app/getting-started/partial-prerendering#dynamic-rendering).
 
@@ -186,7 +186,7 @@ For example, this Server Action would get called after adding a new post. Regard
 
 app/actions.ts
 
-```
+\`\`\`
 'use server'
 
  
@@ -202,7 +202,7 @@ export async function createPost() {
   revalidatePath('/posts')
 
 }
-```
+\`\`\`
 
 [View a demo](https://on-demand-isr.vercel.app/) and [explore the source code](https://github.com/vercel/on-demand-isr).
 
@@ -212,7 +212,7 @@ For most use cases, prefer revalidating entire paths. If you need more granular 
 
 app/blog/page.tsx
 
-```
+\`\`\`
 export default async function Page() {
 
   const data = await fetch('https://api.vercel.app/blog', {
@@ -226,13 +226,13 @@ export default async function Page() {
   // ...
 
 }
-```
+\`\`\`
 
 If you are using an ORM or connecting to a database, you can use `unstable_cache`:
 
 app/blog/page.tsx
 
-```
+\`\`\`
 import { unstable_cache } from 'next/cache'
 
 import { db, posts } from '@/lib/db'
@@ -262,13 +262,13 @@ export default async function Page() {
   // ...
 
 }
-```
+\`\`\`
 
 You can then use `revalidateTag` in a [Server Actions](https://nextjs.org/docs/app/getting-started/updating-data) or [Route Handler](https://nextjs.org/docs/app/api-reference/file-conventions/route):
 
 app/actions.ts
 
-```
+\`\`\`
 'use server'
 
  
@@ -284,7 +284,7 @@ export async function createPost() {
   revalidateTag('posts')
 
 }
-```
+\`\`\`
 
 ### Handling uncaught exceptions
 
@@ -302,7 +302,7 @@ If you are using the `fetch` API, you can add additional logging to understand w
 
 next.config.js
 
-```
+\`\`\`
 module.exports = {
 
   logging: {
@@ -316,7 +316,7 @@ module.exports = {
   },
 
 }
-```
+\`\`\`
 
 ### Verifying correct production behavior
 
@@ -326,9 +326,9 @@ This will allow you to test ISR behavior as it would work in a production enviro
 
 .env
 
-```
+\`\`\`
 NEXT_PRIVATE_DEBUG_CACHE=1
-```
+\`\`\`
 
 This will make the Next.js server console log ISR cache hits and misses. You can inspect the output to see which pages are generated during `next build`, as well as how pages are updated as paths are accessed on-demand.
 

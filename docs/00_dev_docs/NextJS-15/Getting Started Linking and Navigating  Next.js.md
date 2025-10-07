@@ -74,7 +74,7 @@ loading.js special file
 
 app/dashboard/loading.tsx
 
-```
+\`\`\`
 export default function Loading() {
 
   // Add fallback UI that will be shown while the route is loading.
@@ -82,7 +82,7 @@ export default function Loading() {
   return <LoadingSkeleton />
 
 }
-```
+\`\`\`
 
 Behind the scenes, Next.js will automatically wrap the `page.tsx` contents in a `<Suspense>` boundary. The prefetched fallback UI will be shown while the route is loading, and swapped for the actual content once ready.
 
@@ -117,13 +117,13 @@ We recommend adding `loading.tsx` to dynamic routes to enable partial prefetchin
 
 app/blog/\[slug\]/loading.tsx
 
-```
+\`\`\`
 export default function Loading() {
 
   return <LoadingSkeleton />
 
 }
-```
+\`\`\`
 
 > **Good to know**: In development mode, you can use the Next.js Devtools to identify if the route is static or dynamic. See [`devIndicators`](https://nextjs.org/docs/app/api-reference/config/next-config-js/devIndicators) for more information.
 
@@ -135,7 +135,7 @@ Ensure the route is statically generated at build time by adding `generateStatic
 
 app/blog/\[slug\]/page.tsx
 
-```
+\`\`\`
 export async function generateStaticParams() {
 
   const posts = await fetch('https://.../posts').then((res) => res.json())
@@ -167,7 +167,7 @@ export default async function Page({
   // ...
 
 }
-```
+\`\`\`
 
 ### Slow networks
 
@@ -177,7 +177,7 @@ To improve perceived performance, you can use the [`useLinkStatus` hook](https:/
 
 app/ui/loading-indicator.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -197,11 +197,11 @@ export default function LoadingIndicator() {
   ) : null
 
 }
-```
+\`\`\`
 
 You can "debounce" the loading indicator by adding an initial animation delay (e.g. 100ms) and starting the animation as invisible (e.g. `opacity: 0`). This means the loading indicator will only be shown if the navigation takes longer than the specified delay.
 
-```
+\`\`\`
 .spinner {
 
   /* ... */
@@ -245,7 +245,7 @@ You can "debounce" the loading indicator by adding an initial animation delay (e
   }
 
 }
-```
+\`\`\`
 
 > **Good to know**: You can use other visual feedback patterns like a progress bar. View an example [here](https://github.com/vercel/react-transition-progress).
 
@@ -253,13 +253,13 @@ You can "debounce" the loading indicator by adding an initial animation delay (e
 
 You can opt out of prefetching by setting the `prefetch` prop to `false` on the `<Link>` component. This is useful to avoid unnecessary usage of resources when rendering large lists of links (e.g. an infinite scroll table).
 
-```
+\`\`\`
 <Link prefetch={false} href="/blog">
 
   Blog
 
 </Link>
-```
+\`\`\`
 
 However, disabling prefetching comes with trade-offs:
 
@@ -270,7 +270,7 @@ To reduce resource usage without fully disabling prefetch, you can prefetch only
 
 app/ui/hover-prefetch-link.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -318,7 +318,7 @@ function HoverPrefetchLink({
   )
 
 }
-```
+\`\`\`
 
 ### Hydration not completed
 

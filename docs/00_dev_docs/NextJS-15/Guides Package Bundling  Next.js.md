@@ -21,7 +21,7 @@ Bundling external packages can significantly improve the performance of your app
 
 Install the plugin by running the following command:
 
-```
+\`\`\`
 npm i @next/bundle-analyzer
 
 # or
@@ -31,13 +31,13 @@ yarn add @next/bundle-analyzer
 # or
 
 pnpm add @next/bundle-analyzer
-```
+\`\`\`
 
 Then, add the bundle analyzer's settings to your `next.config.js`.
 
 next.config.js
 
-```
+\`\`\`
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {}
@@ -53,13 +53,13 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
  
 
 module.exports = withBundleAnalyzer(nextConfig)
-```
+\`\`\`
 
 ### Generating a report
 
 Run the following command to analyze your bundles:
 
-```
+\`\`\`
 ANALYZE=true npm run build
 
 # or
@@ -69,7 +69,7 @@ ANALYZE=true yarn build
 # or
 
 ANALYZE=true pnpm build
-```
+\`\`\`
 
 The report will open three new tabs in your browser, which you can inspect. Periodically evaluating your application's bundles can help you maintain application performance over time.
 
@@ -81,7 +81,7 @@ You can optimize how these packages are imported by adding the [`optimizePackage
 
 next.config.js
 
-```
+\`\`\`
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
@@ -97,7 +97,7 @@ const nextConfig = {
  
 
 module.exports = nextConfig
-```
+\`\`\`
 
 Next.js also optimizes some libraries automatically, thus they do not need to be included in the optimizePackageImports list. See the [full list](https://nextjs.org/docs/app/api-reference/config/next-config-js/optimizePackageImports).
 
@@ -107,7 +107,7 @@ Since packages imported inside Server Components and Route Handlers are automati
 
 next.config.js
 
-```
+\`\`\`
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
@@ -119,7 +119,7 @@ const nextConfig = {
  
 
 module.exports = nextConfig
-```
+\`\`\`
 
 Next.js includes a list of popular packages that currently are working on compatibility and automatically opt-ed out. See the [full list](https://nextjs.org/docs/app/api-reference/config/next-config-js/serverExternalPackages).
 

@@ -44,7 +44,7 @@
 3. 카카오 검수 대기 (1-2일 소요)
 
 #### 템플릿 예시
-```
+\`\`\`
 [케어온] 가입 신청 완료
 
 안녕하세요, #{이름}님!
@@ -57,13 +57,13 @@
 담당자가 영업일 기준 1-2일 내에 연락드릴 예정입니다.
 
 문의: 1866-1845
-```
+\`\`\`
 
 ## 3. 환경변수 설정
 
 `.env.local` 파일에 다음 환경변수를 추가합니다:
 
-```env
+\`\`\`env
 # 뿌리오 API 설정
 PPURIO_USERNAME=your_ppurio_account_id
 PPURIO_API_KEY=your_ppurio_api_key
@@ -74,13 +74,13 @@ SENDER_PHONE=010-0000-0000
 
 # 테스트 모드 (선택사항)
 PPURIO_TEST_MODE=false  # true로 설정시 실제 발송하지 않고 로그만 출력
-```
+\`\`\`
 
 ## 4. 템플릿 코드 업데이트
 
 `/lib/ppurio/kakao-alimtalk.ts` 파일에서 승인된 템플릿 코드로 업데이트:
 
-```typescript
+\`\`\`typescript
 export const ALIMTALK_TEMPLATES = {
   ENROLLMENT_COMPLETE: {
     code: '실제_승인된_템플릿_코드', // 예: 'careon_2024010100001'
@@ -89,21 +89,21 @@ export const ALIMTALK_TEMPLATES = {
   },
   // ...
 }
-```
+\`\`\`
 
 ## 5. API 테스트
 
 ### 5.1. 토큰 발급 테스트
-```bash
+\`\`\`bash
 curl -X POST https://message.ppurio.com/v1/token \
   -H "Authorization: Basic $(echo -n 'USERNAME:API_KEY' | base64)"
-```
+\`\`\`
 
 ### 5.2. 알림톡 발송 테스트
 개발 서버 실행 후:
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 관리자 페이지 접속: http://localhost:3000/admin/alimtalk
 

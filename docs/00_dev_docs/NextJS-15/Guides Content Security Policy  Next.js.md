@@ -64,7 +64,7 @@ If you're using nonces, you may need to explicitly opt pages into dynamic render
 
 app/page.tsx
 
-```
+\`\`\`
 import { connection } from 'next/server'
 
  
@@ -78,7 +78,7 @@ export default async function Page() {
   // Your page content
 
 }
-```
+\`\`\`
 
 ### Reading the nonce
 
@@ -136,7 +136,7 @@ Add the experimental SRI configuration to your `next.config.js`:
 
 next.config.js
 
-```
+\`\`\`
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
@@ -156,7 +156,7 @@ const nextConfig = {
  
 
 module.exports = nextConfig
-```
+\`\`\`
 
 ### CSP configuration with SRI
 

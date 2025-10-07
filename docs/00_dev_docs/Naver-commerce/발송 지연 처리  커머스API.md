@@ -143,7 +143,7 @@ string 배열
 
 
 
-```nodejs
+\`\`\`nodejs
 const axios = require('axios');
 let data = JSON.stringify({
   "dispatchDueDate": "2022-06-05T12:17:35.000+09:00",
@@ -170,9 +170,9 @@ axios.request(config)
 .catch((error) => {
   console.log(error);
 });
-```
+\`\`\`
 
-```curl
+\`\`\`curl
 curl -L 'https://api.commerce.naver.com/external/v1/pay-order/seller/product-orders/:productOrderId/delay' \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
@@ -182,5 +182,4 @@ curl -L 'https://api.commerce.naver.com/external/v1/pay-order/seller/product-ord
   "delayedDispatchReason": "PRODUCT_PREPARE",
   "dispatchDelayedDetailedReason": "상품 준비중입니다."
 }'
-```
-
+\`\`\`

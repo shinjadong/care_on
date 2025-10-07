@@ -30,7 +30,7 @@ To fetch data with the `fetch` API, turn your component into an asynchronous fun
 
 app/blog/page.tsx
 
-```
+\`\`\`
 export default async function Page() {
 
   const data = await fetch('https://api.vercel.app/blog')
@@ -52,7 +52,7 @@ export default async function Page() {
   )
 
 }
-```
+\`\`\`
 
 > **Good to know:**
 > 
@@ -65,7 +65,7 @@ Since Server Components are rendered on the server, you can safely make database
 
 app/blog/page.tsx
 
-```
+\`\`\`
 import { db, posts } from '@/lib/db'
 
  
@@ -89,7 +89,7 @@ export default async function Page() {
   )
 
 }
-```
+\`\`\`
 
 ### Client Components
 
@@ -104,7 +104,7 @@ You can use React's [`use` hook](https://react.dev/reference/react/use) to [stre
 
 app/blog/page.tsx
 
-```
+\`\`\`
 import Posts from '@/app/ui/posts'
 
 import { Suspense } from 'react'
@@ -130,13 +130,13 @@ export default function Page() {
   )
 
 }
-```
+\`\`\`
 
 Then, in your Client Component, use the `use` hook to read the promise:
 
 app/ui/posts.tsx
 
-```
+\`\`\`
 'use client'
 
 import { use } from 'react'
@@ -172,7 +172,7 @@ export default function Posts({
   )
 
 }
-```
+\`\`\`
 
 In the example above, the `<Posts>` component is wrapped in a [`<Suspense>` boundary](https://react.dev/reference/react/Suspense). This means the fallback will be shown while the promise is being resolved. Learn more about [streaming](https://nextjs.org/docs/app/getting-started/#streaming).
 
@@ -182,7 +182,7 @@ You can use a community library like [SWR](https://swr.vercel.app/) or [React Qu
 
 app/blog/page.tsx
 
-```
+\`\`\`
 'use client'
 
 import useSWR from 'swr'
@@ -226,7 +226,7 @@ export default function BlogPage() {
   )
 
 }
-```
+\`\`\`
 
 ## Deduplicate requests and cache data
 
@@ -242,7 +242,7 @@ If you are *not* using `fetch`, and instead using an ORM or database directly, y
 
 app/lib/data.ts
 
-```
+\`\`\`
 import { cache } from 'react'
 
 import { db, posts, eq } from '@/lib/db'
@@ -258,7 +258,7 @@ export const getPost = cache(async (id: string) => {
   })
 
 })
-```
+\`\`\`
 
 ## Streaming
 
@@ -285,7 +285,7 @@ Blog folder structure with loading.js file
 
 app/blog/loading.tsx
 
-```
+\`\`\`
 export default function Loading() {
 
   // Define the Loading UI here
@@ -293,7 +293,7 @@ export default function Loading() {
   return <div>Loading...</div>
 
 }
-```
+\`\`\`
 
 On navigation, the user will immediately see the layout and a [loading state](https://nextjs.org/docs/app/getting-started/#creating-meaningful-loading-states) while the page is being rendered. The new content will then be automatically swapped in once rendering is complete.
 
@@ -333,7 +333,7 @@ For example, the `<Playlists>` component will only start fetching data once the 
 
 app/artist/\[username\]/page.tsx
 
-```
+\`\`\`
 export default async function Page({
 
   params,
@@ -399,7 +399,7 @@ async function Playlists({ artistID }: { artistID: string }) {
   )
 
 }
-```
+\`\`\`
 
 To improve the user experience, you should use [React `<Suspense>`](https://nextjs.org/docs/app/getting-started/linking-and-navigating#streaming) to show a `fallback` while data is being fetch. This will enable [streaming](https://nextjs.org/docs/app/getting-started/#streaming) and prevent the whole route from being blocked by the sequential data requests.
 
@@ -413,7 +413,7 @@ However, within *any* component, multiple `async` / `await` requests can still b
 
 app/artist/\[username\]/page.tsx
 
-```
+\`\`\`
 import { getArtist, getAlbums } from '@/app/lib/data'
 
  
@@ -431,13 +431,13 @@ export default async function Page({ params }) {
   return <div>{artist.name}</div>
 
 }
-```
+\`\`\`
 
 You can initiate requests in parallel by defining them outside the components that use the data, and resolving them together, for example, with [`Promise.all`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all):
 
 app/artist/\[username\]/page.tsx
 
-```
+\`\`\`
 import Albums from './albums'
 
  
@@ -499,7 +499,7 @@ export default async function Page({
   )
 
 }
-```
+\`\`\`
 
 > **Good to know:** If one request fails when using `Promise.all`, the entire operation will fail. To handle this, you can use the [`Promise.allSettled`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) method instead.
 
@@ -509,7 +509,7 @@ You can call `preload()` before `checkIsAvailable()` to eagerly initiate `<Item/
 
 app/item/\[id\]/page.tsx
 
-```
+\`\`\`
 import { getItem, checkIsAvailable } from '@/lib/data'
 
  
@@ -559,13 +559,13 @@ export async function Item({ id }: { id: string }) {
   // ...
 
 }
-```
+\`\`\`
 
 Additionally, you can use React's [`cache` function](https://react.dev/reference/react/cache) and the [`server-only` package](https://www.npmjs.com/package/server-only) to create a reusable utility function. This approach allows you to cache the data fetching function and ensure that it's only executed on the server.
 
 utils/get-item.ts
 
-```
+\`\`\`
 import { cache } from 'react'
 
 import 'server-only'
@@ -587,7 +587,7 @@ export const getItem = cache(async (id: string) => {
   // ...
 
 })
-```
+\`\`\`
 
 ## API Reference
 

@@ -25,7 +25,7 @@ For these errors, avoid using `try` / `catch` blocks and throw errors. Instead, 
 
 app/actions.ts
 
-```
+\`\`\`
 'use server'
 
  
@@ -57,13 +57,13 @@ export async function createPost(prevState: any, formData: FormData) {
   }
 
 }
-```
+\`\`\`
 
 You can pass your action to the `useActionState` hook and use the returned `state` to display an error message.
 
 app/ui/form.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -109,7 +109,7 @@ export function Form() {
   )
 
 }
-```
+\`\`\`
 
 ### Server Components
 
@@ -117,7 +117,7 @@ When fetching data inside of a Server Component, you can use the response to con
 
 app/page.tsx
 
-```
+\`\`\`
 export default async function Page() {
 
   const res = await fetch(\`https://...\`)
@@ -137,13 +137,13 @@ export default async function Page() {
   return '...'
 
 }
-```
+\`\`\`
 
 You can call the [`notFound`](https://nextjs.org/docs/app/api-reference/functions/not-found) function within a route segment and use the [`not-found.js`](https://nextjs.org/docs/app/api-reference/file-conventions/not-found) file to show a 404 UI.
 
 app/blog/\[slug\]/page.tsx
 
-```
+\`\`\`
 import { getPostBySlug } from '@/lib/posts'
 
  
@@ -167,17 +167,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
   return <div>{post.title}</div>
 
 }
-```
+\`\`\`
 
 app/blog/\[slug\]/not-found.tsx
 
-```
+\`\`\`
 export default function NotFound() {
 
   return <div>404 - Page Not Found</div>
 
 }
-```
+\`\`\`
 
 ## Handling uncaught exceptions
 
@@ -189,7 +189,7 @@ Create an error boundary by adding an [`error.js`](https://nextjs.org/docs/app/a
 
 app/dashboard/error.tsx
 
-```
+\`\`\`
 'use client' // Error boundaries must be Client Components
 
  
@@ -249,7 +249,7 @@ export default function Error({
   )
 
 }
-```
+\`\`\`
 
 Errors will bubble up to the nearest parent error boundary. This allows for granular error handling by placing `error.tsx` files at different levels in the [route hierarchy](https://nextjs.org/docs/app/getting-started/project-structure#component-hierarchy).
 
@@ -263,7 +263,7 @@ In general, errors in event handlers or async code aren’t handled by error bou
 
 To handle these cases, catch the error manually and store it using `useState` or `useReducer`, then update the UI to inform the user.
 
-```
+\`\`\`
 'use client'
 
  
@@ -315,11 +315,11 @@ export function Button() {
   )
 
 }
-```
+\`\`\`
 
 Note that unhandled errors inside `startTransition` from `useTransition`, will bubble up to the nearest error boundary.
 
-```
+\`\`\`
 'use client'
 
  
@@ -355,13 +355,13 @@ export function Button() {
   )
 
 }
-```
+\`\`\`
 
 While less common, you can handle errors in the root layout using the [`global-error.js`](https://nextjs.org/docs/app/api-reference/file-conventions/error#global-error) file, located in the root app directory, even when leveraging [internationalization](https://nextjs.org/docs/app/guides/internationalization). Global error UI must define its own `<html>` and `<body>` tags, since it is replacing the root layout or template when active.
 
 app/global-error.tsx
 
-```
+\`\`\`
 'use client' // Error boundaries must be Client Components
 
  
@@ -399,7 +399,7 @@ export default function GlobalError({
   )
 
 }
-```
+\`\`\`
 
 ## API Reference
 

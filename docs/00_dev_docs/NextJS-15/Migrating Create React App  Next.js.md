@@ -60,9 +60,9 @@ Install Next.js in your existing project:
 
 Terminal
 
-```
+\`\`\`
 npm install next@latest
-```
+\`\`\`
 
 ### Step 2: Create the Next.js Configuration File
 
@@ -70,7 +70,7 @@ Create a `next.config.ts` at the root of your project (same level as your `packa
 
 next.config.ts
 
-```
+\`\`\`
 import type { NextConfig } from 'next'
 
  
@@ -86,7 +86,7 @@ const nextConfig: NextConfig = {
  
 
 export default nextConfig
-```
+\`\`\`
 
 > **Note**: Using `output: 'export'` means you’re doing a static export. You will **not** have access to server-side features like SSR or APIs. You can remove this line to leverage Next.js server features.
 
@@ -101,7 +101,7 @@ The closest equivalent of the root layout file in a CRA application is `public/i
 
 app/layout.tsx
 
-```
+\`\`\`
 export default function RootLayout({
 
   children,
@@ -115,13 +115,13 @@ export default function RootLayout({
   return '...'
 
 }
-```
+\`\`\`
 
 Now copy the content of your old `index.html` into this `<RootLayout>` component. Replace `body div#root` (and `body noscript`) with `<div id="root">{children}</div>`.
 
 app/layout.tsx
 
-```
+\`\`\`
 export default function RootLayout({
 
   children,
@@ -161,7 +161,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 > **Good to know**: Next.js ignores CRA’s `public/manifest.json`, additional iconography, and [testing configuration](https://nextjs.org/docs/app/guides/testing) by default. If you need these, Next.js has support with its [Metadata API](https://nextjs.org/docs/app/getting-started/metadata-and-og-images) and [Testing](https://nextjs.org/docs/app/guides/testing) setup.
 
@@ -169,7 +169,7 @@ Next.js automatically includes the `<meta charset="UTF-8" />` and `<meta name="v
 
 app/layout.tsx
 
-```
+\`\`\`
 export default function RootLayout({
 
   children,
@@ -205,13 +205,13 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 Any [metadata files](https://nextjs.org/docs/app/getting-started/metadata-and-og-images#file-based-metadata) such as `favicon.ico`, `icon.png`, `robots.txt` are automatically added to the application `<head>` tag as long as you have them placed into the top level of the `app` directory. After moving [all supported files](https://nextjs.org/docs/app/getting-started/metadata-and-og-images#file-based-metadata) into the `app` directory you can safely delete their `<link>` tags:
 
 app/layout.tsx
 
-```
+\`\`\`
 export default function RootLayout({
 
   children,
@@ -245,13 +245,13 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 Finally, Next.js can manage your last `<head>` tags with the [Metadata API](https://nextjs.org/docs/app/getting-started/metadata-and-og-images). Move your final metadata info into an exported [`metadata` object](https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadata-object):
 
 app/layout.tsx
 
-```
+\`\`\`
 import type { Metadata } from 'next'
 
  
@@ -291,7 +291,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 With the above changes, you shifted from declaring everything in your `index.html` to using Next.js' convention-based approach built into the framework ([Metadata API](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)). This approach enables you to more easily improve your SEO and web shareability of your pages.
 
@@ -303,7 +303,7 @@ If you have a global CSS file, import it into your `app/layout.tsx`:
 
 app/layout.tsx
 
-```
+\`\`\`
 import '../index.css'
 
  
@@ -343,7 +343,7 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 If you're using Tailwind CSS, see our [installation docs](https://nextjs.org/docs/app/getting-started/css#tailwind-css).
 
@@ -355,7 +355,7 @@ Since we want to keep the app as an SPA for now and intercept **all** routes, we
 
 1. **Create a `[[...slug]]` directory inside `app`.**
 
-```
+\`\`\`
 app
 
  ┣ [[...slug]]
@@ -363,13 +363,13 @@ app
  ┃ ┗ page.tsx
 
  ┣ layout.tsx
-```
+\`\`\`
 
 1. **Add the following to `page.tsx`**:
 
 app/\[\[...slug\]\]/page.tsx
 
-```
+\`\`\`
 export function generateStaticParams() {
 
   return [{ slug: [''] }]
@@ -383,7 +383,7 @@ export default function Page() {
   return '...' // We'll update this
 
 }
-```
+\`\`\`
 
 This tells Next.js to generate a single route for the empty slug (`/`), effectively mapping **all** routes to the same page. This page is a [Server Component](https://nextjs.org/docs/app/getting-started/server-and-client-components), prerendered into static HTML.
 
@@ -395,7 +395,7 @@ Create a `client.tsx` (or `client.js`) in `app/[[...slug]]/`:
 
 app/\[\[...slug\]\]/client.tsx
 
-```
+\`\`\`
 'use client'
 
  
@@ -413,7 +413,7 @@ export function ClientOnly() {
   return <App />
 
 }
-```
+\`\`\`
 
 - The `'use client'` directive makes this file a **Client Component**.
 - The `dynamic` import with `ssr: false` disables server-side rendering for the `<App />` component, making it truly client-only (SPA).
@@ -422,7 +422,7 @@ Now update your `page.tsx` (or `page.js`) to use your new component:
 
 app/\[\[...slug\]\]/page.tsx
 
-```
+\`\`\`
 import { ClientOnly } from './client'
 
  
@@ -440,13 +440,13 @@ export default function Page() {
   return <ClientOnly />
 
 }
-```
+\`\`\`
 
 ### Step 8: Update Static Image Imports
 
 In CRA, importing an image file returns its public URL as a string:
 
-```
+\`\`\`
 import image from './img.png'
 
  
@@ -456,7 +456,7 @@ export default function App() {
   return <img src={image} />
 
 }
-```
+\`\`\`
 
 With Next.js, static image imports return an object. The object can then be used directly with the Next.js [`<Image>` component](https://nextjs.org/docs/app/api-reference/components/image), or you can use the object's `src` property with your existing `<img>` tag.
 
@@ -466,7 +466,7 @@ Keeping the `<img>` tag will reduce the amount of changes in your application an
 
 **Convert absolute import paths for images imported from `/public` into relative imports:**
 
-```
+\`\`\`
 // Before
 
 import logo from '/logo.png'
@@ -476,11 +476,11 @@ import logo from '/logo.png'
 // After
 
 import logo from '../public/logo.png'
-```
+\`\`\`
 
 **Pass the image `src` property instead of the whole image object to your `<img>` tag:**
 
-```
+\`\`\`
 // Before
 
 <img src={logo} />
@@ -490,7 +490,7 @@ import logo from '../public/logo.png'
 // After
 
 <img src={logo.src} />
-```
+\`\`\`
 
 Alternatively, you can reference the public URL for the image asset based on the filename. For example, `public/logo.png` will serve the image at `/logo.png` for your application, which would be the `src` value.
 
@@ -508,7 +508,7 @@ Update your `package.json` scripts to use Next.js commands. Also, add `.next` an
 
 package.json
 
-```
+\`\`\`
 {
 
   "scripts": {
@@ -522,23 +522,23 @@ package.json
   }
 
 }
-```
+\`\`\`
 
 .gitignore
 
-```
+\`\`\`
 # ...
 
 .next
 
 next-env.d.ts
-```
+\`\`\`
 
 Now you can run:
 
-```
+\`\`\`
 npm run dev
-```
+\`\`\`
 
 Open [http://localhost:3000](http://localhost:3000/). You should see your application now running on Next.js (in SPA mode).
 
@@ -560,7 +560,7 @@ If you used the `homepage` field in your CRA `package.json` to serve the app und
 
 next.config.ts
 
-```
+\`\`\`
 import { NextConfig } from 'next'
 
  
@@ -576,7 +576,7 @@ const nextConfig: NextConfig = {
  
 
 export default nextConfig
-```
+\`\`\`
 
 ### Handling a Custom Service Worker
 
@@ -588,7 +588,7 @@ If your CRA app used the `proxy` field in `package.json` to forward requests to 
 
 next.config.ts
 
-```
+\`\`\`
 import { NextConfig } from 'next'
 
  
@@ -612,7 +612,7 @@ const nextConfig: NextConfig = {
   },
 
 }
-```
+\`\`\`
 
 ### Custom Webpack / Babel Config
 
@@ -620,7 +620,7 @@ If you had a custom webpack or Babel configuration in CRA, you can extend Next.j
 
 next.config.ts
 
-```
+\`\`\`
 import { NextConfig } from 'next'
 
  
@@ -640,7 +640,7 @@ const nextConfig: NextConfig = {
  
 
 export default nextConfig
-```
+\`\`\`
 
 > **Note**: This will require disabling Turbopack by removing `--turbopack` from your `dev` script.
 
@@ -648,21 +648,21 @@ export default nextConfig
 
 Next.js automatically sets up TypeScript if you have a `tsconfig.json`. Make sure `next-env.d.ts` is listed in your `tsconfig.json` `include` array:
 
-```
+\`\`\`
 {
 
   "include": ["next-env.d.ts", "app/**/*", "src/**/*"]
 
 }
-```
+\`\`\`
 
 ## Bundler Compatibility
 
 Both Create React App and Next.js default to webpack for bundling. Next.js also offers [Turbopack](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack) for faster local development with:
 
-```
+\`\`\`
 next dev --turbopack
-```
+\`\`\`
 
 You can still provide a [custom webpack configuration](https://nextjs.org/docs/app/api-reference/config/next-config-js/webpack) if you need to migrate advanced webpack settings from CRA.
 

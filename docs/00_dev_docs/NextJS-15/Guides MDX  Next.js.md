@@ -15,15 +15,15 @@ tags:
 
 You write...
 
-```
+\`\`\`
 I **love** using [Next.js](https://nextjs.org/)
-```
+\`\`\`
 
 Output:
 
-```
+\`\`\`
 <p>I <strong>love</strong> using <a href="https://nextjs.org/">Next.js</a></p>
-```
+\`\`\`
 
 [MDX](https://mdxjs.com/) is a superset of markdown that lets you write [JSX](https://react.dev/learn/writing-markup-with-jsx) directly in your markdown files. It is a powerful way to add dynamic interactivity and embed React components within your content.
 
@@ -39,9 +39,9 @@ Install these packages to render MDX with Next.js:
 
 Terminal
 
-```
+\`\`\`
 npm install @next/mdx @mdx-js/loader @mdx-js/react @types/mdx
-```
+\`\`\`
 
 ## Configure next.config.mjs
 
@@ -49,7 +49,7 @@ Update the `next.config.mjs` file at your project's root to configure it to use 
 
 next.config.mjs
 
-```
+\`\`\`
 import createMDX from '@next/mdx'
 
  
@@ -79,7 +79,7 @@ const withMDX = createMDX({
 // Merge MDX config with Next.js config
 
 export default withMDX(nextConfig)
-```
+\`\`\`
 
 This allows `.mdx` files to act as pages, routes, or imports in your application.
 
@@ -89,13 +89,13 @@ By default, `next/mdx` only compiles files with the `.mdx` extension. To handle 
 
 next.config.mjs
 
-```
+\`\`\`
 const withMDX = createMDX({
 
   extension: /\.(md|mdx)$/,
 
 })
-```
+\`\`\`
 
 ## Add an mdx-components.tsx file
 
@@ -103,7 +103,7 @@ Create an `mdx-components.tsx` (or `.js`) file in the root of your project to de
 
 mdx-components.tsx
 
-```
+\`\`\`
 import type { MDXComponents } from 'mdx/types'
 
  
@@ -117,7 +117,7 @@ export function useMDXComponents(): MDXComponents {
   return components
 
 }
-```
+\`\`\`
 
 > **Good to know**:
 > 
@@ -137,7 +137,7 @@ In App Router apps, that includes being able to use [metadata](https://nextjs.or
 
 Create a new MDX page within the `/app` directory:
 
-```
+\`\`\`
 my-project
 
   ├── app
@@ -149,11 +149,11 @@ my-project
   |── mdx-components.(tsx/js)
 
   └── package.json
-```
+\`\`\`
 
 You can use MDX in these files, and even import React components, directly inside your MDX page:
 
-```
+\`\`\`
 import { MyComponent } from 'my-component'
 
  
@@ -183,7 +183,7 @@ Checkout my React component:
  
 
 <MyComponent />
-```
+\`\`\`
 
 Navigating to the `/mdx-page` route should display your rendered MDX page.
 
@@ -191,7 +191,7 @@ Navigating to the `/mdx-page` route should display your rendered MDX page.
 
 Create a new page within the `/app` directory and an MDX file wherever you'd like:
 
-```
+\`\`\`
 .
 
   ├── app/
@@ -207,7 +207,7 @@ Create a new page within the `/app` directory and an MDX file wherever you'd lik
   ├── mdx-components.(tsx/js)
 
   └── package.json
-```
+\`\`\`
 
 You can use MDX in these files, and even import React components, directly inside your MDX page:
 
@@ -215,7 +215,7 @@ Import the MDX file inside the page to display the content:
 
 app/mdx-page/page.tsx
 
-```
+\`\`\`
 import Welcome from '@/markdown/welcome.mdx'
 
  
@@ -225,7 +225,7 @@ export default function Page() {
   return <Welcome />
 
 }
-```
+\`\`\`
 
 Navigating to the `/mdx-page` route should display your rendered MDX page.
 
@@ -243,7 +243,7 @@ Route segments for dynamic MDX components
 
 app/blog/\[slug\]/page.tsx
 
-```
+\`\`\`
 export default async function Page({
 
   params,
@@ -275,7 +275,7 @@ export function generateStaticParams() {
  
 
 export const dynamicParams = false
-```
+\`\`\`
 
 > **Good to know**: Ensure you specify the `.mdx` file extension in your import. While it is not required to use [module path aliases](https://nextjs.org/docs/app/getting-started/installation#set-up-absolute-imports-and-module-path-aliases) (e.g., `@/content`), it does simplify your import path.
 
@@ -283,7 +283,7 @@ export const dynamicParams = false
 
 Markdown, when rendered, maps to native HTML elements. For example, writing the following markdown:
 
-```
+\`\`\`
 ## This is a heading
 
  
@@ -297,11 +297,11 @@ This is a list in markdown:
 - Two
 
 - Three
-```
+\`\`\`
 
 Generates the following HTML:
 
-```
+\`\`\`
 <h2>This is a heading</h2>
 
  
@@ -319,7 +319,7 @@ Generates the following HTML:
   <li>Three</li>
 
 </ul>
-```
+\`\`\`
 
 To style your markdown, you can provide custom components that map to the generated HTML elements. Styles and components can be implemented globally, locally, and with shared layouts.
 
@@ -329,7 +329,7 @@ Adding styles and components in `mdx-components.tsx` will affect *all* MDX files
 
 mdx-components.tsx
 
-```
+\`\`\`
 import type { MDXComponents } from 'mdx/types'
 
 import Image, { ImageProps } from 'next/image'
@@ -379,7 +379,7 @@ export function useMDXComponents(): MDXComponents {
   return components
 
 }
-```
+\`\`\`
 
 ### Local styles and components
 
@@ -387,7 +387,7 @@ You can apply local styles and components to specific pages by passing them into
 
 app/mdx-page/page.tsx
 
-```
+\`\`\`
 import Welcome from '@/markdown/welcome.mdx'
 
  
@@ -413,7 +413,7 @@ export default function Page() {
   return <Welcome components={overrideComponents} />
 
 }
-```
+\`\`\`
 
 ### Shared layouts
 
@@ -439,7 +439,7 @@ Metadata can now be referenced outside of the MDX file:
 
 app/blog/page.tsx
 
-```
+\`\`\`
 import BlogPost, { metadata } from '@/content/blog-post.mdx'
 
  
@@ -453,7 +453,7 @@ export default function Page() {
   return <BlogPost />
 
 }
-```
+\`\`\`
 
 A common use case for this is when you want to iterate over a collection of MDX and extract data. For example, creating a blog index page from all blog posts. You can use packages like [Node's `fs` module](https://nodejs.org/api/fs.html) or [globby](https://www.npmjs.com/package/globby) to read a directory of posts and extract the metadata.
 
@@ -472,7 +472,7 @@ Since the remark and rehype ecosystem is ESM only, you'll need to use `next.conf
 
 next.config.mjs
 
-```
+\`\`\`
 import remarkGfm from 'remark-gfm'
 
 import createMDX from '@next/mdx'
@@ -512,7 +512,7 @@ const withMDX = createMDX({
 // Combine MDX and Next.js config
 
 export default withMDX(nextConfig)
-```
+\`\`\`
 
 ### Using Plugins with Turbopack
 
@@ -520,7 +520,7 @@ To use plugins with [Turbopack](https://nextjs.org/docs/app/api-reference/turbop
 
 next.config.mjs
 
-```
+\`\`\`
 import createMDX from '@next/mdx'
 
  
@@ -570,7 +570,7 @@ const withMDX = createMDX({
  
 
 export default withMDX(nextConfig)
-```
+\`\`\`
 
 > **Good to know**:
 > 
@@ -586,7 +586,7 @@ The following example uses `next-mdx-remote-client`:
 
 app/mdx-page-remote/page.tsx
 
-```
+\`\`\`
 import { MDXRemote } from 'next-mdx-remote-client/rsc'
 
  
@@ -602,7 +602,7 @@ export default async function RemoteMdxPage() {
   return <MDXRemote source={markdown} />
 
 }
-```
+\`\`\`
 
 Navigating to the `/mdx-page-remote` route should display your rendered MDX.
 
@@ -612,7 +612,7 @@ React does not natively understand markdown. The markdown plaintext needs to fir
 
 `remark` is an ecosystem of tools around markdown. `rehype` is the same, but for HTML. For example, the following code snippet transforms markdown into HTML:
 
-```
+\`\`\`
 import { unified } from 'unified'
 
 import remarkParse from 'remark-parse'
@@ -648,7 +648,7 @@ async function main() {
   console.log(String(file)) // <p>Hello, Next.js!</p>
 
 }
-```
+\`\`\`
 
 The `remark` and `rehype` ecosystem contains plugins for [syntax highlighting](https://github.com/atomiks/rehype-pretty-code), [linking headings](https://github.com/rehypejs/rehype-autolink-headings), [generating a table of contents](https://github.com/remarkjs/remark-toc), and more.
 
@@ -660,7 +660,7 @@ Next.js supports a new MDX compiler written in Rust. This compiler is still expe
 
 next.config.js
 
-```
+\`\`\`
 module.exports = withMDX({
 
   experimental: {
@@ -670,13 +670,13 @@ module.exports = withMDX({
   },
 
 })
-```
+\`\`\`
 
 `mdxRs` also accepts an object to configure how to transform mdx files.
 
 next.config.js
 
-```
+\`\`\`
 module.exports = withMDX({
 
   experimental: {
@@ -694,7 +694,7 @@ module.exports = withMDX({
   },
 
 })
-```
+\`\`\`
 
 ## Helpful Links
 

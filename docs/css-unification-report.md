@@ -19,7 +19,7 @@ CareOn 프로젝트는 현대적인 스타일링 도구들을 사용하고 있�
 ## 🏗️ 현재 CSS 아키텍처 분석
 
 ### 1. CSS 파일 구조
-```
+\`\`\`
 📁 CSS Files Structure
 ├── app/globals.css (1,584 lines)
 │   ├── Tailwind directives
@@ -41,7 +41,7 @@ CareOn 프로젝트는 현대적인 스타일링 도구들을 사용하고 있�
     ├── Spacing system
     ├── Color tokens
     └── Animations
-```
+\`\`\`
 
 ### 2. 스타일링 기술 스택
 - **Primary**: Tailwind CSS v3.4.17
@@ -63,16 +63,16 @@ CareOn 프로젝트는 현대적인 스타일링 도구들을 사용하고 있�
 ### ✅ 우수 사례 (권장 패턴)
 
 #### 1. `components/what/BusinessTypeSelector.tsx`
-```tsx
+\`\`\`tsx
 // 순수 Tailwind CSS + 조건부 스타일링
 <div className={cn(
   "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6",
   "p-4 bg-white rounded-xl border border-gray-200"
 )}>
-```
+\`\`\`
 
 #### 2. `components/ui/button.tsx`
-```tsx
+\`\`\`tsx
 // class-variance-authority 활용한 variant 시스템
 const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-md text-sm font-medium",
@@ -85,24 +85,24 @@ const buttonVariants = cva(
     }
   }
 )
-```
+\`\`\`
 
 ### ⚠️ 문제 사례
 
 #### 1. `components/services/hero.tsx`
-```tsx
+\`\`\`tsx
 // 커스텀 CSS 클래스와 Tailwind 혼재 (비권장)
 <section className="section hero-sticky-container">
   <div className="hero-content-container">
     <div className="hero-content-lockup">
       <h1 className="typography-hero-headline text-4xl font-bold text-white mb-2">
-```
+\`\`\`
 
 #### 2. `components/what/story-section.tsx`
-```tsx
+\`\`\`tsx
 // 하드코딩된 크기값 (비권장)
 <div className="w-[260px] h-[530px] sm:w-[280px] sm:h-[570px]">
-```
+\`\`\`
 
 ---
 
@@ -123,7 +123,7 @@ const buttonVariants = cva(
 
 ### Phase 2: Tailwind 기반 통일화 (우선순위: 🟡 MEDIUM)
 1. **커스텀 CSS 클래스 → Tailwind 마이그레이션**
-   ```css
+   \`\`\`css
    /* 현재 */
    .hero-content-headline {
      font-size: clamp(3rem, 8vw, 6rem);
@@ -135,10 +135,10 @@ const buttonVariants = cva(
    .text-hero-gradient {
      @apply text-6xl font-bold bg-gradient-to-r from-white to-gray-100 bg-clip-text text-transparent;
    }
-   ```
+   \`\`\`
 
 2. **디자인 토큰 확장**
-   ```ts
+   \`\`\`ts
    // tailwind.config.ts 확장
    theme: {
      extend: {
@@ -153,7 +153,7 @@ const buttonVariants = cva(
        }
      }
    }
-   ```
+   \`\`\`
 
 ### Phase 3: 컴포넌트 표준화 (우선순위: 🟢 LOW)
 1. **UI 컴포넌트 라이브러리 완성**
@@ -221,7 +221,7 @@ const buttonVariants = cva(
 ## 🔧 기술적 권장사항
 
 ### 1. 개발 도구 설정
-```json
+\`\`\`json
 // .vscode/settings.json
 {
   "tailwindCSS.experimental.classRegex": [
@@ -229,10 +229,10 @@ const buttonVariants = cva(
     "cva\\(([^)]*)\\)" // cva() 함수 지원
   ]
 }
-```
+\`\`\`
 
 ### 2. ESLint 규칙 추가
-```json
+\`\`\`json
 // .eslintrc.json
 {
   "rules": {
@@ -240,7 +240,7 @@ const buttonVariants = cva(
     "tailwindcss/no-custom-classname": "warn"
   }
 }
-```
+\`\`\`
 
 ### 3. 커밋 가이드라인
 - 스타일링 변경사항은 별도 PR로 분리

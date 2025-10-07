@@ -24,9 +24,9 @@ The quickest way to create a new Next.js app is using [`create-next-app`](https:
 
 Terminal
 
-```
+\`\`\`
 npx create-next-app@latest
-```
+\`\`\`
 
 On installation, you'll see the following prompts:
 
@@ -38,9 +38,9 @@ To manually create a new Next.js app, install the required packages:
 
 Terminal
 
-```
+\`\`\`
 pnpm i next@latest react@latest react-dom@latest
-```
+\`\`\`
 
 > **Good to know**: The App Router uses [React canary releases](https://react.dev/blog/2023/05/03/react-canaries) built-in, which include all the stable React 19 changes, as well as newer features being validated in frameworks. The Pages Router uses the React version you install in `package.json`.
 
@@ -48,7 +48,7 @@ Then, add the following scripts to your `package.json` file:
 
 package.json
 
-```
+\`\`\`
 {
 
   "scripts": {
@@ -64,7 +64,7 @@ package.json
   }
 
 }
-```
+\`\`\`
 
 These scripts refer to the different stages of developing an application:
 
@@ -83,7 +83,7 @@ Create an `app` folder. Then, inside `app`, create a `layout.tsx` file. This fil
 
 app/layout.tsx
 
-```
+\`\`\`
 export default function RootLayout({
 
   children,
@@ -105,19 +105,19 @@ export default function RootLayout({
   )
 
 }
-```
+\`\`\`
 
 Create a home page `app/page.tsx` with some initial content:
 
 app/page.tsx
 
-```
+\`\`\`
 export default function Page() {
 
   return <h1>Hello, Next.js!</h1>
 
 }
-```
+\`\`\`
 
 Both `layout.tsx` and `page.tsx` will be rendered when the user visits the root of your application (`/`).
 
@@ -138,7 +138,7 @@ You can then reference these assets using the root path (`/`). For example, `pub
 
 app/page.tsx
 
-```
+\`\`\`
 import Image from 'next/image'
 
  
@@ -148,7 +148,7 @@ export default function Page() {
   return <Image src="/profile.png" alt="Profile" width={100} height={100} />
 
 }
-```
+\`\`\`
 
 ## Run the development server
 
@@ -185,7 +185,7 @@ To manually add ESLint to an existing project, add `next lint` as a script to `p
 
 package.json
 
-```
+\`\`\`
 {
 
   "scripts": {
@@ -195,15 +195,15 @@ package.json
   }
 
 }
-```
+\`\`\`
 
 Then, run `npm run lint` and you will be guided through the installation and configuration process.
 
 Terminal
 
-```
+\`\`\`
 npm run lint
-```
+\`\`\`
 
 You'll see a prompt like this:
 
@@ -231,7 +231,7 @@ Next.js has in-built support for the `"paths"` and `"baseUrl"` options of `tscon
 
 These options allow you to alias project directories to absolute paths, making it easier and cleaner to import modules. For example:
 
-```
+\`\`\`
 // Before
 
 import { Button } from '../../../components/button'
@@ -241,11 +241,11 @@ import { Button } from '../../../components/button'
 // After
 
 import { Button } from '@/components/button'
-```
+\`\`\`
 
 To configure absolute imports, add the `baseUrl` configuration option to your `tsconfig.json` or `jsconfig.json` file. For example:
 
-```
+\`\`\`
 {
 
   "compilerOptions": {
@@ -255,13 +255,13 @@ To configure absolute imports, add the `baseUrl` configuration option to your `t
   }
 
 }
-```
+\`\`\`
 
 In addition to configuring the `baseUrl` path, you can use the `"paths"` option to `"alias"` module paths.
 
 For example, the following configuration maps `@/components/*` to `components/*`:
 
-```
+\`\`\`
 {
 
   "compilerOptions": {
@@ -279,6 +279,6 @@ For example, the following configuration maps `@/components/*` to `components/*`
   }
 
 }
-```
+\`\`\`
 
 Each of the `"paths"` are relative to the `baseUrl` location.
