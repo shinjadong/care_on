@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { CareonContainer } from "@/components/ui/careon-container"
-import { CareonButton } from "@/components/ui/careon-button"
-import { CareonBottomSheet } from "@/components/ui/careon-bottom-sheet"
+import { CareonContainer } from "./ui/careon-container"
+import { CareonButton } from "./ui/careon-button"
+import { CareonBottomSheet } from "./ui/careon-bottom-sheet"
 import { BackButton } from "@/components/ui/back-button"
 import type { FormData } from "@/app/enrollment/page"
 import { ChevronRightIcon } from "lucide-react"

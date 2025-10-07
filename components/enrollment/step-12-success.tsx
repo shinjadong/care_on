@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CareonContainer } from "@/components/ui/careon-container"
-import { CareonButton } from "@/components/ui/careon-button"
+import { CareonContainer } from "./ui/careon-container"
+import { CareonButton } from "./ui/careon-button"
 import type { FormData } from "@/app/enrollment/page"
 import { CheckCircle, Calendar, Phone, Mail, FileText } from "lucide-react"
 import confetti from "canvas-confetti"

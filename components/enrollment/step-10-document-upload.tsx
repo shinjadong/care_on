@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { CareonContainer } from "@/components/ui/careon-container"
-import { CareonButton } from "@/components/ui/careon-button"
+import { CareonContainer } from "./ui/careon-container"
+import { CareonButton } from "./ui/careon-button"
 import { BackButton } from "@/components/ui/back-button"
-import { CareonBottomSheet } from "@/components/ui/careon-bottom-sheet"
+import { CareonBottomSheet } from "./ui/careon-bottom-sheet"
 import type { FormData } from "@/app/enrollment/page"
 import { Eye, X, Upload, Check } from "lucide-react"
 

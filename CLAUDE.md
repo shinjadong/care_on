@@ -548,10 +548,13 @@ npx supabase db reset              # Reset database with migrations
   - Google OAuth via Supabase Auth
 
 ### Database Architecture
-The application uses Supabase with service role keys for server-side operations. Two client creation patterns:
-- **Browser Client**: `lib/supabase/client.ts` - Uses public anon key for client-side operations
-- **Server Client**: `lib/supabase/server.ts` - Can use service role key for admin operations (server-side only)
+The application uses Supabase with two client patterns:
+- **Browser Client**: `lib/supabase/client.ts` - Uses `createBrowserClient()` with anon key for client-side operations
+- **Server Client**: `lib/supabase/server.ts` - Uses `createServerClient()` with optional service role key
+  - Call `createClient()` for anon key operations
+  - Call `createClient(true)` for admin operations requiring service role key
 - **RLS Policies**: Currently disabled for development (`20250125000001_disable_rls_temp.sql`)
+- **Recent Migrations**: SMS verification codes (`20251006000002`), OAuth token fixes (`20251006000001`), product images (`20251006000000`)
 
 ### Authentication Flow
 - Google OAuth integration with Supabase Auth
@@ -576,37 +579,67 @@ All API routes are in `app/api/` with key endpoints:
 ```
 app/
 ├── admin/          # Admin dashboard (protected routes)
-├── api/            # API endpoints
-├── enrollment/     # Merchant enrollment flow
-├── landing/        # Main landing page (default redirect from /)
-├── services/       # Service pages
-└── layout.tsx      # Root layout with Header/Footer
+├── api/            # API endpoints (all server-side)
+├── auth/           # Authentication pages (login callback, etc.)
+├── enrollment/     # Merchant enrollment flow (11+ step wizard)
+├── enroll/         # Alternative enrollment entry point
+├── faq/            # FAQ pages
+├── landing/        # Marketing landing page
+├── login/          # Login page
+├── my/             # User dashboard and profile
+├── privacy/        # Privacy policy page
+├── products/       # Product catalog (root redirect target)
+├── quote-complete/ # Quote completion flow
+├── review/         # Public review system
+├── signup/         # User registration
+├── store-setup/    # Store setup wizard
+├── terms/          # Terms of service page
+├── what/           # About/what is CareOn page
+├── layout.tsx      # Root layout with Header/Footer
+├── page.tsx        # Root page (redirects to /products)
+└── globals.css     # Global styles including glassmorphic design system
 
 components/
-├── ui/             # ShadcnUI components
-├── ui-backup/      # Backup of original UI components
-├── auth/           # Authentication components
+├── ui/             # ShadcnUI components (shadcn/ui CLI managed)
+├── ui-backup/      # Previous glassmorphic UI components
+├── auth/           # Authentication components (ProtectedRoute, etc.)
 ├── enrollment/     # Multi-step enrollment form components
 ├── page-builder/   # Puck page builder integration
 └── [feature]/      # Feature-specific components
 
 lib/
-├── supabase/       # Supabase clients
-├── ppurio/         # SMS service
-├── database.types.ts # Supabase database TypeScript types
-└── utils/          # Utility functions
+├── api/            # API utilities and helpers
+├── auth/           # Authentication utilities
+├── enrollment/     # Enrollment flow utilities
+├── hooks/          # Custom React hooks
+├── naver-commerce/ # Naver commerce integration
+├── ppurio/         # SMS service (Ppurio API)
+├── store/          # State management (Zustand stores)
+├── supabase/       # Supabase client creators
+│   ├── client.ts   # Browser client (anon key)
+│   └── server.ts   # Server client (anon or service role)
+├── utils/          # Utility functions
+├── database.types.ts # Auto-generated Supabase TypeScript types
+└── types.ts        # Custom TypeScript type definitions
 
 content/
-├── [카드사명]-동의서.md # Card company agreement documents
+├── [카드사명]-동의서.md # Card company agreement documents (Korean)
 
 docs/
 ├── 00_dev_docs/    # Development documentation
 ├── images/         # Documentation images
 └── 고객 가입 시스템(리뉴얼)/ # Enrollment system docs
 
+supabase/
+├── migrations/     # Database migrations (chronological)
+└── functions/      # Supabase Edge Functions
+
 scripts/
-├── apply-migration.js # Database migration script
-└── check-enrollment-data.js # Enrollment data validation
+├── apply-migration.js        # Database migration helper
+└── check-enrollment-data.js  # Enrollment data validation
+
+types/
+└── [custom type definitions] # Shared TypeScript types
 ```
 
 ## Environment Variables
@@ -653,6 +686,12 @@ CareOn UI components follow a consistent naming pattern (`careon-*`):
 - `careon-container` - Responsive container wrapper
 - `careon-bottom-sheet` - Mobile-friendly bottom sheet
 - `careon-carrier-select` - Korean carrier selection dropdown
+
+**Component Organization:**
+- `components/ui/` - ShadcnUI base components (shadcn/ui CLI managed)
+- `components/ui-backup/` - Previous glassmorphic UI components (kept for reference)
+- `components/[feature]/` - Feature-specific components (enrollment, auth, page-builder, etc.)
+- Admin pages use standard ShadcnUI, not glassmorphic design
 
 ## Key Features & Workflows
 
@@ -701,8 +740,8 @@ Contract system for service agreements:
 - **Image domains**: Vercel Blob Storage, Supabase Storage, YouTube thumbnails
 
 ### Routing Patterns
-- Root `/` redirects to `/landing` (302 temporary redirect)
-- Admin routes (`/admin/*`) require authentication
+- Root `/` redirects to `/products` (302 temporary redirect, not `/landing`)
+- Admin routes (`/admin/*`) - auth enforced client-side via `ProtectedRoute`, not middleware
 - API routes follow RESTful conventions with `route.ts` files
 - Dynamic routes use `[param]` folder naming
 
@@ -740,6 +779,28 @@ Contract system for service agreements:
 - Card company agreement documents
 - Enrollment system technical documentation
 
+## Important Architecture Details
+
+### Server vs Client Components
+- All components in `app/` directory are **Server Components by default** in Next.js 15
+- Use `'use client'` directive only when needed for:
+  - React hooks (useState, useEffect, etc.)
+  - Browser APIs (window, localStorage, etc.)
+  - Event handlers (onClick, onChange, etc.)
+  - Context providers and consumers
+- API routes in `app/api/` are always server-side regardless of directive
+
+### Path Aliases
+- Use `@/` prefix for all imports: `import { Button } from "@/components/ui/button"`
+- Configured in `tsconfig.json` paths: `"@/*": ["./*"]`
+- Works for all directories: components, lib, app, types, etc.
+
+### TypeScript Configuration
+- Strict mode enabled but build errors ignored (`ignoreBuildErrors: true`)
+- This allows deployment even with type errors - fix them when possible but don't block on them
+- ES6 target with bundler module resolution
+- Always prefer explicit typing over `any`
+
 ## Common Development Tasks
 
 ### Working with Enrollment System
@@ -774,6 +835,41 @@ Follow the existing patterns:
 1. **Address Search**: Use `react-daum-postcode` component
 2. **SMS**: Send via `/api/sms/send` using Ppurio service
 3. **Business Categories**: See `components/enrollment/steps/BusinessInfo.tsx` for category list
+
+### Working with Database
+
+**Creating Migrations:**
+```bash
+npx supabase migration new descriptive_migration_name
+# Edit the generated SQL file in supabase/migrations/
+npx supabase db reset  # Apply all migrations from scratch
+```
+
+**Migration Naming Convention:**
+- Format: `YYYYMMDD[HHMMSS]_description.sql`
+- Example: `20251006000002_create_verification_codes.sql`
+- Migrations run in chronological order
+
+**Using Supabase Clients:**
+```typescript
+// Client-side (browser)
+import { createClient } from '@/lib/supabase/client'
+const supabase = createClient()
+
+// Server-side (API routes, Server Components)
+import { createClient } from '@/lib/supabase/server'
+const supabase = await createClient()  // anon key
+const adminSupabase = await createClient(true)  // service role key
+
+// Database types
+import type { Database } from '@/lib/database.types'
+```
+
+**Regenerating Types:**
+```bash
+# After schema changes, regenerate TypeScript types
+npx supabase gen types typescript --project-id YOUR_PROJECT_ID > lib/database.types.ts
+```
 
 ### Admin Dashboard Improvements (2025-09-26)
 
@@ -810,9 +906,9 @@ Follow the existing patterns:
 ### Manual Testing Flow
 
 1. Start development server: `npm run dev`
-2. Access main landing: `http://localhost:3000/landing`
+2. Access main products page: `http://localhost:3000/products` (root redirects here)
 3. Test enrollment flow: `http://localhost:3000/enrollment`
-4. Admin dashboard: `http://localhost:3000/admin` (requires auth)
+4. Admin dashboard: `http://localhost:3000/admin` (requires client-side auth check)
 5. Check API responses in browser DevTools Network tab
 
 ### Common Issues & Solutions

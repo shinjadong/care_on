@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   Sheet,
   SheetContent,
@@ -9,17 +9,12 @@ import {
   SheetTitle,
   SheetTrigger,
   SheetFooter,
-} from '@/components/ui/sheet'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { ShoppingCart, Minus, Plus, Trash2, Store, FileText } from 'lucide-react'
+} from './ui/sheet'
+import { DraggableModal } from './ui/draggable-modal'
+import { PhoneLoginForm } from './PhoneLoginForm'
+import { Button } from './ui/button'
+import { Badge } from './ui/badge'
+import { ShoppingCart, Minus, Plus, Trash2, Store, FileText, CheckCircle } from 'lucide-react'
 import { useCartStore } from '@/lib/store/cart-store'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -29,7 +24,9 @@ export default function ShoppingCartComponent() {
   const { items, updateQuantity, removeItem, getTotalPrice, getTotalItems, clearCart } = useCartStore()
   const [isOpen, setIsOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const checkoutButtonRef = useRef<HTMLButtonElement>(null)
 
   // Hydration 문제 해결: 클라이언트에서만 렌더링
   useEffect(() => {
@@ -37,29 +34,21 @@ export default function ShoppingCartComponent() {
   }, [])
 
   const handleCheckout = () => {
-    // 확인 다이얼로그 표시
-    setShowConfirmDialog(true)
+    // 견적서 확인 모달 표시
+    setShowConfirmModal(true)
   }
 
-  const handleConfirmQuote = async () => {
-    // "좋아요" 버튼 클릭 시 인증 확인 후 이동
-    setShowConfirmDialog(false)
-    setIsOpen(false)
+  const handleConfirmQuote = () => {
+    // "좋아요" 버튼 클릭 시 로그인 모달로 전환
+    setShowConfirmModal(false)
+    setShowLoginModal(true)
+  }
 
-    try {
-      // 인증 상태 확인
-      const response = await fetch('/api/auth/check')
-      if (response.ok) {
-        // 이미 로그인되어 있으면 바로 완료 페이지로
-        router.push('/quote-complete')
-      } else {
-        // 로그인 필요
-        router.push('/auth/login?redirect=/quote-complete')
-      }
-    } catch (error) {
-      // 에러 발생 시 로그인 페이지로
-      router.push('/auth/login?redirect=/quote-complete')
-    }
+  const handleLoginSuccess = () => {
+    // 로그인 성공 시
+    setShowLoginModal(false)
+    setIsOpen(false)
+    router.push('/quote-complete')
   }
 
   const categoryColors: Record<string, string> = {
@@ -91,10 +80,12 @@ export default function ShoppingCartComponent() {
             </div>
           </Button>
         </SheetTrigger>
-        <SheetContent className="w-full sm:max-w-md flex flex-col h-full">
-          <SheetHeader>
-            <SheetTitle className="flex items-center gap-2">
-              <ShoppingCart size={20} />
+        <SheetContent className="w-[280px] sm:w-[320px] flex flex-col h-full p-0">
+          <SheetHeader className="px-4 pt-6 pb-4 border-b">
+            <SheetTitle className="flex items-center gap-2 text-lg">
+              <div className="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center">
+                <ShoppingCart size={18} className="text-[#009da2]" />
+              </div>
               장바구니
             </SheetTitle>
           </SheetHeader>
@@ -123,83 +114,89 @@ export default function ShoppingCartComponent() {
         </Button>
       </SheetTrigger>
 
-      <SheetContent className="w-full sm:max-w-md flex flex-col h-full">
-        <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
-            <ShoppingCart size={20} />
+      <SheetContent className="w-[280px] sm:w-[320px] flex flex-col h-full p-0">
+        <SheetHeader className="px-4 pt-6 pb-4 border-b">
+          <SheetTitle className="flex items-center gap-2 text-lg">
+            <div className="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center">
+              <ShoppingCart size={18} className="text-[#009da2]" />
+            </div>
             장바구니
           </SheetTitle>
-          <SheetDescription>
-            선택한 상품들로 매장을 세팅할 수 있습니다.
+          <SheetDescription className="text-xs">
+            선택한 상품으로 매장 세팅
           </SheetDescription>
         </SheetHeader>
 
-        <div className="flex-1 overflow-y-auto py-4">
+        <div className="flex-1 overflow-y-auto px-4">
           {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-gray-500">
-              <ShoppingCart size={64} className="mb-4 text-gray-300" />
-              <p className="text-lg font-medium">장바구니가 비어있습니다</p>
-              <p className="text-sm mt-2">상품을 추가해주세요</p>
+            <div className="flex flex-col items-center justify-center h-full text-gray-500 px-4">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+                <ShoppingCart size={32} className="text-gray-300" />
+              </div>
+              <p className="text-sm font-medium text-gray-700">장바구니가 비어있습니다</p>
+              <p className="text-xs text-gray-500 mt-1">상품을 추가해주세요</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 py-2">
               {items.map((item) => (
                 <div
                   key={item.product_id}
-                  className="border rounded-lg p-4 space-y-3"
+                  className="group hover:bg-gray-50 rounded-xl p-3 transition-colors border border-gray-100"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h4 className="font-medium text-sm">{item.name}</h4>
+                  <div className="flex items-start gap-2 mb-2">
+                    {item.image_url && (
+                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        <img src={item.image_url} alt={item.name} className="w-full h-full object-contain p-1" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-xs leading-tight line-clamp-2 mb-1">{item.name}</h4>
                       <Badge
                         className={cn(
-                          "mt-1 text-xs",
+                          "text-[10px] px-1.5 py-0 h-4",
                           categoryColors[item.category] || categoryColors['기타']
                         )}
                       >
                         {item.category}
                       </Badge>
-                      {item.provider && (
-                        <p className="text-xs text-gray-600 mt-1">{item.provider}</p>
-                      )}
                     </div>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8"
+                      className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                       onClick={() => removeItem(item.product_id)}
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={12} />
                     </Button>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
+                    <div className="flex items-center gap-1">
                       <Button
                         variant="outline"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-6 w-6 rounded-md"
                         onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
                       >
-                        <Minus size={14} />
+                        <Minus size={10} />
                       </Button>
-                      <span className="w-12 text-center font-medium">
+                      <span className="w-8 text-center text-xs font-medium">
                         {item.quantity}
                       </span>
                       <Button
                         variant="outline"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-6 w-6 rounded-md"
                         onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
                       >
-                        <Plus size={14} />
+                        <Plus size={10} />
                       </Button>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium">
+                      <p className="text-xs font-bold text-[#009da2]">
                         {(item.monthly_fee * item.quantity).toLocaleString()}원
+                        <span className="text-[10px] font-normal text-gray-500">/월</span>
                       </p>
-                      <p className="text-xs text-gray-600">/월</p>
                     </div>
                   </div>
                 </div>
@@ -209,125 +206,133 @@ export default function ShoppingCartComponent() {
         </div>
 
         {items.length > 0 && (
-          <SheetFooter className="flex-col gap-4 border-t pt-4">
-            {/* 장바구니 비우기 - 작게 구석에 배치 */}
-            <div className="w-full flex justify-end">
+          <SheetFooter className="flex-col gap-3 border-t p-4">
+            {/* 요약 정보 */}
+            <div className="w-full bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl p-3 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-600 flex-shrink-0">총 상품</span>
+                <span className="text-sm font-semibold text-gray-800">{totalItems}개</span>
+              </div>
+              <div className="flex justify-between items-center gap-2 pt-1 border-t border-teal-100">
+                <span className="text-xs font-medium text-gray-700 flex-shrink-0">월 총액</span>
+                <span className="text-base font-bold text-[#009da2] truncate">
+                  {getTotalPrice().toLocaleString()}원
+                </span>
+              </div>
+            </div>
+
+            {/* 매장 세팅 버튼 */}
+            <div className="w-full">
+              <Button
+                ref={checkoutButtonRef}
+                className="w-full h-12 text-sm font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 bg-gradient-to-r from-[#009da2] to-[#00c9cf] hover:from-[#008a8f] hover:to-[#00b8be]"
+                onClick={handleCheckout}
+              >
+                <Store className="mr-1.5" size={18} />
+                매장 세팅하기
+              </Button>
+              <p className="text-[10px] text-center text-gray-500 mt-1.5">
+                전문가가 직접 설치해드립니다
+              </p>
+            </div>
+
+            {/* 장바구니 비우기 */}
+            <div className="w-full flex justify-center">
               <button
                 onClick={() => {
                   if (confirm('장바구니를 비우시겠습니까?')) {
                     clearCart()
                   }
                 }}
-                className="text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1"
+                className="text-[10px] text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1"
               >
-                <Trash2 size={12} />
-                비우기
+                <Trash2 size={10} />
+                전체 삭제
               </button>
-            </div>
-
-            <div className="w-full space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">총 상품 수</span>
-                <span className="font-medium">{totalItems}개</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="font-medium">월 총액</span>
-                <span className="text-xl font-bold text-primary">
-                  {getTotalPrice().toLocaleString()}원
-                </span>
-              </div>
-            </div>
-
-            {/* 매장 세팅하기 - 매우 메인으로 강조 */}
-            <div className="w-full">
-              <Button
-                className="w-full h-14 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-200 bg-gradient-to-r from-[#009da2] to-[#00c9cf] hover:from-[#008a8f] hover:to-[#00b8be]"
-                size="lg"
-                onClick={handleCheckout}
-              >
-                <Store className="mr-2" size={22} />
-                이 구성으로 매장 세팅하기
-              </Button>
-              <p className="text-xs text-center text-gray-500 mt-2">
-                전문가가 직접 설치해드립니다
-              </p>
             </div>
           </SheetFooter>
         )}
       </SheetContent>
 
-      {/* 견적서 확인 다이얼로그 - Enrollment 스타일 */}
-      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent className="sm:max-w-md bg-[#fbfbfb] border-none p-0">
-          <div className="p-6 pb-3">
-            <div className="w-16 h-16 mx-auto mb-4 bg-teal-100 rounded-full flex items-center justify-center animate-in zoom-in duration-300">
+      {/* 견적서 확인 모달 (드래그 가능) */}
+      <DraggableModal
+        isOpen={showConfirmModal}
+        onOpenChange={setShowConfirmModal}
+        title="견적서 확인"
+        triggerElement={checkoutButtonRef.current}
+      >
+        <div className="space-y-6">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-teal-100 rounded-full flex items-center justify-center">
               <FileText className="h-8 w-8 text-[#009da2]" />
             </div>
-            <DialogHeader>
-              <DialogTitle className="text-center text-2xl font-semibold text-black leading-relaxed">
-                선택한 상품들 구성으로<br />
-                견적서 받아보시겠어요?
-              </DialogTitle>
-            </DialogHeader>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              선택한 상품들 구성으로
+            </h3>
+            <p className="text-base text-gray-700">
+              견적서 받아보시겠어요?
+            </p>
           </div>
-          
-          <div className="px-6 space-y-6">
 
-            {/* 선택된 상품 요약 */}
-            <div className="bg-white rounded-xl border-2 border-gray-100 p-5 space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-              <h4 className="font-semibold text-gray-800 text-base">선택하신 상품</h4>
-              <div className="space-y-3">
-                {items.slice(0, 3).map((item, index) => (
-                  <div 
-                    key={item.product_id} 
-                    className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
-                        <span className="text-[#009da2] font-bold text-sm">✓</span>
-                      </div>
-                      <span className="text-gray-700 font-medium">{item.name}</span>
-                    </div>
-                    <span className="text-gray-600 font-medium">{item.quantity}개</span>
+          {/* 선택된 상품 요약 */}
+          <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+            <h4 className="font-semibold text-gray-800 text-sm">선택하신 상품</h4>
+            <div className="space-y-2">
+              {items.slice(0, 3).map((item) => (
+                <div key={item.product_id} className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={16} className="text-[#009da2]" />
+                    <span className="text-sm text-gray-700">{item.name}</span>
                   </div>
-                ))}
-                {items.length > 3 && (
-                  <div className="text-sm text-gray-500 text-center pt-2">
-                    외 {items.length - 3}개 상품
-                  </div>
-                )}
-              </div>
-              <div className="bg-teal-50 rounded-lg p-4 mt-4">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-gray-800">월 총액</span>
-                  <span className="text-2xl font-bold text-[#009da2]">
-                    {getTotalPrice().toLocaleString()}원
-                  </span>
+                  <span className="text-sm text-gray-600">{item.quantity}개</span>
                 </div>
+              ))}
+              {items.length > 3 && (
+                <div className="text-xs text-gray-500 text-center pt-1">
+                  외 {items.length - 3}개 상품
+                </div>
+              )}
+            </div>
+            <div className="bg-teal-50 rounded-lg p-3 mt-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-semibold text-gray-800">월 총액</span>
+                <span className="text-xl font-bold text-[#009da2]">
+                  {getTotalPrice().toLocaleString()}원
+                </span>
               </div>
             </div>
           </div>
 
           {/* 버튼 영역 */}
-          <div className="p-6 pt-0 space-y-3">
-            <button
-              type="button"
-              onClick={handleConfirmQuote}
-              className="w-full py-4 px-6 rounded-xl font-semibold text-base text-white bg-[#009da2] hover:bg-[#008a8f] transition-all duration-200 active:scale-[0.98]"
-            >
-              좋아요
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowConfirmDialog(false)}
-              className="w-full py-4 px-6 rounded-xl font-medium text-base text-gray-600 bg-white hover:bg-gray-50 border-2 border-gray-200 transition-all duration-200 active:scale-[0.98]"
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setShowConfirmModal(false)}
+              className="flex-1 h-12"
             >
               취소
-            </button>
+            </Button>
+            <Button
+              onClick={handleConfirmQuote}
+              className="flex-1 h-12 bg-gradient-to-r from-[#009da2] to-[#00c9cf] hover:from-[#008a8f] hover:to-[#00b8be]"
+            >
+              좋아요
+            </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </DraggableModal>
+
+      {/* 휴대폰 로그인 모달 (드래그 가능) */}
+      <DraggableModal
+        isOpen={showLoginModal}
+        onOpenChange={setShowLoginModal}
+        title="로그인"
+      >
+        <PhoneLoginForm
+          onSuccess={handleLoginSuccess}
+          onCancel={() => setShowLoginModal(false)}
+        />
+      </DraggableModal>
     </Sheet>
   )
 }

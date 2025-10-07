@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Card } from './ui/card'
+import { Button } from './ui/button'
+import { Badge } from './ui/badge'
 import { ShoppingCart, Plus, Info, Check } from 'lucide-react'
 import { useCartStore } from '@/lib/store/cart-store'
 import { cn } from '@/lib/utils'
@@ -155,7 +155,7 @@ export default function FlipProductCard({ product }: FlipProductCardProps) {
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     const button = e.currentTarget
-    
+
     // 장바구니에 추가
     addItem({
       product_id: product.product_id,
@@ -171,6 +171,9 @@ export default function FlipProductCard({ product }: FlipProductCardProps) {
 
     setIsAdded(true)
     setTimeout(() => setIsAdded(false), 2000)
+
+    // 애니메이션 완료 후 카드를 초기 상태로 되돌림
+    setTimeout(() => setIsFlipped(false), 1000)
   }
 
   const categoryColors: Record<string, string> = {
@@ -185,7 +188,7 @@ export default function FlipProductCard({ product }: FlipProductCardProps) {
   }
 
   return (
-    <div className="flip-card h-[400px] w-full">
+    <div className="flip-card h-[500px] w-full">
       <div
         className={cn(
           "flip-card-inner",
@@ -194,11 +197,11 @@ export default function FlipProductCard({ product }: FlipProductCardProps) {
       >
         {/* Front Side */}
         <Card
-          className="flip-card-front overflow-hidden cursor-pointer hover:shadow-lg transition-shadow bg-white border-2"
-          onClick={() => setIsFlipped(true)}
+          className="flip-card-front overflow-hidden cursor-pointer hover:shadow-lg transition-shadow bg-white border-2 border-teal-200 hover:border-teal-300"
+          onClick={() => setIsFlipped(!isFlipped)}
           style={{ pointerEvents: isFlipped ? 'none' : 'auto' }}
         >
-          <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+          <div className="relative h-96 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
             {/* 항상 아이콘을 렌더링 (배경) */}
             <div className="absolute inset-0 flex items-center justify-center text-gray-400">
               <ShoppingCart size={64} />
@@ -231,40 +234,39 @@ export default function FlipProductCard({ product }: FlipProductCardProps) {
             )}
           </div>
 
-          <div className="p-4 flex flex-col gap-3">
-            <div>
-              <h3 className="font-bold text-lg line-clamp-2">{product.name}</h3>
+          <div className="p-5 flex flex-col justify-between h-[calc(500px-384px)]">
+            <div className="space-y-1">
+              <h3 className="font-bold text-base line-clamp-1">{product.name}</h3>
               {product.provider && (
-                <p className="text-sm text-gray-600">{product.provider}</p>
+                <p className="text-xs text-gray-500">{product.provider}</p>
               )}
             </div>
 
-            <div className="flex items-center justify-between mt-auto">
-              <div>
-                <p className="text-2xl font-bold text-[#009da2]">
+            <div className="flex items-end justify-between gap-3">
+              <div className="flex-shrink-0">
+                <p className="text-xl font-bold text-[#009da2] leading-tight">
                   {product.monthly_fee.toLocaleString()}원
-                  <span className="text-sm font-normal text-gray-600">/월</span>
+                  <span className="text-xs font-normal text-gray-600 ml-0.5">/월</span>
                 </p>
+                {product.closure_refund_rate > 0 && (
+                  <p className="text-[10px] text-gray-500 mt-0.5">
+                    폐업 환급률 {product.closure_refund_rate}%
+                  </p>
+                )}
               </div>
               <Button
                 size="sm"
                 variant="outline"
-                className="gap-1 border-2 border-[#009da2] text-[#009da2] hover:bg-teal-50"
+                className="gap-1 border-2 border-[#009da2] text-[#009da2] hover:bg-teal-50 flex-shrink-0 h-8 text-xs px-3"
                 onClick={(e) => {
                   e.stopPropagation()
                   setIsFlipped(true)
                 }}
               >
-                <Info size={16} />
+                <Info size={14} />
                 상세보기
               </Button>
             </div>
-
-            {product.closure_refund_rate > 0 && (
-              <p className="text-xs text-gray-500">
-                폐업 환급률: {product.closure_refund_rate}%
-              </p>
-            )}
           </div>
         </Card>
 

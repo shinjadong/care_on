@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { CareonContainer } from "@/components/ui/careon-container"
-import { CareonButton } from "@/components/ui/careon-button"
+import { CareonContainer } from "./ui/careon-container"
+import { CareonButton } from "./ui/careon-button"
 import { BackButton } from "@/components/ui/back-button"
 import type { FormData } from "@/app/enrollment/page"
 import { ChevronRightIcon } from "lucide-react"
