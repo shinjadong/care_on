@@ -1,0 +1,549 @@
+<span id="markdown-mermaid" aria-hidden="true"
+                    data-dark-mode-theme="dark"
+                    data-light-mode-theme="default"
+                    data-max-text-size="50000"></span>
+                <h1 id="images-and-vision">Images and vision</h1>
+<p>Learn how to understand or generate images.</p>
+<h2 id="overview">Overview</h2>
+<p>[</p>
+<p><img src="https://cdn.openai.com/API/docs/images/images.png" alt="Create images"></p>
+<p>Create images</p>
+<p>Use GPT Image or DALL·E to generate or edit images.</p>
+<p>](/docs/guides/image-generation)[</p>
+<p><img src="https://cdn.openai.com/API/docs/images/vision.png" alt="Process image inputs"></p>
+<p>Process image inputs</p>
+<p>Use our models' vision capabilities to analyze images.</p>
+<p>](#analyze-images)</p>
+<p>In this guide, you will learn about building applications involving images with the OpenAI API. If you know what you want to build, find your use case below to get started. If you're not sure where to start, continue reading to get an overview.</p>
+<h3 id="a-tour-of-image-related-use-cases">A tour of image-related use cases</h3>
+<p>Recent language models can process image inputs and analyze them — a capability known as <strong>vision</strong>. With <code>gpt-image-1</code>, they can both analyze visual inputs and create images.</p>
+<p>The OpenAI API offers several endpoints to process images as input or generate them as output, enabling you to build powerful multimodal applications.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Supported use cases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Responses API</td>
+<td>Analyze images and use them as input and/or generate images as output</td>
+</tr>
+<tr>
+<td>Images API</td>
+<td>Generate images as output, optionally using images as input</td>
+</tr>
+<tr>
+<td>Chat Completions API</td>
+<td>Analyze images and use them as input to generate text or audio</td>
+</tr>
+</tbody>
+</table>
+<p>To learn more about the input and output modalities supported by our models, refer to our <a href="/docs/models">models page</a>.</p>
+<h2 id="generate-or-edit-images">Generate or edit images</h2>
+<p>You can generate or edit images using the Image API or the Responses API.</p>
+<p>Our latest image generation model, <code>gpt-image-1</code>, is a natively multimodal large language model. It can understand text and images and leverage its broad world knowledge to generate images with better instruction following and contextual awareness.</p>
+<p>In contrast, we also offer specialized image generation models - DALL·E 2 and 3 - which don't have the same inherent understanding of the world as GPT Image.</p>
+<p>Generate images with Responses</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">import</span> <span class="hljs-title class_">OpenAI</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;openai&quot;</span>;
+<span class="hljs-keyword">const</span> openai = <span class="hljs-keyword">new</span> <span class="hljs-title class_">OpenAI</span>();
+
+<span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> openai.<span class="hljs-property">responses</span>.<span class="hljs-title function_">create</span>({
+    <span class="hljs-attr">model</span>: <span class="hljs-string">&quot;gpt-4.1-mini&quot;</span>,
+    <span class="hljs-attr">input</span>: <span class="hljs-string">&quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;</span>,
+    <span class="hljs-attr">tools</span>: [{<span class="hljs-attr">type</span>: <span class="hljs-string">&quot;image_generation&quot;</span>}],
+});
+
+<span class="hljs-comment">// Save the image to a file</span>
+<span class="hljs-keyword">const</span> imageData = response.<span class="hljs-property">output</span>
+  .<span class="hljs-title function_">filter</span>(<span class="hljs-function">(<span class="hljs-params">output</span>) =&gt;</span> output.<span class="hljs-property">type</span> === <span class="hljs-string">&quot;image_generation_call&quot;</span>)
+  .<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">output</span>) =&gt;</span> output.<span class="hljs-property">result</span>);
+
+<span class="hljs-keyword">if</span> (imageData.<span class="hljs-property">length</span> &gt; <span class="hljs-number">0</span>) {
+  <span class="hljs-keyword">const</span> imageBase64 = imageData[<span class="hljs-number">0</span>];
+  <span class="hljs-keyword">const</span> fs = <span class="hljs-keyword">await</span> <span class="hljs-title function_">import</span>(<span class="hljs-string">&quot;fs&quot;</span>);
+  fs.<span class="hljs-title function_">writeFileSync</span>(<span class="hljs-string">&quot;cat_and_otter.png&quot;</span>, <span class="hljs-title class_">Buffer</span>.<span class="hljs-title function_">from</span>(imageBase64, <span class="hljs-string">&quot;base64&quot;</span>));
+}
+</code></pre>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> openai <span class="hljs-keyword">import</span> OpenAI
+<span class="hljs-keyword">import</span> base64
+
+client = OpenAI() 
+
+response = client.responses.create(
+    model=<span class="hljs-string">&quot;gpt-4.1-mini&quot;</span>,
+    <span class="hljs-built_in">input</span>=<span class="hljs-string">&quot;Generate an image of gray tabby cat hugging an otter with an orange scarf&quot;</span>,
+    tools=[{<span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;image_generation&quot;</span>}],
+)
+
+// Save the image to a file
+image_data = [
+    output.result
+    <span class="hljs-keyword">for</span> output <span class="hljs-keyword">in</span> response.output
+    <span class="hljs-keyword">if</span> output.<span class="hljs-built_in">type</span> == <span class="hljs-string">&quot;image_generation_call&quot;</span>
+]
+
+<span class="hljs-keyword">if</span> image_data:
+    image_base64 = image_data[<span class="hljs-number">0</span>]
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;cat_and_otter.png&quot;</span>, <span class="hljs-string">&quot;wb&quot;</span>) <span class="hljs-keyword">as</span> f:
+        f.write(base64.b64decode(image_base64))
+</code></pre>
+<p>You can learn more about image generation in our <a href="/docs/guides/image-generation">Image generation</a> guide.</p>
+<h3 id="using-world-knowledge-for-image-generation">Using world knowledge for image generation</h3>
+<p>The difference between DALL·E models and GPT Image is that a natively multimodal language model can use its visual understanding of the world to generate lifelike images including real-life details without a reference.</p>
+<p>For example, if you prompt GPT Image to generate an image of a glass cabinet with the most popular semi-precious stones, the model knows enough to select gemstones like amethyst, rose quartz, jade, etc, and depict them in a realistic way.</p>
+<h2 id="analyze-images">Analyze images</h2>
+<p><strong>Vision</strong> is the ability for a model to &quot;see&quot; and understand images. If there is text in an image, the model can also understand the text. It can understand most visual elements, including objects, shapes, colors, and textures, even if there are some <a href="/docs/guides/images-vision#limitations">limitations</a>.</p>
+<h3 id="giving-a-model-images-as-input">Giving a model images as input</h3>
+<p>You can provide images as input to generation requests in multiple ways:</p>
+<ul>
+<li>By providing a fully qualified URL to an image file</li>
+<li>By providing an image as a Base64-encoded data URL</li>
+<li>By providing a file ID (created with the <a href="/docs/api-reference/files">Files API</a>)</li>
+</ul>
+<p>You can provide multiple images as input in a single request by including multiple images in the <code>content</code> array, but keep in mind that <a href="/docs/guides/images-vision#calculating-costs">images count as tokens</a> and will be billed accordingly.</p>
+<p>Passing a URL</p>
+<p>Analyze the content of an image</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">import</span> <span class="hljs-title class_">OpenAI</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;openai&quot;</span>;
+
+<span class="hljs-keyword">const</span> openai = <span class="hljs-keyword">new</span> <span class="hljs-title class_">OpenAI</span>();
+
+<span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> openai.<span class="hljs-property">responses</span>.<span class="hljs-title function_">create</span>({
+    <span class="hljs-attr">model</span>: <span class="hljs-string">&quot;gpt-4.1-mini&quot;</span>,
+    <span class="hljs-attr">input</span>: [{
+        <span class="hljs-attr">role</span>: <span class="hljs-string">&quot;user&quot;</span>,
+        <span class="hljs-attr">content</span>: [
+            { <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;input_text&quot;</span>, <span class="hljs-attr">text</span>: <span class="hljs-string">&quot;what&#x27;s in this image?&quot;</span> },
+            {
+                <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;input_image&quot;</span>,
+                <span class="hljs-attr">image_url</span>: <span class="hljs-string">&quot;https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg&quot;</span>,
+            },
+        ],
+    }],
+});
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(response.<span class="hljs-property">output_text</span>);
+</code></pre>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> openai <span class="hljs-keyword">import</span> OpenAI
+
+client = OpenAI()
+
+response = client.responses.create(
+    model=<span class="hljs-string">&quot;gpt-4.1-mini&quot;</span>,
+    <span class="hljs-built_in">input</span>=[{
+        <span class="hljs-string">&quot;role&quot;</span>: <span class="hljs-string">&quot;user&quot;</span>,
+        <span class="hljs-string">&quot;content&quot;</span>: [
+            {<span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;input_text&quot;</span>, <span class="hljs-string">&quot;text&quot;</span>: <span class="hljs-string">&quot;what&#x27;s in this image?&quot;</span>},
+            {
+                <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;input_image&quot;</span>,
+                <span class="hljs-string">&quot;image_url&quot;</span>: <span class="hljs-string">&quot;https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg&quot;</span>,
+            },
+        ],
+    }],
+)
+
+<span class="hljs-built_in">print</span>(response.output_text)
+</code></pre>
+<pre><code class="language-csharp"><span class="hljs-keyword">using</span> OpenAI.Responses;
+
+<span class="hljs-built_in">string</span> key = Environment.GetEnvironmentVariable(<span class="hljs-string">&quot;OPENAI_API_KEY&quot;</span>)!;
+OpenAIResponseClient client = <span class="hljs-keyword">new</span>(model: <span class="hljs-string">&quot;gpt-5&quot;</span>, apiKey: key);
+
+Uri imageUrl = <span class="hljs-keyword">new</span>(<span class="hljs-string">&quot;https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg&quot;</span>);
+
+OpenAIResponse response = (OpenAIResponse)client.CreateResponse([
+    ResponseItem.CreateUserMessageItem([
+        ResponseContentPart.CreateInputTextPart(<span class="hljs-string">&quot;What is in this image?&quot;</span>),
+        ResponseContentPart.CreateInputImagePart(imageUrl)
+    ])
+]);
+
+Console.WriteLine(response.GetOutputText());
+</code></pre>
+<pre><code class="language-bash">curl https://api.openai.com/v1/responses \
+  -H <span class="hljs-string">&quot;Content-Type: application/json&quot;</span> \
+  -H <span class="hljs-string">&quot;Authorization: Bearer <span class="hljs-variable">$OPENAI_API_KEY</span>&quot;</span> \
+  -d <span class="hljs-string">&#x27;{
+    &quot;model&quot;: &quot;gpt-4.1-mini&quot;,
+    &quot;input&quot;: [
+      {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+          {&quot;type&quot;: &quot;input_text&quot;, &quot;text&quot;: &quot;what is in this image?&quot;},
+          {
+            &quot;type&quot;: &quot;input_image&quot;,
+            &quot;image_url&quot;: &quot;https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg&quot;
+          }
+        ]
+      }
+    ]
+  }&#x27;</span>
+</code></pre>
+<p>Passing a Base64 encoded image</p>
+<p>Analyze the content of an image</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">import</span> fs <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;fs&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-title class_">OpenAI</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;openai&quot;</span>;
+
+<span class="hljs-keyword">const</span> openai = <span class="hljs-keyword">new</span> <span class="hljs-title class_">OpenAI</span>();
+
+<span class="hljs-keyword">const</span> imagePath = <span class="hljs-string">&quot;path_to_your_image.jpg&quot;</span>;
+<span class="hljs-keyword">const</span> base64Image = fs.<span class="hljs-title function_">readFileSync</span>(imagePath, <span class="hljs-string">&quot;base64&quot;</span>);
+
+<span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> openai.<span class="hljs-property">responses</span>.<span class="hljs-title function_">create</span>({
+    <span class="hljs-attr">model</span>: <span class="hljs-string">&quot;gpt-4.1-mini&quot;</span>,
+    <span class="hljs-attr">input</span>: [
+        {
+            <span class="hljs-attr">role</span>: <span class="hljs-string">&quot;user&quot;</span>,
+            <span class="hljs-attr">content</span>: [
+                { <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;input_text&quot;</span>, <span class="hljs-attr">text</span>: <span class="hljs-string">&quot;what&#x27;s in this image?&quot;</span> },
+                {
+                    <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;input_image&quot;</span>,
+                    <span class="hljs-attr">image_url</span>: <span class="hljs-string">`data:image/jpeg;base64,<span class="hljs-subst">${base64Image}</span>`</span>,
+                },
+            ],
+        },
+    ],
+});
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(response.<span class="hljs-property">output_text</span>);
+</code></pre>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> base64
+<span class="hljs-keyword">from</span> openai <span class="hljs-keyword">import</span> OpenAI
+
+client = OpenAI()
+
+<span class="hljs-comment"># Function to encode the image</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">encode_image</span>(<span class="hljs-params">image_path</span>):
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(image_path, <span class="hljs-string">&quot;rb&quot;</span>) <span class="hljs-keyword">as</span> image_file:
+        <span class="hljs-keyword">return</span> base64.b64encode(image_file.read()).decode(<span class="hljs-string">&quot;utf-8&quot;</span>)
+
+<span class="hljs-comment"># Path to your image</span>
+image_path = <span class="hljs-string">&quot;path_to_your_image.jpg&quot;</span>
+
+<span class="hljs-comment"># Getting the Base64 string</span>
+base64_image = encode_image(image_path)
+
+response = client.responses.create(
+    model=<span class="hljs-string">&quot;gpt-4.1&quot;</span>,
+    <span class="hljs-built_in">input</span>=[
+        {
+            <span class="hljs-string">&quot;role&quot;</span>: <span class="hljs-string">&quot;user&quot;</span>,
+            <span class="hljs-string">&quot;content&quot;</span>: [
+                { <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;input_text&quot;</span>, <span class="hljs-string">&quot;text&quot;</span>: <span class="hljs-string">&quot;what&#x27;s in this image?&quot;</span> },
+                {
+                    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;input_image&quot;</span>,
+                    <span class="hljs-string">&quot;image_url&quot;</span>: <span class="hljs-string">f&quot;data:image/jpeg;base64,<span class="hljs-subst">{base64_image}</span>&quot;</span>,
+                },
+            ],
+        }
+    ],
+)
+
+<span class="hljs-built_in">print</span>(response.output_text)
+</code></pre>
+<pre><code class="language-csharp"><span class="hljs-keyword">using</span> OpenAI.Responses;
+
+<span class="hljs-built_in">string</span> key = Environment.GetEnvironmentVariable(<span class="hljs-string">&quot;OPENAI_API_KEY&quot;</span>)!;
+OpenAIResponseClient client = <span class="hljs-keyword">new</span>(model: <span class="hljs-string">&quot;gpt-5&quot;</span>, apiKey: key);
+
+Uri imageUrl = <span class="hljs-keyword">new</span>(<span class="hljs-string">&quot;https://openai-documentation.vercel.app/images/cat_and_otter.png&quot;</span>);
+<span class="hljs-keyword">using</span> HttpClient http = <span class="hljs-keyword">new</span>();
+
+<span class="hljs-comment">// Download an image as stream</span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">var</span> stream = <span class="hljs-keyword">await</span> http.GetStreamAsync(imageUrl);
+
+OpenAIResponse response1 = (OpenAIResponse)client.CreateResponse([
+    ResponseItem.CreateUserMessageItem([
+        ResponseContentPart.CreateInputTextPart(<span class="hljs-string">&quot;What is in this image?&quot;</span>),
+        ResponseContentPart.CreateInputImagePart(BinaryData.FromStream(stream), <span class="hljs-string">&quot;image/png&quot;</span>)
+    ])
+]);
+
+Console.WriteLine(<span class="hljs-string">$&quot;From image stream: <span class="hljs-subst">{response1.GetOutputText()}</span>&quot;</span>);
+
+<span class="hljs-comment">// Download an image as byte array</span>
+<span class="hljs-built_in">byte</span>[] bytes = <span class="hljs-keyword">await</span> http.GetByteArrayAsync(imageUrl);
+
+OpenAIResponse response2 = (OpenAIResponse)client.CreateResponse([
+    ResponseItem.CreateUserMessageItem([
+        ResponseContentPart.CreateInputTextPart(<span class="hljs-string">&quot;What is in this image?&quot;</span>),
+        ResponseContentPart.CreateInputImagePart(BinaryData.FromBytes(bytes), <span class="hljs-string">&quot;image/png&quot;</span>)
+    ])
+]);
+
+Console.WriteLine(<span class="hljs-string">$&quot;From byte array: <span class="hljs-subst">{response2.GetOutputText()}</span>&quot;</span>);
+</code></pre>
+<p>Passing a file ID</p>
+<p>Analyze the content of an image</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">import</span> <span class="hljs-title class_">OpenAI</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;openai&quot;</span>;
+<span class="hljs-keyword">import</span> fs <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;fs&quot;</span>;
+
+<span class="hljs-keyword">const</span> openai = <span class="hljs-keyword">new</span> <span class="hljs-title class_">OpenAI</span>();
+
+<span class="hljs-comment">// Function to create a file with the Files API</span>
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">createFile</span>(<span class="hljs-params">filePath</span>) {
+  <span class="hljs-keyword">const</span> fileContent = fs.<span class="hljs-title function_">createReadStream</span>(filePath);
+  <span class="hljs-keyword">const</span> result = <span class="hljs-keyword">await</span> openai.<span class="hljs-property">files</span>.<span class="hljs-title function_">create</span>({
+    <span class="hljs-attr">file</span>: fileContent,
+    <span class="hljs-attr">purpose</span>: <span class="hljs-string">&quot;vision&quot;</span>,
+  });
+  <span class="hljs-keyword">return</span> result.<span class="hljs-property">id</span>;
+}
+
+<span class="hljs-comment">// Getting the file ID</span>
+<span class="hljs-keyword">const</span> fileId = <span class="hljs-keyword">await</span> <span class="hljs-title function_">createFile</span>(<span class="hljs-string">&quot;path_to_your_image.jpg&quot;</span>);
+
+<span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> openai.<span class="hljs-property">responses</span>.<span class="hljs-title function_">create</span>({
+  <span class="hljs-attr">model</span>: <span class="hljs-string">&quot;gpt-4.1-mini&quot;</span>,
+  <span class="hljs-attr">input</span>: [
+    {
+      <span class="hljs-attr">role</span>: <span class="hljs-string">&quot;user&quot;</span>,
+      <span class="hljs-attr">content</span>: [
+        { <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;input_text&quot;</span>, <span class="hljs-attr">text</span>: <span class="hljs-string">&quot;what&#x27;s in this image?&quot;</span> },
+        {
+          <span class="hljs-attr">type</span>: <span class="hljs-string">&quot;input_image&quot;</span>,
+          <span class="hljs-attr">file_id</span>: fileId,
+        },
+      ],
+    },
+  ],
+});
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(response.<span class="hljs-property">output_text</span>);
+</code></pre>
+<pre><code class="language-python"><span class="hljs-keyword">from</span> openai <span class="hljs-keyword">import</span> OpenAI
+
+client = OpenAI()
+
+<span class="hljs-comment"># Function to create a file with the Files API</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">create_file</span>(<span class="hljs-params">file_path</span>):
+  <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(file_path, <span class="hljs-string">&quot;rb&quot;</span>) <span class="hljs-keyword">as</span> file_content:
+    result = client.files.create(
+        file=file_content,
+        purpose=<span class="hljs-string">&quot;vision&quot;</span>,
+    )
+    <span class="hljs-keyword">return</span> result.<span class="hljs-built_in">id</span>
+
+<span class="hljs-comment"># Getting the file ID</span>
+file_id = create_file(<span class="hljs-string">&quot;path_to_your_image.jpg&quot;</span>)
+
+response = client.responses.create(
+    model=<span class="hljs-string">&quot;gpt-4.1-mini&quot;</span>,
+    <span class="hljs-built_in">input</span>=[{
+        <span class="hljs-string">&quot;role&quot;</span>: <span class="hljs-string">&quot;user&quot;</span>,
+        <span class="hljs-string">&quot;content&quot;</span>: [
+            {<span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;input_text&quot;</span>, <span class="hljs-string">&quot;text&quot;</span>: <span class="hljs-string">&quot;what&#x27;s in this image?&quot;</span>},
+            {
+                <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;input_image&quot;</span>,
+                <span class="hljs-string">&quot;file_id&quot;</span>: file_id,
+            },
+        ],
+    }],
+)
+
+<span class="hljs-built_in">print</span>(response.output_text)
+</code></pre>
+<pre><code class="language-csharp"><span class="hljs-keyword">using</span> OpenAI.Files;
+<span class="hljs-keyword">using</span> OpenAI.Responses;
+
+<span class="hljs-built_in">string</span> key = Environment.GetEnvironmentVariable(<span class="hljs-string">&quot;OPENAI_API_KEY&quot;</span>)!;
+OpenAIResponseClient client = <span class="hljs-keyword">new</span>(model: <span class="hljs-string">&quot;gpt-5&quot;</span>, apiKey: key);
+
+<span class="hljs-built_in">string</span> filename = <span class="hljs-string">&quot;cat_and_otter.png&quot;</span>;
+Uri imageUrl = <span class="hljs-keyword">new</span>(<span class="hljs-string">$&quot;https://openai-documentation.vercel.app/images/<span class="hljs-subst">{filename}</span>&quot;</span>);
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">var</span> http = <span class="hljs-keyword">new</span> HttpClient();
+
+<span class="hljs-comment">// Download an image as stream</span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">var</span> stream = <span class="hljs-keyword">await</span> http.GetStreamAsync(imageUrl);
+
+OpenAIFileClient files = <span class="hljs-keyword">new</span>(key);
+OpenAIFile file = <span class="hljs-keyword">await</span> files.UploadFileAsync(BinaryData.FromStream(stream), filename, FileUploadPurpose.Vision);
+
+OpenAIResponse response = (OpenAIResponse)client.CreateResponse([
+    ResponseItem.CreateUserMessageItem([
+        ResponseContentPart.CreateInputTextPart(<span class="hljs-string">&quot;what&#x27;s in this image?&quot;</span>),
+        ResponseContentPart.CreateInputImagePart(file.Id)
+    ])
+]);
+
+Console.WriteLine(response.GetOutputText());
+</code></pre>
+<h3 id="image-input-requirements">Image input requirements</h3>
+<p>Input images must meet the following requirements to be used in the API.</p>
+<p>|Supported file types|PNG (.png) - JPEG (.jpeg and .jpg) - WEBP (.webp) - Non-animated GIF (.gif)|
+|Size limits|Up to 50 MB total payload size per request - Up to 500 individual image inputs per request|
+|Other requirements|No watermarks or logos - No NSFW content - Clear enough for a human to understand|</p>
+<h3 id="specify-image-input-detail-level">Specify image input detail level</h3>
+<p>The <code>detail</code> parameter tells the model what level of detail to use when processing and understanding the image (<code>low</code>, <code>high</code>, or <code>auto</code> to let the model decide). If you skip the parameter, the model will use <code>auto</code>.</p>
+<pre><code class="language-plain">{
+    &quot;type&quot;: &quot;input_image&quot;,
+    &quot;image_url&quot;: &quot;https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg&quot;,
+    &quot;detail&quot;: &quot;high&quot;
+}
+</code></pre>
+<p>You can save tokens and speed up responses by using <code>&quot;detail&quot;: &quot;low&quot;</code>. This lets the model process the image with a budget of 85 tokens. The model receives a low-resolution 512px x 512px version of the image. This is fine if your use case doesn't require the model to see with high-resolution detail (for example, if you're asking about the dominant shape or color in the image).</p>
+<p>On the other hand, you can use <code>&quot;detail&quot;: &quot;high&quot;</code> if you want the model to have a better understanding of the image.</p>
+<p>Read more about calculating image processing costs in the <a href="/docs/guides/images-vision#calculating-costs">Calculating costs</a> section below.</p>
+<h2 id="limitations">Limitations</h2>
+<p>While models with vision capabilities are powerful and can be used in many situations, it's important to understand the limitations of these models. Here are some known limitations:</p>
+<ul>
+<li><strong>Medical images</strong>: The model is not suitable for interpreting specialized medical images like CT scans and shouldn't be used for medical advice.</li>
+<li><strong>Non-English</strong>: The model may not perform optimally when handling images with text of non-Latin alphabets, such as Japanese or Korean.</li>
+<li><strong>Small text</strong>: Enlarge text within the image to improve readability, but avoid cropping important details.</li>
+<li><strong>Rotation</strong>: The model may misinterpret rotated or upside-down text and images.</li>
+<li><strong>Visual elements</strong>: The model may struggle to understand graphs or text where colors or styles—like solid, dashed, or dotted lines—vary.</li>
+<li><strong>Spatial reasoning</strong>: The model struggles with tasks requiring precise spatial localization, such as identifying chess positions.</li>
+<li><strong>Accuracy</strong>: The model may generate incorrect descriptions or captions in certain scenarios.</li>
+<li><strong>Image shape</strong>: The model struggles with panoramic and fisheye images.</li>
+<li><strong>Metadata and resizing</strong>: The model doesn't process original file names or metadata, and images are resized before analysis, affecting their original dimensions.</li>
+<li><strong>Counting</strong>: The model may give approximate counts for objects in images.</li>
+<li><strong>CAPTCHAS</strong>: For safety reasons, our system blocks the submission of CAPTCHAs.</li>
+</ul>
+<h2 id="calculating-costs">Calculating costs</h2>
+<p>Image inputs are metered and charged in tokens, just as text inputs are. How images are converted to text token inputs varies based on the model. You can find a vision pricing calculator in the FAQ section of the <a href="https://openai.com/api/pricing/">pricing page</a>.</p>
+<h3 id="gpt-41-mini-gpt-41-nano-o4-mini">GPT-4.1-mini, GPT-4.1-nano, o4-mini</h3>
+<p>Image inputs are metered and charged in tokens based on their dimensions. The token cost of an image is determined as follows:</p>
+<p>A. Calculate the number of 32px x 32px patches that are needed to fully cover the image (a patch may extend beyond the image boundaries; out-of-bounds pixels are treated as black.)</p>
+<pre><code class="language-text">raw_patches = ceil(width/32)×ceil(height/32)
+</code></pre>
+<p>B. If the number of patches exceeds 1536, we scale down the image so that it can be covered by no more than 1536 patches</p>
+<pre><code class="language-text">r = √(32²×1536/(width×height))
+r = r × min( floor(width×r/32) / (width×r/32), floor(height×r/32) / (height×r/32) )
+</code></pre>
+<p>C. The token cost is the number of patches, capped at a maximum of 1536 tokens</p>
+<pre><code class="language-text">image_tokens = ceil(resized_width/32)×ceil(resized_height/32)
+</code></pre>
+<p>D. Apply a multiplier based on the model to get the total tokens.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Multiplier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gpt-5-mini</td>
+<td>1.62</td>
+</tr>
+<tr>
+<td>gpt-5-nano</td>
+<td>2.46</td>
+</tr>
+<tr>
+<td>gpt-4.1-mini</td>
+<td>1.62</td>
+</tr>
+<tr>
+<td>gpt-4.1-nano</td>
+<td>2.46</td>
+</tr>
+<tr>
+<td>o4-mini</td>
+<td>1.72</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cost calculation examples</strong></p>
+<ul>
+<li>A 1024 x 1024 image is <strong>1024 tokens</strong>
+<ul>
+<li>Width is 1024, resulting in <code>(1024 + 32 - 1) // 32 = 32</code> patches</li>
+<li>Height is 1024, resulting in <code>(1024 + 32 - 1) // 32 = 32</code> patches</li>
+<li>Tokens calculated as <code>32 * 32 = 1024</code>, below the cap of 1536</li>
+</ul>
+</li>
+<li>A 1800 x 2400 image is <strong>1452 tokens</strong>
+<ul>
+<li>Width is 1800, resulting in <code>(1800 + 32 - 1) // 32 = 57</code> patches</li>
+<li>Height is 2400, resulting in <code>(2400 + 32 - 1) // 32 = 75</code> patches</li>
+<li>We need <code>57 * 75 = 4275</code> patches to cover the full image. Since that exceeds 1536, we need to scale down the image while preserving the aspect ratio.</li>
+<li>We can calculate the shrink factor as <code>sqrt(token_budget × patch_size^2 / (width * height))</code>. In our example, the shrink factor is <code>sqrt(1536 * 32^2 / (1800 * 2400)) = 0.603</code>.</li>
+<li>Width is now 1086, resulting in <code>1086 / 32 = 33.94</code> patches</li>
+<li>Height is now 1448, resulting in <code>1448 / 32 = 45.25</code> patches</li>
+<li>We want to make sure the image fits in a whole number of patches. In this case we scale again by <code>33 / 33.94 = 0.97</code> to fit the width in 33 patches.</li>
+<li>The final width is then <code>1086 * (33 / 33.94) = 1056)</code> and the final height is <code>1448 * (33 / 33.94) = 1408</code></li>
+<li>The image now requires <code>1056 / 32 = 33</code> patches to cover the width and <code>1408 / 32 = 44</code> patches to cover the height</li>
+<li>The total number of tokens is the <code>33 * 44 = 1452</code>, below the cap of 1536</li>
+</ul>
+</li>
+</ul>
+<h3 id="gpt-4o-gpt-41-gpt-4o-mini-cua-and-o-series-except-o4-mini">GPT 4o, GPT-4.1, GPT-4o-mini, CUA, and o-series (except o4-mini)</h3>
+<p>The token cost of an image is determined by two factors: size and detail.</p>
+<p>Any image with <code>&quot;detail&quot;: &quot;low&quot;</code> costs a set, base number of tokens. This amount varies by model (see chart below). To calculate the cost of an image with <code>&quot;detail&quot;: &quot;high&quot;</code>, we do the following:</p>
+<ul>
+<li>Scale to fit in a 2048px x 2048px square, maintaining original aspect ratio</li>
+<li>Scale so that the image's shortest side is 768px long</li>
+<li>Count the number of 512px squares in the image—each square costs a set amount of tokens (see chart below)</li>
+<li>Add the base tokens to the total</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Base tokens</th>
+<th>Tile tokens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gpt-5, gpt-5-chat-latest</td>
+<td>70</td>
+<td>140</td>
+</tr>
+<tr>
+<td>4o, 4.1, 4.5</td>
+<td>85</td>
+<td>170</td>
+</tr>
+<tr>
+<td>4o-mini</td>
+<td>2833</td>
+<td>5667</td>
+</tr>
+<tr>
+<td>o1, o1-pro, o3</td>
+<td>75</td>
+<td>150</td>
+</tr>
+<tr>
+<td>computer-use-preview</td>
+<td>65</td>
+<td>129</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cost calculation examples (for gpt-4o)</strong></p>
+<ul>
+<li>A 1024 x 1024 square image in <code>&quot;detail&quot;: &quot;high&quot;</code> mode costs 765 tokens
+<ul>
+<li>1024 is less than 2048, so there is no initial resize.</li>
+<li>The shortest side is 1024, so we scale the image down to 768 x 768.</li>
+<li>4 512px square tiles are needed to represent the image, so the final token cost is <code>170 * 4 + 85 = 765</code>.</li>
+</ul>
+</li>
+<li>A 2048 x 4096 image in <code>&quot;detail&quot;: &quot;high&quot;</code> mode costs 1105 tokens
+<ul>
+<li>We scale down the image to 1024 x 2048 to fit within the 2048 square.</li>
+<li>The shortest side is 1024, so we further scale down to 768 x 1536.</li>
+<li>6 512px tiles are needed, so the final token cost is <code>170 * 6 + 85 = 1105</code>.</li>
+</ul>
+</li>
+<li>A 4096 x 8192 image in <code>&quot;detail&quot;: &quot;low&quot;</code> most costs 85 tokens
+<ul>
+<li>Regardless of input size, low detail images are a fixed cost.</li>
+</ul>
+</li>
+</ul>
+<h3 id="gpt-image-1">GPT Image 1</h3>
+<p>For GPT Image 1, we calculate the cost of an image input the same way as described above, except that we scale down the image so that the shortest side is 512px instead of 768px. The price depends on the dimensions of the image and the <a href="/docs/guides/image-generation?image-generation-model=gpt-image-1#input-fidelity">input fidelity</a>.</p>
+<p>When input fidelity is set to low, the base cost is 65 image tokens, and each tile costs 129 image tokens. When using high input fidelity, we add a set number of tokens based on the image's aspect ratio in addition to the image tokens described above.</p>
+<ul>
+<li>If your image is square, we add 4160 extra input image tokens.</li>
+<li>If it is closer to portrait or landscape, we add 6240 extra tokens.</li>
+</ul>
+<p>To see pricing for image input tokens, refer to our <a href="/docs/pricing#latest-models">pricing page</a>.</p>
+<hr>
+<p>We process images at the token level, so each image we process counts towards your tokens per minute (TPM) limit.</p>
+<p>For the most precise and up-to-date estimates for image processing, please use our image pricing calculator available <a href="https://openai.com/api/pricing/">here</a>.</p>
