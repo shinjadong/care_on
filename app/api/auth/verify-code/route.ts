@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/infrastructure/auth/supabase/server'
+import { createServiceClient } from '@/lib/infrastructure/auth/supabase/server'
 import { cookies } from 'next/headers'
 
 export async function POST(request: NextRequest) {
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const cleanPhone = phoneNumber.replace(/-/g, '')
 
     // Service role key로 verification_codes 테이블 접근
-    const supabase = await createClient(true)
+    const supabase = await createServiceClient()
 
     console.log('🔍 인증 코드 검증 시도:', {
       input_phone: phoneNumber,
