@@ -25,7 +25,7 @@ export class PrismaProductRepository implements IProductRepository {
 
   async findById(id: string): Promise<Product | null> {
     const result = await this.db.product.findUnique({
-      where: { id }
+      where: { product_id: id }
     })
 
     if (!result) {
@@ -51,12 +51,12 @@ export class PrismaProductRepository implements IProductRepository {
         where.available = filters.available
       }
       if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
-        where.monthlyFee = {}
+        where.monthly_fee = {}
         if (filters.minPrice !== undefined) {
-          where.monthlyFee.gte = filters.minPrice
+          where.monthly_fee.gte = filters.minPrice
         }
         if (filters.maxPrice !== undefined) {
-          where.monthlyFee.lte = filters.maxPrice
+          where.monthly_fee.lte = filters.maxPrice
         }
       }
       if (filters.searchTerm) {
@@ -74,7 +74,7 @@ export class PrismaProductRepository implements IProductRepository {
         where,
         skip,
         take: pageSize,
-        orderBy: { createdAt: 'desc' }
+        orderBy: { created_at: 'desc' }
       }),
       this.db.product.count({ where })
     ])
@@ -101,7 +101,7 @@ export class PrismaProductRepository implements IProductRepository {
     const data = this.productToPersistence(product)
 
     await this.db.product.upsert({
-      where: { id: product.id },
+      where: { product_id: product.id },
       create: data,
       update: data
     })
@@ -109,7 +109,7 @@ export class PrismaProductRepository implements IProductRepository {
 
   async delete(id: string): Promise<void> {
     await this.db.product.delete({
-      where: { id }
+      where: { product_id: id }
     })
   }
 
@@ -119,11 +119,11 @@ export class PrismaProductRepository implements IProductRepository {
 
   async findPackageById(id: string): Promise<Package | null> {
     const result = await this.db.package.findUnique({
-      where: { id },
+      where: { package_id: id },
       include: {
-        items: {
+        package_items: {
           select: {
-            productId: true
+            product_id: true
           }
         }
       }
@@ -146,7 +146,7 @@ export class PrismaProductRepository implements IProductRepository {
 
     if (filters) {
       if (filters.available !== undefined) {
-        where.available = filters.available
+        where.active = filters.available
       }
       if (filters.searchTerm) {
         where.OR = [
@@ -163,11 +163,11 @@ export class PrismaProductRepository implements IProductRepository {
         where,
         skip,
         take: pageSize,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
         include: {
-          items: {
+          package_items: {
             select: {
-              productId: true
+              product_id: true
             }
           }
         }
@@ -191,22 +191,22 @@ export class PrismaProductRepository implements IProductRepository {
     await this.db.$transaction(async (tx) => {
       // Upsert package
       await tx.package.upsert({
-        where: { id: pkg.id },
+        where: { package_id: pkg.id },
         create: data,
         update: data
       })
 
       // Delete existing package items
       await tx.packageItem.deleteMany({
-        where: { packageId: pkg.id }
+        where: { package_id: pkg.id }
       })
 
       // Create new package items
       if (productIds.length > 0) {
         await tx.packageItem.createMany({
           data: productIds.map(productId => ({
-            packageId: pkg.id,
-            productId
+            package_id: pkg.id,
+            product_id: productId
           }))
         })
       }
@@ -215,7 +215,7 @@ export class PrismaProductRepository implements IProductRepository {
 
   async deletePackage(id: string): Promise<void> {
     await this.db.package.delete({
-      where: { id }
+      where: { package_id: id }
     })
   }
 
@@ -236,7 +236,7 @@ export class PrismaProductRepository implements IProductRepository {
 
   async getProductsByIds(ids: string[]): Promise<Product[]> {
     const products = await this.db.product.findMany({
-      where: { id: { in: ids } }
+      where: { product_id: { in: ids } }
     })
 
     return products.map(p => this.productToDomain(p))
@@ -249,9 +249,9 @@ export class PrismaProductRepository implements IProductRepository {
   private productToDomain(data: any): Product {
     // Parse discountTiers from JSON
     let discountTiers: DiscountTier[] | null = null
-    if (data.discountTiers) {
+    if (data.discount_tiers) {
       try {
-        discountTiers = JSON.parse(JSON.stringify(data.discountTiers))
+        discountTiers = JSON.parse(JSON.stringify(data.discount_tiers))
       } catch (e) {
         console.error('Failed to parse discount tiers:', e)
         discountTiers = null
@@ -259,18 +259,18 @@ export class PrismaProductRepository implements IProductRepository {
     }
 
     const props: ProductProps = {
-      id: data.id,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
+      id: data.product_id,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
       name: data.name,
       description: data.description,
       category: data.category,
       provider: data.provider,
-      monthlyFee: data.monthlyFee,
-      imageUrl: data.imageUrl,
+      monthlyFee: data.monthly_fee,
+      imageUrl: data.image_url,
       available: data.available,
-      closureRefundRate: data.closureRefundRate,
-      maxDiscountRate: data.maxDiscountRate,
+      closureRefundRate: data.closure_refund_rate,
+      maxDiscountRate: data.max_discount_rate,
       discountTiers
     }
 
@@ -279,32 +279,32 @@ export class PrismaProductRepository implements IProductRepository {
 
   private productToPersistence(product: Product): any {
     return {
-      id: product.id,
-      createdAt: product.createdAt,
-      updatedAt: product.updatedAt,
+      product_id: product.id,
+      created_at: product.createdAt,
+      updated_at: product.updatedAt,
       name: product.name,
       description: product.description,
       category: product.category,
       provider: product.provider,
-      monthlyFee: product.monthlyFee,
-      imageUrl: product.imageUrl,
+      monthly_fee: product.monthlyFee,
+      image_url: product.imageUrl,
       available: product.available,
-      closureRefundRate: product.closureRefundRate,
-      maxDiscountRate: product.maxDiscountRate,
-      discountTiers: product.discountTiers || undefined
+      closure_refund_rate: product.closureRefundRate,
+      max_discount_rate: product.maxDiscountRate,
+      discount_tiers: product.discountTiers || undefined
     }
   }
 
   private packageToDomain(data: any): Package {
     const props: PackageProps = {
-      id: data.id,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt,
+      id: data.package_id,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
       name: data.name,
       description: data.description,
-      totalFee: data.totalFee,
-      available: data.available,
-      productIds: data.items?.map((item: any) => item.productId) || []
+      totalFee: data.monthly_fee,
+      available: data.active,
+      productIds: data.package_items?.map((item: any) => item.product_id) || []
     }
 
     return Package.fromPersistence(props)
@@ -312,13 +312,13 @@ export class PrismaProductRepository implements IProductRepository {
 
   private packageToPersistence(pkg: Package): any {
     return {
-      id: pkg.id,
-      createdAt: pkg.createdAt,
-      updatedAt: pkg.updatedAt,
+      package_id: pkg.id,
+      created_at: pkg.createdAt,
+      updated_at: pkg.updatedAt,
       name: pkg.name,
       description: pkg.description,
-      totalFee: pkg.totalFee,
-      available: pkg.available
+      monthly_fee: pkg.totalFee,
+      active: pkg.available
     }
   }
 }
