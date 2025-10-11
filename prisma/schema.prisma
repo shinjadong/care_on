@@ -363,7 +363,7 @@ model ai_blog_generation_history {
   token_count        Int?
   cost_amount        Decimal?       @db.Decimal(10, 6)
   created_at         DateTime?      @default(now()) @db.Timestamptz(6)
-  ai_blog_posts      ai_blog_posts? @relation(fields: [blog_post_id], references: [id], onUpdate: NoAction)
+  blog_post          BlogPost?      @relation(fields: [blog_post_id], references: [id], onUpdate: NoAction)
 
   @@index([created_at(sort: Desc)], map: "idx_ai_blog_generation_history_created_at")
   @@index([user_id], map: "idx_ai_blog_generation_history_user_id")
@@ -371,7 +371,7 @@ model ai_blog_generation_history {
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model ai_blog_posts {
+model BlogPost {
   id                         String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user_id                    String?                      @db.Uuid
   title                      String
@@ -399,6 +399,7 @@ model ai_blog_posts {
   @@index([slug], map: "idx_ai_blog_posts_slug")
   @@index([status], map: "idx_ai_blog_posts_status")
   @@index([user_id], map: "idx_ai_blog_posts_user_id")
+  @@map("ai_blog_posts")
   @@schema("public")
 }
 
@@ -940,7 +941,7 @@ model employees {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model enrollment_applications {
+model EnrollmentApplication {
   id                         String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at                 DateTime           @default(now()) @db.Timestamptz(6)
   updated_at                 DateTime           @default(now()) @db.Timestamptz(6)
@@ -1001,6 +1002,7 @@ model enrollment_applications {
   @@index([created_at(sort: Desc)], map: "idx_enrollment_created_at")
   @@index([status], map: "idx_enrollment_status")
   @@index([user_id], map: "idx_enrollment_user_id")
+  @@map("enrollment_applications")
   @@schema("public")
 }
 
@@ -1013,7 +1015,7 @@ model enrollment_notes {
   note                    String
   is_internal             Boolean?                 @default(false)
   users                   users?                   @relation(fields: [author_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  enrollment_applications enrollment_applications? @relation(fields: [enrollment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  enrollment_application  EnrollmentApplication?  @relation(fields: [enrollment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([created_at(sort: Desc)], map: "idx_enrollment_notes_created_at")
   @@index([enrollment_id], map: "idx_enrollment_notes_enrollment_id")

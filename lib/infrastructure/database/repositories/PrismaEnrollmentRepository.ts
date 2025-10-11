@@ -35,7 +35,7 @@ export class PrismaEnrollmentRepository implements IEnrollmentRepository {
 
   async findByBusinessNumber(businessNumber: string): Promise<EnrollmentApplication | null> {
     const result = await this.db.enrollmentApplication.findUnique({
-      where: { businessNumber }
+      where: { business_number: businessNumber }
     })
 
     if (!result) {
@@ -47,8 +47,8 @@ export class PrismaEnrollmentRepository implements IEnrollmentRepository {
 
   async findByUserId(userId: string): Promise<EnrollmentApplication[]> {
     const results = await this.db.enrollmentApplication.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' }
+      where: { user_id: userId },
+      orderBy: { created_at: 'desc' }
     })
 
     return results.map(this.toDomain)
@@ -84,7 +84,7 @@ export class PrismaEnrollmentRepository implements IEnrollmentRepository {
         where,
         skip,
         take: pageSize,
-        orderBy: { createdAt: 'desc' }
+        orderBy: { created_at: 'desc' }
       }),
       this.db.enrollmentApplication.count({ where })
     ])
@@ -128,7 +128,7 @@ export class PrismaEnrollmentRepository implements IEnrollmentRepository {
 
   async existsByBusinessNumber(businessNumber: string): Promise<boolean> {
     const count = await this.db.enrollmentApplication.count({
-      where: { businessNumber }
+      where: { business_number: businessNumber }
     })
 
     return count > 0
@@ -140,68 +140,68 @@ export class PrismaEnrollmentRepository implements IEnrollmentRepository {
   private toDomain(prismaModel: PrismaEnrollmentApplication): EnrollmentApplication {
     const props: EnrollmentApplicationProps = {
       id: prismaModel.id,
-      createdAt: prismaModel.createdAt,
-      updatedAt: prismaModel.updatedAt,
+      createdAt: prismaModel.created_at,
+      updatedAt: prismaModel.updated_at,
 
       // Agreements
-      agreeTerms: prismaModel.agreeTerms,
-      agreePrivacy: prismaModel.agreePrivacy,
-      agreeMarketing: prismaModel.agreeMarketing,
-      agreeTosspay: prismaModel.agreeTosspay,
-      agreedCardCompanies: prismaModel.agreedCardCompanies || undefined,
+      agreeTerms: prismaModel.agree_terms || false,
+      agreePrivacy: prismaModel.agree_privacy || false,
+      agreeMarketing: prismaModel.agree_marketing || false,
+      agreeTosspay: prismaModel.agree_tosspay || false,
+      agreedCardCompanies: prismaModel.agreed_card_companies || undefined,
 
       // Business Type
-      businessType: prismaModel.businessType as '개인사업자' | '법인사업자',
+      businessType: prismaModel.business_type as '개인사업자' | '법인사업자',
 
       // Representative Info
-      representativeName: prismaModel.representativeName,
-      phoneNumber: prismaModel.phoneNumber,
-      birthDate: prismaModel.birthDate,
-      gender: prismaModel.gender as 'male' | 'female',
+      representativeName: prismaModel.representative_name || "",
+      phoneNumber: prismaModel.phone_number || "",
+      birthDate: prismaModel.birth_date || "",
+      gender: (prismaModel.gender || "male") as 'male' | 'female',
 
       // Business Info
-      businessName: prismaModel.businessName || undefined,
-      businessNumber: prismaModel.businessNumber || undefined,
-      businessAddress: prismaModel.businessAddress || undefined,
-      businessCategory: prismaModel.businessCategory || undefined,
-      businessStartDate: prismaModel.businessStartDate || undefined,
+      businessName: prismaModel.business_name || undefined,
+      businessNumber: prismaModel.business_number || undefined,
+      businessAddress: prismaModel.business_address || undefined,
+      businessCategory: prismaModel.business_category || undefined,
+      businessStartDate: undefined,
 
       // Store Info
-      storeName: prismaModel.storeName || undefined,
-      storeAddress: prismaModel.storeAddress || undefined,
-      storePhone: prismaModel.storePhone || undefined,
+      storeName: undefined,
+      storeAddress: undefined,
+      storePhone: undefined,
 
       // Financial Info
-      monthlyRevenue: prismaModel.monthlyRevenue || undefined,
-      settlementAccount: prismaModel.settlementAccount || undefined,
-      bankName: prismaModel.bankName || undefined,
-      accountHolder: prismaModel.accountHolder || undefined,
+      monthlyRevenue: undefined,
+      settlementAccount: undefined,
+      bankName: prismaModel.bank_name || undefined,
+      accountHolder: prismaModel.account_holder || undefined,
 
       // Document URLs
-      businessRegistrationUrl: prismaModel.businessRegistrationUrl || undefined,
-      idCardFrontUrl: prismaModel.idCardFrontUrl || undefined,
-      idCardBackUrl: prismaModel.idCardBackUrl || undefined,
-      bankbookUrl: prismaModel.bankbookUrl || undefined,
-      businessLicenseUrl: prismaModel.businessLicenseUrl || undefined,
-      signPhotoUrl: prismaModel.signPhotoUrl || undefined,
-      doorClosedUrl: prismaModel.doorClosedUrl || undefined,
-      doorOpenUrl: prismaModel.doorOpenUrl || undefined,
-      interiorUrl: prismaModel.interiorUrl || undefined,
-      productUrl: prismaModel.productUrl || undefined,
-      businessCardUrl: prismaModel.businessCardUrl || undefined,
-      corporateRegistrationUrl: prismaModel.corporateRegistrationUrl || undefined,
-      shareholderListUrl: prismaModel.shareholderListUrl || undefined,
-      sealCertificateUrl: prismaModel.sealCertificateUrl || undefined,
-      sealUsageUrl: prismaModel.sealUsageUrl || undefined,
+      businessRegistrationUrl: prismaModel.business_registration_url || undefined,
+      idCardFrontUrl: prismaModel.id_card_front_url || undefined,
+      idCardBackUrl: prismaModel.id_card_back_url || undefined,
+      bankbookUrl: prismaModel.bankbook_url || undefined,
+      businessLicenseUrl: prismaModel.business_license_url || undefined,
+      signPhotoUrl: prismaModel.sign_photo_url || undefined,
+      doorClosedUrl: prismaModel.door_closed_url || undefined,
+      doorOpenUrl: prismaModel.door_open_url || undefined,
+      interiorUrl: prismaModel.interior_url || undefined,
+      productUrl: prismaModel.product_url || undefined,
+      businessCardUrl: prismaModel.business_card_url || undefined,
+      corporateRegistrationUrl: prismaModel.corporate_registration_url || undefined,
+      shareholderListUrl: prismaModel.shareholder_list_url || undefined,
+      sealCertificateUrl: prismaModel.seal_certificate_url || undefined,
+      sealUsageUrl: prismaModel.seal_usage_url || undefined,
 
       // Status
       status: prismaModel.status as any,
-      submittedAt: prismaModel.submittedAt || undefined,
-      reviewedAt: prismaModel.reviewedAt || undefined,
-      reviewerNotes: prismaModel.reviewerNotes || undefined,
+      submittedAt: prismaModel.submitted_at || undefined,
+      reviewedAt: prismaModel.reviewed_at || undefined,
+      reviewerNotes: prismaModel.reviewer_notes || undefined,
 
       // Relations
-      userId: prismaModel.userId || undefined
+      userId: prismaModel.user_id || undefined
     }
 
     return EnrollmentApplication.fromPersistence(props)
@@ -235,14 +235,14 @@ export class PrismaEnrollmentRepository implements IEnrollmentRepository {
       businessNumber: props.businessNumber || null,
       businessAddress: props.businessAddress || null,
       businessCategory: props.businessCategory || null,
-      businessStartDate: props.businessStartDate || null,
+      businessStartDate: undefined,
 
-      storeName: props.storeName || null,
-      storeAddress: props.storeAddress || null,
-      storePhone: props.storePhone || null,
+      storeName: undefined,
+      storeAddress: undefined,
+      storePhone: undefined,
 
-      monthlyRevenue: props.monthlyRevenue || null,
-      settlementAccount: props.settlementAccount || null,
+      monthlyRevenue: undefined,
+      settlementAccount: undefined,
       bankName: props.bankName || null,
       accountHolder: props.accountHolder || null,
 

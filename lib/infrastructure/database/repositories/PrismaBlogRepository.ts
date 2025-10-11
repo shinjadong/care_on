@@ -1,7 +1,7 @@
 import type { PrismaClient } from '@prisma/client'
 import type { IBlogRepository, BlogFilters } from '@/lib/domain/canvas/repositories/IBlogRepository'
 import { BlogPost } from '@/lib/domain/canvas/entities/BlogPost'
-import type { BlogImage, BlogMetadata, BlogStatus } from '@/lib/domain/canvas/types'
+import type { BlogImage, BlogStatus } from '@/lib/domain/canvas/types'
 
 /**
  * PrismaBlogRepository
@@ -28,11 +28,11 @@ export class PrismaBlogRepository implements IBlogRepository {
   async findByUserId(userId: string, filters?: BlogFilters): Promise<BlogPost[]> {
     const rows = await this.prisma.blogPost.findMany({
       where: {
-        userId,
+        user_id: userId,
         ...(filters?.status && { status: filters.status }),
       },
       orderBy: {
-        [filters?.sortBy || 'createdAt']: filters?.sortOrder || 'desc',
+        [filters?.sortBy === 'createdAt' ? 'created_at' : filters?.sortBy || 'created_at']: filters?.sortOrder || 'desc',
       },
       skip: filters?.offset || 0,
       take: filters?.limit || 50,
@@ -73,22 +73,22 @@ export class PrismaBlogRepository implements IBlogRepository {
    * Convert database row to domain entity
    */
   private toDomain(row: any): BlogPost {
-    // Parse JSON fields
-    const images = this.parseImages(row.images)
-    const metadata = row.metadata ? this.parseMetadata(row.metadata) : undefined
+    // Parse JSON fields - image_urls is string array, convert to BlogImage format
+    const images = this.parseImages(row.image_urls)
+    const metadata = row.meta_description ? { seoTitle: row.meta_description } : undefined
 
     // Use fromPersistence to reconstruct entity from database
     // This bypasses business rule validation (already validated when created)
     return BlogPost.fromPersistence({
       id: row.id,
-      userId: row.userId,
+      userId: row.user_id,
       title: row.title,
       content: row.content,
       images,
       metadata,
       status: row.status as BlogStatus,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
     })
   }
 
@@ -98,58 +98,35 @@ export class PrismaBlogRepository implements IBlogRepository {
   private toPersistence(post: BlogPost) {
     return {
       id: post.id,
-      userId: post.userId,
+      user_id: post.userId,
       title: post.title,
       content: post.content,
-      images: post.images as any, // Prisma will handle JSON serialization
-      metadata: (post.metadata || null) as any,
+      keyword: post.title, // Use title as keyword for now
+      image_urls: post.images.map(img => img.url),
+      meta_description: post.metadata?.seoTitle || null,
       status: post.status,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
+      created_at: post.createdAt,
+      updated_at: post.updatedAt,
     }
   }
 
   /**
-   * Parse images JSON from database
+   * Parse images from database (image_urls is string array)
    */
-  private parseImages(imagesJson: any): BlogImage[] {
-    if (!imagesJson) return []
+  private parseImages(imageUrls: any): BlogImage[] {
+    if (!imageUrls) return []
 
-    // Prisma returns Json type, which could be string or object
-    const images = typeof imagesJson === 'string'
-      ? JSON.parse(imagesJson)
-      : imagesJson
+    if (!Array.isArray(imageUrls)) return []
 
-    if (!Array.isArray(images)) return []
-
-    return images.map((img: any) => ({
-      id: img.id,
-      url: img.url,
-      filename: img.filename,
-      size: img.size,
-      type: img.type,
-      uploadedAt: new Date(img.uploadedAt),
-      analysis: img.analysis,
+    // Convert simple URL array to BlogImage format
+    return imageUrls.map((url: string, index: number) => ({
+      id: `img-${index}`,
+      url,
+      filename: url.split('/').pop() || 'image',
+      size: 0,
+      type: 'image/jpeg',
+      uploadedAt: new Date(),
+      analysis: undefined,
     }))
-  }
-
-  /**
-   * Parse metadata JSON from database
-   */
-  private parseMetadata(metadataJson: any): BlogMetadata {
-    if (!metadataJson) return {}
-
-    // Prisma returns Json type
-    const metadata = typeof metadataJson === 'string'
-      ? JSON.parse(metadataJson)
-      : metadataJson
-
-    return {
-      seoTitle: metadata.seoTitle,
-      tags: metadata.tags,
-      category: metadata.category,
-      coverImageUrl: metadata.coverImageUrl,
-      estimatedReadingTime: metadata.estimatedReadingTime,
-    }
   }
 }
