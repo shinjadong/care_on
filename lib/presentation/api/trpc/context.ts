@@ -24,13 +24,22 @@ export async function createContext({
   resHeaders,
 }: FetchCreateContextFnOptions) {
   // TODO: Get user from Supabase session
-  // For now, we'll return null user
+  // For now, we'll return mock user in development mode
   // In production, you would:
   // 1. Extract session cookie from req
   // 2. Validate with Supabase
   // 3. Return user info
 
-  const user: User | null = null // Replace with actual user from Supabase
+  // TEMPORARY: Mock user for development/testing
+  // Remove this when Supabase auth is implemented
+  const isDevelopment = process.env.NODE_ENV === 'development'
+  const user: User | null = isDevelopment
+    ? {
+        id: 'dev-user-001',
+        email: 'dev@careon.com',
+        role: 'user'
+      }
+    : null // In production, this will come from Supabase
 
   return {
     req,
