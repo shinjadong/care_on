@@ -4,10 +4,12 @@
  */
 
 import { type FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch'
+import { cookies } from 'next/headers'
+import { createServerClient } from '@supabase/ssr'
 import { prisma } from '@/lib/infrastructure/database/prisma/client'
 
 /**
- * User type (will be replaced with actual Supabase user type)
+ * User type from Supabase
  */
 export interface User {
   id: string
@@ -23,28 +25,47 @@ export async function createContext({
   req,
   resHeaders,
 }: FetchCreateContextFnOptions) {
-  // TODO: Get user from Supabase session
-  // For now, we'll return mock user in development mode
-  // In production, you would:
-  // 1. Extract session cookie from req
-  // 2. Validate with Supabase
-  // 3. Return user info
+  // Create Supabase client for server-side auth
+  const cookieStore = await cookies()
 
-  // TEMPORARY: Mock user for development/testing
-  // Remove this when Supabase auth is implemented
-  const isDevelopment = process.env.NODE_ENV === 'development'
-  const user: User | null = isDevelopment
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options)
+            })
+          } catch {
+            // Ignore if called from Server Component
+          }
+        },
+      },
+    }
+  )
+
+  // Get authenticated user from Supabase session
+  const { data: { user: supabaseUser } } = await supabase.auth.getUser()
+
+  // Map Supabase user to our User type
+  const user: User | null = supabaseUser
     ? {
-        id: 'dev-user-001',
-        email: 'dev@careon.com',
-        role: 'user'
+        id: supabaseUser.id,
+        email: supabaseUser.email || '',
+        role: supabaseUser.user_metadata?.role || 'user',
       }
-    : null // In production, this will come from Supabase
+    : null
 
   return {
     req,
     resHeaders,
     prisma,
+    supabase,
     user,
   }
 }

@@ -1,15 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ImageUploader } from '@/components/canvas/ImageUploader'
 import { PreferencesDialog } from '@/components/canvas/PreferencesDialog'
 import { BlogEditor } from '@/components/canvas/BlogEditor'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Loader2, Sparkles, ArrowRight, ImagePlus } from 'lucide-react'
+import { Loader2, Sparkles, ArrowRight, ImagePlus, LogOut } from 'lucide-react'
 import { toast } from 'sonner'
 import { trpc } from '@/lib/presentation/api/trpc/client'
+import { createClient } from '@/lib/infrastructure/auth/supabase/client'
 
 interface Preferences {
   tone: 'formal' | 'casual' | 'professional' | 'friendly'
@@ -26,6 +27,8 @@ interface GeneratedBlog {
 
 export default function CanvasPage() {
   const router = useRouter()
+  const supabase = createClient()
+
   const [step, setStep] = useState<'upload' | 'generating' | 'editing'>('upload')
   const [selectedImages, setSelectedImages] = useState<File[]>([])
   const [preferencesOpen, setPreferencesOpen] = useState(false)
@@ -34,11 +37,31 @@ export default function CanvasPage() {
     length: 'medium',
   })
   const [generatedBlog, setGeneratedBlog] = useState<GeneratedBlog | null>(null)
+  const [userEmail, setUserEmail] = useState<string>('')
 
   // tRPC mutations
   const generateBlogMutation = trpc.canvas.generateBlog.useMutation()
   const updateMutation = trpc.canvas.update.useMutation()
   const publishMutation = trpc.canvas.publish.useMutation()
+
+  // Check authentication on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        router.push('/login')
+      } else {
+        setUserEmail(user.email || '')
+      }
+    }
+    checkAuth()
+  }, [supabase, router])
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
 
   const handleImagesSelected = (files: File[]) => {
     setSelectedImages(files)
@@ -157,10 +180,23 @@ export default function CanvasPage() {
     <div className="container mx-auto max-w-6xl py-8 px-4">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">AI 블로그 생성</h1>
-        <p className="text-muted-foreground">
-          이미지를 업로드하면 AI가 자동으로 맥락에 맞는 블로그를 생성합니다
-        </p>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">AI 블로그 생성</h1>
+            <p className="text-muted-foreground">
+              이미지를 업로드하면 AI가 자동으로 맥락에 맞는 블로그를 생성합니다
+            </p>
+          </div>
+          {userEmail && (
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground">{userEmail}</span>
+              <Button variant="outline" size="sm" onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                로그아웃
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Step Indicator */}
