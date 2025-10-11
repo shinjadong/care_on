@@ -1,0 +1,300 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================================
+// ENROLLMENT DOMAIN
+// ========================================
+
+enum EnrollmentStatus {
+  draft       // 작성 중
+  submitted   // 제출됨
+  reviewing   // 검토 중
+  approved    // 승인됨
+  rejected    // 반려됨
+}
+
+model EnrollmentApplication {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Step 1: Agreements
+  agreeTerms         Boolean @default(false)
+  agreePrivacy       Boolean @default(false)
+  agreeMarketing     Boolean @default(false)
+  agreeTosspay       Boolean @default(false)
+  agreedCardCompanies String? // JSON array of agreed card companies
+
+  // Step 2: Business Type
+  businessType String // '개인사업자' or '법인사업자'
+
+  // Step 3: Representative Info
+  representativeName String
+  phoneNumber        String
+  birthDate          String
+  gender             String // 'male' or 'female'
+
+  // Step 4: Business Info
+  businessName       String?
+  businessNumber     String?  @unique // Korean business registration number (optional until submitted)
+  businessAddress    String?
+  businessCategory   String?
+  businessStartDate  String?
+
+  // Step 5: Store Info
+  storeName          String?
+  storeAddress       String?
+  storePhone         String?
+
+  // Step 6-9: Financial & Account Info
+  monthlyRevenue     Int?
+  settlementAccount  String?
+  bankName           String?
+  accountHolder      String?
+
+  // Step 10: Document URLs (Vercel Blob Storage)
+  businessRegistrationUrl String?
+  idCardFrontUrl          String?
+  idCardBackUrl           String?
+  bankbookUrl             String?
+  businessLicenseUrl      String?
+  signPhotoUrl            String?
+  doorClosedUrl           String?
+  doorOpenUrl             String?
+  interiorUrl             String?
+  productUrl              String?
+  businessCardUrl         String?
+  // Corporate only documents
+  corporateRegistrationUrl String?
+  shareholderListUrl       String?
+  sealCertificateUrl       String?
+  sealUsageUrl             String?
+
+  // Step 11: Status Management
+  status         EnrollmentStatus @default(draft)
+  submittedAt    DateTime?
+  reviewedAt     DateTime?
+  reviewerNotes  String?
+
+  // Relations
+  userId String? // Link to auth.users (optional)
+  notes  EnrollmentNote[]
+
+  @@index([status])
+  @@index([userId])
+  @@index([businessNumber])
+  @@index([createdAt])
+}
+
+model EnrollmentNote {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  enrollmentId String
+  enrollment   EnrollmentApplication @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  authorId   String   // Admin user ID (String only, no FK to auth.users)
+  note       String
+  isInternal Boolean  @default(false) // Internal notes not visible to applicant
+
+  @@index([enrollmentId])
+  @@index([authorId])
+}
+
+// ========================================
+// PRODUCT DOMAIN
+// ========================================
+
+model Product {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  name        String
+  description String?
+  category    String
+  provider    String // Supplier/provider name
+  monthlyFee  Int // Monthly fee in KRW
+  imageUrl    String?
+  available   Boolean  @default(true)
+
+  // Discount & Refund Policies
+  closureRefundRate Float @default(0) // Closure refund rate (0-1)
+  maxDiscountRate   Float @default(0) // Maximum discount rate (0-1)
+  discountTiers     Json? // Discount tiers: [{ rate: 0.1, condition: "3개월 이상", minQuantity: 3 }]
+
+  // Relations
+  packageItems PackageItem[]
+
+  @@index([category])
+  @@index([available])
+}
+
+model Package {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  name        String
+  description String?
+  totalFee    Int // Total monthly fee
+  available   Boolean  @default(true)
+
+  items PackageItem[]
+
+  @@index([available])
+}
+
+model PackageItem {
+  id        String @id @default(uuid())
+
+  packageId String
+  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([packageId, productId])
+  @@index([packageId])
+  @@index([productId])
+}
+
+// ========================================
+// CUSTOMER DOMAIN
+// ========================================
+
+enum CustomerStatus {
+  active
+  inactive
+  suspended
+}
+
+model Customer {
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Business Info
+  businessName   String
+  businessNumber String   @unique
+  representativeName String
+  phoneNumber    String
+  email          String?
+
+  // Status
+  status         CustomerStatus @default(active)
+
+  // Relations
+  userId         String? // Link to auth.users
+  contracts      Contract[]
+  reviews        Review[]
+
+  @@index([status])
+  @@index([businessNumber])
+  @@index([userId])
+}
+
+// ========================================
+// CONTRACT DOMAIN
+// ========================================
+
+enum ContractStatus {
+  draft
+  active
+  expired
+  cancelled
+}
+
+model Contract {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  contractNumber String @unique // Generated contract number
+
+  customerId   String
+  customer     Customer @relation(fields: [customerId], references: [id])
+
+  startDate    DateTime
+  endDate      DateTime?
+
+  status       ContractStatus @default(draft)
+  terms        String? // Contract terms (text or JSON)
+
+  @@index([customerId])
+  @@index([status])
+  @@index([contractNumber])
+}
+
+// ========================================
+// REVIEW DOMAIN
+// ========================================
+
+model Review {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  rating     Int // 1-5
+  content    String
+  images     String? // JSON array of image URLs
+
+  approved   Boolean  @default(false)
+  approvedAt DateTime?
+
+  @@index([customerId])
+  @@index([approved])
+  @@index([rating])
+}
+
+// ========================================
+// CANVAS DOMAIN (Blog Editor)
+// ========================================
+
+enum BlogStatus {
+  draft
+  published
+  archived
+}
+
+model BlogPost {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User reference - Links to Enrollment userId (Single Source of Truth)
+  // Canvas domain does NOT duplicate user/business data
+  // It retrieves context via GetEnrollmentUseCase
+  userId    String
+
+  // Blog content
+  title     String
+  content   String @db.Text // Markdown format
+
+  // Images - Stored as JSON array
+  // Schema: [{ id, url, filename, size, type, uploadedAt, analysis }]
+  images    Json @default("[]")
+
+  // Metadata - Stored as JSON
+  // Schema: { seoTitle, tags, category, coverImageUrl, estimatedReadingTime }
+  metadata  Json?
+
+  // Status
+  status    BlogStatus @default(draft)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
