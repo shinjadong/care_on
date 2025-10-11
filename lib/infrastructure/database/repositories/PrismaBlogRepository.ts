@@ -101,8 +101,8 @@ export class PrismaBlogRepository implements IBlogRepository {
       userId: post.userId,
       title: post.title,
       content: post.content,
-      images: post.images, // Prisma will handle JSON serialization
-      metadata: post.metadata || null,
+      images: post.images as any, // Prisma will handle JSON serialization
+      metadata: (post.metadata || null) as any,
       status: post.status,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,

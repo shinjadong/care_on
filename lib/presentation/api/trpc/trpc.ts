@@ -6,7 +6,7 @@
 import { initTRPC, TRPCError } from '@trpc/server'
 import superjson from 'superjson'
 import { ZodError } from 'zod'
-import type { Context } from './context'
+import type { Context, User } from './context'
 
 /**
  * Initialize tRPC with context
@@ -45,7 +45,7 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   return next({
     ctx: {
       ...ctx,
-      user: ctx.user as NonNullable<typeof ctx.user>, // Type-safe non-null user
+      user: ctx.user as User, // Type-safe non-null user (guaranteed by runtime check)
     },
   })
 })

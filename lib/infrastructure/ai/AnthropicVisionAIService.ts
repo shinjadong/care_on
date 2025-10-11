@@ -41,8 +41,9 @@ export class AnthropicVisionAIService implements IVisionAIService {
       const contextPrompt = this.buildContextPrompt(context)
 
       // Call Anthropic Vision API
+      // Using latest Claude Sonnet 4 model
       const response = await this.anthropic.messages.create({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 2048,
         messages: [
           {

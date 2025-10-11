@@ -68,30 +68,6 @@ export default function StepSettlementInfo({ formData, updateFormData, onNext, o
     }
   }
 
-  const formatAccountNumber = (value: string) => {
-    // Remove all non-numeric characters except hyphens
-    const cleanValue = value.replace(/[^\d-]/g, '')
-
-    // If no hyphens, auto-format common patterns
-    if (!cleanValue.includes('-') && cleanValue.length > 3) {
-      // Simple auto-formatting (can be improved based on bank-specific patterns)
-      const nums = cleanValue.replace(/-/g, '')
-      if (nums.length <= 13) {
-        // Format as XXX-XXXX-XXXX or similar
-        let formatted = ''
-        for (let i = 0; i < nums.length; i++) {
-          if ((i === 3 || i === 7) && i < nums.length - 1) {
-            formatted += '-'
-          }
-          formatted += nums[i]
-        }
-        return formatted
-      }
-    }
-
-    return cleanValue
-  }
-
   const handleAccountNumberChange = (value: string) => {
     // 숫자만 남기기
     const cleaned = value.replace(/[^0-9]/g, '')

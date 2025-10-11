@@ -64,7 +64,7 @@ export const productRouter = router({
   // Create product (admin only)
   create: protectedProcedure
     .input(createProductSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       // TODO: Add admin role check
       // if (ctx.user.role !== 'admin') {
       //   throw new Error('Unauthorized: Admin access required')
@@ -83,7 +83,7 @@ export const productRouter = router({
       id: z.string().uuid(),
       updates: updateProductSchema
     }))
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       // TODO: Add admin role check
       // if (ctx.user.role !== 'admin') {
       //   throw new Error('Unauthorized: Admin access required')
@@ -99,7 +99,7 @@ export const productRouter = router({
   // Delete product (admin only)
   delete: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       // TODO: Add admin role check
       // if (ctx.user.role !== 'admin') {
       //   throw new Error('Unauthorized: Admin access required')
@@ -158,7 +158,7 @@ export const productRouter = router({
   // Create package (admin only)
   createPackage: protectedProcedure
     .input(createPackageSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       // TODO: Add admin role check
 
       const repository = getProductRepository()
@@ -174,7 +174,7 @@ export const productRouter = router({
       id: z.string().uuid(),
       updates: updatePackageSchema
     }))
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       // TODO: Add admin role check
 
       const repository = getProductRepository()
@@ -193,7 +193,7 @@ export const productRouter = router({
   // Delete package (admin only)
   deletePackage: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       // TODO: Add admin role check
 
       const repository = getProductRepository()

@@ -2,7 +2,7 @@
 // API endpoints for AI-powered blog generation and management
 
 import { z } from 'zod'
-import { router, publicProcedure, protectedProcedure } from '../trpc'
+import { router, protectedProcedure } from '../trpc'
 import { BlogGenerationService } from '@/lib/application/services/BlogGenerationService'
 import { GetEnrollmentUseCase } from '@/lib/domain/enrollment/usecases/GetEnrollmentUseCase'
 import { AnalyzeImagesUseCase } from '@/lib/domain/canvas/usecases/AnalyzeImagesUseCase'

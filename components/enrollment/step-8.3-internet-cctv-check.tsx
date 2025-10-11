@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { CareonContainer } from "./ui/careon-container"
 import { CareonButton } from "./ui/careon-button"
 import { BackButton } from "@/components/ui/back-button"

@@ -13,13 +13,18 @@ interface CareonButtonProps {
 }
 
 export function CareonButton({ children, onClick, variant = "teal", disabled = false, className }: CareonButtonProps) {
+  const variantStyles = {
+    teal: "bg-[#009da2] hover:bg-[#008a8f]",
+    blue: "bg-blue-600 hover:bg-blue-700"
+  }
+
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       className={cn(
         "w-full py-4 px-6 rounded-xl font-semibold text-base text-white transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed",
-        "bg-[#009da2] hover:bg-[#008a8f]",
+        variantStyles[variant],
         className,
       )}
     >

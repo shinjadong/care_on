@@ -34,9 +34,11 @@ export default function CanvasPage() {
     length: 'medium',
   })
   const [generatedBlog, setGeneratedBlog] = useState<GeneratedBlog | null>(null)
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [isPublishing, setIsPublishing] = useState(false)
+
+  // tRPC mutations
+  const generateBlogMutation = trpc.canvas.generateBlog.useMutation()
+  const updateMutation = trpc.canvas.update.useMutation()
+  const publishMutation = trpc.canvas.publish.useMutation()
 
   const handleImagesSelected = (files: File[]) => {
     setSelectedImages(files)
@@ -57,7 +59,6 @@ export default function CanvasPage() {
   }
 
   const generateBlog = async (prefs: Preferences) => {
-    setIsGenerating(true)
     setStep('generating')
 
     try {
@@ -76,7 +77,7 @@ export default function CanvasPage() {
       )
 
       // Call tRPC API to generate blog with AI
-      const result = await trpc.canvas.generateBlog.mutate({
+      const result = await generateBlogMutation.mutateAsync({
         images: imagesData,
         preferences: prefs,
       })
@@ -98,8 +99,6 @@ export default function CanvasPage() {
       const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다'
       toast.error(`블로그 생성 실패: ${errorMessage}`)
       setStep('upload')
-    } finally {
-      setIsGenerating(false)
     }
   }
 
@@ -118,10 +117,9 @@ export default function CanvasPage() {
   const handleSave = async () => {
     if (!generatedBlog) return
 
-    setIsSaving(true)
     try {
       // Call tRPC API to save blog
-      await trpc.canvas.update.mutate({
+      await updateMutation.mutateAsync({
         id: generatedBlog.id,
         title: generatedBlog.title,
         content: generatedBlog.content,
@@ -132,18 +130,15 @@ export default function CanvasPage() {
       console.error('저장 실패:', error)
       const errorMessage = error instanceof Error ? error.message : '저장에 실패했습니다'
       toast.error(errorMessage)
-    } finally {
-      setIsSaving(false)
     }
   }
 
   const handlePublish = async () => {
     if (!generatedBlog) return
 
-    setIsPublishing(true)
     try {
       // Call tRPC API to publish blog
-      await trpc.canvas.publish.mutate({ id: generatedBlog.id })
+      await publishMutation.mutateAsync({ id: generatedBlog.id })
 
       toast.success('블로그가 발행되었습니다!')
       router.push('/my/blogs')
@@ -151,8 +146,6 @@ export default function CanvasPage() {
       console.error('발행 실패:', error)
       const errorMessage = error instanceof Error ? error.message : '발행에 실패했습니다'
       toast.error(errorMessage)
-    } finally {
-      setIsPublishing(false)
     }
   }
 

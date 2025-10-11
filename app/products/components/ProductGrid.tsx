@@ -19,13 +19,11 @@ interface Product {
 
 interface ProductGridProps {
   products: Product[]
-  selectedCategory: string
   onResetCategory: () => void
 }
 
 export default function ProductGrid({
   products,
-  selectedCategory,
   onResetCategory
 }: ProductGridProps) {
   if (products.length === 0) {

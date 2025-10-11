@@ -42,7 +42,8 @@ export class OpenAIBlogService implements IAIBlogService {
     try {
       const prompt = this.buildBlogGenerationPrompt(input)
 
-      // Use OpenAI Responses API with instructions parameter
+      // Use OpenAI Responses API with latest GPT-5 model
+      // Alternatives: 'gpt-5-mini', 'gpt-5-nano', 'gpt-5-chat-latest'
       const response = await this.openai.responses.create({
         model: 'gpt-5',
         reasoning: { effort: 'medium' },

@@ -46,6 +46,7 @@ export class OpenAIVisionAIService implements IVisionAIService {
       }))
 
       // Call OpenAI Vision API using Responses API
+      // Latest vision models: 'gpt-4.1-mini', 'gpt-4.1-nano', 'gpt-5-mini', 'gpt-5-nano'
       const response = await this.openai.responses.create({
         model: 'gpt-4.1-mini',
         input: [

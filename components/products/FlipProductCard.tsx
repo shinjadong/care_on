@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -151,7 +151,6 @@ export default function FlipProductCard({ product }: FlipProductCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
   const addItem = useCartStore((state) => state.addItem)
-  const addButtonRef = useRef<HTMLButtonElement>(null)
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     const button = e.currentTarget

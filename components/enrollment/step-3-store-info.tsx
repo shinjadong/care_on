@@ -10,7 +10,7 @@ import type { FormData } from "@/app/enrollment/page"
 
 interface StepStoreInfoProps {
   formData: FormData
-  updateFormData: (field: keyof FormData, value: string) => void
+  updateFormData: (field: keyof FormData, value: any) => void
   onNext: () => void
   onBack: () => void
 }

@@ -42,7 +42,7 @@ export default async function ProductsPage({
       inStock: product.available,
       provider: product.provider,
       maxDiscountRate: product.maxDiscountRate,
-      discountTiers: product.discountTiers,
+      discountTiers: product.discountTiers || [],
       imageUrl: product.imageUrl
     }))
 

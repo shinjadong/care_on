@@ -1,7 +1,7 @@
 "use client"
 
 // Customer enrollment form
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import StepAgreements from "@/components/enrollment/step-0-agreements"
 import StepOwnerInfo from "@/components/enrollment/step-1-owner-info"
 import StepCardAgreements from "@/components/enrollment/step-1.5-card-agreements-v2"

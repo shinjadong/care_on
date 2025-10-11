@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import ProductDetailClient from './ProductDetailClient'
 import {
   Shield,
-  CreditCard,
   Wifi,
   Camera,
   Package,
@@ -51,7 +50,6 @@ export default async function ProductDetailPage({
     const product = await getProductUseCase.execute(id)
 
     // DB 데이터를 UI에 맞게 변환
-    const ProductIcon = categoryIcons[product.category] || Package
     const gradientColor = categoryColors[product.category] || 'from-gray-600 to-gray-400'
 
     // 할인율 계산 (maxDiscountRate 사용)
@@ -138,7 +136,7 @@ export default async function ProductDetailPage({
       gradientColor,
       provider: product.provider,
       maxDiscountRate: product.maxDiscountRate,
-      discountTiers: product.discountTiers,
+      discountTiers: product.discountTiers || [],
       imageUrl: product.imageUrl
     }
 
